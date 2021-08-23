@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${tm:msg(pageContext.request, "menuRegist")}</title>
+<title>${pb:msg(pageContext.request, "menuRegist")}</title>
 </head>
 <%@ include file="../../gridData.jsp"%>
 <script>
@@ -29,7 +29,7 @@
   				, function(){
   					
   					if(commGridSaveData(masterGrid).length > 0){
-  						if(!confirm('${tm:msg(pageContext.request, "searchConfirm")}')){
+  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
   							return false;
   						}
   					}
@@ -55,7 +55,7 @@
   				, function(){
   					
   					if(saveData.length == 0){
-  						toast('${tm:msg(pageContext.request, "noSaveData")}', 'info');
+  						toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
   						return false;
   					}
   					else{
@@ -69,7 +69,7 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						toast('${tm:msg(pageContext.request, "saveSuccess")}', 'success');
+  						toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
   						commGridClear(masterGrid);
   	  					f_search('saveAfter');
 					}
@@ -80,8 +80,8 @@
   	}
 </script>
 <body>
-<button type="button" id='saveBtn'>${tm:msg(pageContext.request, "save")}</button>
-<button type="button" id='searchBtn'>${tm:msg(pageContext.request, "search")}</button>
+<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "save")}</button>
+<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "search")}</button>
 <div id='masterGridContainer' class='gridContainer' style="height: 100%;">
 	<div id="masterGrid" class="grid"></div>
 </div>
