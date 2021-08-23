@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="combo">
+
+	<select id="S_COMM_MLG" resultType="HashMap" parameterType="HashMap" >
+		SELECT A.MLG_CD AS CODE_VALUE
+			 , A.COMM_MLG_ID
+			 , A.MLG_CD
+			 , A.DESCRIPTION
+			 , A.MSG_YN
+			 , A.MENU_YN
+			 , A.CODE_YN
+			 , A.GRID_YN
+			 , A.FUNCTION_YN
+		 <choose>
+		 	<when test="LANG_CODE == 'KO'">
+		 	, A.MLG_KO AS CODE_NAME
+		 	</when>
+		 	<otherwise>
+		 	, A.MLG_EN AS CODE_NAME
+		 	</otherwise>
+		 </choose>
+		  FROM COMM_MLG A
+		 WHERE A.COMM_MLG_ID = A.COMM_MLG_ID
+		 <if test="@com.util.CommUtil@nvl(MSG_YN, '') != ''">
+		 	AND A.MSG_YN = #{MSG_YN}
+		 </if>
+		 <if test="@com.util.CommUtil@nvl(MENU_YN, '') != ''">
+		 	AND A.MENU_YN = #{MENU_YN}
+		 </if>
+		 <if test="@com.util.CommUtil@nvl(CODE_YN, '') != ''">
+		 	AND A.CODE_YN = #{CODE_YN}
+		 </if>
+		 <if test="@com.util.CommUtil@nvl(GRID_YN, '') != ''">
+		 	AND A.GRID_YN = #{GRID_YN}
+		 </if>
+		 <if test="@com.util.CommUtil@nvl(FUNCTION_YN, '') != ''">
+		 	AND A.FUNCTION_YN = #{FUNCTION_YN}
+		 </if>
+		 <choose>
+		 	<when test="LANG_CODE == 'KO'">
+		 ORDER BY A.MLG_KO ASC
+		 	</when>
+		 	<otherwise>
+		 ORDER BY A.MLG_EN ASC
+		 	</otherwise>
+		 </choose>
+		 
+	</select>
+	
+	<select id="S_CODE_DETAIL" resultType="HashMap" parameterType="HashMap" >
+		SELECT A.CODE_DETAIL_ID
+			 , A.CODE_MASTER_ID
+			 , A.CODE AS CODE_VALUE
+			 , A.CODE
+			 , A.MLG_CD
+			 , A.USE_YN
+			 , A.DESCRIPTION
+			 , A.ATTR1
+			 , A.ATTR2
+			 , A.ATTR3
+			 , A.ATTR4
+			 , A.ATTR5
+			 , A.SEQ
+		 <choose>
+		 	<when test="LANG_CODE == 'KO'">
+		 	, B.MLG_KO AS CODE_NAME
+		 	</when>
+		 	<otherwise>
+		 	, B.MLG_EN AS CODE_NAME
+		 	</otherwise>
+		 </choose>
+		  FROM CODE_DETAIL A
+     LEFT JOIN COMM_MLG B ON A.MLG_CD = B.MLG_CD 
+     					 AND B.CODE_YN = '1'
+		 WHERE A.CODE_MASTER_ID = #{CODE_MASTER_ID}
+		   AND A.USE_YN = #{USE_YN}
+		 ORDER BY A.SEQ ASC
+	</select>
+	
+</mapper>

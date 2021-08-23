@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+	
+		<util:properties id="config" location="classpath:/config.properties" />
+		
+ 		<!-- Root Context: defines shared resources visible to all other web components -->
+		<bean id='DS' class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+			<property name="driverClassName" value="#{config['db.driver']}" />
+			<property name="url" value="#{config['db.url']}" />
+			<property name="username" value="#{config['db.username']}"/>
+			<property name="password" value="#{config['db.password']}" />
+		</bean>
+		<bean id='SqlFactory' class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="DS" />
+			<property name="configLocation" value="classpath:/mybatis-config.xml" />
+			<property name="mapperLocations" value="classpath:/mapper/*.xml" />
+		</bean>
+		
+		<bean id='sqlSession' class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+			<constructor-arg index="0" ref="SqlFactory"/>
+    		<constructor-arg index="1" value="REUSE" />
+		</bean>
+	
+		<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+			<property name="dataSource" ref="DS" />
+		</bean>
+		
+</beans>

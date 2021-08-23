@@ -1,0 +1,241 @@
+@charset "UTF-8";
+/* 사용자정의CSS */
+.background-img {
+	background-image: url(/resources/img/green.jpg);
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	height: 100%;
+}
+
+.menu-btn{
+	background-image: url(/resources/img/menu-icon.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding: 0;
+    border: 1px solid #c8c8c8;
+	cursor: pointer;
+}
+
+.center-table{
+	display: table;
+	height: 100%;
+	margin: auto;
+}
+.center-table>*{
+	display: table-cell;
+	vertical-align: middle;
+}
+.input-text{
+	display: block;
+}
+.input-green{
+	border: 1px solid #2ed184;
+}
+
+.font-size-36{
+	font-size: 36px;
+	border-radius: 10px;
+	padding: 10px;
+}
+.font-size-24{
+	font-size: 24px;
+	border-radius: 10px;
+	padding: 5px;	
+}
+.mg-to-15{
+	margin-top: 15px;
+}
+.mg-lt-15{
+	margin-left: 15px;
+}
+.mg-rt-15{
+	margin-right: 15px;
+}
+.mg-bt-15{
+	margin-bottom: 15px;
+}
+.mg-15{
+	margin: 15px;
+}
+.pd-to-15{
+	padding-top: 15px;
+}
+.pd-lt-15{
+	padding-left: 15px;
+}
+.pd-rt-15{
+	padding-right: 15px;
+}
+.pd-bt-15{
+	padding-bottom: 15px;
+}
+.pd-15{
+	padding: 15px;
+}
+.btn-area{
+	
+}
+.grid-area{
+	
+}
+.btn{
+	border-radius: 5px;
+}
+.btn-green{
+	background-color: #6AEBA8;
+	border: 1px solid #2ed184;
+	color: white;
+}
+
+.fl-left{
+	float: left;
+}
+.fl-right{
+	float: right;
+}
+iframe {
+	border-width: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#indexTab li .ui-icon-closethick {
+	float: right;
+	margin: 0.1em 0em 0 1em;
+	cursor: pointer;
+}
+
+#indexTab {
+	border: 0;
+	padding: 0;
+}
+
+#indexTab>ul {
+	border-radius: 0;
+}
+
+#indexTab li {
+	margin: .2em;
+	border: 0;
+	border-radius: .2em;
+}
+
+.ui-tabs-panel {
+	height: 92%;
+	padding: 0 !important;
+}
+
+.context {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	display: none;
+}
+
+.context>ul {
+	border: 1px solid black;
+}
+
+.context li {
+	padding: .4em;
+}
+
+.gridContainer {
+	float: left;
+	width: 100%;
+	height: 100%;
+}
+
+.grid {
+	width: 100%;
+	height: 100%;
+}
+
+.gridContext {
+	width: 200px;
+}
+
+.slick-row-hover {
+	background-color: #FAFAFA;
+}
+
+.editor-text {
+	width: -webkit-fill-available;
+	padding: 7px;
+}
+
+.editor-checkbox {
+	width: 25px;
+	height: 25px;
+	margin-top: 5px;
+}
+
+.slick-cell.copied {
+	background: rgba(0, 0, 255, 0.1) !important;
+	-webkit-transition: 0.5s background;
+}
+
+.slick-cell.selected {
+	background-color: beige;
+}
+
+.slick-headerrow-column {
+	text-overflow: clip;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.slick-headerrow-column input {
+	margin: 0;
+	padding: 3px;
+	width: 100%;
+	height: 100%;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.slick-footer-count {
+	font-weight: bold;
+	color: gray;
+	font-style: italic;
+}
+
+.slick-footer-sum {
+	font-weight: bold;
+	color: gray;
+	font-style: italic;
+}
+
+.common-tooltip {
+	background-color: white;
+	background-image: none;
+}
+
+.tree-toggle {
+	height: 9px;
+	width: 9px;
+	display: inline-block;
+}
+
+.tree-toggle.expand {
+	background: url(../plugin/slickGrid/images/expand.gif) no-repeat center
+		center;
+}
+
+.tree-toggle.collapse {
+	background: url(../plugin/slickGrid/images/collapse.gif) no-repeat
+		center center;
+}

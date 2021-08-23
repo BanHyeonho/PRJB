@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="comm">
+	
+	<!-- 생성자,수정자 SQL블럭 -->
+	<sql id="cidColumn">
+		, CID
+		, CDT
+		, MID
+		, MDT
+	</sql>
+	
+	<!-- 그리드별 컨텍스트메뉴 -->
+	<select id="S_GRID_COMBO_POPUP" resultType="HashMap" parameterType="HashMap" >
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.GRID_COMBO_POPUP_ID
+			 , A.GRID_DETAIL_ID
+			 , A.PARAM_NAME
+			 , A.PARAM_VALUE
+			 , A.TARGET
+			 , A.USE_YN
+		  FROM GRID_COMBO_POPUP A
+		 WHERE A.GRID_DETAIL_ID = #{GRID_DETAIL_ID}
+		 <if test="@com.util.CommUtil@nvl(USE_YN, '') != ''">
+		 	AND A.USE_YN = #{USE_YN}
+		 </if>
+	</select>
+	
+	<!-- 그리드컨텍스트메뉴저장 -->
+	<sql id="P_GRID_CONTEXT">
+		MERGE INTO GRID_CONTEXT A
+    	USING DUAL
+           ON (A.GRID_MASTER_ID = ${GRID_MASTER_ID} AND A.FUNCTION_CD = ${FUNCTION_CD})
+    	 WHEN MATCHED THEN
+			UPDATE SET A.USE_YN = ${USE_YN}
+					 , A.DESCRIPTION = ${DESCRIPTION}
+					 , A.MID = ${MID}
+					 , A.MDT = SYSDATE
+    	 WHEN NOT MATCHED THEN
+        	INSERT (A.GRID_CONTEXT_ID, A.GRID_MASTER_ID, A.FUNCTION_CD, A.USE_YN, A.DESCRIPTION, A.CID, A.CDT, A.MID, A.MDT)
+        	VALUES (GRID_CONTEXT_S.NEXTVAL, ${GRID_MASTER_ID}, ${FUNCTION_CD}, ${USE_YN}, ${DESCRIPTION}, ${MID}, SYSDATE, ${MID}, SYSDATE)
+	</sql>
+	<insert id="I_GRID_CONTEXT" parameterType="HashMap" >
+		<include refid="P_GRID_CONTEXT">
+			<property name="GRID_MASTER_ID" value="#{GRID_MASTER_ID}"/>
+			<property name="FUNCTION_CD" value="#{FUNCTION_CD}"/>
+			<property name="USE_YN" value="#{USE_YN}"/>
+			<property name="DESCRIPTION" value="#{DESCRIPTION}"/>
+			<property name="MID" value="#{MID}"/>
+		</include>
+	</insert>
+	<update id="U_GRID_CONTEXT" parameterType="HashMap" >
+		<include refid="P_GRID_CONTEXT">
+			<property name="GRID_MASTER_ID" value="#{GRID_MASTER_ID}"/>
+			<property name="FUNCTION_CD" value="#{FUNCTION_CD}"/>
+			<property name="USE_YN" value="#{USE_YN}"/>
+			<property name="DESCRIPTION" value="#{DESCRIPTION}"/>
+			<property name="MID" value="#{MID}"/>
+		</include>
+	</update>
+	<!-- 그리드별 컨텍스트메뉴 -->
+	<select id="S_GRID_CONTEXT" resultType="HashMap" parameterType="HashMap" >
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.CODE AS FUNCTION_CD
+			<choose>
+			 	<when test="LANG_CODE == 'KO'">
+			 	, C.MLG_KO AS FUNCTION_NAME
+			 	</when>
+			 	<otherwise>
+			 	, C.MLG_EN AS FUNCTION_NAME
+			 	</otherwise>
+			 </choose>
+		  	 , NVL(B.USE_YN, 0) AS USE_YN
+		  	 , B.DESCRIPTION
+		  	 , B.GRID_CONTEXT_ID
+		  	 , #{GRID_MASTER_ID} AS GRID_MASTER_ID
+		  FROM CODE_DETAIL A
+	 LEFT JOIN GRID_CONTEXT B ON A.CODE = B.FUNCTION_CD AND B.GRID_MASTER_ID = #{GRID_MASTER_ID}
+	 LEFT JOIN COMM_MLG	   C ON A.MLG_CD = C.MLG_CD AND C.CODE_YN = '1'
+		 WHERE A.CODE_MASTER_ID = 4
+		   AND A.USE_YN = '1'
+		 ORDER BY A.SEQ
+	</select>
+	
+	<!-- 화면별 그리드 컨텍스트 셋팅데이터 -->
+	<select id="S_GRID_CONTEXT_DATA" resultType="HashMap" parameterType="HashMap" >
+		SELECT C.GRID_NAME 
+			 , LISTAGG(A.FUNCTION_CD, ',') WITHIN GROUP(ORDER BY B.SEQ) AS CONTEXT_MENU
+		  FROM GRID_CONTEXT A
+	 LEFT JOIN CODE_DETAIL B ON A.FUNCTION_CD = B.CODE AND B.CODE_MASTER_ID = 4
+	 LEFT JOIN GRID_MASTER C ON A.GRID_MASTER_ID = C.GRID_MASTER_ID
+	     WHERE B.USE_YN = '1'
+		   AND A.USE_YN = '1'
+		   AND A.GRID_MASTER_ID = #{GRID_MASTER_ID}
+		 GROUP BY C.GRID_NAME 
+	</select>
+	
+	<!-- 화면별 그리드셋팅데이터 -->
+	<select id="S_GRID_DATA" resultType="HashMap" parameterType="HashMap" >
+		SELECT C.GRID_NAME 
+			 , C.FILTER_YN 
+			 , C.SORT_YN
+			 , C.TREE_YN
+			 , A.SEQ
+			 , A.FIELD
+			 , A.MLG_CD
+			 <choose>
+			 	<when test="LANG_CODE == 'KO'">
+			 	, D.MLG_KO AS FIELD_NAME
+			 	</when>
+			 	<otherwise>
+			 	, D.MLG_EN AS FIELD_NAME
+			 	</otherwise>
+			 </choose>
+			 , A.GROUP_MLG_CD
+			 , A.WIDTH
+			 , A.TEXT_ALIGN
+			 , A.FIELD_TYPE
+			 , A.REQUIRE_YN
+			 , A.FIXED_YN
+			 , A.USE_YN
+			 , A.FOOTER
+			 , A.DESCRIPTION
+			 , A.QUERY_ID
+			 , A.GRID_DETAIL_ID
+			 , B.ATTR1 				AS EDITOR
+			 , B.ATTR2 				AS PASTE_YN
+		  FROM GRID_DETAIL A
+	 LEFT JOIN CODE_DETAIL B ON A.FIELD_TYPE = B.CODE AND B.CODE_MASTER_ID = 3 AND B.USE_YN = '1'
+	 LEFT JOIN GRID_MASTER C ON A.GRID_MASTER_ID = C.GRID_MASTER_ID
+	 LEFT JOIN COMM_MLG	   D ON A.MLG_CD = D.MLG_CD AND D.GRID_YN = '1'
+		 WHERE C.GRID_MASTER_ID = #{GRID_MASTER_ID}
+		 ORDER BY A.SEQ
+	</select>
+	
+	<!-- 그리드 관리 상세그리드 조회 -->
+	<select id="S_GRID_DETAIL" resultType="HashMap" parameterType="HashMap" >
+		/* S_GRID_DETAIL */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.GRID_DETAIL_ID
+			 , A.GRID_MASTER_ID
+			 , A.SEQ
+			 , A.FIELD
+			 , A.MLG_CD
+			 , A.GROUP_MLG_CD
+			 , A.WIDTH
+			 , A.TEXT_ALIGN
+			 , A.FIELD_TYPE
+			 , A.REQUIRE_YN
+			 , A.FIXED_YN
+			 , A.USE_YN
+			 , A.FOOTER
+			 , A.DESCRIPTION
+			 , A.QUERY_ID
+		  FROM GRID_DETAIL A
+		 WHERE A.GRID_MASTER_ID = #{GRID_MASTER_ID}
+		 ORDER BY A.SEQ
+	</select>
+	
+	<!-- 그리드 관리 마스터그리드 조회 -->
+	<select id="S_GRID_MASTER" resultType="HashMap" parameterType="HashMap" >
+		/* S_GRID_MASTER */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.GRID_MASTER_ID 
+			 , A.MENU_CD 
+			 <choose>
+			 	<when test="LANG_CODE == 'KO'">
+			 	, C.MLG_KO AS MENU_NAME
+			 	</when>
+			 	<otherwise>
+			 	, C.MLG_EN AS MENU_NAME
+			 	</otherwise>
+			 </choose>
+			 , A.GRID_NAME 
+			 , A.FILTER_YN 
+			 , A.DESCRIPTION
+			 , A.SORT_YN
+			 , A.TREE_YN
+		  FROM GRID_MASTER A
+	 LEFT JOIN COMM_MENU B ON A.MENU_CD = B.MENU_CD
+	 LEFT JOIN COMM_MLG C ON B.MLG_CD = C.MLG_CD AND C.MENU_YN = '1'
+		 WHERE A.MENU_CD = #{MENU_CD}
+	</select>
+	
+	<!-- 그리드 관리 메뉴 조회 -->
+	<select id="S_GRID_MANAGE_MENU" resultType="HashMap" parameterType="HashMap" >
+		/* S_GRID_MANAGE_MENU */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , LEVEL-1 AS "indent"
+			 , SUBSTR( SYS_CONNECT_BY_PATH(ROWNUM, '_')
+	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
+	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1	AS "parent"
+			 , A.COMM_MENU_ID 
+			 , A.MENU_CD
+			 <choose>
+			 	<when test="LANG_CODE == 'KO'">
+			 	, B.MLG_KO AS MENU_NAME
+			 	</when>
+			 	<otherwise>
+			 	, B.MLG_EN AS MENU_NAME
+			 	</otherwise>
+			 </choose>
+		  FROM COMM_MENU A
+     LEFT JOIN COMM_MLG B ON A.MLG_CD = B.MLG_CD
+     	 WHERE A.USE_YN = '1'
+		 START WITH A.UP_MENU_CD IS null 
+		CONNECT BY PRIOR A.MENU_CD = A.UP_MENU_CD
+		ORDER SIBLINGS BY A.SEQ
+	</select>
+	
+	<!-- 공통코드 상세 조회 -->
+	<select id="S_CODE_DETAIL" resultType="HashMap" parameterType="HashMap" >
+		/* S_CODE_DETAIL */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.CODE_DETAIL_ID 
+			 , A.CODE_MASTER_ID 
+			 , A.CODE 
+			 , A.MLG_CD 
+			 , NVL(A.USE_YN, '0') AS USE_YN	 
+			 , A.DESCRIPTION 
+			 , A.ATTR1 
+			 , A.ATTR2 
+			 , A.ATTR3 
+			 , A.ATTR4 
+			 , A.ATTR5 
+			 , A.SEQ 
+		  FROM CODE_DETAIL A
+		 WHERE A.CODE_MASTER_ID = #{CODE_MASTER_ID}
+		 ORDER BY A.SEQ ASC
+	</select>
+	
+	<!-- 공통코드 마스터 조회 -->
+	<select id="S_CODE_MASTER" resultType="HashMap" parameterType="HashMap" >
+		/* S_CODE_MASTER */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.CODE_MASTER_ID 
+			 , A.MLG_CD 
+			 , NVL(A.USE_YN, '0') AS USE_YN 
+			 , A.DESCRIPTION 
+			 , A.ATTR1 
+			 , A.ATTR2 
+			 , A.ATTR3 
+			 , A.ATTR4 
+			 , A.ATTR5
+		  FROM CODE_MASTER A
+		 ORDER BY A.CODE_MASTER_ID DESC
+	</select>
+	
+	<!-- 메뉴 URL 조회 -->
+	<select id="S_MENU_URL" resultType="HashMap" parameterType="HashMap" >
+		/* S_MY_MENU */
+		SELECT A.MENU_URL
+		  FROM COMM_MENU A
+		 WHERE A.USE_YN = '1'
+		   AND A.MENU_CD = #{MENU_CD}
+		   AND #{CID} = #{CID} 
+	</select>
+	
+	<!-- 로그인한 계정의 메뉴 조회 -->
+	<select id="S_MY_MENU" resultType="HashMap" parameterType="HashMap" >
+		/* S_MY_MENU */
+		SELECT LEVEL-1 AS MENU_DEPTH
+			 , SYS_CONNECT_BY_PATH(A.MENU_CD, '@') AS MENU_PATH
+			 , A.COMM_MENU_ID 
+			 , A.MENU_CD 
+			 , A.MLG_CD
+			 , A.MENU_URL 
+			 , A.UP_MENU_CD 
+			 , A.USE_YN 
+			 , A.DESCRIPTION 
+			 , A.SEQ
+		  FROM COMM_MENU A
+		 WHERE A.USE_YN = '1'
+		   AND #{CID} = #{CID} 
+		 START WITH UP_MENU_CD IS null 
+		CONNECT BY PRIOR MENU_CD = UP_MENU_CD
+		ORDER SIBLINGS BY SEQ
+	</select>
+	
+	<!-- 메뉴 조회 -->
+	<select id="S_COMM_MENU" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_MENU */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , LEVEL-1 AS "indent"
+			 , SUBSTR( SYS_CONNECT_BY_PATH(ROWNUM, '_')
+	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
+	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1	AS "parent"
+			 , COMM_MENU_ID 
+			 , MENU_CD 
+			 , MENU_CD as TREE_VIEW
+			 , MLG_CD
+			 , MENU_URL 
+			 , UP_MENU_CD 
+			 , NVL(USE_YN, '0')	AS USE_YN 
+			 , DESCRIPTION 
+			 , SEQ
+		  FROM COMM_MENU
+		 START WITH UP_MENU_CD IS null 
+		CONNECT BY PRIOR MENU_CD = UP_MENU_CD
+		ORDER SIBLINGS BY SEQ
+	</select>
+	
+	<!-- 메뉴,코드,메시지 다국어 조회 -->
+	<select id="S_COMM_MLG_TYPE" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_MLG_TYPE */
+		SELECT COMM_MLG_ID
+		 	 , MLG_CD
+		 	 , MLG_KO
+		 	 , MLG_EN
+		 	 , NVL(MSG_YN, '0') 	AS MSG_YN
+		 	 , NVL(MENU_YN, '0')	AS MENU_YN
+		 	 , NVL(CODE_YN, '0')	AS CODE_YN
+		 	 , NVL(GRID_YN, '0')	AS GRID_YN
+		 	 , NVL(FUNCTION_YN, '0')	AS FUNCTION_YN
+		 	 , DESCRIPTION
+		  FROM COMM_MLG
+		 WHERE COMM_MLG_ID = COMM_MLG_ID
+		 <if test="@com.util.CommUtil@nvl(MENU_YN, '') != ''">
+		 	AND MENU_YN = #{MENU_YN}
+		 </if>
+		 <if test="@com.util.CommUtil@nvl(MSG_YN, '') != ''">
+		 	AND MSG_YN = #{MSG_YN}
+		 </if>
+		 <if test="@com.util.CommUtil@nvl(CODE_YN, '') != ''">
+		 	AND CODE_YN = #{CODE_YN}
+		 </if>
+		 <if test="@com.util.CommUtil@nvl(GRID_YN, '') != ''">
+		 	AND GRID_YN = #{GRID_YN}
+		 </if>
+		 <if test="@com.util.CommUtil@nvl(FUNCTION_YN, '') != ''">
+		 	AND FUNCTION_YN = #{FUNCTION_YN}
+		 </if>
+		 ORDER BY MLG_KO
+	</select>
+	
+	<!-- 다국어 조회 -->
+	<select id="S_COMM_MLG" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_MLG */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , COMM_MLG_ID
+		 	 , MLG_CD
+		 	 , MLG_KO
+		 	 , MLG_EN
+		 	 , NVL(MSG_YN, '0') 	AS MSG_YN
+		 	 , NVL(MENU_YN, '0')	AS MENU_YN
+		 	 , NVL(CODE_YN, '0')	AS CODE_YN
+		 	 , NVL(GRID_YN, '0')	AS GRID_YN
+		 	 , NVL(FUNCTION_YN, '0')	AS FUNCTION_YN
+		 	 , DESCRIPTION
+		  FROM COMM_MLG
+		 ORDER BY COMM_MLG_ID DESC
+	</select>
+	
+	<!-- 공통쿼리사용을 위한 테이블컬럼조회 -->
+	<select id="S_COLUMNS" resultType="HashMap" parameterType="HashMap" >
+		/* S_COLUMNS */
+		SELECT COLUMN_NAME
+		  FROM COLS 
+		 WHERE TABLE_NAME = #{TALBE_NAME}
+		 ORDER BY COLUMN_ID ASC
+	</select>
+	
+	<!-- 공통INSERT -->
+	<insert id="I_COMM_QUERY" parameterType="HashMap" >
+		/* I_COMM_QUERY */
+		INSERT INTO ${TALBE_NAME}
+			<foreach collection="TABLE_LAYOUT" item="item" open="(" separator="," close=")" >
+					${item.COLUMN_NAME}
+			</foreach>
+			VALUES
+			<foreach collection="TABLE_LAYOUT" item="item" open="(" separator="," close=")">
+				<choose>
+					<when test="item.COLUMN_NAME == TALBE_NAME+'_ID'">
+					${TALBE_NAME}_S.NEXTVAL
+					</when>
+					<when test="item.COLUMN_NAME == 'CDT' or item.COLUMN_NAME == 'MDT'">
+					SYSDATE
+					</when>
+					<otherwise>
+					#{item.COLUMN_VALUE}
+					</otherwise>
+				</choose>	
+			</foreach>
+	</insert>
+	
+	<!-- 공통UPDATE -->
+	<update id="U_COMM_QUERY" parameterType="HashMap" >
+		/* U_COMM_QUERY */
+		UPDATE ${TALBE_NAME}
+		   SET 
+		   <foreach collection="TABLE_LAYOUT" item="item" separator=",">
+				<choose>
+					<when test="item.COLUMN_NAME == TALBE_NAME+'_ID' or item.COLUMN_NAME == 'CDT' or item.COLUMN_NAME == 'CID'">
+					${item.COLUMN_NAME} = ${item.COLUMN_NAME}
+					</when>
+					<when test="item.COLUMN_NAME == 'MDT'">
+					${item.COLUMN_NAME} = SYSDATE
+					</when>
+					<otherwise>
+					${item.COLUMN_NAME} = #{item.COLUMN_VALUE}
+					</otherwise>
+				</choose>	
+			</foreach>
+		 WHERE ${WHERE_QUERY}
+	</update>
+	
+	<!-- 공통DELETE -->
+	<delete id="D_COMM_QUERY" parameterType="HashMap" >
+		/* D_COMM_QUERY */
+		DELETE
+		  FROM ${TALBE_NAME}
+		 WHERE ${WHERE_QUERY}
+	</delete>
+	
+	<!-- 각사용자별 암호화salt조회 -->
+	<select id="S_SALT" resultType="HashMap" parameterType="HashMap" >
+		/* S_SALT */
+		SELECT A.SALT
+		  FROM COMM_USER_SALT A
+		  JOIN COMM_USER B
+		    ON A.COMM_USER_ID = B.COMM_USER_ID
+		 WHERE B.LOGIN_ID = #{LOGIN_ID}	 
+	</select>
+	
+	<!-- 로그인 -->
+	<select id="S_LOGIN" resultType="HashMap" parameterType="HashMap" >
+		/* S_LOGIN */
+		SELECT A.COMM_USER_ID
+			 , A.LOGIN_ID
+		 	 , A.USER_NM
+		 	 , NVL(A.USE_YN, '0')	AS USE_YN
+		 	 , TO_CHAR(A.CDT, 'YYYY-MM-DD') as CDT
+		  FROM COMM_USER A
+		 WHERE A.USE_YN = #{USE_YN}
+		   AND A.LOGIN_ID = #{LOGIN_ID}
+		   AND A.PWD = #{PWD}
+	</select>
+	
+	<!-- 사용자생성(회원가입) -->
+	<insert id="I_COMM_USER" parameterType="HashMap" >
+		/* I_COMM_USER */
+		<selectKey resultType="HashMap" keyProperty="COMM_USER_ID" order="BEFORE">
+			SELECT COMM_USER_S.NEXTVAL as COMM_USER_ID
+			  FROM DUAL
+		</selectKey>
+		INSERT INTO COMM_USER(COMM_USER_ID 
+							, LOGIN_ID 
+							, PWD 
+							, USER_NM 
+							, USE_YN
+							<include refid="cidColumn"></include>
+							)
+					  VALUES( #{COMM_USER_ID}
+							, #{LOGIN_ID}
+							, #{PWD}
+							, #{USER_NM}
+							, '1'
+							, #{COMM_USER_ID}
+							, SYSDATE 
+							, #{COMM_USER_ID}
+							, SYSDATE  
+							)
+	</insert>
+	
+	<!-- 패스워드암호화 salt생성 -->
+	<insert id="I_SALT" parameterType="HashMap" >
+		/* I_SALT */
+		<selectKey resultType="HashMap" keyProperty="COMM_USER_SALT_ID" order="BEFORE">
+			SELECT COMM_USER_SALT_S.NEXTVAL as "COMM_USER_SALT_ID"
+			  FROM DUAL
+		</selectKey>
+		INSERT INTO COMM_USER_SALT(COMM_USER_SALT_ID
+								 , COMM_USER_ID 
+								 , SALT
+								 <include refid="cidColumn"></include>
+								  )
+						   VALUES( #{COMM_USER_SALT_ID} 
+								 , #{COMM_USER_ID}
+								 , #{SALT}
+								 , #{COMM_USER_ID} 
+								 , SYSDATE 
+								 , #{COMM_USER_ID} 
+								 , SYSDATE  
+								 )
+	</insert>
+		
+</mapper>
