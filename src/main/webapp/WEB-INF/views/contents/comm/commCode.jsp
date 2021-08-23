@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${tm:msg(pageContext.request, "commCode")}</title>
+<title>${pb:msg(pageContext.request, "commCode")}</title>
 <%@ include file="../../gridData.jsp"%>
 </head>
 	<script type="text/javascript">
@@ -33,7 +33,7 @@
 			}
 			else if(commGridSaveData(detailGrid).length > 0
 					){
-				if(!confirm('${tm:msg(pageContext.request, "searchConfirm")}')){
+				if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
 					gridEventIgnore = true;	
 					masterGrid.setSelectedRows(args.previousSelectedRows);
 					return false;
@@ -69,7 +69,7 @@
   					if((commGridSaveData(masterGrid).length > 0
   					|| commGridSaveData(detailGrid).length > 0 )
   					&& type != 'saveAfter'){
-  						if(!confirm('${tm:msg(pageContext.request, "searchConfirm")}')){
+  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
   							return false;
   						}
   					}
@@ -111,7 +111,7 @@
   				, function(){
   					
   					if(commGridSaveData(detailGrid).length > 0){
-  						if(!confirm('${tm:msg(pageContext.request, "searchConfirm")}')){
+  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
   							commandYn = true;
   							masterGrid.setSelectedRows([preRow]);
   							return false;
@@ -157,7 +157,7 @@
   				, function(){
   					
   					if(masterData.length == 0 && detailData.length == 0){
-  						toast('${tm:msg(pageContext.request, "noSaveData")}', 'info');
+  						toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
   						return false;
   					}
   					else{
@@ -185,7 +185,7 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						toast('${tm:msg(pageContext.request, "saveSuccess")}', 'success');
+  						toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
   						commGridClear(masterGrid);
   						commGridClear(detailGrid);
   	  					f_search('saveAfter');	
@@ -200,8 +200,8 @@
   	
 	</script>
 <body>
-<button type="button" id='saveBtn'>${tm:msg(pageContext.request, "save")}</button>
-<button type="button" id='searchBtn'>${tm:msg(pageContext.request, "search")}</button>
+<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "save")}</button>
+<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "search")}</button>
 <div id='content' class="pd-15">
 	<div id='masterGridContainer' class='gridContainer' style="height: 50%;">
 		<div id='masterGrid' class="grid">

@@ -4,9 +4,9 @@
 		xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
 		version="2.0">
  
-	<description>Tomy's Tag Library</description>
+	<description>PRJB Tag Library</description>
 	<tlib-version>1.1</tlib-version>
-	<short-name>tm</short-name>
+	<short-name>pb</short-name>
 	<function>
 		<!-- 설명 -->
 		<description>
@@ -20,7 +20,7 @@
 		<function-signature>java.lang.String msg(javax.servlet.http.HttpServletRequest, java.lang.String)</function-signature>
 		<!-- 사용예시 -->
 		<example>
-	      ${tm:msg(javax.servlet.http.HttpServletRequest input, java.lang.String input2)}
+	      ${pb:msg(javax.servlet.http.HttpServletRequest input, java.lang.String input2)}
 	    </example>	
 	</function>
 	<function>
@@ -36,7 +36,7 @@
 		<function-signature>java.lang.String jsNow()</function-signature>
 		<!-- 사용예시 -->
 		<example>
-	      ${tm:jsNow()}
+	      ${pb:jsNow()}
 	    </example>
 	    
 	</function>

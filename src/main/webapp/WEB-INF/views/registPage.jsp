@@ -5,7 +5,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>${tm:msg(pageContext.request, "signUp")}</title>
+	<title>${pb:msg(pageContext.request, "signUp")}</title>
 	<script type="text/javascript">
 	$(document).ready(function () {
 		
@@ -14,7 +14,7 @@
 		$('#registBtn').on('click', regist);
 	});
 	var goBack = function(){
-		if(confirm('${tm:msg(pageContext.request, "confirmGoBack")}')){
+		if(confirm('${pb:msg(pageContext.request, "confirmGoBack")}')){
 			location.replace('/');	
 		}
 	}
@@ -28,7 +28,7 @@
 			var rs = chkRequire(["registForm"]);
 			
 			for (var i = 0; i < rs.tags.length; i++) {
-				toast(msg('${tm:msg(pageContext.request, "requireEmpty")}', {
+				toast(msg('${pb:msg(pageContext.request, "requireEmpty")}', {
 					param : $(rs.tags[i]).attr('placeholder')
 				}), 'info');
 			}
@@ -41,7 +41,7 @@
 			}
 			//아이디중복
 			else if( data.result == 'duplicatedId'){
-				toast('${tm:msg(pageContext.request, "duplicatedId")}', 'info');
+				toast('${pb:msg(pageContext.request, "duplicatedId")}', 'info');
 				$('#registForm [name=LOGIN_ID]').focus();
 			}
 			
@@ -54,11 +54,11 @@
 	<div class="background-img">
 		<div class="center-table">
 			<form action="#" id='registForm'>
-				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${tm:msg(pageContext.request, "loginId")}' >
-				<input type="password" class="input-text font-size-36 mg-bt-15 input-green" tabindex="2" name="PWD" require="true" placeholder='${tm:msg(pageContext.request, "password")}' >
-				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" data-enter='4' tabindex="3" name="USER_NM" require="true" placeholder='${tm:msg(pageContext.request, "name")}' >
-				<button type="button" class="font-size-24 fl-right mg-lt-15 btn btn-green" tabindex="5" id='goBackBtn'>${tm:msg(pageContext.request, "goBack")}</button>
-				<button type="button" class="font-size-24 fl-right btn btn-green" tabindex="4" id='registBtn'>${tm:msg(pageContext.request, "join")}</button>
+				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "loginId")}' >
+				<input type="password" class="input-text font-size-36 mg-bt-15 input-green" tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "password")}' >
+				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" data-enter='4' tabindex="3" name="USER_NM" require="true" placeholder='${pb:msg(pageContext.request, "name")}' >
+				<button type="button" class="font-size-24 fl-right mg-lt-15 btn btn-green" tabindex="5" id='goBackBtn'>${pb:msg(pageContext.request, "goBack")}</button>
+				<button type="button" class="font-size-24 fl-right btn btn-green" tabindex="4" id='registBtn'>${pb:msg(pageContext.request, "join")}</button>
 			</form>
 		</div>
 	</div>

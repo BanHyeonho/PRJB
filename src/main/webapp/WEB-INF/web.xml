@@ -25,9 +25,9 @@
   </filter-mapping>
   <jsp-config>
     <taglib>
-      <taglib-uri>/resources/tld/tomyTagLib.tld</taglib-uri>
+      <taglib-uri>/resources/tld/PRJBTagLib.tld</taglib-uri>
       <taglib-location>
-				/resources/tld/tomyTagLib.tld
+				/resources/tld/PRJBTagLib.tld
 			</taglib-location>
     </taglib>
   </jsp-config>

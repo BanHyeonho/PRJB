@@ -4,7 +4,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>${tm:msg(pageContext.request, "login")}</title>
+	<title>${pb:msg(pageContext.request, "login")}</title>
 	<script type="text/javascript">
 	$(document).ready(function () {
 		
@@ -21,7 +21,7 @@
 			
 			var rs = chkRequire(["loginForm"]);
 			for (var i = 0; i < rs.tags.length; i++) {
-				toast(msg('${tm:msg(pageContext.request, "requireEmpty")}', {
+				toast(msg('${pb:msg(pageContext.request, "requireEmpty")}', {
 					param : $(rs.tags[i]).attr('placeholder')
 				}), 'info');
 			}
@@ -34,7 +34,7 @@
 			}
 			//아이디, 패스워드 오류
 			else if( data.result == 'chkIdPwd'){
-				toast('${tm:msg(pageContext.request, "chkIdPwd")}', 'info');
+				toast('${pb:msg(pageContext.request, "chkIdPwd")}', 'info');
 				$('#loginForm [name=pwd]').val('');
 				$('#loginForm [name=pwd]').focus();
 			}
@@ -51,10 +51,10 @@
 	<div class="background-img">
 		<div class="center-table">
 			<form action="#" id='loginForm'>
-				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${tm:msg(pageContext.request, "loginId")}'>
-				<input type="password" class="input-text font-size-36 mg-bt-15 input-green" data-enter='3' tabindex="2" name="PWD" require="true" placeholder='${tm:msg(pageContext.request, "password")}' >
-				<button type="button" class="font-size-24 fl-right mg-lt-15 btn btn-green" tabindex="3" id='loginBtn'>${tm:msg(pageContext.request, "login")}</button>
-				<button type="button" class="font-size-24 fl-right btn btn-green" tabindex="4" id='registBtn'>${tm:msg(pageContext.request, "signUp")}</button>
+				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "loginId")}'>
+				<input type="password" class="input-text font-size-36 mg-bt-15 input-green" data-enter='3' tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "password")}' >
+				<button type="button" class="font-size-24 fl-right mg-lt-15 btn btn-green" tabindex="3" id='loginBtn'>${pb:msg(pageContext.request, "login")}</button>
+				<button type="button" class="font-size-24 fl-right btn btn-green" tabindex="4" id='registBtn'>${pb:msg(pageContext.request, "signUp")}</button>
 			</form>
 		</div>
 	</div>
