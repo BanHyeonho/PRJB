@@ -2,8 +2,6 @@ package com.model;
 
 import org.apache.ibatis.type.Alias;
 
-import com.encryt.Encrypt;
-
 import lombok.Getter;
 import lombok.Setter;
 

@@ -20,6 +20,7 @@ public class EncryptWrapperFactory implements ObjectWrapperFactory {
 	/*
 	 * true 일경우 getWrapperFor 실행
 	 */
+	@Override
 	public boolean hasWrapperFor(Object object) {
         Class<? extends Object> clazz = object.getClass();
         String fullName = clazz.getName();
@@ -29,7 +30,7 @@ public class EncryptWrapperFactory implements ObjectWrapperFactory {
         else if (!clazz.getName().startsWith("com.")) {
             return false;
         } else {
-            Boolean cached = (Boolean)hasWrapperForCache.get(clazz);
+            Boolean cached = hasWrapperForCache.get(clazz);
             if (null != cached) {
                 return cached;
             } else {
@@ -51,6 +52,7 @@ public class EncryptWrapperFactory implements ObjectWrapperFactory {
         }
     }
 
+	@Override
 	public ObjectWrapper getWrapperFor(MetaObject metaObject, Object object) {
 		if("java.util.HashMap".equals(object.getClass().getName())) {
     		return new HashBean(metaObject, object);

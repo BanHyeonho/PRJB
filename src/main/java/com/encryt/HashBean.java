@@ -18,7 +18,8 @@ public class HashBean extends MapWrapper{
 		this.map = (Map<String, Object>)map;
 	}
 
-    public Object get(PropertyTokenizer prop) {
+    @Override
+	public Object get(PropertyTokenizer prop) {
         if (prop.getIndex() != null) {
             Object collection = this.resolveCollection(prop, this.map);
             return this.getCollectionValue(prop, collection);
@@ -35,14 +36,15 @@ public class HashBean extends MapWrapper{
             	}
             	//암호화
             	else {
-            		return AES256Util.encrypt((String)String.class.cast(this.map.get(prop.getName())));
+            		return AES256Util.encrypt(String.class.cast(this.map.get(prop.getName())));
             	}
         	}
         	
         }
     }
 
-    public void set(PropertyTokenizer prop, Object value) {
+    @Override
+	public void set(PropertyTokenizer prop, Object value) {
         if (prop.getIndex() != null) {
             Object collection = this.resolveCollection(prop, this.map);
             this.setCollectionValue(prop, collection, value);
@@ -60,7 +62,7 @@ public class HashBean extends MapWrapper{
     	        	}
     	        	//암호화
     	        	else {
-    	        		m.put("COLUMN_VALUE", AES256Util.encrypt((String)String.class.cast(m.get("COLUMN_VALUE"))));
+    	        		m.put("COLUMN_VALUE", AES256Util.encrypt(String.class.cast(m.get("COLUMN_VALUE"))));
     	        		this.map.put(prop.getName(), m);
     	        	}
             		
@@ -71,7 +73,7 @@ public class HashBean extends MapWrapper{
     	        	}
     	        	//복호화
     	        	else {
-    	        		this.map.put(prop.getName(), AES256Util.decrypt((String)String.class.cast(value)));
+    	        		this.map.put(prop.getName(), AES256Util.decrypt(String.class.cast(value)));
     	        	}
     			}
         	}

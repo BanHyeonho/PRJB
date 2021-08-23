@@ -24,11 +24,13 @@ public class EncryptBean extends BeanWrapper {
         this.metaClass = MetaClass.forClass(object.getClass(), null);
     }
 
-    public String findProperty(String name, boolean useCamelCaseMapping) {
+    @Override
+	public String findProperty(String name, boolean useCamelCaseMapping) {
         return metaClass.findProperty(name, true);
     }
     
-    public Object get(PropertyTokenizer prop) {
+    @Override
+	public Object get(PropertyTokenizer prop) {
         if (prop.getIndex() != null) {
             Object collection = this.resolveCollection(prop, this.object);
             return this.getCollectionValue(prop, collection);
@@ -37,7 +39,8 @@ public class EncryptBean extends BeanWrapper {
         }
     }
 
-    public void set(PropertyTokenizer prop, Object value) {
+    @Override
+	public void set(PropertyTokenizer prop, Object value) {
         if (prop.getIndex() != null) {
             Object collection = this.resolveCollection(prop, this.object);
             this.setCollectionValue(prop, collection, value);
@@ -54,7 +57,7 @@ public class EncryptBean extends BeanWrapper {
             try {
                 Object value = method.invoke(object, NO_ARGUMENTS);
                 Field field = CommUtil.getField(object.getClass(), prop.getName());
-                return String.class.isInstance(value) && null != field.getAnnotation(Encrypt.class) ? AES256Util.encrypt((String)String.class.cast(value)) : value;
+                return String.class.isInstance(value) && null != field.getAnnotation(Encrypt.class) ? AES256Util.encrypt(String.class.cast(value)) : value;
             } catch (Throwable var6) {
                 throw ExceptionUtil.unwrapThrowable(var6);
             }
@@ -69,7 +72,7 @@ public class EncryptBean extends BeanWrapper {
         try {
             Field field = CommUtil.getField(object.getClass(), prop.getName());
             if (String.class.isInstance(value) && null != field.getAnnotation(Encrypt.class)) {
-                value = AES256Util.decrypt((String)String.class.cast(value));
+                value = AES256Util.decrypt(String.class.cast(value));
             }
 
             Invoker method = this.metaClass.getSetInvoker(prop.getName());
