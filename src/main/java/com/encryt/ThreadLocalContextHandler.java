@@ -16,7 +16,8 @@ public class ThreadLocalContextHandler extends ThreadLocal<ThreadLocalContextHol
     private ThreadLocalContextHandler() {
     }
 
-    protected ThreadLocalContextHolder initialValue() {
+    @Override
+	protected ThreadLocalContextHolder initialValue() {
         return new ThreadLocalContextHolder();
     }
 
@@ -25,7 +26,7 @@ public class ThreadLocalContextHandler extends ThreadLocal<ThreadLocalContextHol
     }
 
     private static ThreadLocalContextHolder getContextHolder(boolean checkWarn) {
-        ThreadLocalContextHolder holder = (ThreadLocalContextHolder)local.get();
+        ThreadLocalContextHolder holder = local.get();
         if (!alreadyWarned && checkWarn && !holder.isClearByOther()) {
             log.warn("WARNING!!! This thread's ThreadLocalContextHolder object may NOT managed.");
             alreadyWarned = true;
