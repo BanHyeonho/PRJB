@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="/resources/tld/PRJBTagLib.tld" prefix="tm" %>
+<%@ taglib uri="/resources/tld/PRJBTagLib.tld" prefix="pb" %>
 
 <!-- Jquery -->
 <script src="/script/jquery-3.5.1.min.js?v=${pb:jsNow()}"></script>
