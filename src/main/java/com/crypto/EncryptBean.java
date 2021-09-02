@@ -1,5 +1,5 @@
 
-package com.encryt;
+package com.crypto;
 
 import java.lang.reflect.Field;
 

@@ -1,4 +1,4 @@
-package com.encryt;
+package com.crypto;
 
 import java.io.UnsupportedEncodingException;
 

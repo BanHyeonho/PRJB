@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<!-- <!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd"> -->
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
 	<!-- Appenders -->
@@ -10,26 +11,50 @@
 		</layout>
 	</appender>
 	
+	<appender name="rollingFile" class="org.apache.log4j.RollingFileAppender">
+		<!-- 로그 파일명 정의를 위한 parameter -->
+		<param name="File" value="C:/develop/logs/prjb/prjb.log"/>
+		<!-- 이전 로그 파일에 로그를 덧붙여 쓸 것인지를 정의하기 위한 parameter -->
+		<param name="Append" value="true"/> 
+		<!-- 로그 파일의 최대 크기를 정의하기 위한 parameter -->   	  
+		<param name="MaxFileSize" value="50MB"/>    
+		<!-- 로그 파일 백업 인덱스를 정의하기 위한 parameter -->
+		<param name="MaxBackupIndex" value="10"/>    
+	    <layout class="org.apache.log4j.PatternLayout">
+	        <param name="ConversionPattern" value="%d{yyyy/MM/dd HH:mm:ss,SSS} %p [%c.%M():%L] - %m%n" />
+	    </layout>   
+	</appender>
+
 	<!-- Application Loggers -->
 	<logger name="com" >
 		<level value="info" />
+		<appender-ref ref="console"/>
+		<appender-ref ref="rollingFile"/>
 	</logger>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core" >
 		<level value="FATAL" />
+		<appender-ref ref="console"/>
+		<appender-ref ref="rollingFile"/>
 	</logger>
 	
 	<logger name="org.springframework.beans" >
 		<level value="FATAL" />
+		<appender-ref ref="console"/>
+		<appender-ref ref="rollingFile"/>
 	</logger>
 	
 	<logger name="org.springframework.context" >
 		<level value="FATAL" />
+		<appender-ref ref="console"/>
+		<appender-ref ref="rollingFile"/>
 	</logger>
 
 	<logger name="org.springframework.web" >
 		<level value="FATAL" />
+		<appender-ref ref="console"/>
+		<appender-ref ref="rollingFile"/>
 	</logger>
 
 	<logger name="jdbc" >
@@ -37,6 +62,8 @@
 	</logger>
 	<logger name="jdbc.sqlonly" >
 		<level value="debug" />
+		<appender-ref ref="console"/>
+		<appender-ref ref="rollingFile"/>
 	</logger>
 	<logger name="jdbc.sqltiming" >
 		<level value="off" />
@@ -57,7 +84,6 @@
 	<!-- Root Logger -->
 	<root>
 		<priority value="off" />
-		<appender-ref ref="console" />
 	</root>
 	
 </log4j:configuration>
