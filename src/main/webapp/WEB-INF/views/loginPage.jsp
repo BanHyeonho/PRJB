@@ -21,7 +21,7 @@
 			
 			var rs = chkRequire(["loginForm"]);
 			for (var i = 0; i < rs.tags.length; i++) {
-				toast(msg('${pb:msg(pageContext.request, "requireEmpty")}', {
+				toast(msg('${pb:msg(pageContext.request, "을(를)_입력하세요.")}', {
 					param : $(rs.tags[i]).attr('placeholder')
 				}), 'info');
 			}
@@ -32,9 +32,9 @@
 			if(data.result == 'success'){
 				location.replace('/');
 			}
-			//아이디, 패스워드 오류
+			//아이디, 비밀번호 오류
 			else if( data.result == 'chkIdPwd'){
-				toast('${pb:msg(pageContext.request, "chkIdPwd")}', 'info');
+				toast('${pb:msg(pageContext.request, "아이디_또는_비밀번호가_일치하지_않습니다.")}', 'info');
 				$('#loginForm [name=pwd]').val('');
 				$('#loginForm [name=pwd]').focus();
 			}
