@@ -30,6 +30,19 @@ import org.springframework.jdbc.support.JdbcUtils;
 
 public class CommUtil {
 
+	
+	/**
+	 * 클라이언트 IP 리턴
+	 * @param request
+	 * @return
+	 */
+	public static String getAddress(HttpServletRequest request) {
+	
+		String ip = request.getHeader("X-FORWARDED-FOR") == null ? request.getRemoteAddr() : request.getHeader("X-FORWARDED-FOR");
+		
+		return ip;
+	}
+	
 	/**
 	 * 접속브라우저의 언어설정 첫번째가 한글인지 체크
 	 * @param request
@@ -91,8 +104,7 @@ public class CommUtil {
 		Enumeration paramNames = request.getParameterNames();
 
 		// 저장할 맵
-		Map paramMap = ("SORT".equals(mapType) ? new LinkedHashMap() : new HashMap()); 
-
+		Map paramMap = ("SORT".equals(mapType) ? new LinkedHashMap() : new HashMap());
 		// 맵에 저장
 		while(paramNames.hasMoreElements()) {
 			String name	 = paramNames.nextElement().toString();
