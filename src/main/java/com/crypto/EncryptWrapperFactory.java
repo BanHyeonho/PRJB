@@ -1,4 +1,4 @@
-package com.encryt;
+package com.crypto;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

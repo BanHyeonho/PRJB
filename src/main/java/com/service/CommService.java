@@ -37,9 +37,12 @@ public class CommService {
 	 */
 	public ModelAndView page(HttpServletRequest request, ModelAndView mv) throws Exception {
 		
+		
+		
 		Map<String, String> param = new HashMap();
 		param.put("MENU_CD", request.getParameter("menuCd"));
 		param.put("CID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
+		param.put("CIP", CommUtil.getAddress(request));
 		param.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 		Map<String, String> map = commDao.selectOne("comm.S_MENU_URL", param);
 		
@@ -268,10 +271,13 @@ public class CommService {
 		
 		String salt = CommUtil.getSalt();
 		String encrytPwd = CommUtil.getSHA512( pwd , salt);
+		String ip = CommUtil.getAddress(request);
 		
 		paramMap.put("SALT", salt);
 		paramMap.put("PWD", encrytPwd);
 		
+		paramMap.put("CIP", ip);
+		paramMap.put("MIP", ip);
 		try {
 			commDao.insert("comm.I_COMM_USER", paramMap);
 			commDao.insert("comm.I_SALT", paramMap);
@@ -339,6 +345,9 @@ public class CommService {
 	public String gridSave(List<Map> param, HttpServletRequest request) throws Exception{
 		
 		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		
+		String ip = CommUtil.getAddress(request);
+		
 		String tableNm = "";
 		String queryId = "";
 		List<Map> tableLayout = new ArrayList();
@@ -368,6 +377,9 @@ public class CommService {
 					gridQueryId = nameSpace + ".I_" + query;
 					paramMap.put("CID", cId);
 					paramMap.put("MID", cId);
+					paramMap.put("CIP", ip);
+					paramMap.put("MIP", ip);					
+					
 					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 					for (Map map : tableLayout) {
 						map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
@@ -381,6 +393,7 @@ public class CommService {
 					gridQueryId = nameSpace + ".U_" + query;
 					whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
 					paramMap.put("MID", cId);
+					paramMap.put("MIP", ip);
 					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 					for (Map map : tableLayout) {
 						map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
@@ -416,6 +429,7 @@ public class CommService {
 		Object result = null;
 		
 		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		String ip = CommUtil.getAddress(request);
 		Map<String, Object> paramMap = CommUtil.getParameterMap(request);
 		
 		String tableNm = String.valueOf(paramMap.get("TALBE_NAME"));
@@ -443,6 +457,8 @@ public class CommService {
 
 			paramMap.put("CID", cId);
 			paramMap.put("MID", cId);
+			paramMap.put("CIP", ip);
+			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 			for (Map map : tableLayout) {
 				map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
@@ -458,6 +474,7 @@ public class CommService {
 			
 			String whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
 			paramMap.put("MID", cId);
+			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 			for (Map map : tableLayout) {
 				map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
@@ -484,6 +501,7 @@ public class CommService {
 		else if( queryId.contains(".P_")) {
 			
 			paramMap.put("CID", cId);
+			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 			commDao.selectOne(queryId, paramMap);
 			
