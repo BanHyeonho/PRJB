@@ -214,4 +214,5 @@
             </plugin>
         </plugins>
     </build>
+    <artifactId>prjb</artifactId>
 </project>
