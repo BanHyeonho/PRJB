@@ -154,7 +154,7 @@
   	var f_search = function(){
   		
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'comm.S_GRID_MANAGE_MENU');
+		fData.set('QUERY_ID', 'com.S_GRID_MANAGE_MENU');
   		commAjax( fData
   				, function(){
   					
@@ -202,7 +202,7 @@
 	var f_masterSearch = function(pk, preRow){
 		
 		var fData = new FormData();
-		fData.set('QUERY_ID', 'comm.S_GRID_MASTER');
+		fData.set('QUERY_ID', 'com.S_GRID_MASTER');
 		fData.set('MENU_CD', pk);
 		
   		commAjax( fData
@@ -246,7 +246,7 @@
   			return false;
   		}
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'comm.S_GRID_CONTEXT');
+		fData.set('QUERY_ID', 'com.S_GRID_CONTEXT');
 		fData.set('GRID_MASTER_ID', pk);
 		
   		commAjax( fData
@@ -287,7 +287,7 @@
   			return false;
   		}
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'comm.S_GRID_DETAIL');
+		fData.set('QUERY_ID', 'com.S_GRID_DETAIL');
 		fData.set('GRID_MASTER_ID', pk);
 		
   		commAjax( fData
@@ -329,7 +329,7 @@
   			return false;
   		}
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'comm.S_GRID_COMBO_POPUP');
+		fData.set('QUERY_ID', 'com.S_GRID_COMBO_POPUP');
 		fData.set('GRID_DETAIL_ID', pk);
 		
   		commAjax( fData
@@ -387,7 +387,7 @@
   						if(masterData.length > 0){
   							masterData.unshift({
   	  							 'TALBE_NAME' : 'GRID_MASTER'
-  	  							,'QUERY_ID' : 'comm.COMM_QUERY'
+  	  							,'QUERY_ID' : 'com.COMM_QUERY'
   	  						});
   	  						fData.set('masterGrid', JSON.stringify(masterData));
   						}
@@ -396,7 +396,7 @@
   						if(contextData.length > 0){
   							contextData.unshift({
   	  							 'TALBE_NAME' : 'GRID_CONTEXT'
-  	  							,'QUERY_ID' : 'comm.GRID_CONTEXT'
+  	  							,'QUERY_ID' : 'com.GRID_CONTEXT'
   	  						});
   	  						fData.set('contextGrid', JSON.stringify(contextData));
   						}
@@ -405,7 +405,7 @@
   						if(detailData.length > 0){
   							detailData.unshift({
   	  							 'TALBE_NAME' : 'GRID_DETAIL'
-  	  							,'QUERY_ID' : 'comm.COMM_QUERY'
+  	  							,'QUERY_ID' : 'com.COMM_QUERY'
   	  						});
   	  						fData.set('detailGrid', JSON.stringify(detailData));
   						}
@@ -414,7 +414,7 @@
   						if(settingData.length > 0){
   							settingData.unshift({
   	  							 'TALBE_NAME' : 'GRID_COMBO_POPUP'
-  	  							,'QUERY_ID' : 'comm.COMM_QUERY'
+  	  							,'QUERY_ID' : 'com.COMM_QUERY'
   	  						});
   	  						fData.set('settingGrid', JSON.stringify(settingData));
   						}

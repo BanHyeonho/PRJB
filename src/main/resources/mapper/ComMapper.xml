@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="comm">
+<mapper namespace="com">
 	
 	<!-- 생성자,수정자 SQL블럭 -->
 	<sql id="cidColumn">

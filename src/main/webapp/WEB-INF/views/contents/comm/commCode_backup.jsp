@@ -90,7 +90,7 @@
   	var f_search = function(type){
   		
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'comm.S_CODE_MASTER');
+		fData.set('QUERY_ID', 'com.S_CODE_MASTER');
   		commAjax( fData
   				, function(){
   					
@@ -126,7 +126,7 @@
   	var f_detailSearch = function(pk, preRow){
   	
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'comm.S_CODE_DETAIL');
+		fData.set('QUERY_ID', 'com.S_CODE_DETAIL');
 		fData.set('CODE_MASTER_ID', pk);
 		
   		commAjax( fData
@@ -196,7 +196,7 @@
   					else{
   						saveData.unshift({
   							 'TALBE_NAME' : 'CODE_MASTER'
-  							,'QUERY_ID' : 'comm.COMM_QUERY'
+  							,'QUERY_ID' : 'com.COMM_QUERY'
   						});
   						fData.set('masterGrid', JSON.stringify(saveData));
   					}

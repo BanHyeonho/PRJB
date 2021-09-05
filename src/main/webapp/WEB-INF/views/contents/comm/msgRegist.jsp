@@ -37,7 +37,7 @@
   	var f_search = function(){
   		
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'comm.S_COMM_MLG');
+		fData.set('QUERY_ID', 'com.S_COMM_MLG');
   		commAjax( fData
   				, function(){
   					
@@ -75,7 +75,7 @@
   					else{
   						saveData.unshift({
   							 'TALBE_NAME' : 'COMM_MLG'
-  							,'QUERY_ID' : 'comm.COMM_QUERY'
+  							,'QUERY_ID' : 'com.COMM_QUERY'
   						});
   						fData.set('masterGrid', JSON.stringify(saveData));
   					}

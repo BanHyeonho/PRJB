@@ -117,7 +117,7 @@
 		function getMenu(){
 			
 			var fData = new FormData();
-			fData.set('QUERY_ID', 'comm.S_MY_MENU');
+			fData.set('QUERY_ID', 'com.S_MY_MENU');
 	  		commAjax( fData
 	  				, null
 	  				, function(data){
