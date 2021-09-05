@@ -1,5 +1,5 @@
 
-package com.crypto;
+package prjb.com.crypto;
 
 import java.lang.reflect.Field;
 
@@ -11,14 +11,14 @@ import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 import org.apache.ibatis.reflection.wrapper.BeanWrapper;
 
-import com.util.CommUtil;
+import prjb.com.util.ComUtil;
 
-public class EncryptBean extends BeanWrapper {
+public class CryptoBean extends BeanWrapper {
     
     private final Object object;
     private final MetaClass metaClass;
 
-    public EncryptBean(MetaObject metaObject, Object object) {
+    public CryptoBean(MetaObject metaObject, Object object) {
         super(metaObject, object);
         this.object = object;
         this.metaClass = MetaClass.forClass(object.getClass(), null);
@@ -56,8 +56,8 @@ public class EncryptBean extends BeanWrapper {
 
             try {
                 Object value = method.invoke(object, NO_ARGUMENTS);
-                Field field = CommUtil.getField(object.getClass(), prop.getName());
-                return String.class.isInstance(value) && null != field.getAnnotation(Encrypt.class) ? AES256Util.encrypt(String.class.cast(value)) : value;
+                Field field = ComUtil.getField(object.getClass(), prop.getName());
+                return String.class.isInstance(value) && null != field.getAnnotation(Crypto.class) ? AES256Util.encrypt(String.class.cast(value)) : value;
             } catch (Throwable var6) {
                 throw ExceptionUtil.unwrapThrowable(var6);
             }
@@ -70,8 +70,8 @@ public class EncryptBean extends BeanWrapper {
 
     private void setBeanProperty(PropertyTokenizer prop, Object object, Object value) {
         try {
-            Field field = CommUtil.getField(object.getClass(), prop.getName());
-            if (String.class.isInstance(value) && null != field.getAnnotation(Encrypt.class)) {
+            Field field = ComUtil.getField(object.getClass(), prop.getName());
+            if (String.class.isInstance(value) && null != field.getAnnotation(Crypto.class)) {
                 value = AES256Util.decrypt(String.class.cast(value));
             }
 

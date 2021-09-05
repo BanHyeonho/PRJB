@@ -1,4 +1,4 @@
-package com.crypto;
+package prjb.com.crypto;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -9,13 +9,13 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
-import com.util.CommUtil;
+import prjb.com.util.ComUtil;
 
-public class EncryptWrapperFactory implements ObjectWrapperFactory {
+public class CryptoWrapperFactory implements ObjectWrapperFactory {
 
 	private static Map<Class<?>, Boolean> hasWrapperForCache = new HashMap();
 	
-	public EncryptWrapperFactory(){}
+	public CryptoWrapperFactory(){}
 	
 	/*
 	 * true 일경우 getWrapperFor 실행
@@ -34,7 +34,7 @@ public class EncryptWrapperFactory implements ObjectWrapperFactory {
             if (null != cached) {
                 return cached;
             } else {
-                Iterator var4 = CommUtil.getAllFields(clazz).iterator();
+                Iterator var4 = ComUtil.getAllFields(clazz).iterator();
 
                 Field field;
                 do {
@@ -44,7 +44,7 @@ public class EncryptWrapperFactory implements ObjectWrapperFactory {
                     }
 
                     field = (Field)var4.next();
-                } while(null == field.getAnnotation(Encrypt.class));
+                } while(null == field.getAnnotation(Crypto.class));
 
                 hasWrapperForCache.put(clazz, true);
                 return true;
@@ -57,7 +57,7 @@ public class EncryptWrapperFactory implements ObjectWrapperFactory {
 		if("java.util.HashMap".equals(object.getClass().getName())) {
     		return new HashBean(metaObject, object);
     	}else {
-    		return new EncryptBean(metaObject, object);	
+    		return new CryptoBean(metaObject, object);	
     	}
 		
 	}

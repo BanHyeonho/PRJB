@@ -1,4 +1,4 @@
-package com.model;
+package prjb.com.model;
 
 import org.apache.ibatis.type.Alias;
 
@@ -7,10 +7,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@Alias("CommMlg")
-public class CommMlg {
+@Alias("comMlg")
+public class ComMlg {
 	
-	private long commMlgId;
+	private long comMlgId;
 	private String mlgCd; 
 	private String mlgKo;
 	private String mlgEn;

@@ -1,20 +1,19 @@
-package com.crypto;
+package prjb.com.crypto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.util.CommUtil;
-
 import oracle.net.ano.EncryptionService;
+import prjb.com.util.ComUtil;
 
-public class EncryptService {
+public class CryptoService {
     private static final Logger log = LoggerFactory.getLogger(EncryptionService.class);
 
-    public EncryptService() {
+    public CryptoService() {
     }
 
     public static String encrypt(String plainText) throws Throwable {
-        return CommUtil.isBlank(plainText) ? plainText : AES128Encrypt.encrypt(plainText);
+        return ComUtil.isBlank(plainText) ? plainText : AES128Encrypt.encrypt(plainText);
     }
 
     public static String encryptIgnoreException(String plainText) throws Throwable {
@@ -31,7 +30,7 @@ public class EncryptService {
     }
 
     private static boolean alreadyEncrypt(String plainText) throws Throwable {
-        if (CommUtil.isBlank(plainText)) {
+        if (ComUtil.isBlank(plainText)) {
             return false;
         } else {
             try {
@@ -45,7 +44,7 @@ public class EncryptService {
     }
 
     public static String decrypt(String encrypted) throws Throwable {
-        return CommUtil.isBlank(encrypted) ? encrypted : AES128Encrypt.decrypt(encrypted);
+        return ComUtil.isBlank(encrypted) ? encrypted : AES128Encrypt.decrypt(encrypted);
     }
 
     public static String decryptIgnoreException(String encrypted) throws Throwable {

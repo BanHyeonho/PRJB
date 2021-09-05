@@ -1,4 +1,4 @@
-package com.crypto;
+package prjb.com.crypto;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Key;

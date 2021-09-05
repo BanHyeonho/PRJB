@@ -15,7 +15,7 @@
 		<!-- 사용명 -->
 		<name>msg</name>
 		<!-- Class명 -->
-		<function-class>com.util.tldUtil</function-class>
+		<function-class>prjb.com.util.tldUtil</function-class>
 		<!-- method명 -->
 		<function-signature>java.lang.String msg(javax.servlet.http.HttpServletRequest, java.lang.String)</function-signature>
 		<!-- 사용예시 -->
@@ -31,7 +31,7 @@
 		<!-- 사용명 -->
 		<name>jsNow</name>
 		<!-- Class명 -->
-		<function-class>com.util.tldUtil</function-class>
+		<function-class>prjb.com.util.tldUtil</function-class>
 		<!-- method명 -->
 		<function-signature>java.lang.String jsNow()</function-signature>
 		<!-- 사용예시 -->

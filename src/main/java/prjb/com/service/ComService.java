@@ -1,4 +1,4 @@
-package com.service;
+package prjb.com.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,14 +18,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.mapper.CommDao;
-import com.util.CommUtil;
 
-@Service("CommService")
-public class CommService {
+import prjb.com.mapper.ComDao;
+import prjb.com.util.ComUtil;
+
+@Service("ComService")
+public class ComService {
 	
 	@Autowired
-	CommDao commDao;
+	ComDao comDao;
 	
 	
 	/**
@@ -42,9 +43,9 @@ public class CommService {
 		Map<String, String> param = new HashMap();
 		param.put("MENU_CD", request.getParameter("menuCd"));
 		param.put("CID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
-		param.put("CIP", CommUtil.getAddress(request));
+		param.put("CIP", ComUtil.getAddress(request));
 		param.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
-		Map<String, String> map = commDao.selectOne("comm.S_MENU_URL", param);
+		Map<String, String> map = comDao.selectOne("comm.S_MENU_URL", param);
 		
 		String menuUrl = (map == null ? null : map.get("MENU_URL") );
 		//메뉴url이 없는경우
@@ -55,7 +56,7 @@ public class CommService {
 		//메뉴등록
 		else if("comm_menuRegist".equals(menuUrl)){
 			
-			Map<String, Map<String,String>> msgMap = CommUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
 			List<Map<String, String>> menuLang = new ArrayList();
 			Iterator<String> keys = msgMap.keySet().iterator();
 	        while( keys.hasNext() ){
@@ -75,7 +76,7 @@ public class CommService {
 		//공통코드
 		else if("comm_commCode".equals(menuUrl)){
 			
-			Map<String, Map<String,String>> msgMap = CommUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
 			List<Map<String, String>> menuLang = new ArrayList();
 			Iterator<String> keys = msgMap.keySet().iterator();
 	        while( keys.hasNext() ){
@@ -95,7 +96,7 @@ public class CommService {
 		//그리드관리
 		else if("comm_gridManage".equals(menuUrl)){
 			
-			Map<String, Map<String,String>> msgMap = CommUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
 			List<Map<String, String>> lang = new ArrayList();
 			Iterator<String> keys = msgMap.keySet().iterator();
 	        while( keys.hasNext() ){
@@ -118,27 +119,27 @@ public class CommService {
 		List gridContextData = new ArrayList();
 		param = new HashMap();
 		param.put("MENU_CD", request.getParameter("menuCd"));
-		List<Map> masterGridList = commDao.selectList("comm.S_GRID_MASTER", param);
+		List<Map> masterGridList = comDao.selectList("comm.S_GRID_MASTER", param);
 		for (Map m : masterGridList) {
 			
-			Map gridContextMap = commDao.selectOne("comm.S_GRID_CONTEXT_DATA", m);
+			Map gridContextMap = comDao.selectOne("comm.S_GRID_CONTEXT_DATA", m);
 			gridContextData.add(gridContextMap);
 			
 			m.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
-			List<Map> detailGridList = commDao.selectList("comm.S_GRID_DATA", m);
+			List<Map> detailGridList = comDao.selectList("comm.S_GRID_DATA", m);
 			gridData.add(detailGridList);
 			
 			for (Map<String, String> map2 : detailGridList) {
 				if("COMBO".equals(map2.get("FIELD_TYPE")) && !"".equals(map2.get("QUERY_ID"))) {
 					map2.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 					map2.put("USE_YN", "1");
-					List<Map> comboPopupParamList = commDao.selectList("comm.S_GRID_COMBO_POPUP", map2);
+					List<Map> comboPopupParamList = comDao.selectList("comm.S_GRID_COMBO_POPUP", map2);
 					Map<String, String> paramMap = new HashMap();
 					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 					for (Map<String, String> map3 : comboPopupParamList) {
 						paramMap.put(map3.get("PARAM_NAME"), map3.get("PARAM_VALUE"));
 					}
-					List<Map> comboPopupResult = commDao.selectList(map2.get("QUERY_ID"), paramMap);
+					List<Map> comboPopupResult = comDao.selectList(map2.get("QUERY_ID"), paramMap);
 					mv.addObject( m.get("GRID_NAME") + "." + map2.get("FIELD") + "_SOURCE", comboPopupResult);
 				}
 			}
@@ -158,7 +159,7 @@ public class CommService {
 	 * @throws Exception
 	 */
 	public List<Map> getMlg(Map param) throws Exception {
-		List<Map> msgList = commDao.selectList("comm.S_COMM_MLG_TYPE", param);
+		List<Map> msgList = comDao.selectList("comm.S_COMM_MLG_TYPE", param);
 		return msgList;
 	}
 	/**
@@ -167,7 +168,7 @@ public class CommService {
 	 */
 	public void setMlg() throws Exception {
 		
-		List<Map> msgList = commDao.selectList("comm.S_COMM_MLG", null);
+		List<Map> msgList = comDao.selectList("comm.S_COMM_MLG", null);
 		
 		StartService.msgMLGKO = new HashMap<String, Map<String, String>>();
 		StartService.msgMLGEN = new HashMap<String, Map<String, String>>();
@@ -204,26 +205,26 @@ public class CommService {
 	@Transactional(rollbackFor = Exception.class)
 	public String loginAction(HttpServletRequest request, Map param) throws Exception{
 		
-		Map<String, String> paramMap = (param == null ? CommUtil.getParameterMap(request) : param);
+		Map<String, String> paramMap = (param == null ? ComUtil.getParameterMap(request) : param);
 		
 		String result;
 		String pwd;
 		try {
-			pwd = CommUtil.decrypt(request.getSession().getAttribute("privateKey").toString(), paramMap.get("PWD"));
+			pwd = ComUtil.decrypt(request.getSession().getAttribute("privateKey").toString(), paramMap.get("PWD"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new Exception("JAVA-0001");
 		}
 		
-		Map<String,String> salt = commDao.selectOne("comm.S_SALT", paramMap);
+		Map<String,String> salt = comDao.selectOne("comm.S_SALT", paramMap);
 		
-		String shaPwd = CommUtil.getSHA512( pwd , salt == null ? "" : salt.get("SALT") );
+		String shaPwd = ComUtil.getSHA512( pwd , salt == null ? "" : salt.get("SALT") );
 		
 		paramMap.put("PWD", shaPwd);
 		paramMap.put("USE_YN", "1");
 		
-		Map<String,String> loginResult = commDao.selectOne("comm.S_LOGIN", paramMap);
+		Map<String,String> loginResult = comDao.selectOne("comm.S_LOGIN", paramMap);
 				
 		if(loginResult == null) {
 			result = "chkIdPwd";
@@ -235,7 +236,7 @@ public class CommService {
 			request.getSession().setAttribute("USER_NM", loginResult.get("USER_NM"));
 			request.getSession().setAttribute("JOIN_DT", loginResult.get("CDT"));
 			
-			if( CommUtil.langKoChk(request) ) {
+			if( ComUtil.langKoChk(request) ) {
 				request.getSession().setAttribute("LANG_CODE", "KO");	
 			}else {
 				request.getSession().setAttribute("LANG_CODE", "EN");
@@ -255,23 +256,23 @@ public class CommService {
 	@Transactional(rollbackFor = Exception.class)
 	public String registAction(HttpServletRequest request) throws Exception{
 		
-		Map<String, String> paramMap = CommUtil.getParameterMap(request);
+		Map<String, String> paramMap = ComUtil.getParameterMap(request);
 		
 		String result;
 		String originPwd;
 		String pwd;
 		try {
 			originPwd = paramMap.get("PWD");
-			pwd = CommUtil.decrypt(request.getSession().getAttribute("privateKey").toString(), originPwd);
+			pwd = ComUtil.decrypt(request.getSession().getAttribute("privateKey").toString(), originPwd);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new Exception("JAVA-0001");
 		}
 		
-		String salt = CommUtil.getSalt();
-		String encrytPwd = CommUtil.getSHA512( pwd , salt);
-		String ip = CommUtil.getAddress(request);
+		String salt = ComUtil.getSalt();
+		String encrytPwd = ComUtil.getSHA512( pwd , salt);
+		String ip = ComUtil.getAddress(request);
 		
 		paramMap.put("SALT", salt);
 		paramMap.put("PWD", encrytPwd);
@@ -279,8 +280,8 @@ public class CommService {
 		paramMap.put("CIP", ip);
 		paramMap.put("MIP", ip);
 		try {
-			commDao.insert("comm.I_COMM_USER", paramMap);
-			commDao.insert("comm.I_SALT", paramMap);
+			comDao.insert("comm.I_COMM_USER", paramMap);
+			comDao.insert("comm.I_SALT", paramMap);
 			paramMap.put("PWD", originPwd);
 			result = loginAction(request, paramMap);
 		}
@@ -304,7 +305,7 @@ public class CommService {
 	@Transactional(rollbackFor = Exception.class)
 	public String save(HttpServletRequest request) throws Exception {
 		
-		Map<String, Object> paramMap = CommUtil.getParameterMap(request, "SORT");
+		Map<String, Object> paramMap = ComUtil.getParameterMap(request, "SORT");
 		
 		for ( Map.Entry<String, Object> param : paramMap.entrySet() ) {
 			
@@ -346,7 +347,7 @@ public class CommService {
 		
 		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
 		
-		String ip = CommUtil.getAddress(request);
+		String ip = ComUtil.getAddress(request);
 		
 		String tableNm = "";
 		String queryId = "";
@@ -360,7 +361,7 @@ public class CommService {
 			if("comm.COMM_QUERY".equals(queryId)) {
 				Map colParam = new HashMap();
 				colParam.put("TALBE_NAME", tableNm);
-				tableLayout = commDao.selectList("comm.S_COLUMNS", colParam);
+				tableLayout = comDao.selectList("comm.S_COLUMNS", colParam);
 			}
 			
 		}
@@ -386,7 +387,7 @@ public class CommService {
 					}
 					paramMap.put("TALBE_NAME", tableNm);
 					paramMap.put("TABLE_LAYOUT", tableLayout);
-					commDao.insert(gridQueryId, paramMap);
+					comDao.insert(gridQueryId, paramMap);
 					break;
 					
 				case "updated":
@@ -401,7 +402,7 @@ public class CommService {
 					paramMap.put("TALBE_NAME", tableNm);
 					paramMap.put("TABLE_LAYOUT", tableLayout);
 					paramMap.put("WHERE_QUERY", whereQuery);
-					commDao.update(gridQueryId, paramMap);
+					comDao.update(gridQueryId, paramMap);
 					break;
 					
 				case "deleted":
@@ -409,7 +410,7 @@ public class CommService {
 					whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
 					paramMap.put("TALBE_NAME", tableNm);
 					paramMap.put("WHERE_QUERY", whereQuery);
-					commDao.delete(gridQueryId, paramMap);
+					comDao.delete(gridQueryId, paramMap);
 					break;
 			}
 		}
@@ -429,8 +430,8 @@ public class CommService {
 		Object result = null;
 		
 		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
-		String ip = CommUtil.getAddress(request);
-		Map<String, Object> paramMap = CommUtil.getParameterMap(request);
+		String ip = ComUtil.getAddress(request);
+		Map<String, Object> paramMap = ComUtil.getParameterMap(request);
 		
 		String tableNm = String.valueOf(paramMap.get("TALBE_NAME"));
 		String queryId = String.valueOf(paramMap.get("QUERY_ID"));
@@ -440,7 +441,7 @@ public class CommService {
 		if(queryId.endsWith("COMM_QUERY")) {
 			Map colParam = new HashMap();
 			colParam.put("TALBE_NAME", tableNm);
-			tableLayout = commDao.selectList("comm.S_COLUMNS", colParam);
+			tableLayout = comDao.selectList("comm.S_COLUMNS", colParam);
 		}
 		
 		//SELECT
@@ -449,7 +450,7 @@ public class CommService {
 			paramMap.put("CID", cId);
 			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 			
-			result = commDao.selectList(queryId, paramMap);
+			result = comDao.selectList(queryId, paramMap);
 			
 		}
 		//INSERT
@@ -465,7 +466,7 @@ public class CommService {
 			}
 			paramMap.put("TALBE_NAME", tableNm);
 			paramMap.put("TABLE_LAYOUT", tableLayout);
-			commDao.insert(queryId, paramMap);
+			comDao.insert(queryId, paramMap);
 				
 			result = "success";
 		}
@@ -483,7 +484,7 @@ public class CommService {
 			paramMap.put("TABLE_LAYOUT", tableLayout);
 			paramMap.put("WHERE_QUERY", whereQuery);
 			
-			commDao.update(queryId, paramMap);
+			comDao.update(queryId, paramMap);
 			
 			result = "success";
 		}
@@ -493,7 +494,7 @@ public class CommService {
 			String whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
 			paramMap.put("TALBE_NAME", tableNm);
 			paramMap.put("WHERE_QUERY", whereQuery);
-			commDao.delete(queryId, paramMap);
+			comDao.delete(queryId, paramMap);
 			
 			result = "success";
 		}
@@ -503,7 +504,7 @@ public class CommService {
 			paramMap.put("CID", cId);
 			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
-			commDao.selectOne(queryId, paramMap);
+			comDao.selectOne(queryId, paramMap);
 			
 			result = "success";
 		}

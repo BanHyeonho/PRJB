@@ -1,4 +1,4 @@
-package com.controller;
+package prjb.com.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.service.CommService;
-import com.util.CommUtil;
+import prjb.com.service.ComService;
+import prjb.com.util.ComUtil;
 
-@Controller("CommController")
-public class CommController {
+@Controller("ComController")
+public class ComController {
 
 	@Autowired
-	CommService commService;
+	ComService comService;
 	
-	private static final Logger logger = LoggerFactory.getLogger(CommController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ComController.class);
 	 
 	/**
 	 * 메인화면
@@ -42,7 +42,7 @@ public class CommController {
 	public String loginPage(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		
-		CommUtil.getKeyPair(request);
+		ComUtil.getKeyPair(request);
 		
 		return "loginPage";
 	}
@@ -65,7 +65,7 @@ public class CommController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, String> resultMap = new HashMap();
 		
-		resultMap.put("result", commService.loginAction(request, null));
+		resultMap.put("result", comService.loginAction(request, null));
 		
 		return resultMap;
 	}
@@ -78,7 +78,7 @@ public class CommController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, String> resultMap = new HashMap();
 		
-		resultMap.put("result", commService.registAction(request));
+		resultMap.put("result", comService.registAction(request));
 		
 		return resultMap;
 	}
@@ -125,7 +125,7 @@ public class CommController {
 	public ModelAndView page(HttpServletRequest request, ModelAndView mv) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		
-		return commService.page(request, mv);
+		return comService.page(request, mv);
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class CommController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, String> resultMap = new HashMap();
 		
-		resultMap.put("result", commService.save(request));
+		resultMap.put("result", comService.save(request));
 		
 		return resultMap;
 	}
@@ -150,7 +150,7 @@ public class CommController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, Object> resultMap = new HashMap();
 		
-		resultMap.put("result", commService.ajax(request));
+		resultMap.put("result", comService.ajax(request));
 		
 		return resultMap;
 	}
@@ -163,7 +163,7 @@ public class CommController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, Object> resultMap = new HashMap();
 		
-		commService.setMlg();
+		comService.setMlg();
 		resultMap.put("result", "success");
 		
 		return resultMap;

@@ -1,4 +1,4 @@
-package com.crypto;
+package prjb.com.crypto;
 
 import java.io.UnsupportedEncodingException;
 
@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.util.CommUtil;
+import prjb.com.util.ComUtil;
 
 final class AES128Encrypt {
     private static final Logger log = LoggerFactory.getLogger(AES128Encrypt.class);
@@ -32,7 +32,7 @@ final class AES128Encrypt {
 
     protected static String encrypt(String plainText) throws Throwable {
         try {
-            if (CommUtil.isBlank(plainText)) {
+            if (ComUtil.isBlank(plainText)) {
                 return plainText;
             } else {
                 byte[] plainTextbytes = plainText.getBytes(CHARACTER_ENCODING);
@@ -87,7 +87,7 @@ final class AES128Encrypt {
 
     protected static String decrypt(String encryptedText) throws Throwable {
         try {
-            if (CommUtil.isBlank(encryptedText)) {
+            if (ComUtil.isBlank(encryptedText)) {
                 return encryptedText;
             } else {
                 byte[] cipheredBytes = hexToByteArray(encryptedText);

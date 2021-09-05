@@ -1,4 +1,4 @@
-package com.service;
+package prjb.com.service;
 
 import java.util.Map;
 
@@ -14,12 +14,12 @@ public class StartService{
 	public static Map<String, Map<String,String>> msgMLGEN = null;
 	
 	@Autowired
-	CommService commService;
+	ComService comService;
 	
 	@PostConstruct
     private void init() throws Exception {
 		//다국어전체 초기화
-		commService.setMlg();
+		comService.setMlg();
     }
 		
 }

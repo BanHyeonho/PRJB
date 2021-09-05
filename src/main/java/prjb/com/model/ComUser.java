@@ -1,4 +1,4 @@
-package com.model;
+package prjb.com.model;
 
 import org.apache.ibatis.type.Alias;
 
@@ -7,11 +7,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@Alias("CommUser")
-public class CommUser {
+@Alias("ComUser")
+public class ComUser {
 	
-	private long commUserId;
-	private long commUserSaltId;
+	private long comUserId;
+	private long comUserSaltId;
 	private String loginId; 
 	private String pwd;
 	private String salt;

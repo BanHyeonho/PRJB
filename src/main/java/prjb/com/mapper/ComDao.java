@@ -1,4 +1,4 @@
-package com.mapper;
+package prjb.com.mapper;
 
 import java.util.List;
 import java.util.Map;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
  * Vo를 사용하지않고 Map을 사용하여 쿼리호출 
  */
 
-@Repository("CommDao")
-public class CommDao {
+@Repository("comDao")
+public class ComDao {
 
 	@Autowired
 	@Qualifier("sqlSession")

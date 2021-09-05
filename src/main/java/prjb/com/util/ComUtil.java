@@ -1,4 +1,4 @@
-package com.util;
+package prjb.com.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.jdbc.support.JdbcUtils;
 
-public class CommUtil {
+public class ComUtil {
 
 	
 	/**

@@ -1,4 +1,4 @@
-package com.crypto;
+package prjb.com.crypto;
 
 import java.util.ArrayList;
 import java.util.HashMap;

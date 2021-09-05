@@ -1,4 +1,4 @@
-package com.util;
+package prjb.com.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.taglibs.standard.tag.common.core.Util;
 
-import com.service.StartService;
+import prjb.com.service.StartService;
 
 /**
  * 
@@ -24,7 +24,7 @@ public class tldUtil {
 	 */
 	public static String msg(HttpServletRequest request, String param) {
 		
-		Map<String, Map<String,String>> msgMap = CommUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+		Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
 		
 		if (param == null) {
 			return "";

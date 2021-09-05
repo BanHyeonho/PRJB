@@ -11,7 +11,7 @@
 		
  		<!-- Root Context: defines shared resources visible to all other web components -->
 		<bean id='DS' class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-			<property name="driverClassName" value="#{config['db.driver']}" />
+			<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
 			<property name="url" value="#{config['db.url']}" />
 			<property name="username" value="#{config['db.username']}"/>
 			<property name="password" value="#{config['db.password']}" />
