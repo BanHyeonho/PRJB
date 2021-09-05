@@ -14,5 +14,5 @@
 <!-- 		<package name="com.model"/> -->
 	</typeAliases>
 	
-	<objectWrapperFactory type="com.encryt.EncryptWrapperFactory" />
+	<objectWrapperFactory type="prjb.com.crypto.CryptoWrapperFactory" />
 </configuration>

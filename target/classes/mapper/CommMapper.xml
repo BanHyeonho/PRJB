@@ -8,8 +8,10 @@
 	<sql id="cidColumn">
 		, CID
 		, CDT
+		, CIP
 		, MID
 		, MDT
+		, MIP
 	</sql>
 	
 	<!-- 그리드별 컨텍스트메뉴 -->
@@ -458,9 +460,11 @@
 							, #{USER_NM}
 							, '1'
 							, #{COMM_USER_ID}
-							, SYSDATE 
+							, SYSDATE
+							, #{CIP}
 							, #{COMM_USER_ID}
-							, SYSDATE  
+							, SYSDATE
+							, #{MIP}
 							)
 	</insert>
 	
@@ -480,9 +484,11 @@
 								 , #{COMM_USER_ID}
 								 , #{SALT}
 								 , #{COMM_USER_ID} 
-								 , SYSDATE 
+								 , SYSDATE
+								 , #{CIP}
 								 , #{COMM_USER_ID} 
-								 , SYSDATE  
+								 , SYSDATE
+								 , #{MIP}
 								 )
 	</insert>
 		
