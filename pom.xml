@@ -16,20 +16,20 @@
 	<dependencies>
 			
 		<!-- tomcat -->
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-catalina</artifactId>
-			<version>9.0.52</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.apache.tomcat</groupId> -->
+<!-- 			<artifactId>tomcat-catalina</artifactId> -->
+<!-- 			<version>9.0.52</version> -->
+<!-- 		</dependency> -->
 
  		<!--Local ojdbc -->
-		<dependency>
-			<groupId>ojdbc</groupId>
-			<artifactId>ojdbc</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/ojdbc8.jar</systemPath>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>ojdbc</groupId> -->
+<!-- 			<artifactId>ojdbc</artifactId> -->
+<!-- 			<version>1.0</version> -->
+<!-- 			<scope>system</scope> -->
+<!-- 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/ojdbc8.jar</systemPath> -->
+<!-- 		</dependency> -->
 		
 		<!-- lombok -->
 		<dependency>
@@ -193,6 +193,7 @@
 		</dependency>        
 	</dependencies>
     <build>
+    	<finalName>ROOT</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-eclipse-plugin</artifactId>
