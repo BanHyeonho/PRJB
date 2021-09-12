@@ -56,4 +56,7 @@
     <error-code>9999</error-code>
     <location>/WEB-INF/views/error/9999.jsp</location>
   </error-page>
+  
+  <distributable/>
+  
 </web-app>
