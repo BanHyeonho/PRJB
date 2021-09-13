@@ -15,13 +15,13 @@
 	var login = function(){
 		
 		var fData = new FormData($('#loginForm')[0]);
-		fData.set('PWD', commSecurePw( $('#loginForm [name=PWD]').val() , '${publicKey}' ));
+		fData.set('PWD', gf_commSecurePw( $('#loginForm [name=PWD]').val() , '${publicKey}' ));
 		
-		commAjax( fData, function(){
+		gf_commAjax( fData, function(){
 			
-			var rs = chkRequire(["loginForm"]);
+			var rs = gf_chkRequire(["loginForm"]);
 			for (var i = 0; i < rs.tags.length; i++) {
-				toast(msg('${pb:msg(pageContext.request, "을(를)_입력하세요.")}', {
+				gf_toast(gf_msg('${pb:msg(pageContext.request, "을(를)_입력하세요.")}', {
 					param : $(rs.tags[i]).attr('placeholder')
 				}), 'info');
 			}
@@ -34,7 +34,7 @@
 			}
 			//아이디, 비밀번호 오류
 			else if( data.result == 'chkIdPwd'){
-				toast('${pb:msg(pageContext.request, "아이디_또는_비밀번호가_일치하지_않습니다.")}', 'info');
+				gf_toast('${pb:msg(pageContext.request, "아이디_또는_비밀번호가_일치하지_않습니다.")}', 'info');
 				$('#loginForm [name=pwd]').val('');
 				$('#loginForm [name=pwd]').focus();
 			}

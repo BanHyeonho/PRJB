@@ -12,7 +12,7 @@
 <script>
 	
 	$(document).ready(function() {
-	    masterGrid = commGridInit('masterGrid', {
+	    masterGrid = gf_commGridInit('masterGrid', {
 	    	'defaultInsert' : {'USE_YN' : '1'}
 	    });
 	    
@@ -25,15 +25,15 @@
   		
   		var fData = new FormData();
 		fData.set('QUERY_ID', 'com.S_COMM_MENU');
-  		commAjax( fData
+		gf_commAjax( fData
   				, function(){
   					
-  					if(commGridSaveData(masterGrid).length > 0){
+  					if(gf_commGridSaveData(masterGrid).length > 0){
   						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
   							return false;
   						}
   					}
-  					commGridClear(masterGrid);
+  					gf_commGridClear(masterGrid);
   				}
   				, function(data){
   					
@@ -47,15 +47,15 @@
   	
   	var f_save = function(){
   		
-  		var saveData = commGridSaveData(masterGrid);
+  		var saveData = gf_commGridSaveData(masterGrid);
   		
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(saveData));
-  		commAjax( fData
+		gf_commAjax( fData
   				, function(){
   					
   					if(saveData.length == 0){
-  						toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
+  						gf_toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
   						return false;
   					}
   					else{
@@ -69,8 +69,8 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
-  						commGridClear(masterGrid);
+  						gf_toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
+  						gf_commGridClear(masterGrid);
   	  					f_search('saveAfter');
 					}
 				}

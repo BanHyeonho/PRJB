@@ -3,7 +3,7 @@
  */
 
 //문자 치환함수
-function commNvl(val, val2) {
+function gf_commNvl(val, val2) {
 
 	let result = val;
 	if (val == undefined || val == null || val == '') {
@@ -14,7 +14,7 @@ function commNvl(val, val2) {
 }
 
 //암호화
-function commSecurePw(pw, puk) {	//암호화할 비밀번호 , 공개키
+function gf_commSecurePw(pw, puk) {	//암호화할 비밀번호 , 공개키
 
 	// 객체 생성
 	let crypt = new JSEncrypt();
@@ -27,7 +27,7 @@ function commSecurePw(pw, puk) {	//암호화할 비밀번호 , 공개키
 }
 
 //폼 필수값 체크
-function chkRequire(formList) {
+function gf_chkRequire(formList) {
 
 	let result = {
 		result: true
@@ -49,10 +49,16 @@ function chkRequire(formList) {
 	return result;
 }
 
-//다국어 메시지 파라미터 치환
-function msg(p_text, p_param){
+//다국어 반환
+function gf_mlg(p_mlg_code, p_type){
 	
-	var paramKey = Object.keys(commNvl(p_param, {}));
+	return mlg.hasOwnProperty(p_mlg_code) ? mlg[p_mlg_code].VALUE : p_mlg_code;
+	
+}
+//다국어 메시지 파라미터 치환
+function gf_msg(p_text, p_param){
+	
+	var paramKey = Object.keys(gf_commNvl(p_param, {}));
 	for (var i = 0; i < paramKey.length; i++) {
 		var chgKey = '\\[\\@;' + paramKey[i] + ';\\@\\]';
 		var reg = new RegExp(chgKey, 'g');
@@ -69,27 +75,27 @@ function msg(p_text, p_param){
 /*	AJAX 											 								*/
 /*													 								*/
 /********************************************************************************** */
-function commAjax(param, before, success, error, complete, url, async, method, global, timeout, dataType) {
+function gf_commAjax(param, before, success, error, complete, url, async, method, global, timeout, dataType) {
 
-	const vUrl = commNvl(url, '/ajax');
-	const vMethod = commNvl(method, 'post');
-	const vDataType = commNvl(dataType, 'json');
-	const vAsync = commNvl(async, true);
-	const vGlobal = commNvl(global, true);
-	const vTimeout = commNvl(timeout, 3600000);
+	const vUrl = gf_commNvl(url, '/ajax');
+	const vMethod = gf_commNvl(method, 'post');
+	const vDataType = gf_commNvl(dataType, 'json');
+	const vAsync = gf_commNvl(async, true);
+	const vGlobal = gf_commNvl(global, true);
+	const vTimeout = gf_commNvl(timeout, 3600000);
 
-	const vParam = commNvl(param, {});
+	const vParam = gf_commNvl(param, {});
 
-	const vBefore = commNvl(before, function() {
+	const vBefore = gf_commNvl(before, function() {
 		//aJax 요청전에 실행되는 함수, return false 일경우 ajax 요청 취소 가능
 	});
 
-	const vSuccess = commNvl(success, function(data) {
+	const vSuccess = gf_commNvl(success, function(data) {
 		//ajax통신 성공시 실행함수
 		console.log('success', data);
 	});
 
-	const vError = commNvl(error, function(data) {
+	const vError = gf_commNvl(error, function(data) {
 		//ajax통신 실패시 실행함수
 		try{
 			toast(JSON.parse(data.responseText).errorMsg, 'danger');	
@@ -98,7 +104,7 @@ function commAjax(param, before, success, error, complete, url, async, method, g
 		}
 	});
 
-	const vComplete = commNvl(complete, function(data) {
+	const vComplete = gf_commNvl(complete, function(data) {
 		//ajax통신 완료시 실행함수
 //		console.log('complete', data);
 	});
@@ -154,7 +160,7 @@ function commAjax(param, before, success, error, complete, url, async, method, g
 /*													 								*/
 /********************************************************************************** */
 //그리드 생성함수
-function commGridInit(gridDiv, option) {
+function gf_commGridInit(gridDiv, option) {
 
 	let vGrid;
 	let columnFilters = {};
@@ -260,8 +266,8 @@ function commGridInit(gridDiv, option) {
 					
 					var field = cols[i].sortCol.field;
 					var sign = cols[i].sortAsc ? 1 : -1;
-					var value1 = String(commNvl(dataRow1[field], '')).trim();
-					var value2 = String(commNvl(dataRow2[field], '')).trim();
+					var value1 = String(gf_commNvl(dataRow1[field], '')).trim();
+					var value2 = String(gf_commNvl(dataRow2[field], '')).trim();
 					
 					try{
 						if(cols[i].sortCol.editor.name == 'FormulaNumberEditor'){
@@ -311,12 +317,12 @@ function commGridInit(gridDiv, option) {
 				let defaultInsertOption = vGrid.getOptions().defaultInsert;
 				let defaultInsert = {};
 				
-				let key = Object.keys(commNvl(defaultInsertOption, {}));
+				let key = Object.keys(gf_commNvl(defaultInsertOption, {}));
 				for(let i = 0; i < key.length; i++){
 					if(typeof defaultInsertOption[key[i]] === 'function'){
 						
 						let value = defaultInsertOption[key[i]][key[i]];
-						if( commNvl(value, '') == ''){
+						if( gf_commNvl(value, '') == ''){
 							toast(mlg.noMasterId.VALUE, 'info');	//저장할 마스터ID가 없습니다.
 							return false;
 						}			
@@ -376,15 +382,15 @@ function commGridInit(gridDiv, option) {
 		if ((e.button == 2) || (e.which == 3)) {
 			var cell = vGrid.getCellFromEvent(e);
 
-			var addEvent = commNvl($('#' + gridDiv + 'Context li[onclick^=commGridAddRow]').attr('onclick'), '');
+			var addEvent = gf_commNvl($('#' + gridDiv + 'Context li[onclick^=commGridAddRow]').attr('onclick'), '');
 			addEvent = (addEvent.indexOf(',') > 0 ? addEvent.substr(0, addEvent.indexOf(',')) + ')' : addEvent);
 			$('#' + gridDiv + 'Context li[onclick^=commGridAddRow]').attr('onclick', addEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
 
-			var addMultiEvent = commNvl($('#' + gridDiv + 'Context li[onclick^=commGridAddMultiRow]').attr('onclick'), '');
+			var addMultiEvent = gf_commNvl($('#' + gridDiv + 'Context li[onclick^=commGridAddMultiRow]').attr('onclick'), '');
 			addMultiEvent = (addMultiEvent.indexOf(',') > 0 ? addMultiEvent.substr(0, addMultiEvent.indexOf(',')) + ')' : addMultiEvent);
 			$('#' + gridDiv + 'Context li[onclick^=commGridAddMultiRow]').attr('onclick', addMultiEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
 
-			var removeEvent = commNvl($('#' + gridDiv + 'Context li[onclick^=commGridRemoveRow]').attr('onclick'), '');
+			var removeEvent = gf_commNvl($('#' + gridDiv + 'Context li[onclick^=commGridRemoveRow]').attr('onclick'), '');
 			removeEvent = (removeEvent.indexOf(',') > 0 ? removeEvent.substr(0, removeEvent.indexOf(',')) + ')' : removeEvent);
 			$('#' + gridDiv + 'Context li[onclick^=commGridRemoveRow]').attr('onclick', removeEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
 
@@ -491,14 +497,14 @@ function commGridInit(gridDiv, option) {
 			if (columnId !== undefined && columnFilters[columnId] !== "") {
 				var c = vGrid.getColumns()[vGrid.getColumnIndex(columnId)];
 				//콤보
-				if(commNvl(c.editor, {}).name == 'Select2Editor'){
-					if (String(commNvl(c.dataSource[item[c.field]], '')).indexOf(columnFilters[columnId]) == -1) {
+				if(gf_commNvl(c.editor, {}).name == 'Select2Editor'){
+					if (String(gf_commNvl(c.dataSource[item[c.field]], '')).indexOf(columnFilters[columnId]) == -1) {
 						return false;
 					}
 				}
 				//그외
 				else{
-					if (String(commNvl(item[c.field], '')).indexOf(columnFilters[columnId]) == -1) {
+					if (String(gf_commNvl(item[c.field], '')).indexOf(columnFilters[columnId]) == -1) {
 						return false;
 					}
 				}
@@ -511,7 +517,7 @@ function commGridInit(gridDiv, option) {
 	return vGrid;
 }
 //그리드 풋터전체갱신
-function gridFooters(grid) {
+function gf_gridFooters(grid) {
 	
 	var columnIdx = grid.getColumns().length;
 	while (columnIdx--) {
@@ -519,7 +525,7 @@ function gridFooters(grid) {
 	}
 }
 //그리드 풋터갱신
-function gridFooter(cell, grid) {
+function gf_gridFooter(cell, grid) {
 	var columnId = grid.getColumns()[cell].id;
 	
 	//건수
@@ -552,14 +558,14 @@ function gridFooter(cell, grid) {
 }
 
 //그리드 저장데이터 생성
-function commGridSaveData(grid){
+function gf_commGridSaveData(grid){
 	
 	grid.getEditorLock().commitCurrentEdit();
 	var saveData = [];
 
 	$.each(grid.getData().getItems(),function(index, item){
 		//INSERT, UPDATE
-		if(commNvl(item['gState'], '') != ''){
+		if(gf_commNvl(item['gState'], '') != ''){
 			saveData.push(item);
 		}
 	});
@@ -572,7 +578,7 @@ function commGridSaveData(grid){
 	return saveData;
 }
 
-function commGridClear(grid){
+function gf_commGridClear(grid){
 	
 	grid.getEditorLock().commitCurrentEdit();
 	try{
@@ -592,7 +598,7 @@ function commGridClear(grid){
 /*													 								*/
 /********************************************************************************** */
 //그리드 새로고침
-function commGridRefresh(gridDiv) {
+function gf_commGridRefresh(gridDiv) {
 
 	new Function(gridDiv + '.invalidate()')();
 	new Function(gridDiv + '.updateRowCount()')();
@@ -607,7 +613,7 @@ function commGridRefresh(gridDiv) {
 }
 
 //그리드 행추가
-function commGridAddRow(gridDiv, cell) {
+function gf_commGridAddRow(gridDiv, cell) {
 	let grid = new Function('return ' + gridDiv)();
 	
 	grid.getEditorLock().commitCurrentEdit();
@@ -615,12 +621,12 @@ function commGridAddRow(gridDiv, cell) {
 	let defaultInsertOption = grid.getOptions().defaultInsert;
 	let defaultInsert = {};
 	
-	let key = Object.keys(commNvl(defaultInsertOption, {}));
+	let key = Object.keys(gf_commNvl(defaultInsertOption, {}));
 	for(let i = 0; i < key.length; i++){
 		if(typeof defaultInsertOption[key[i]] === 'function'){
 			
 			let value = defaultInsertOption[key[i]][key[i]];
-			if( commNvl(value, '') == ''){
+			if( gf_commNvl(value, '') == ''){
 				toast(mlg.noMasterId.VALUE, 'info');	//저장할 마스터ID가 없습니다.
 				return false;
 			}			
@@ -652,7 +658,7 @@ function commGridAddRow(gridDiv, cell) {
 }
 
 //그리드 여러행추가
-function commGridAddMultiRow(gridDiv, cell) {
+function gf_commGridAddMultiRow(gridDiv, cell) {
 
 	let rowNum = Number(prompt(mlg.gridMultiRowConfirm.VALUE, 2));//'몇행 추가하시겠습니까?'
 	
@@ -662,12 +668,12 @@ function commGridAddMultiRow(gridDiv, cell) {
 	let defaultInsertOption = grid.getOptions().defaultInsert;
 	let defaultInsert = {};
 	
-	let key = Object.keys(commNvl(defaultInsertOption, {}));
+	let key = Object.keys(gf_commNvl(defaultInsertOption, {}));
 	for(let i = 0; i < key.length; i++){
 		if(typeof defaultInsertOption[key[i]] === 'function'){
 			
 			let value = defaultInsertOption[key[i]][key[i]];
-			if( commNvl(value, '') == ''){
+			if( gf_commNvl(value, '') == ''){
 				toast(mlg.noMasterId.VALUE, 'info');	//저장할 마스터ID가 없습니다.
 				return false;
 			}			
@@ -701,7 +707,7 @@ function commGridAddMultiRow(gridDiv, cell) {
 }
 
 //그리드 행삭제
-function commGridRemoveRow(gridDiv, cell) {
+function gf_commGridRemoveRow(gridDiv, cell) {
 	
 	let grid = new Function('return ' + gridDiv)();
 	grid.getEditorLock().cancelCurrentEdit();
@@ -711,11 +717,11 @@ function commGridRemoveRow(gridDiv, cell) {
 	} else {
 		
 		//트리
-		if(commNvl(grid.treeYn, false)){
+		if(gf_commNvl(grid.treeYn, false)){
 			var gridData = grid.getData().getItems();
 			var parentCnt = 0;
 			for(var i = cell.row+1; i < gridData.length; i++){
-				if(commNvl(gridData[i].parent, '') != ''){
+				if(gf_commNvl(gridData[i].parent, '') != ''){
 					if(parentCnt > 0){
 						gridData[i].parent = (gridData[i].parent-1);	
 					}
@@ -735,7 +741,7 @@ function commGridRemoveRow(gridDiv, cell) {
 }
 
 //그리드 선택된행삭제
-function commGridRemoveMultiRow(gridDiv) {
+function gf_commGridRemoveMultiRow(gridDiv) {
 
 	let grid = new Function('return ' + gridDiv)();
 	grid.getEditorLock().cancelCurrentEdit();
@@ -754,11 +760,11 @@ function commGridRemoveMultiRow(gridDiv) {
 	if (confirm(mlg.gridMultiRowRemoveConfirm.VALUE)) {
 
 		//트리
-		if(commNvl(grid.treeYn, false)){
+		if(gf_commNvl(grid.treeYn, false)){
 			var gridData = grid.getData().getItems();
 			var parentCnt = 0;
 			for(var i = Math.max.apply(null,selectedRows)+1; i < gridData.length; i++){
-				if(commNvl(gridData[i].parent, '') != ''){
+				if(gf_commNvl(gridData[i].parent, '') != ''){
 					if(parentCnt > 0){
 						gridData[i].parent = (gridData[i].parent-selectedRows.length);
 					}
@@ -937,7 +943,7 @@ function PopulateSelect(select, dataSource, addBlank) {
 	});
 };
 
-function chkEditFunc(row, cell, grid, tag){
+function gf_chkEditFunc(row, cell, grid, tag){
 	
 	var chk = $(tag).is(':checked');
 	var item = grid.getDataItem(row);
@@ -952,7 +958,7 @@ function chkEditFunc(row, cell, grid, tag){
 	grid.onCellChange.notify(args);
 }
 //그리드 공통 포맷
-function slickGridFormatter(row, cell, value, columnDef, dataContext){
+function gf_slickGridFormatter(row, cell, value, columnDef, dataContext){
 	
 	if(typeof value == 'number'){
 		value = String(value);	
@@ -1007,7 +1013,7 @@ function slickGridFormatter(row, cell, value, columnDef, dataContext){
 /*	토스트 											 								*/
 /*	type : success, danger, info, 기본				 								*/
 /********************************************************************************** */
-function toast(text, p_type) {
+function gf_toast(text, p_type) {
 	var option = {};
 
 	//성공시

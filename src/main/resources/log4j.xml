@@ -13,8 +13,8 @@
 	
 	<appender name="rollingFile" class="org.apache.log4j.RollingFileAppender">
 		<!-- 로그 파일명 정의를 위한 parameter -->
-<!-- 		<param name="File" value="C:/develop/logs/prjb/prjb.log"/> -->
-		<param name="File" value="/app/logs/prjb/prjb.log"/>
+		<param name="File" value="C:/develop/logs/prjb/prjb.log"/>
+<!-- 		<param name="File" value="/app/logs/prjb/prjb.log"/> -->
 		<!-- 이전 로그 파일에 로그를 덧붙여 쓸 것인지를 정의하기 위한 parameter -->
 		<param name="Append" value="true"/> 
 		<!-- 로그 파일의 최대 크기를 정의하기 위한 parameter -->   	  

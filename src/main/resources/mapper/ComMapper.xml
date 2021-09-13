@@ -34,20 +34,20 @@
 	<sql id="P_GRID_CONTEXT">
 		MERGE INTO GRID_CONTEXT A
     	USING DUAL
-           ON (A.GRID_MASTER_ID = ${GRID_MASTER_ID} AND A.FUNCTION_CD = ${FUNCTION_CD})
+           ON (A.GRID_MASTER_ID = ${GRID_MASTER_ID} AND A.FUNCTION_CODE = ${FUNCTION_CODE})
     	 WHEN MATCHED THEN
 			UPDATE SET A.USE_YN = ${USE_YN}
 					 , A.DESCRIPTION = ${DESCRIPTION}
 					 , A.MID = ${MID}
 					 , A.MDT = SYSDATE
     	 WHEN NOT MATCHED THEN
-        	INSERT (A.GRID_CONTEXT_ID, A.GRID_MASTER_ID, A.FUNCTION_CD, A.USE_YN, A.DESCRIPTION, A.CID, A.CDT, A.MID, A.MDT)
-        	VALUES (GRID_CONTEXT_S.NEXTVAL, ${GRID_MASTER_ID}, ${FUNCTION_CD}, ${USE_YN}, ${DESCRIPTION}, ${MID}, SYSDATE, ${MID}, SYSDATE)
+        	INSERT (A.GRID_CONTEXT_ID, A.GRID_MASTER_ID, A.FUNCTION_CODE, A.USE_YN, A.DESCRIPTION, A.CID, A.CDT, A.MID, A.MDT)
+        	VALUES (GRID_CONTEXT_S.NEXTVAL, ${GRID_MASTER_ID}, ${FUNCTION_CODE}, ${USE_YN}, ${DESCRIPTION}, ${MID}, SYSDATE, ${MID}, SYSDATE)
 	</sql>
 	<insert id="I_GRID_CONTEXT" parameterType="HashMap" >
 		<include refid="P_GRID_CONTEXT">
 			<property name="GRID_MASTER_ID" value="#{GRID_MASTER_ID}"/>
-			<property name="FUNCTION_CD" value="#{FUNCTION_CD}"/>
+			<property name="FUNCTION_CODE" value="#{FUNCTION_CODE}"/>
 			<property name="USE_YN" value="#{USE_YN}"/>
 			<property name="DESCRIPTION" value="#{DESCRIPTION}"/>
 			<property name="MID" value="#{MID}"/>
@@ -56,7 +56,7 @@
 	<update id="U_GRID_CONTEXT" parameterType="HashMap" >
 		<include refid="P_GRID_CONTEXT">
 			<property name="GRID_MASTER_ID" value="#{GRID_MASTER_ID}"/>
-			<property name="FUNCTION_CD" value="#{FUNCTION_CD}"/>
+			<property name="FUNCTION_CODE" value="#{FUNCTION_CODE}"/>
 			<property name="USE_YN" value="#{USE_YN}"/>
 			<property name="DESCRIPTION" value="#{DESCRIPTION}"/>
 			<property name="MID" value="#{MID}"/>
@@ -65,7 +65,7 @@
 	<!-- 그리드별 컨텍스트메뉴 -->
 	<select id="S_GRID_CONTEXT" resultType="HashMap" parameterType="HashMap" >
 		SELECT 'id_' || (ROWNUM-1) AS "id"
-			 , A.CODE AS FUNCTION_CD
+			 , A.CODE AS FUNCTION_CODE
 			<choose>
 			 	<when test="LANG_CODE == 'KO'">
 			 	, C.MLG_KO AS FUNCTION_NAME
@@ -78,10 +78,10 @@
 		  	 , B.DESCRIPTION
 		  	 , B.GRID_CONTEXT_ID
 		  	 , #{GRID_MASTER_ID} AS GRID_MASTER_ID
-		  FROM CODE_DETAIL A
-	 LEFT JOIN GRID_CONTEXT B ON A.CODE = B.FUNCTION_CD AND B.GRID_MASTER_ID = #{GRID_MASTER_ID}
-	 LEFT JOIN COMM_MLG	   C ON A.MLG_CD = C.MLG_CD AND C.CODE_YN = '1'
-		 WHERE A.CODE_MASTER_ID = 4
+		  FROM COMM_CODE_DETAIL A
+	 LEFT JOIN GRID_CONTEXT B ON A.CODE = B.FUNCTION_CODE AND B.GRID_MASTER_ID = #{GRID_MASTER_ID}
+	 LEFT JOIN COMM_MLG	   C ON A.MLG_CODE = C.MLG_CODE AND C.CODE_YN = '1'
+		 WHERE A.COMM_CODE_MASTER_ID = 4
 		   AND A.USE_YN = '1'
 		 ORDER BY A.SEQ
 	</select>
@@ -89,9 +89,9 @@
 	<!-- 화면별 그리드 컨텍스트 셋팅데이터 -->
 	<select id="S_GRID_CONTEXT_DATA" resultType="HashMap" parameterType="HashMap" >
 		SELECT C.GRID_NAME 
-			 , LISTAGG(A.FUNCTION_CD, ',') WITHIN GROUP(ORDER BY B.SEQ) AS CONTEXT_MENU
+			 , LISTAGG(A.FUNCTION_CODE, ',') WITHIN GROUP(ORDER BY B.SEQ) AS CONTEXT_MENU
 		  FROM GRID_CONTEXT A
-	 LEFT JOIN CODE_DETAIL B ON A.FUNCTION_CD = B.CODE AND B.CODE_MASTER_ID = 4
+	 LEFT JOIN COMM_CODE_DETAIL B ON A.FUNCTION_CODE = B.CODE AND B.COMM_CODE_MASTER_ID = 4
 	 LEFT JOIN GRID_MASTER C ON A.GRID_MASTER_ID = C.GRID_MASTER_ID
 	     WHERE B.USE_YN = '1'
 		   AND A.USE_YN = '1'
@@ -107,7 +107,7 @@
 			 , C.TREE_YN
 			 , A.SEQ
 			 , A.FIELD
-			 , A.MLG_CD
+			 , A.MLG_CODE
 			 <choose>
 			 	<when test="LANG_CODE == 'KO'">
 			 	, D.MLG_KO AS FIELD_NAME
@@ -116,7 +116,7 @@
 			 	, D.MLG_EN AS FIELD_NAME
 			 	</otherwise>
 			 </choose>
-			 , A.GROUP_MLG_CD
+			 , A.GROUP_MLG_CODE
 			 , A.WIDTH
 			 , A.TEXT_ALIGN
 			 , A.FIELD_TYPE
@@ -130,9 +130,9 @@
 			 , B.ATTR1 				AS EDITOR
 			 , B.ATTR2 				AS PASTE_YN
 		  FROM GRID_DETAIL A
-	 LEFT JOIN CODE_DETAIL B ON A.FIELD_TYPE = B.CODE AND B.CODE_MASTER_ID = 3 AND B.USE_YN = '1'
+	 LEFT JOIN COMM_CODE_DETAIL B ON A.FIELD_TYPE = B.CODE AND B.COMM_CODE_MASTER_ID = 3 AND B.USE_YN = '1'
 	 LEFT JOIN GRID_MASTER C ON A.GRID_MASTER_ID = C.GRID_MASTER_ID
-	 LEFT JOIN COMM_MLG	   D ON A.MLG_CD = D.MLG_CD AND D.GRID_YN = '1'
+	 LEFT JOIN COMM_MLG	   D ON A.MLG_CODE = D.MLG_CODE AND D.GRID_YN = '1'
 		 WHERE C.GRID_MASTER_ID = #{GRID_MASTER_ID}
 		 ORDER BY A.SEQ
 	</select>
@@ -145,8 +145,8 @@
 			 , A.GRID_MASTER_ID
 			 , A.SEQ
 			 , A.FIELD
-			 , A.MLG_CD
-			 , A.GROUP_MLG_CD
+			 , A.MLG_CODE
+			 , A.GROUP_MLG_CODE
 			 , A.WIDTH
 			 , A.TEXT_ALIGN
 			 , A.FIELD_TYPE
@@ -165,8 +165,8 @@
 	<select id="S_GRID_MASTER" resultType="HashMap" parameterType="HashMap" >
 		/* S_GRID_MASTER */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
-			 , A.GRID_MASTER_ID 
-			 , A.MENU_CD 
+			 , A.COMM_GRID_MASTER_ID 
+			 , A.MENU_CODE 
 			 <choose>
 			 	<when test="LANG_CODE == 'KO'">
 			 	, C.MLG_KO AS MENU_NAME
@@ -180,10 +180,10 @@
 			 , A.DESCRIPTION
 			 , A.SORT_YN
 			 , A.TREE_YN
-		  FROM GRID_MASTER A
-	 LEFT JOIN COMM_MENU B ON A.MENU_CD = B.MENU_CD
-	 LEFT JOIN COMM_MLG C ON B.MLG_CD = C.MLG_CD AND C.MENU_YN = '1'
-		 WHERE A.MENU_CD = #{MENU_CD}
+		  FROM COMM_GRID_MASTER A
+	 LEFT JOIN COMM_MENU B ON A.MENU_CODE = B.MENU_CODE
+	 LEFT JOIN COMM_MLG C ON B.MLG_CODE = C.MLG_CODE AND C.MENU_YN = '1'
+		 WHERE A.MENU_CODE = #{MENU_CODE}
 	</select>
 	
 	<!-- 그리드 관리 메뉴 조회 -->
@@ -195,7 +195,7 @@
 	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
 	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1	AS "parent"
 			 , A.COMM_MENU_ID 
-			 , A.MENU_CD
+			 , A.MENU_CODE
 			 <choose>
 			 	<when test="LANG_CODE == 'KO'">
 			 	, B.MLG_KO AS MENU_NAME
@@ -205,21 +205,21 @@
 			 	</otherwise>
 			 </choose>
 		  FROM COMM_MENU A
-     LEFT JOIN COMM_MLG B ON A.MLG_CD = B.MLG_CD
+     LEFT JOIN COMM_MLG B ON A.MLG_CODE = B.MLG_CODE
      	 WHERE A.USE_YN = '1'
-		 START WITH A.UP_MENU_CD IS null 
-		CONNECT BY PRIOR A.MENU_CD = A.UP_MENU_CD
+		 START WITH A.UP_MENU_CODE IS null 
+		CONNECT BY PRIOR A.MENU_CODE = A.UP_MENU_CODE
 		ORDER SIBLINGS BY A.SEQ
 	</select>
 	
 	<!-- 공통코드 상세 조회 -->
-	<select id="S_CODE_DETAIL" resultType="HashMap" parameterType="HashMap" >
-		/* S_CODE_DETAIL */
+	<select id="S_COMM_CODE_DETAIL" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_CODE_DETAIL */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
-			 , A.CODE_DETAIL_ID 
-			 , A.CODE_MASTER_ID 
+			 , A.COMM_CODE_DETAIL_ID 
+			 , A.COMM_CODE_MASTER_ID 
 			 , A.CODE 
-			 , A.MLG_CD 
+			 , A.MLG_CODE 
 			 , NVL(A.USE_YN, '0') AS USE_YN	 
 			 , A.DESCRIPTION 
 			 , A.ATTR1 
@@ -228,17 +228,17 @@
 			 , A.ATTR4 
 			 , A.ATTR5 
 			 , A.SEQ 
-		  FROM CODE_DETAIL A
-		 WHERE A.CODE_MASTER_ID = #{CODE_MASTER_ID}
+		  FROM COMM_CODE_DETAIL A
+		 WHERE A.COMM_CODE_MASTER_ID = #{COMM_CODE_MASTER_ID}
 		 ORDER BY A.SEQ ASC
 	</select>
 	
 	<!-- 공통코드 마스터 조회 -->
-	<select id="S_CODE_MASTER" resultType="HashMap" parameterType="HashMap" >
-		/* S_CODE_MASTER */
+	<select id="S_COMM_CODE_MASTER" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_CODE_MASTER */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
-			 , A.CODE_MASTER_ID 
-			 , A.MLG_CD 
+			 , A.COMM_CODE_MASTER_ID 
+			 , A.MLG_CODE 
 			 , NVL(A.USE_YN, '0') AS USE_YN 
 			 , A.DESCRIPTION 
 			 , A.ATTR1 
@@ -246,8 +246,8 @@
 			 , A.ATTR3 
 			 , A.ATTR4 
 			 , A.ATTR5
-		  FROM CODE_MASTER A
-		 ORDER BY A.CODE_MASTER_ID DESC
+		  FROM COMM_CODE_MASTER A
+		 ORDER BY A.COMM_CODE_MASTER_ID DESC
 	</select>
 	
 	<!-- 메뉴 URL 조회 -->
@@ -256,7 +256,7 @@
 		SELECT A.MENU_URL
 		  FROM COMM_MENU A
 		 WHERE A.USE_YN = '1'
-		   AND A.MENU_CD = #{MENU_CD}
+		   AND A.MENU_CODE = #{MENU_CODE}
 		   AND #{CID} = #{CID} 
 	</select>
 	
@@ -264,20 +264,20 @@
 	<select id="S_MY_MENU" resultType="HashMap" parameterType="HashMap" >
 		/* S_MY_MENU */
 		SELECT LEVEL-1 AS MENU_DEPTH
-			 , SYS_CONNECT_BY_PATH(A.MENU_CD, '@') AS MENU_PATH
+			 , SYS_CONNECT_BY_PATH(A.MENU_CODE, '@') AS MENU_PATH
 			 , A.COMM_MENU_ID 
-			 , A.MENU_CD 
-			 , A.MLG_CD
+			 , A.MENU_CODE 
+			 , A.MLG_CODE
 			 , A.MENU_URL 
-			 , A.UP_MENU_CD 
+			 , A.UP_MENU_CODE 
 			 , A.USE_YN 
 			 , A.DESCRIPTION 
 			 , A.SEQ
 		  FROM COMM_MENU A
 		 WHERE A.USE_YN = '1'
 		   AND #{CID} = #{CID} 
-		 START WITH UP_MENU_CD IS null 
-		CONNECT BY PRIOR MENU_CD = UP_MENU_CD
+		 START WITH UP_MENU_CODE IS null 
+		CONNECT BY PRIOR MENU_CODE = UP_MENU_CODE
 		ORDER SIBLINGS BY SEQ
 	</select>
 	
@@ -290,17 +290,17 @@
 	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
 	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1	AS "parent"
 			 , COMM_MENU_ID 
-			 , MENU_CD 
-			 , MENU_CD as TREE_VIEW
-			 , MLG_CD
+			 , MENU_CODE 
+			 , MENU_CODE as TREE_VIEW
+			 , MLG_CODE
 			 , MENU_URL 
-			 , UP_MENU_CD 
+			 , UP_MENU_CODE 
 			 , NVL(USE_YN, '0')	AS USE_YN 
 			 , DESCRIPTION 
 			 , SEQ
 		  FROM COMM_MENU
-		 START WITH UP_MENU_CD IS null 
-		CONNECT BY PRIOR MENU_CD = UP_MENU_CD
+		 START WITH UP_MENU_CODE IS null 
+		CONNECT BY PRIOR MENU_CODE = UP_MENU_CODE
 		ORDER SIBLINGS BY SEQ
 	</select>
 	
@@ -308,7 +308,7 @@
 	<select id="S_COMM_MLG_TYPE" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_MLG_TYPE */
 		SELECT COMM_MLG_ID
-		 	 , MLG_CD
+		 	 , MLG_CODE
 		 	 , MLG_KO
 		 	 , MLG_EN
 		 	 , NVL(MSG_YN, '0') 	AS MSG_YN
@@ -342,7 +342,7 @@
 		/* S_COMM_MLG */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , COMM_MLG_ID
-		 	 , MLG_CD
+		 	 , MLG_CODE
 		 	 , MLG_KO
 		 	 , MLG_EN
 		 	 , NVL(MSG_YN, '0') 	AS MSG_YN
@@ -431,7 +431,7 @@
 		/* S_LOGIN */
 		SELECT A.COMM_USER_ID
 			 , A.LOGIN_ID
-		 	 , A.USER_NM
+		 	 , A.USER_NAME
 		 	 , NVL(A.USE_YN, '0')	AS USE_YN
 		 	 , TO_CHAR(A.CDT, 'YYYY-MM-DD') as CDT
 		  FROM COMM_USER A
@@ -450,14 +450,14 @@
 		INSERT INTO COMM_USER(COMM_USER_ID 
 							, LOGIN_ID 
 							, PWD 
-							, USER_NM 
+							, USER_NAME 
 							, USE_YN
 							<include refid="cidColumn"></include>
 							)
 					  VALUES( #{COMM_USER_ID}
 							, #{LOGIN_ID}
 							, #{PWD}
-							, #{USER_NM}
+							, #{USER_NAME}
 							, '1'
 							, #{COMM_USER_ID}
 							, SYSDATE

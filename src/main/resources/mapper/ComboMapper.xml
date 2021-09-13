@@ -5,9 +5,9 @@
 <mapper namespace="combo">
 
 	<select id="S_COMM_MLG" resultType="HashMap" parameterType="HashMap" >
-		SELECT A.MLG_CD AS CODE_VALUE
+		SELECT A.MLG_CODE AS CODE_VALUE
 			 , A.COMM_MLG_ID
-			 , A.MLG_CD
+			 , A.MLG_CODE
 			 , A.DESCRIPTION
 			 , A.MSG_YN
 			 , A.MENU_YN
@@ -55,7 +55,7 @@
 			 , A.CODE_MASTER_ID
 			 , A.CODE AS CODE_VALUE
 			 , A.CODE
-			 , A.MLG_CD
+			 , A.MLG_CODE
 			 , A.USE_YN
 			 , A.DESCRIPTION
 			 , A.ATTR1
@@ -73,7 +73,7 @@
 		 	</otherwise>
 		 </choose>
 		  FROM CODE_DETAIL A
-     LEFT JOIN COMM_MLG B ON A.MLG_CD = B.MLG_CD 
+     LEFT JOIN COMM_MLG B ON A.MLG_CODE = B.MLG_CODE 
      					 AND B.CODE_YN = '1'
 		 WHERE A.CODE_MASTER_ID = #{CODE_MASTER_ID}
 		   AND A.USE_YN = #{USE_YN}

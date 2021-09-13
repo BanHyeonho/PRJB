@@ -118,28 +118,27 @@
 			
 			var fData = new FormData();
 			fData.set('QUERY_ID', 'com.S_MY_MENU');
-	  		commAjax( fData
+	  		gf_commAjax( fData
 	  				, null
 	  				, function(data){
-	  					
 	  					$.each(data.result, function( index, item){
 	  						var depth = item.MENU_DEPTH;
-	  						var menuCd = item.MENU_CD;
+	  						var menuCode = item.MENU_CODE;
 	  						var menuUrl = item.MENU_URL;
-	  						var menuNm = mlg[item.MLG_CD].VALUE;
+	  						var menuNm = gf_mlg(item.MLG_CODE);
 	  						
 	  						var tag;
-	  						if(commNvl(menuUrl, '') == ''){
+	  						if(gf_commNvl(menuUrl, '') == ''){
 	  							tag = $('<span>' + menuNm + '</span>');
 	  						}
 	  						else{
-	  							tag = $('<button id="' + menuCd +'" >' + menuNm + '</button>');
+	  							tag = $('<button id="' + menuCode +'" >' + menuNm + '</button>');
 	  						}
 	  						$('#menuList').append(tag);
 	  						
-	  						$('#' + menuCd).on('click', {
+	  						$('#' + menuCode).on('click', {
 	  							 'menuNm' : menuNm
-	  							,'menuCd' : menuCd
+	  							,'menuCode' : menuCode
 	  						}, addPage);
 	  					});
 					});
@@ -198,7 +197,7 @@
 	        
 	        li.attr('title', label);
 	        
-	        var tabContentHtml = '<iframe src="/page?menuCd=' + e.data.menuCd + '" scrolling="no"></iframe>';
+	        var tabContentHtml = '<iframe src="/page?menuCode=' + e.data.menuCode + '" scrolling="no"></iframe>';
 	 
 	      	tabs.find( ".ui-tabs-nav" ).append( li );
 	      	tabs.append( "<div id='" + id + "'>" + tabContentHtml + "</div>" );

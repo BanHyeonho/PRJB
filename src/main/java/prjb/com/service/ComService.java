@@ -41,7 +41,7 @@ public class ComService {
 		
 		
 		Map<String, String> param = new HashMap();
-		param.put("MENU_CD", request.getParameter("menuCd"));
+		param.put("MENU_CODE", request.getParameter("menuCode"));
 		param.put("CID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
 		param.put("CIP", ComUtil.getAddress(request));
 		param.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
@@ -64,7 +64,7 @@ public class ComService {
 	            if("1".equals(msgMap.get(key).get("MENU_YN"))) {
 	            	
 	            	param = new HashMap();
-	            	param.put("MLG_CD", key);
+	            	param.put("MLG_CODE", key);
 	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
 	            	menuLang.add(param);
 	            	
@@ -84,7 +84,7 @@ public class ComService {
 	            if("1".equals(msgMap.get(key).get("CODE_YN"))) {
 	            	
 	            	param = new HashMap();
-	            	param.put("MLG_CD", key);
+	            	param.put("MLG_CODE", key);
 	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
 	            	menuLang.add(param);
 	            	
@@ -104,7 +104,7 @@ public class ComService {
 	            if("1".equals(msgMap.get(key).get("GRID_YN"))) {
 	            	
 	            	param = new HashMap();
-	            	param.put("MLG_CD", key);
+	            	param.put("MLG_CODE", key);
 	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
 	            	lang.add(param);
 	            	
@@ -118,7 +118,7 @@ public class ComService {
 		List gridData = new ArrayList();
 		List gridContextData = new ArrayList();
 		param = new HashMap();
-		param.put("MENU_CD", request.getParameter("menuCd"));
+		param.put("MENU_CODE", request.getParameter("menuCode"));
 		List<Map> masterGridList = comDao.selectList("com.S_GRID_MASTER", param);
 		for (Map m : masterGridList) {
 			
@@ -183,7 +183,7 @@ public class ComService {
 			koMap.put("MSG_YN", map.get("MSG_YN"));
 			koMap.put("GRID_YN", map.get("GRID_YN"));
 			koMap.put("DESCRIPTION", map.get("DESCRIPTION"));
-			StartService.msgMLGKO.put(map.get("MLG_CD"), koMap);
+			StartService.msgMLGKO.put(map.get("MLG_CODE"), koMap);
 			
 			enMap.put("VALUE", map.get("MLG_EN"));
 			enMap.put("MENU_YN", map.get("MENU_YN"));
@@ -191,7 +191,7 @@ public class ComService {
 			enMap.put("MSG_YN", map.get("MSG_YN"));
 			enMap.put("GRID_YN", map.get("GRID_YN"));
 			enMap.put("DESCRIPTION", map.get("DESCRIPTION"));
-			StartService.msgMLGEN.put(map.get("MLG_CD"), enMap);
+			StartService.msgMLGEN.put(map.get("MLG_CODE"), enMap);
 		}
 	}
 
@@ -233,7 +233,7 @@ public class ComService {
 			request.getSession().setAttribute("LOGIN_SESSION_YN", "1");
 			request.getSession().setAttribute("COMM_USER_ID", loginResult.get("COMM_USER_ID"));
 			request.getSession().setAttribute("LOGIN_ID", loginResult.get("LOGIN_ID"));
-			request.getSession().setAttribute("USER_NM", loginResult.get("USER_NM"));
+			request.getSession().setAttribute("USER_NAME", loginResult.get("USER_NAME"));
 			request.getSession().setAttribute("JOIN_DT", loginResult.get("CDT"));
 			
 			if( ComUtil.langKoChk(request) ) {

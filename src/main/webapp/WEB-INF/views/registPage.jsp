@@ -22,13 +22,13 @@
 	var regist = function(){
 		
 		var fData = new FormData($('#registForm')[0]);
-		fData.set('PWD', commSecurePw( $('#registForm [name=PWD]').val() , '${publicKey}' ));
-		commAjax(fData, function(){
+		fData.set('PWD', gf_commSecurePw( $('#registForm [name=PWD]').val() , '${publicKey}' ));
+		gf_commAjax(fData, function(){
 			
-			var rs = chkRequire(["registForm"]);
+			var rs = gf_chkRequire(["registForm"]);
 			
 			for (var i = 0; i < rs.tags.length; i++) {
-				toast(msg('${pb:msg(pageContext.request, "을(를)_입력하세요.")}', {
+				gf_toast(gf_msg('${pb:msg(pageContext.request, "을(를)_입력하세요.")}', {
 					param : $(rs.tags[i]).attr('placeholder')
 				}), 'info');
 			}
@@ -41,7 +41,7 @@
 			}
 			//아이디중복
 			else if( data.result == 'duplicatedId'){
-				toast('${pb:msg(pageContext.request, "이미존재하는_아이디_입니다.")}', 'info');
+				gf_toast('${pb:msg(pageContext.request, "이미존재하는_아이디_입니다.")}', 'info');
 				$('#registForm [name=LOGIN_ID]').focus();
 			}
 			
@@ -56,7 +56,7 @@
 			<form action="#" id='registForm'>
 				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}' >
 				<input type="password" class="input-text font-size-36 mg-bt-15 input-green" tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "비밀번호")}' >
-				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" data-enter='4' tabindex="3" name="USER_NM" require="true" placeholder='${pb:msg(pageContext.request, "이름")}' >
+				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" data-enter='4' tabindex="3" name="USER_NAME" require="true" placeholder='${pb:msg(pageContext.request, "이름")}' >
 				<button type="button" class="font-size-24 fl-right mg-lt-15 btn btn-green" tabindex="5" id='goBackBtn'>${pb:msg(pageContext.request, "뒤로")}</button>
 				<button type="button" class="font-size-24 fl-right btn btn-green" tabindex="4" id='registBtn'>${pb:msg(pageContext.request, "가입")}</button>
 			</form>
