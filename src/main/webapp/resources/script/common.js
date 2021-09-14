@@ -98,9 +98,9 @@ function gf_commAjax(param, before, success, error, complete, url, async, method
 	const vError = gf_commNvl(error, function(data) {
 		//ajax통신 실패시 실행함수
 		try{
-			toast(JSON.parse(data.responseText).errorMsg, 'danger');	
+			gf_toast(JSON.parse(data.responseText).errorMsg, 'danger');	
 		}catch(e){
-			toast(data.responseText, 'danger');
+			gf_toast(data.responseText, 'danger');
 		}
 	});
 
