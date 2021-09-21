@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
+import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
 
@@ -56,7 +57,7 @@ public class ComService {
 		//메뉴등록
 		else if("comm_menuRegist".equals(menuUrl)){
 			
-			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
 			List<Map<String, String>> menuLang = new ArrayList();
 			Iterator<String> keys = msgMap.keySet().iterator();
 	        while( keys.hasNext() ){
@@ -76,7 +77,7 @@ public class ComService {
 		//공통코드
 		else if("comm_commCode".equals(menuUrl)){
 			
-			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
 			List<Map<String, String>> menuLang = new ArrayList();
 			Iterator<String> keys = msgMap.keySet().iterator();
 	        while( keys.hasNext() ){
@@ -96,7 +97,7 @@ public class ComService {
 		//그리드관리
 		else if("comm_gridManage".equals(menuUrl)){
 			
-			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
 			List<Map<String, String>> lang = new ArrayList();
 			Iterator<String> keys = msgMap.keySet().iterator();
 	        while( keys.hasNext() ){
@@ -170,8 +171,8 @@ public class ComService {
 		
 		List<Map> msgList = comDao.selectList("com.S_COMM_MLG", null);
 		
-		StartService.msgMLGKO = new HashMap<String, Map<String, String>>();
-		StartService.msgMLGEN = new HashMap<String, Map<String, String>>();
+		InitBean.msgMLGKO = new HashMap<String, Map<String, String>>();
+		InitBean.msgMLGEN = new HashMap<String, Map<String, String>>();
 		
 		for (Map<String, String> map : msgList) {
 			Map<String, String> koMap = new HashMap();	
@@ -183,7 +184,7 @@ public class ComService {
 			koMap.put("MSG_YN", map.get("MSG_YN"));
 			koMap.put("GRID_YN", map.get("GRID_YN"));
 			koMap.put("DESCRIPTION", map.get("DESCRIPTION"));
-			StartService.msgMLGKO.put(map.get("MLG_CODE"), koMap);
+			InitBean.msgMLGKO.put(map.get("MLG_CODE"), koMap);
 			
 			enMap.put("VALUE", map.get("MLG_EN"));
 			enMap.put("MENU_YN", map.get("MENU_YN"));
@@ -191,7 +192,7 @@ public class ComService {
 			enMap.put("MSG_YN", map.get("MSG_YN"));
 			enMap.put("GRID_YN", map.get("GRID_YN"));
 			enMap.put("DESCRIPTION", map.get("DESCRIPTION"));
-			StartService.msgMLGEN.put(map.get("MLG_CODE"), enMap);
+			InitBean.msgMLGEN.put(map.get("MLG_CODE"), enMap);
 		}
 	}
 

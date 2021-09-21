@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.taglibs.standard.tag.common.core.Util;
 
-import prjb.com.service.StartService;
+import prjb.com.init.InitBean;
 
 /**
  * 
@@ -24,7 +24,7 @@ public class tldUtil {
 	 */
 	public static String msg(HttpServletRequest request, String param) {
 		
-		Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+		Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
 		
 		if (param == null) {
 			return "";

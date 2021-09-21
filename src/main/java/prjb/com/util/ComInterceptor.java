@@ -9,7 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import prjb.com.service.StartService;
+import prjb.com.init.InitBean;
 
 public class ComInterceptor extends HandlerInterceptorAdapter {
 
@@ -79,7 +79,7 @@ public class ComInterceptor extends HandlerInterceptorAdapter {
 		String requestURI = request.getRequestURI();
 		//로그아웃이 아닐때 다국어 메시지 셋팅
 		if(!"/logout".equals(requestURI)) {
-			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
 			
 			if(modelAndView != null) {
 				String lang = new ObjectMapper().writeValueAsString(msgMap);

@@ -29,8 +29,9 @@
 	</Appenders>
     
 	<Loggers>
+		<!-- APP -->
 		<Logger name="prjb" level="INFO" additivity="FALSE">
-			<AppenderRef ref="Console"/>
+	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="org.springframework.context" level="FATAL" additivity="FALSE">
@@ -42,13 +43,22 @@
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     
-    	<Logger name="jdbc.sqltiming" level="INFO" additivity="FALSE">
+		<!-- SQL -->
+    	<Logger name="jdbc.sqltiming" level="DEBUG" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="jdbc.audit" level="FATAL" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    	<Logger name="jdbc.connection" level="FATAL" additivity="FALSE">
+	    	<AppenderRef ref="Console"/>
+	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    	<Logger name="jdbc.sqlonly" level="OFF" additivity="FALSE"> 
+    		<AppenderRef ref="Console" />
+    		<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="jdbc.resultset" level="OFF" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
@@ -58,11 +68,8 @@
 	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
-    	<Logger name="jdbc.connection" level="FATAL" additivity="FALSE">
-	    	<AppenderRef ref="Console"/>
-	    	<AppenderRef ref="RollingFile"/>
-    	</Logger>
     	
+		<!-- ROOT -->
 		<Root level="OFF" additivity="FALSE">
 			<AppenderRef ref="Console"/>
 			<AppenderRef ref="RollingFile"/>

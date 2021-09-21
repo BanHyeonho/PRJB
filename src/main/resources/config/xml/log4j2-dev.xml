@@ -13,6 +13,7 @@
 	</Appenders>
     
 	<Loggers>
+		<!-- APP -->
 		<Logger name="prjb" level="INFO" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
     	</Logger>
@@ -23,11 +24,18 @@
 	    	<AppenderRef ref="Console"/>
     	</Logger>
     
-    	<Logger name="jdbc.sqltiming" level="INFO" additivity="FALSE">
+		<!-- SQL -->
+    	<Logger name="jdbc.sqltiming" level="DEBUG" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
     	</Logger>
     	<Logger name="jdbc.audit" level="FATAL" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
+    	</Logger>
+    	<Logger name="jdbc.connection" level="FATAL" additivity="FALSE">
+	    	<AppenderRef ref="Console"/>
+    	</Logger>
+    	<Logger name="jdbc.sqlonly" level="OFF" additivity="FALSE"> 
+    		<AppenderRef ref="Console" /> 
     	</Logger>
     	<Logger name="jdbc.resultset" level="OFF" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
@@ -35,10 +43,8 @@
     	<Logger name="jdbc.resultsettable" level="OFF" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
     	</Logger>
-    	<Logger name="jdbc.connection" level="FATAL" additivity="FALSE">
-	    	<AppenderRef ref="Console"/>
-    	</Logger>
     	
+		<!-- ROOT -->
 		<Root level="OFF" additivity="FALSE">
 			<AppenderRef ref="Console"/>
 		</Root>

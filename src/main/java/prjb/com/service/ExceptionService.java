@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import prjb.com.init.InitBean;
 import prjb.com.util.ComUtil;
 
 @RestControllerAdvice("prjb.com.controller")
@@ -20,7 +21,7 @@ public class ExceptionService {
 	@ExceptionHandler(Exception.class)
 	public Object custom(HttpServletRequest request, HttpServletResponse response, Exception e){
 		
-		Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? StartService.msgMLGKO : StartService.msgMLGEN;
+		Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
 		Map<String, String> returnMap = new HashMap();
 		String errorMsg = e.getMessage();
 				

@@ -1,4 +1,4 @@
-package prjb.com.context;
+package prjb.com.init;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;

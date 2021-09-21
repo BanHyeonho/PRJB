@@ -3,7 +3,7 @@
 	
 	<!-- vm option 설정 -->
   	<listener>
-        <listener-class>prjb.com.context.PrjbServletContextListener</listener-class>
+        <listener-class>prjb.com.init.PrjbServletContextListener</listener-class>
     </listener>
     <context-param>
 		<param-name>vmOptionFilePath</param-name>
