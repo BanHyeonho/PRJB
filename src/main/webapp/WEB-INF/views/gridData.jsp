@@ -58,7 +58,7 @@ var gridMlg = {};
 					<c:if test="${item.get(\"PASTE_YN\") == '1'}">
 					,pasteYn: '1'
 					</c:if>
-					,formatter: slickGridFormatter
+					,formatter: gf_slickGridFormatter
 				}];
 			</c:when>
 			<c:otherwise>
@@ -98,7 +98,7 @@ var gridMlg = {};
 							<c:if test="${item.get(\"PASTE_YN\") == '1'}">
 							,pasteYn: '1'
 							</c:if>
-							,formatter: slickGridFormatter
+							,formatter: gf_slickGridFormatter
 						});
 			</c:otherwise>
 		</c:choose>

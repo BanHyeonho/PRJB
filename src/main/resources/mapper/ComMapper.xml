@@ -18,44 +18,44 @@
 	<select id="S_GRID_COMBO_POPUP" resultType="HashMap" parameterType="HashMap" >
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.GRID_COMBO_POPUP_ID
-			 , A.GRID_DETAIL_ID
+			 , A.COMM_GRID_DETAIL_ID
 			 , A.PARAM_NAME
 			 , A.PARAM_VALUE
 			 , A.TARGET
 			 , A.USE_YN
 		  FROM GRID_COMBO_POPUP A
-		 WHERE A.GRID_DETAIL_ID = #{GRID_DETAIL_ID}
+		 WHERE A.COMM_GRID_DETAIL_ID = #{COMM_GRID_DETAIL_ID}
 		 <if test="@com.util.CommUtil@nvl(USE_YN, '') != ''">
 		 	AND A.USE_YN = #{USE_YN}
 		 </if>
 	</select>
 	
 	<!-- 그리드컨텍스트메뉴저장 -->
-	<sql id="P_GRID_CONTEXT">
-		MERGE INTO GRID_CONTEXT A
+	<sql id="P_COMM_GRID_CONTEXT">
+		MERGE INTO COMM_GRID_CONTEXT A
     	USING DUAL
-           ON (A.GRID_MASTER_ID = ${GRID_MASTER_ID} AND A.FUNCTION_CODE = ${FUNCTION_CODE})
+           ON (A.COMM_GRID_MASTER_ID = ${COMM_GRID_MASTER_ID} AND A.FUNCTION_CODE = ${FUNCTION_CODE})
     	 WHEN MATCHED THEN
 			UPDATE SET A.USE_YN = ${USE_YN}
 					 , A.DESCRIPTION = ${DESCRIPTION}
 					 , A.MID = ${MID}
 					 , A.MDT = SYSDATE
     	 WHEN NOT MATCHED THEN
-        	INSERT (A.GRID_CONTEXT_ID, A.GRID_MASTER_ID, A.FUNCTION_CODE, A.USE_YN, A.DESCRIPTION, A.CID, A.CDT, A.MID, A.MDT)
-        	VALUES (GRID_CONTEXT_S.NEXTVAL, ${GRID_MASTER_ID}, ${FUNCTION_CODE}, ${USE_YN}, ${DESCRIPTION}, ${MID}, SYSDATE, ${MID}, SYSDATE)
+        	INSERT (A.COMM_GRID_CONTEXT_ID, A.COMM_GRID_MASTER_ID, A.FUNCTION_CODE, A.USE_YN, A.DESCRIPTION, A.CID, A.CDT, A.MID, A.MDT)
+        	VALUES (COMM_GRID_CONTEXT_S.NEXTVAL, ${COMM_GRID_MASTER_ID}, ${FUNCTION_CODE}, ${USE_YN}, ${DESCRIPTION}, ${MID}, SYSDATE, ${MID}, SYSDATE)
 	</sql>
-	<insert id="I_GRID_CONTEXT" parameterType="HashMap" >
-		<include refid="P_GRID_CONTEXT">
-			<property name="GRID_MASTER_ID" value="#{GRID_MASTER_ID}"/>
+	<insert id="I_COMM_GRID_CONTEXT" parameterType="HashMap" >
+		<include refid="P_COMM_GRID_CONTEXT">
+			<property name="COMM_GRID_MASTER_ID" value="#{COMM_GRID_MASTER_ID}"/>
 			<property name="FUNCTION_CODE" value="#{FUNCTION_CODE}"/>
 			<property name="USE_YN" value="#{USE_YN}"/>
 			<property name="DESCRIPTION" value="#{DESCRIPTION}"/>
 			<property name="MID" value="#{MID}"/>
 		</include>
 	</insert>
-	<update id="U_GRID_CONTEXT" parameterType="HashMap" >
-		<include refid="P_GRID_CONTEXT">
-			<property name="GRID_MASTER_ID" value="#{GRID_MASTER_ID}"/>
+	<update id="U_COMM_GRID_CONTEXT" parameterType="HashMap" >
+		<include refid="P_COMM_GRID_CONTEXT">
+			<property name="COMM_GRID_MASTER_ID" value="#{COMM_GRID_MASTER_ID}"/>
 			<property name="FUNCTION_CODE" value="#{FUNCTION_CODE}"/>
 			<property name="USE_YN" value="#{USE_YN}"/>
 			<property name="DESCRIPTION" value="#{DESCRIPTION}"/>
@@ -63,7 +63,7 @@
 		</include>
 	</update>
 	<!-- 그리드별 컨텍스트메뉴 -->
-	<select id="S_GRID_CONTEXT" resultType="HashMap" parameterType="HashMap" >
+	<select id="S_COMM_GRID_CONTEXT" resultType="HashMap" parameterType="HashMap" >
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.CODE AS FUNCTION_CODE
 			<choose>
@@ -76,10 +76,10 @@
 			 </choose>
 		  	 , NVL(B.USE_YN, 0) AS USE_YN
 		  	 , B.DESCRIPTION
-		  	 , B.GRID_CONTEXT_ID
-		  	 , #{GRID_MASTER_ID} AS GRID_MASTER_ID
+		  	 , B.COMM_GRID_CONTEXT_ID
+		  	 , #{COMM_GRID_MASTER_ID} AS COMM_GRID_MASTER_ID
 		  FROM COMM_CODE_DETAIL A
-	 LEFT JOIN GRID_CONTEXT B ON A.CODE = B.FUNCTION_CODE AND B.GRID_MASTER_ID = #{GRID_MASTER_ID}
+	 LEFT JOIN COMM_GRID_CONTEXT B ON A.CODE = B.FUNCTION_CODE AND B.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
 	 LEFT JOIN COMM_MLG	   C ON A.MLG_CODE = C.MLG_CODE AND C.CODE_YN = '1'
 		 WHERE A.COMM_CODE_MASTER_ID = 4
 		   AND A.USE_YN = '1'
@@ -87,15 +87,17 @@
 	</select>
 	
 	<!-- 화면별 그리드 컨텍스트 셋팅데이터 -->
-	<select id="S_GRID_CONTEXT_DATA" resultType="HashMap" parameterType="HashMap" >
+	<select id="S_COMM_GRID_CONTEXT_DATA" resultType="HashMap" parameterType="HashMap" >
 		SELECT C.GRID_NAME 
 			 , LISTAGG(A.FUNCTION_CODE, ',') WITHIN GROUP(ORDER BY B.SEQ) AS CONTEXT_MENU
-		  FROM GRID_CONTEXT A
-	 LEFT JOIN COMM_CODE_DETAIL B ON A.FUNCTION_CODE = B.CODE AND B.COMM_CODE_MASTER_ID = 4
-	 LEFT JOIN GRID_MASTER C ON A.GRID_MASTER_ID = C.GRID_MASTER_ID
-	     WHERE B.USE_YN = '1'
-		   AND A.USE_YN = '1'
-		   AND A.GRID_MASTER_ID = #{GRID_MASTER_ID}
+		  FROM COMM_GRID_CONTEXT A
+	 LEFT JOIN COMM_CODE_DETAIL B ON A.FUNCTION_CODE = B.DETAIL_CODE AND B.COMM_CODE_MASTER_ID = 4
+	 LEFT JOIN COMM_GRID_MASTER C ON A.COMM_GRID_MASTER_ID = C.COMM_GRID_MASTER_ID
+	     WHERE A.USE_YN = '1'
+	     <![CDATA[
+	       AND (TO_DATE(B.START_DATE) >= SYSDATE AND SYSDATE <= TO_DATE(NVL(B.END_DATE, '99999999')))
+	       ]]>
+		   AND A.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
 		 GROUP BY C.GRID_NAME 
 	</select>
 	
@@ -126,23 +128,27 @@
 			 , A.FOOTER
 			 , A.DESCRIPTION
 			 , A.QUERY_ID
-			 , A.GRID_DETAIL_ID
-			 , B.ATTR1 				AS EDITOR
-			 , B.ATTR2 				AS PASTE_YN
-		  FROM GRID_DETAIL A
-	 LEFT JOIN COMM_CODE_DETAIL B ON A.FIELD_TYPE = B.CODE AND B.COMM_CODE_MASTER_ID = 3 AND B.USE_YN = '1'
-	 LEFT JOIN GRID_MASTER C ON A.GRID_MASTER_ID = C.GRID_MASTER_ID
+			 , A.COMM_GRID_DETAIL_ID
+			 , B.ATTRIBUTE1 				AS EDITOR
+			 , B.ATTRIBUTE2 				AS PASTE_YN
+		  FROM COMM_GRID_DETAIL A
+	 LEFT JOIN COMM_CODE_DETAIL B ON A.FIELD_TYPE = B.DETAIL_CODE 
+	 							 AND B.COMM_CODE_MASTER_ID = 3
+								<![CDATA[
+	 							 AND (TO_DATE(B.START_DATE) >= SYSDATE AND SYSDATE <= TO_DATE(B.END_DATE))
+	 							 ]]>
+	 LEFT JOIN COMM_GRID_MASTER C ON A.COMM_GRID_MASTER_ID = C.COMM_GRID_MASTER_ID
 	 LEFT JOIN COMM_MLG	   D ON A.MLG_CODE = D.MLG_CODE AND D.GRID_YN = '1'
-		 WHERE C.GRID_MASTER_ID = #{GRID_MASTER_ID}
+		 WHERE C.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
 		 ORDER BY A.SEQ
 	</select>
 	
 	<!-- 그리드 관리 상세그리드 조회 -->
-	<select id="S_GRID_DETAIL" resultType="HashMap" parameterType="HashMap" >
-		/* S_GRID_DETAIL */
+	<select id="S_COMM_GRID_DETAIL" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_GRID_DETAIL */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
-			 , A.GRID_DETAIL_ID
-			 , A.GRID_MASTER_ID
+			 , A.COMM_GRID_DETAIL_ID
+			 , A.COMM_GRID_MASTER_ID
 			 , A.SEQ
 			 , A.FIELD
 			 , A.MLG_CODE
@@ -156,14 +162,14 @@
 			 , A.FOOTER
 			 , A.DESCRIPTION
 			 , A.QUERY_ID
-		  FROM GRID_DETAIL A
-		 WHERE A.GRID_MASTER_ID = #{GRID_MASTER_ID}
+		  FROM COMM_GRID_DETAIL A
+		 WHERE A.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
 		 ORDER BY A.SEQ
 	</select>
 	
 	<!-- 그리드 관리 마스터그리드 조회 -->
-	<select id="S_GRID_MASTER" resultType="HashMap" parameterType="HashMap" >
-		/* S_GRID_MASTER */
+	<select id="S_COMM_GRID_MASTER" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_GRID_MASTER */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.COMM_GRID_MASTER_ID 
 			 , A.MENU_CODE 

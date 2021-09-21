@@ -458,7 +458,7 @@ function gf_commGridInit(gridDiv, option) {
 			alignClass = 'text-right'
 		}
 		
-		$("<input type='text' class='grid-editor-text " + alignClass +"' placeholder='" + mlg.filter.VALUE + "'>")
+		$("<input type='text' class='grid-editor-text " + alignClass +"' placeholder='" + gf_mlg('필터') + "'>")
 			.data("columnId", args.column.id)
 			.val(columnFilters[args.column.id])
 			.appendTo(args.node);

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Properties>
+		<Property name="layoutPattern">
+			%d{yyyy/MM/dd HH:mm:ss,SSS} %p [%c.%M():%L] - %m%n
+		</Property>
+    </Properties>
+    
+	<Appenders>
+    	<Console name="console" target="SYSTEM_OUT">
+      		<PatternLayout pattern="${layoutPattern}"/>
+    	</Console>
+	</Appenders>
+    
+	<Loggers>
+		<Logger name="prjb" level="info">
+	    	<AppenderRef ref="console"/>
+    	</Logger>
+    	<Logger name="org.springframework.context" level="fatal">
+	    	<AppenderRef ref="console"/>
+    	</Logger>
+    	<Logger name="org.springframework.web" level="fatal">
+	    	<AppenderRef ref="console"/>
+    	</Logger>
+    
+    	<Logger name="jdbc.sqltiming" level="info">
+	    	<AppenderRef ref="console"/>
+    	</Logger>
+    	<Logger name="jdbc.audit" level="off">
+	    	<AppenderRef ref="console"/>
+    	</Logger>
+    	<Logger name="jdbc.resultset" level="off">
+	    	<AppenderRef ref="console"/>
+    	</Logger>
+    	<Logger name="jdbc.resultsettable" level="off">
+	    	<AppenderRef ref="console"/>
+    	</Logger>
+    	<Logger name="jdbc.connection" level="off">
+	    	<AppenderRef ref="console"/>
+    	</Logger>
+    	
+		<Root level="off">
+			<AppenderRef ref="console"/>
+		</Root>
+	</Loggers>
+</Configuration>

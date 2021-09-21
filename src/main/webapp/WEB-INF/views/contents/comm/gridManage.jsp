@@ -20,18 +20,18 @@
 	
 	$(document).ready(function() {
 		
-		menuGrid = commGridInit('menuGrid');
+		menuGrid = gf_commGridInit('menuGrid');
 		
-		masterGrid = commGridInit('masterGrid', {
+		masterGrid = gf_commGridInit('masterGrid', {
 	    	'defaultInsert' : {'MENU_CD' : gridPk
 	    						,'MENU_NAME' : gridPk
 	    						,'FILTER_YN' : '1'
 	    						, 'SORT_YN' : '1'
 	    						, 'TREE_YN' : '0'}
 	    });
-		contextGrid = commGridInit('contextGrid');
+		contextGrid = gf_commGridInit('contextGrid');
 		
-		detailGrid = commGridInit('detailGrid',{
+		detailGrid = gf_commGridInit('detailGrid',{
 	    	'defaultInsert' : {'USE_YN' : '1'
 	    					,'REQUIRE_YN' : '0'
     						,'FIXED_YN' : '0'
@@ -41,7 +41,7 @@
 	    					}
 	    });
 		
-		settingGrid = commGridInit('settingGrid',{
+		settingGrid = gf_commGridInit('settingGrid',{
 	    	'defaultInsert' : {'USE_YN' : '1'
 	    					 ,'GRID_DETAIL_ID' : gridPk}
 	    });

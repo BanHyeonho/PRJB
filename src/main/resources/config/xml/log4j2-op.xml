@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Properties>
+		<Property name="layoutPattern">
+			%d{yyyy/MM/dd HH:mm:ss,SSS} %p [%c.%M():%L] - %m%n
+		</Property>
+    </Properties>
+    
+	<Appenders>    
+    	<RollingFile name="RollingFile" fileName="/app/logs/prjb/prjb.log" filePattern="/app/logs/prjb/backup/prjb.%d{yyyy-MM-dd}-%i.log">
+      		<PatternLayout pattern="${layoutPattern}" />
+	  		<Policies>
+			   <!-- size 단위: Byte(default), KB, MB, or GB -->
+			   <SizeBasedTriggeringPolicy size="50MB" />
+			   <!-- 시간 단위 -->
+			   <TimeBasedTriggeringPolicy />
+	  		</Policies>
+			<DefaultRolloverStrategy max="100" fileIndex="min">
+				<Delete basePath = "./backup" maxDepth = "1">
+			  		<!-- 3일이 경과한 로그파일은 자동 삭제 -->
+			  		<IfLastModified age = "3d"/>
+			  	</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+	</Appenders>
+    
+	<Loggers>
+		<Logger name="prjb" level="info">
+	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    	<Logger name="org.springframework.context" level="fatal">
+	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    	<Logger name="org.springframework.web" level="fatal">
+	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    
+    	<Logger name="jdbc.sqltiming" level="info">
+	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    	<Logger name="jdbc.audit" level="off">
+	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    	<Logger name="jdbc.resultset" level="off">
+	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    	<Logger name="jdbc.resultsettable" level="off">
+	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    	<Logger name="jdbc.connection" level="off">
+	    	<AppenderRef ref="RollingFile"/>
+    	</Logger>
+    	
+		<Root level="off">
+			<AppenderRef ref="RollingFile"/>
+		</Root>
+	</Loggers>
+</Configuration>

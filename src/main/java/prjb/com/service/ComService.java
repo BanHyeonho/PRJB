@@ -119,10 +119,10 @@ public class ComService {
 		List gridContextData = new ArrayList();
 		param = new HashMap();
 		param.put("MENU_CODE", request.getParameter("menuCode"));
-		List<Map> masterGridList = comDao.selectList("com.S_GRID_MASTER", param);
+		List<Map> masterGridList = comDao.selectList("com.S_COMM_GRID_MASTER", param);
 		for (Map m : masterGridList) {
 			
-			Map gridContextMap = comDao.selectOne("com.S_GRID_CONTEXT_DATA", m);
+			Map gridContextMap = comDao.selectOne("com.S_COMM_GRID_CONTEXT_DATA", m);
 			gridContextData.add(gridContextMap);
 			
 			m.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
