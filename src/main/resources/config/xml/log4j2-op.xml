@@ -2,7 +2,7 @@
 <Configuration>
 	<Properties>
 		<Property name="layoutPattern">
-			%d{yyyy/MM/dd HH:mm:ss,SSS} %p [%c.%M():%L] - %m%n
+			%d{yyyy-MM-dd HH:mm:ss,SSS} %p [%c.%M():%L] - %m%n
 		</Property>
     </Properties>
     
@@ -25,33 +25,33 @@
 	</Appenders>
     
 	<Loggers>
-		<Logger name="prjb" level="info">
+		<Logger name="prjb" level="INFO" additivity="FALSE">
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
-    	<Logger name="org.springframework.context" level="fatal">
+    	<Logger name="org.springframework.context" level="FATAL" additivity="FALSE">
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
-    	<Logger name="org.springframework.web" level="fatal">
+    	<Logger name="org.springframework.web" level="FATAL" additivity="FALSE">
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     
-    	<Logger name="jdbc.sqltiming" level="info">
+    	<Logger name="jdbc.sqltiming" level="INFO" additivity="FALSE">
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
-    	<Logger name="jdbc.audit" level="off">
+    	<Logger name="jdbc.audit" level="FATAL" additivity="FALSE">
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
-    	<Logger name="jdbc.resultset" level="off">
+    	<Logger name="jdbc.resultset" level="OFF" additivity="FALSE">
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
-    	<Logger name="jdbc.resultsettable" level="off">
+    	<Logger name="jdbc.resultsettable" level="OFF" additivity="FALSE">
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
-    	<Logger name="jdbc.connection" level="off">
+    	<Logger name="jdbc.connection" level="FATAL" additivity="FALSE">
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	
-		<Root level="off">
+		<Root level="OFF" additivity="FALSE">
 			<AppenderRef ref="RollingFile"/>
 		</Root>
 	</Loggers>
