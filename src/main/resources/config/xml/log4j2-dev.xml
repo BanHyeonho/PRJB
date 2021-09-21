@@ -7,40 +7,40 @@
     </Properties>
     
 	<Appenders>
-    	<Console name="console" target="SYSTEM_OUT">
+    	<Console name="Console" target="SYSTEM_OUT">
       		<PatternLayout pattern="${layoutPattern}"/>
     	</Console>
 	</Appenders>
     
 	<Loggers>
 		<Logger name="prjb" level="INFO" additivity="FALSE">
-	    	<AppenderRef ref="console"/>
+	    	<AppenderRef ref="Console"/>
     	</Logger>
     	<Logger name="org.springframework.context" level="FATAL" additivity="FALSE">
-	    	<AppenderRef ref="console"/>
+	    	<AppenderRef ref="Console"/>
     	</Logger>
     	<Logger name="org.springframework.web" level="FATAL" additivity="FALSE">
-	    	<AppenderRef ref="console"/>
+	    	<AppenderRef ref="Console"/>
     	</Logger>
     
     	<Logger name="jdbc.sqltiming" level="INFO" additivity="FALSE">
-	    	<AppenderRef ref="console"/>
+	    	<AppenderRef ref="Console"/>
     	</Logger>
     	<Logger name="jdbc.audit" level="FATAL" additivity="FALSE">
-	    	<AppenderRef ref="console"/>
+	    	<AppenderRef ref="Console"/>
     	</Logger>
     	<Logger name="jdbc.resultset" level="OFF" additivity="FALSE">
-	    	<AppenderRef ref="console"/>
+	    	<AppenderRef ref="Console"/>
     	</Logger>
     	<Logger name="jdbc.resultsettable" level="OFF" additivity="FALSE">
-	    	<AppenderRef ref="console"/>
+	    	<AppenderRef ref="Console"/>
     	</Logger>
     	<Logger name="jdbc.connection" level="FATAL" additivity="FALSE">
-	    	<AppenderRef ref="console"/>
+	    	<AppenderRef ref="Console"/>
     	</Logger>
     	
 		<Root level="OFF" additivity="FALSE">
-			<AppenderRef ref="console"/>
+			<AppenderRef ref="Console"/>
 		</Root>
 	</Loggers>
 </Configuration>

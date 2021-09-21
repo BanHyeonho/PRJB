@@ -6,7 +6,11 @@
 		</Property>
     </Properties>
     
-	<Appenders>    
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+      		<PatternLayout pattern="${layoutPattern}"/>
+    	</Console>
+    	
     	<RollingFile name="RollingFile" fileName="/app/logs/prjb/prjb.log" filePattern="/app/logs/prjb/backup/prjb.%d{yyyy-MM-dd}-%i.log">
       		<PatternLayout pattern="${layoutPattern}" />
 	  		<Policies>
@@ -26,32 +30,41 @@
     
 	<Loggers>
 		<Logger name="prjb" level="INFO" additivity="FALSE">
+			<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="org.springframework.context" level="FATAL" additivity="FALSE">
+	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="org.springframework.web" level="FATAL" additivity="FALSE">
+	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     
     	<Logger name="jdbc.sqltiming" level="INFO" additivity="FALSE">
+	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="jdbc.audit" level="FATAL" additivity="FALSE">
+	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="jdbc.resultset" level="OFF" additivity="FALSE">
+	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="jdbc.resultsettable" level="OFF" additivity="FALSE">
+	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="jdbc.connection" level="FATAL" additivity="FALSE">
+	    	<AppenderRef ref="Console"/>
 	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	
 		<Root level="OFF" additivity="FALSE">
+			<AppenderRef ref="Console"/>
 			<AppenderRef ref="RollingFile"/>
 		</Root>
 	</Loggers>
