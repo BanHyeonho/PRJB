@@ -27,7 +27,7 @@ public class CryptoWrapperFactory implements ObjectWrapperFactory {
         if(fullName.equals("java.util.HashMap")) {
         	return true;
         }
-        else if (!clazz.getName().startsWith("com.")) {
+        else if (!clazz.getName().startsWith("prjb.")) {
             return false;
         } else {
             Boolean cached = hasWrapperForCache.get(clazz);

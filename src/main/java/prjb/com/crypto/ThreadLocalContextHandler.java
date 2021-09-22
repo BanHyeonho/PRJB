@@ -1,5 +1,4 @@
 package prjb.com.crypto;
-//package com.encryt;
 //
 //import java.util.HashMap;
 //import java.util.Map;

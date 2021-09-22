@@ -7,14 +7,15 @@
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 	
+		<util:properties id="commonConfig" location="classpath:/config/properties/common-config.properties" />
 		<util:properties id="config" location="classpath:/config/properties/config-#{systemProperties['spring.profiles.active']}.properties" />
 		
  		<!-- Root Context: defines shared resources visible to all other web components -->
 		<bean id='DS' class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 			<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
-			<property name="url" value="#{config['db.url']}" />
-			<property name="username" value="#{config['db.username']}"/>
-			<property name="password" value="#{config['db.password']}" />
+			<property name="url" value="#{commonConfig['db.url']}" />
+			<property name="username" value="#{commonConfig['db.username']}"/>
+			<property name="password" value="#{commonConfig['db.password']}" />
 		</bean>
 		<bean id='SqlFactory' class="#{config['sqlSessionFactory']}">
 			<property name="dataSource" ref="DS" />

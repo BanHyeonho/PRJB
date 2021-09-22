@@ -118,7 +118,7 @@
 			
 			var fData = new FormData();
 			fData.set('QUERY_ID', 'com.S_MY_MENU');
-	  		gf_commAjax( fData
+	  		gf_ajax( fData
 	  				, null
 	  				, function(data){
 	  					$.each(data.result, function( index, item){
@@ -128,7 +128,7 @@
 	  						var menuNm = gf_mlg(item.MLG_CODE);
 	  						
 	  						var tag;
-	  						if(gf_commNvl(menuUrl, '') == ''){
+	  						if(gf_nvl(menuUrl, '') == ''){
 	  							tag = $('<span>' + menuNm + '</span>');
 	  						}
 	  						else{
@@ -211,7 +211,7 @@
 		//로그아웃
 		var logout = function(){
 			 
-			if(confirm('${pb:msg(pageContext.request, "logoutConfirm")}')){
+			if(confirm('${pb:msg(pageContext.request, "로그아웃_하시겠습니까?")}')){
 				location.replace('/logout');	
 			}
 		}
@@ -277,11 +277,11 @@
 		</div>
 		
 		<div style="position: absolute;right: .4em;top:.15em;">
-			<button type="button" id='menuBtn' title='${pb:msg(pageContext.request, "menu")}' class="menu-btn" style="width: 45px; height: 45px;">
+			<button type="button" id='menuBtn' title='${pb:msg(pageContext.request, "메뉴")}' class="menu-btn" style="width: 45px; height: 45px;">
 			</button>
 		</div>
 		
-		<div id="menu" title='${pb:msg(pageContext.request, "menu")}' style="display: none;">
+		<div id="menu" title='${pb:msg(pageContext.request, "메뉴")}' style="display: none;">
 			<div id="menuList" style="width: 30%; height:100%; float: left; padding-right: 5px; box-sizing: border-box;">
 <!-- 			메뉴셋팅 -->
 			</div>
@@ -329,22 +329,22 @@
 	<div id="tabContext" class="context">
 		<ul id="tabContextUl">
 			<li class='onlyOtherLi' style="display: none;" >
-		    	<div id='favoriteTabBtn'><span class="ui-icon ui-icon-star"></span><span>${pb:msg(pageContext.request, "favorites")}</span></div>
+		    	<div id='favoriteTabBtn'><span class="ui-icon ui-icon-star"></span><span>${pb:msg(pageContext.request, "즐겨찾기")}</span></div>
 		  	</li>
 			<li class='onlyOtherLi' style="display: none;" >
-		    	<div id='closeTabBtn'><span class="ui-icon ui-icon-closethick"></span><span>${pb:msg(pageContext.request, "closeTab")}</span></div>
+		    	<div id='closeTabBtn'><span class="ui-icon ui-icon-closethick"></span><span>${pb:msg(pageContext.request, "탭닫기")}</span></div>
 		  	</li>
 			<li>
-		    	<div id='closeRightBtn'><span>${pb:msg(pageContext.request, "closeTabRight")}</span></div>
+		    	<div id='closeRightBtn'><span>${pb:msg(pageContext.request, "우측_탭닫기")}</span></div>
 		  	</li>
 		  	<li>
-		    	<div id='closeOthersBtn'><span>${pb:msg(pageContext.request, "closeTabOthers")}</span></div>
+		    	<div id='closeOthersBtn'><span>${pb:msg(pageContext.request, "다른_탭닫기")}</span></div>
 		  	</li>
 		  	<li>
-		    	<div id='refreshTabBtn'><span class="ui-icon ui-icon-arrowrefresh-1-e"></span><span>${pb:msg(pageContext.request, "refresh")}</span></div>
+		    	<div id='refreshTabBtn'><span class="ui-icon ui-icon-arrowrefresh-1-e"></span><span>${pb:msg(pageContext.request, "새로고침")}</span></div>
 		  	</li>
 			<li class='onlyMainLi' style="display: none;">
-		    	<div id='logoutBtn' ><span class="ui-icon ui-icon-power"></span><span>${pb:msg(pageContext.request, "logout")}</span></div>
+		    	<div id='logoutBtn' ><span class="ui-icon ui-icon-power"></span><span>${pb:msg(pageContext.request, "로그아웃")}</span></div>
 		  	</li>
 		</ul>
 	</div>

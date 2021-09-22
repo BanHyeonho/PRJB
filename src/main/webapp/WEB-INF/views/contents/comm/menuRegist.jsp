@@ -12,7 +12,7 @@
 <script>
 	
 	$(document).ready(function() {
-	    masterGrid = gf_commGridInit('masterGrid', {
+	    masterGrid = gf_gridInit('masterGrid', {
 	    	'defaultInsert' : {'USE_YN' : '1'}
 	    });
 	    
@@ -25,7 +25,7 @@
   		
   		var fData = new FormData();
 		fData.set('QUERY_ID', 'com.S_COMM_MENU');
-		gf_commAjax( fData
+		gf_ajax( fData
   				, function(){
   					
   					if(gf_commGridSaveData(masterGrid).length > 0){
@@ -51,7 +51,7 @@
   		
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(saveData));
-		gf_commAjax( fData
+		gf_ajax( fData
   				, function(){
   					
   					if(saveData.length == 0){

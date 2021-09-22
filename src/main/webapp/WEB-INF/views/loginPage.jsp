@@ -15,9 +15,9 @@
 	var login = function(){
 		
 		var fData = new FormData($('#loginForm')[0]);
-		fData.set('PWD', gf_commSecurePw( $('#loginForm [name=PWD]').val() , '${publicKey}' ));
+		fData.set('PWD', gf_securePw( $('#loginForm [name=PWD]').val() , '${publicKey}' ));
 		
-		gf_commAjax( fData, function(){
+		gf_ajax( fData, function(){
 			
 			var rs = gf_chkRequire(["loginForm"]);
 			for (var i = 0; i < rs.tags.length; i++) {

@@ -3,7 +3,7 @@
  */
 
 //문자 치환함수
-function gf_commNvl(val, val2) {
+function gf_nvl(val, val2) {
 
 	let result = val;
 	if (val == undefined || val == null || val == '') {
@@ -14,7 +14,7 @@ function gf_commNvl(val, val2) {
 }
 
 //암호화
-function gf_commSecurePw(pw, puk) {	//암호화할 비밀번호 , 공개키
+function gf_securePw(pw, puk) {	//암호화할 비밀번호 , 공개키
 
 	// 객체 생성
 	let crypt = new JSEncrypt();
@@ -58,7 +58,7 @@ function gf_mlg(p_mlg_code, p_type){
 //다국어 메시지 파라미터 치환
 function gf_msg(p_text, p_param){
 	
-	var paramKey = Object.keys(gf_commNvl(p_param, {}));
+	var paramKey = Object.keys(gf_nvl(p_param, {}));
 	for (var i = 0; i < paramKey.length; i++) {
 		var chgKey = '\\[\\@;' + paramKey[i] + ';\\@\\]';
 		var reg = new RegExp(chgKey, 'g');
@@ -75,27 +75,27 @@ function gf_msg(p_text, p_param){
 /*	AJAX 											 								*/
 /*													 								*/
 /********************************************************************************** */
-function gf_commAjax(param, before, success, error, complete, url, async, method, global, timeout, dataType) {
+function gf_ajax(p_param, p_before, p_success, p_error, p_complete, p_url, p_async, p_method, p_global, p_timeout, p_dataType) {
 
-	const vUrl = gf_commNvl(url, '/ajax');
-	const vMethod = gf_commNvl(method, 'post');
-	const vDataType = gf_commNvl(dataType, 'json');
-	const vAsync = gf_commNvl(async, true);
-	const vGlobal = gf_commNvl(global, true);
-	const vTimeout = gf_commNvl(timeout, 3600000);
+	const v_url = gf_nvl(p_url, '/ajax');
+	const v_method = gf_nvl(p_method, 'post');
+	const v_dataType = gf_nvl(p_dataType, 'json');
+	const v_async = gf_nvl(p_async, true);
+	const v_global = gf_nvl(p_global, true);
+	const v_timeout = gf_nvl(p_timeout, 3600000);
 
-	const vParam = gf_commNvl(param, {});
+	const v_param = gf_nvl(p_param, {});
 
-	const vBefore = gf_commNvl(before, function() {
+	const v_before = gf_nvl(p_before, function() {
 		//aJax 요청전에 실행되는 함수, return false 일경우 ajax 요청 취소 가능
 	});
 
-	const vSuccess = gf_commNvl(success, function(data) {
+	const v_success = gf_nvl(p_success, function(data) {
 		//ajax통신 성공시 실행함수
 		console.log('success', data);
 	});
 
-	const vError = gf_commNvl(error, function(data) {
+	const v_error = gf_nvl(p_error, function(data) {
 		//ajax통신 실패시 실행함수
 		try{
 			gf_toast(JSON.parse(data.responseText).errorMsg, 'danger');	
@@ -104,50 +104,50 @@ function gf_commAjax(param, before, success, error, complete, url, async, method
 		}
 	});
 
-	const vComplete = gf_commNvl(complete, function(data) {
+	const v_complete = gf_nvl(p_complete, function(data) {
 		//ajax통신 완료시 실행함수
 //		console.log('complete', data);
 	});
 
-	let vContentType;
-	let vProcessData;
-	let vEnctype;
+	let v_contentType;
+	let v_processData;
+	let v_enctype;
 	//new FormData() 로 데이터전송
-	if (vParam.toString().indexOf('FormData') != -1) {
+	if (v_param.toString().indexOf('FormData') != -1) {
 		//contentType : false로 선언 시 content-type 헤더가 multipart/form-data로 전송되게 함
 		//processData : false로 선언 시 formData를 string으로 변환하지 않음
-		vEnctype = 'multipart/form-data';
-		vContentType = false;
-		vProcessData = false;
+		v_enctype = 'multipart/form-data';
+		v_contentType = false;
+		v_processData = false;
 	}
-	else if (typeof vParam == 'string') {
-		vEnctype = 'application/x-www-form-urlencoded';
-		vContentType = 'application/json; charset=UTF-8';
-		vProcessData = true;
+	else if (typeof v_param == 'string') {
+		v_enctype = 'application/x-www-form-urlencoded';
+		v_contentType = 'application/json; charset=UTF-8';
+		v_processData = true;
 	}
 	//JSON 으로 데이터전송
 	else {
-		vEnctype = 'application/x-www-form-urlencoded';
-		vContentType = 'application/x-www-form-urlencoded; charset=UTF-8';
-		vProcessData = true;
+		v_enctype = 'application/x-www-form-urlencoded';
+		v_contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
+		v_processData = true;
 	}
 
 
 	const setting = {
-		url: vUrl
-		, method: vMethod
-		, dataType: vDataType
-		, async: vAsync
-		, timeout: vTimeout
-		, global: vGlobal
-		, data: vParam
-		, beforeSend: vBefore
-		, success: vSuccess
-		, error: vError
-		, complete: vComplete
-		, enctype: vEnctype
-		, contentType: vContentType
-		, processData: vProcessData
+		url: v_url
+		, method: v_method
+		, dataType: v_dataType
+		, async: v_async
+		, timeout: v_timeout
+		, global: v_global
+		, data: v_param
+		, beforeSend: v_before
+		, success: v_success
+		, error: v_error
+		, complete: v_complete
+		, enctype: v_enctype
+		, contentType: v_contentType
+		, processData: v_processData
 		, cache: false
 	};
 
@@ -160,7 +160,7 @@ function gf_commAjax(param, before, success, error, complete, url, async, method
 /*													 								*/
 /********************************************************************************** */
 //그리드 생성함수
-function gf_commGridInit(gridDiv, option) {
+function gf_gridInit(gridDiv, option) {
 
 	let vGrid;
 	let columnFilters = {};
@@ -208,36 +208,36 @@ function gf_commGridInit(gridDiv, option) {
 			switch (vContextMenu[i]) {
 				//행추가
 				case "add":
-					contextLi = $('<li>').attr('onclick', 'commGridAddRow("' + gridDiv + '")');
-					contextTextSpan = $('<span>').text(mlg.gridAddRow.VALUE);
+					contextLi = $('<li>').attr('onclick', 'gf_gridAddRow("' + gridDiv + '")');
+					contextTextSpan = $('<span>').text(gf_mlg('행추가'));
 					contextText = $('<div><span class="ui-icon ui-icon-plus"></span></div>');
 	
 					break;
 				//여러행추가
 				case "adds":
-					contextLi = $('<li>').attr('onclick', 'commGridAddMultiRow("' + gridDiv + '")');
-					contextTextSpan = $('<span>').text(mlg.gridAddMultiRow.VALUE);
+					contextLi = $('<li>').attr('onclick', 'gf_gridAddMultiRow("' + gridDiv + '")');
+					contextTextSpan = $('<span>').text(gf_mlg('여러_행추가'));
 					contextText = $('<div><span class="ui-icon ui-icon-plusthick"></span></div>');
 	
 					break;
 				//행삭제
 				case "remove":
-					contextLi = $('<li>').attr('onclick', 'commGridRemoveRow("' + gridDiv + '")');
-					contextTextSpan = $('<span>').text(mlg.gridRemoveRow.VALUE);
+					contextLi = $('<li>').attr('onclick', 'gf_gridRemoveRow("' + gridDiv + '")');
+					contextTextSpan = $('<span>').text(gf_mlg('행삭제'));
 					contextText = $('<div><span class="ui-icon ui-icon-minus"></span></div>');
 	
 					break;
 				//선택된행삭제
 				case "removes":
-					contextLi = $('<li>').attr('onclick', 'commGridRemoveMultiRow("' + gridDiv + '")');
-					contextTextSpan = $('<span>').text(mlg.gridRemoveMultiRow.VALUE);
+					contextLi = $('<li>').attr('onclick', 'gf_gridRemoveMultiRow("' + gridDiv + '")');
+					contextTextSpan = $('<span>').text(gf_mlg('선택된_행삭제'));
 					contextText = $('<div><span class="ui-icon ui-icon-minusthick"></span></div>');
 	
 					break;
 				//그리드 새로고침
 				case "refresh":
-					contextLi = $('<li>').attr('onclick', 'commGridRefresh("' + gridDiv + '")');
-					contextTextSpan = $('<span>').text(mlg.refresh.VALUE);
+					contextLi = $('<li>').attr('onclick', 'gf_gridRefresh("' + gridDiv + '")');
+					contextTextSpan = $('<span>').text(gf_mlg('그리드_새로고침'));
 					contextText = $('<div><span class="ui-icon ui-icon-arrowrefresh-1-e"></span></div>');
 	
 					break;
@@ -266,8 +266,8 @@ function gf_commGridInit(gridDiv, option) {
 					
 					var field = cols[i].sortCol.field;
 					var sign = cols[i].sortAsc ? 1 : -1;
-					var value1 = String(gf_commNvl(dataRow1[field], '')).trim();
-					var value2 = String(gf_commNvl(dataRow2[field], '')).trim();
+					var value1 = String(gf_nvl(dataRow1[field], '')).trim();
+					var value2 = String(gf_nvl(dataRow2[field], '')).trim();
 					
 					try{
 						if(cols[i].sortCol.editor.name == 'FormulaNumberEditor'){
@@ -317,13 +317,13 @@ function gf_commGridInit(gridDiv, option) {
 				let defaultInsertOption = vGrid.getOptions().defaultInsert;
 				let defaultInsert = {};
 				
-				let key = Object.keys(gf_commNvl(defaultInsertOption, {}));
+				let key = Object.keys(gf_nvl(defaultInsertOption, {}));
 				for(let i = 0; i < key.length; i++){
 					if(typeof defaultInsertOption[key[i]] === 'function'){
 						
 						let value = defaultInsertOption[key[i]][key[i]];
-						if( gf_commNvl(value, '') == ''){
-							toast(mlg.noMasterId.VALUE, 'info');	//저장할 마스터ID가 없습니다.
+						if( gf_nvl(value, '') == ''){
+							gf_toast(gf_mlg('저장할_마스터ID가_없습니다'), 'info');	//저장할 마스터ID가 없습니다.
 							return false;
 						}			
 						defaultInsert[key[i]] = value;
@@ -373,7 +373,7 @@ function gf_commGridInit(gridDiv, option) {
 		
 		vGrid.getData().updateItem(item.id, item);
 		
-		gridFooter(cell, args.grid);
+		gf_gridFooter(cell, args.grid);
 	});
 
 	//우클릭으로 메뉴열기
@@ -382,17 +382,17 @@ function gf_commGridInit(gridDiv, option) {
 		if ((e.button == 2) || (e.which == 3)) {
 			var cell = vGrid.getCellFromEvent(e);
 
-			var addEvent = gf_commNvl($('#' + gridDiv + 'Context li[onclick^=commGridAddRow]').attr('onclick'), '');
+			var addEvent = gf_nvl($('#' + gridDiv + 'Context li[onclick^=gf_gridAddRow]').attr('onclick'), '');
 			addEvent = (addEvent.indexOf(',') > 0 ? addEvent.substr(0, addEvent.indexOf(',')) + ')' : addEvent);
-			$('#' + gridDiv + 'Context li[onclick^=commGridAddRow]').attr('onclick', addEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
+			$('#' + gridDiv + 'Context li[onclick^=gf_gridAddRow]').attr('onclick', addEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
 
-			var addMultiEvent = gf_commNvl($('#' + gridDiv + 'Context li[onclick^=commGridAddMultiRow]').attr('onclick'), '');
+			var addMultiEvent = gf_nvl($('#' + gridDiv + 'Context li[onclick^=gf_gridAddMultiRow]').attr('onclick'), '');
 			addMultiEvent = (addMultiEvent.indexOf(',') > 0 ? addMultiEvent.substr(0, addMultiEvent.indexOf(',')) + ')' : addMultiEvent);
-			$('#' + gridDiv + 'Context li[onclick^=commGridAddMultiRow]').attr('onclick', addMultiEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
+			$('#' + gridDiv + 'Context li[onclick^=gf_gridAddMultiRow]').attr('onclick', addMultiEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
 
-			var removeEvent = gf_commNvl($('#' + gridDiv + 'Context li[onclick^=commGridRemoveRow]').attr('onclick'), '');
+			var removeEvent = gf_nvl($('#' + gridDiv + 'Context li[onclick^=gf_gridRemoveRow]').attr('onclick'), '');
 			removeEvent = (removeEvent.indexOf(',') > 0 ? removeEvent.substr(0, removeEvent.indexOf(',')) + ')' : removeEvent);
-			$('#' + gridDiv + 'Context li[onclick^=commGridRemoveRow]').attr('onclick', removeEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
+			$('#' + gridDiv + 'Context li[onclick^=gf_gridRemoveRow]').attr('onclick', removeEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
 
 			$('#' + gridDiv + 'Context').css({
 				'top': e.pageY
@@ -428,7 +428,7 @@ function gf_commGridInit(gridDiv, option) {
 		
 		vGrid.invalidateRows(args.rows);
 		vGrid.render();
-		gridFooters(vGrid);
+		gf_gridFooters(vGrid);
 	});
 
 	$(vGrid.getHeaderRow()).delegate(":input", "change keyup", function(e) {
@@ -497,14 +497,14 @@ function gf_commGridInit(gridDiv, option) {
 			if (columnId !== undefined && columnFilters[columnId] !== "") {
 				var c = vGrid.getColumns()[vGrid.getColumnIndex(columnId)];
 				//콤보
-				if(gf_commNvl(c.editor, {}).name == 'Select2Editor'){
-					if (String(gf_commNvl(c.dataSource[item[c.field]], '')).indexOf(columnFilters[columnId]) == -1) {
+				if(gf_nvl(c.editor, {}).name == 'Select2Editor'){
+					if (String(gf_nvl(c.dataSource[item[c.field]], '')).indexOf(columnFilters[columnId]) == -1) {
 						return false;
 					}
 				}
 				//그외
 				else{
-					if (String(gf_commNvl(item[c.field], '')).indexOf(columnFilters[columnId]) == -1) {
+					if (String(gf_nvl(item[c.field], '')).indexOf(columnFilters[columnId]) == -1) {
 						return false;
 					}
 				}
@@ -521,7 +521,7 @@ function gf_gridFooters(grid) {
 	
 	var columnIdx = grid.getColumns().length;
 	while (columnIdx--) {
-		gridFooter(columnIdx, grid);
+		gf_gridFooter(columnIdx, grid);
 	}
 }
 //그리드 풋터갱신
@@ -532,7 +532,7 @@ function gf_gridFooter(cell, grid) {
 	if(grid.getColumns()[cell].footer == 'COUNT'){
 		var count = grid.getData().getItems().length;
 		var columnElement = grid.getFooterRowColumn(columnId);
-		$(columnElement).html(mlg.cnt.VALUE + " : " + count);
+		$(columnElement).html(gf_mlg('건수') + " : " + count);
 	}
 	//합계
 	else if(grid.getColumns()[cell].footer == 'SUM'){
@@ -542,7 +542,7 @@ function gf_gridFooter(cell, grid) {
 			total += (parseInt(grid.getData().getItems()[i][columnId], 10) || 0);
 		}
 		var columnElement = grid.getFooterRowColumn(columnId);
-		$(columnElement).html(mlg.sum.VALUE + " : " + total);
+		$(columnElement).html(gf_mlg('합계') + " : " + total);
 	}
 	//평균
 	else if(grid.getColumns()[cell].footer == 'AVG'){
@@ -552,20 +552,25 @@ function gf_gridFooter(cell, grid) {
 			total += (parseInt(grid.getData().getItems()[i][columnId], 10) || 0);
 		}
 		var columnElement = grid.getFooterRowColumn(columnId);
-		$(columnElement).html(mlg.avg.VALUE + " : " + (total / grid.getData().getItems().length));
+		$(columnElement).html(gf_mlg('평균') + " : " + (total / grid.getData().getItems().length));
 	}
 	
 }
 
 //그리드 저장데이터 생성
-function gf_commGridSaveData(grid){
+function gf_gridSaveData(grid){
+	
+	//그리드 미생성시
+	if(!(grid instanceof Slick.Grid)){
+		return [];
+	}
 	
 	grid.getEditorLock().commitCurrentEdit();
 	var saveData = [];
 
 	$.each(grid.getData().getItems(),function(index, item){
 		//INSERT, UPDATE
-		if(gf_commNvl(item['gState'], '') != ''){
+		if(gf_nvl(item['gState'], '') != ''){
 			saveData.push(item);
 		}
 	});
@@ -578,7 +583,12 @@ function gf_commGridSaveData(grid){
 	return saveData;
 }
 
-function gf_commGridClear(grid){
+function gf_gridClear(grid){
+	
+	//그리드 미생성시
+	if(!(grid instanceof Slick.Grid)){
+		return false;
+	}
 	
 	grid.getEditorLock().commitCurrentEdit();
 	try{
@@ -598,7 +608,7 @@ function gf_commGridClear(grid){
 /*													 								*/
 /********************************************************************************** */
 //그리드 새로고침
-function gf_commGridRefresh(gridDiv) {
+function gf_gridRefresh(gridDiv) {
 
 	new Function(gridDiv + '.invalidate()')();
 	new Function(gridDiv + '.updateRowCount()')();
@@ -613,7 +623,7 @@ function gf_commGridRefresh(gridDiv) {
 }
 
 //그리드 행추가
-function gf_commGridAddRow(gridDiv, cell) {
+function gf_gridAddRow(gridDiv, cell) {
 	let grid = new Function('return ' + gridDiv)();
 	
 	grid.getEditorLock().commitCurrentEdit();
@@ -621,13 +631,13 @@ function gf_commGridAddRow(gridDiv, cell) {
 	let defaultInsertOption = grid.getOptions().defaultInsert;
 	let defaultInsert = {};
 	
-	let key = Object.keys(gf_commNvl(defaultInsertOption, {}));
+	let key = Object.keys(gf_nvl(defaultInsertOption, {}));
 	for(let i = 0; i < key.length; i++){
 		if(typeof defaultInsertOption[key[i]] === 'function'){
 			
 			let value = defaultInsertOption[key[i]][key[i]];
-			if( gf_commNvl(value, '') == ''){
-				toast(mlg.noMasterId.VALUE, 'info');	//저장할 마스터ID가 없습니다.
+			if( gf_nvl(value, '') == ''){
+				gf_toast(gf_mlg('저장할_마스터ID가_없습니다'), 'info');	//저장할 마스터ID가 없습니다.
 				return false;
 			}			
 			defaultInsert[key[i]] = value;
@@ -654,13 +664,13 @@ function gf_commGridAddRow(gridDiv, cell) {
 	}
 	grid.getSelectionModel().setSelectedRanges("");
 	grid.getData().setItems(grid.getData().getItems());	
-	commGridRefresh(gridDiv);
+	gf_gridRefresh(gridDiv);
 }
 
 //그리드 여러행추가
-function gf_commGridAddMultiRow(gridDiv, cell) {
+function gf_gridAddMultiRow(gridDiv, cell) {
 
-	let rowNum = Number(prompt(mlg.gridMultiRowConfirm.VALUE, 2));//'몇행 추가하시겠습니까?'
+	let rowNum = Number(prompt(gf_mlg('몇행_추가하시겠습니까?'), 2));//'몇행 추가하시겠습니까?'
 	
 	let grid = new Function('return ' + gridDiv)();
 	grid.getEditorLock().commitCurrentEdit();
@@ -668,13 +678,13 @@ function gf_commGridAddMultiRow(gridDiv, cell) {
 	let defaultInsertOption = grid.getOptions().defaultInsert;
 	let defaultInsert = {};
 	
-	let key = Object.keys(gf_commNvl(defaultInsertOption, {}));
+	let key = Object.keys(gf_nvl(defaultInsertOption, {}));
 	for(let i = 0; i < key.length; i++){
 		if(typeof defaultInsertOption[key[i]] === 'function'){
 			
 			let value = defaultInsertOption[key[i]][key[i]];
-			if( gf_commNvl(value, '') == ''){
-				toast(mlg.noMasterId.VALUE, 'info');	//저장할 마스터ID가 없습니다.
+			if( gf_nvl(value, '') == ''){
+				gf_toast(gf_mlg('저장할_마스터ID가_업습니다'), 'info');	//저장할 마스터ID가 없습니다.
 				return false;
 			}			
 			defaultInsert[key[i]] = value;
@@ -703,11 +713,11 @@ function gf_commGridAddMultiRow(gridDiv, cell) {
 	}
 	grid.getSelectionModel().setSelectedRanges("");
 	grid.getData().setItems(grid.getData().getItems());
-	commGridRefresh(gridDiv);
+	gf_gridRefresh(gridDiv);
 }
 
 //그리드 행삭제
-function gf_commGridRemoveRow(gridDiv, cell) {
+function gf_gridRemoveRow(gridDiv, cell) {
 	
 	let grid = new Function('return ' + gridDiv)();
 	grid.getEditorLock().cancelCurrentEdit();
@@ -717,11 +727,11 @@ function gf_commGridRemoveRow(gridDiv, cell) {
 	} else {
 		
 		//트리
-		if(gf_commNvl(grid.treeYn, false)){
+		if(gf_nvl(grid.treeYn, false)){
 			var gridData = grid.getData().getItems();
 			var parentCnt = 0;
 			for(var i = cell.row+1; i < gridData.length; i++){
-				if(gf_commNvl(gridData[i].parent, '') != ''){
+				if(gf_nvl(gridData[i].parent, '') != ''){
 					if(parentCnt > 0){
 						gridData[i].parent = (gridData[i].parent-1);	
 					}
@@ -737,11 +747,11 @@ function gf_commGridRemoveRow(gridDiv, cell) {
 	
 	grid.getSelectionModel().setSelectedRanges("");
 	grid.getData().setItems(grid.getData().getItems());
-	commGridRefresh(gridDiv);
+	gf_gridRefresh(gridDiv);
 }
 
 //그리드 선택된행삭제
-function gf_commGridRemoveMultiRow(gridDiv) {
+function gf_gridRemoveMultiRow(gridDiv) {
 
 	let grid = new Function('return ' + gridDiv)();
 	grid.getEditorLock().cancelCurrentEdit();
@@ -752,19 +762,19 @@ function gf_commGridRemoveMultiRow(gridDiv) {
 	selectedRows = (selectedRows.length > 0 ? selectedRows.filter(x => x < grid.getDataLength()) : selectedRows);
 	
 	if (selectedRows.length == 0) {
-		toast(mlg.noRowSelected.VALUE, 'info');	//선택된 행이 없습니다.
+		gf_toast(gf_mlg('선택된_행이_없습니다'), 'info');	//선택된 행이 없습니다.
 		return false;
 	}
 
 	//선택된 행을 삭제하겠습니까?
-	if (confirm(mlg.gridMultiRowRemoveConfirm.VALUE)) {
+	if (confirm(gf_mlg('선택된_행을_삭제하겠습니까?'))) {
 
 		//트리
-		if(gf_commNvl(grid.treeYn, false)){
+		if(gf_nvl(grid.treeYn, false)){
 			var gridData = grid.getData().getItems();
 			var parentCnt = 0;
 			for(var i = Math.max.apply(null,selectedRows)+1; i < gridData.length; i++){
-				if(gf_commNvl(gridData[i].parent, '') != ''){
+				if(gf_nvl(gridData[i].parent, '') != ''){
 					if(parentCnt > 0){
 						gridData[i].parent = (gridData[i].parent-selectedRows.length);
 					}
@@ -787,7 +797,7 @@ function gf_commGridRemoveMultiRow(gridDiv) {
 	}
 
 	grid.getData().setItems(grid.getData().getItems());
-	commGridRefresh(gridDiv);
+	gf_gridRefresh(gridDiv);
 
 }
 

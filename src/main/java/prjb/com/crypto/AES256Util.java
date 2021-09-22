@@ -33,7 +33,7 @@ final class AES256Util {
 	 * @throws UnsupportedEncodingException 
 	 * 
 	 */
-	@Value("#{config['encrytKey']}")
+	@Value("#{commonConfig['encrytKey']}")
 	private void setKey(String p_key) throws UnsupportedEncodingException{
     	key = p_key;
     	iv = key.substring(0, 16);
@@ -44,7 +44,7 @@ final class AES256Util {
 		keySpec = new SecretKeySpec(keyBytes, ALGORITHM_AES);
     }
 
-	@Value("#{config['encrytList']}")
+	@Value("#{commonConfig['encrytList']}")
 	private void setList(String encrytList){
 		if(encrytList == null) {
 			encryptArray = new ArrayList<String>();

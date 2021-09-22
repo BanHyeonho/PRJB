@@ -6,45 +6,45 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${pb:msg(pageContext.request, "gridManage")}</title>
+<title>${pb:msg(pageContext.request, "그리드 관리")}</title>
 </head>
 <%@ include file="../../gridData.jsp"%>
 <script type="text/javascript">
 
 	var gridPk = function(){
-		this.MENU_CD;
+		this.MENU_CODE;
 		this.MENU_NAME;
-		this.GRID_MASTER_ID;
-		this.GRID_DETAIL_ID;
+		this.COMM_GRID_MASTER_ID;
+		this.COMM_GRID_DETAIL_ID;
 	};
 	
 	$(document).ready(function() {
 		
-		menuGrid = gf_commGridInit('menuGrid');
+		menuGrid = gf_gridInit('menuGrid');
 		
-		masterGrid = gf_commGridInit('masterGrid', {
-	    	'defaultInsert' : {'MENU_CD' : gridPk
+		masterGrid = gf_gridInit('masterGrid', {
+	    	'defaultInsert' : {'MENU_CODE' : gridPk
 	    						,'MENU_NAME' : gridPk
 	    						,'FILTER_YN' : '1'
 	    						, 'SORT_YN' : '1'
 	    						, 'TREE_YN' : '0'}
 	    });
-		contextGrid = gf_commGridInit('contextGrid');
+		contextGrid = gf_gridInit('contextGrid');
 		
-		detailGrid = gf_commGridInit('detailGrid',{
+		detailGrid = gf_gridInit('detailGrid',{
 	    	'defaultInsert' : {'USE_YN' : '1'
 	    					,'REQUIRE_YN' : '0'
     						,'FIXED_YN' : '0'
  							,'WIDTH' : '100'
    							,'TEXT_ALIGN' : 'CENTER'
-	    					,'GRID_MASTER_ID' : gridPk
+	    					,'COMM_GRID_MASTER_ID' : gridPk
 	    					}
 	    });
 		
-		settingGrid = gf_commGridInit('settingGrid',{
-	    	'defaultInsert' : {'USE_YN' : '1'
-	    					 ,'GRID_DETAIL_ID' : gridPk}
-	    });
+// 		settingGrid = gf_gridInit('settingGrid',{
+// 	    	'defaultInsert' : {'USE_YN' : '1'
+// 	    					 ,'COMM_GRID_DETAIL_ID' : gridPk}
+// 	    });
 		
 		
 		menuGrid.onSelectedRowsChanged.subscribe(function (e, args) {
@@ -53,11 +53,11 @@
 				gridEventIgnore = false;
 				return false;
 			}
-			else if(commGridSaveData(masterGrid).length > 0
-			|| commGridSaveData(detailGrid).length > 0 
-			|| commGridSaveData(settingGrid).length > 0
+			else if(gf_gridSaveData(masterGrid).length > 0
+			|| gf_gridSaveData(detailGrid).length > 0 
+			|| gf_gridSaveData(settingGrid).length > 0
 			){
-				if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+				if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
 					gridEventIgnore = true;	
 					menuGrid.setSelectedRows(args.previousSelectedRows);
 					return false;
@@ -71,10 +71,10 @@
 			var grid = args.grid;
 			var preRow = args.previousSelectedRows[0];
 			var selectedRowData = grid.getData().getItem(row);
-			var pk = selectedRowData.MENU_CD;
+			var pk = selectedRowData.MENU_CODE;
 			
 			gridPk.prototype.constructor.MENU_NAME = selectedRowData.MENU_NAME;
-			gridPk.prototype.constructor.MENU_CD = pk;
+			gridPk.prototype.constructor.MENU_CODE = pk;
 			
 			//마스터 조회
 			f_masterSearch(pk, preRow);
@@ -86,11 +86,11 @@
 				gridEventIgnore = false;
 				return false;
 			}
-			else if(commGridSaveData(detailGrid).length > 0
-				 || commGridSaveData(contextGrid).length > 0
-				 || commGridSaveData(settingGrid).length > 0
+			else if(gf_gridSaveData(detailGrid).length > 0
+				 || gf_gridSaveData(contextGrid).length > 0
+				 || gf_gridSaveData(settingGrid).length > 0
 					){
-				if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+				if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
 					gridEventIgnore = true;	
 					masterGrid.setSelectedRows(args.previousSelectedRows);
 					return false;
@@ -104,8 +104,8 @@
 			var grid = args.grid;
 			var preRow = args.previousSelectedRows[0];
 			var selectedRowData = grid.getData().getItem(row);
-			var pk = selectedRowData.GRID_MASTER_ID;
-			gridPk.prototype.constructor.GRID_MASTER_ID = pk;
+			var pk = selectedRowData.COMM_GRID_MASTER_ID;
+			gridPk.prototype.constructor.COMM_GRID_MASTER_ID = pk;
 			
 			//상세조회
 			f_contextSearch(pk, preRow);
@@ -120,9 +120,9 @@
 				gridEventIgnore = false;
 				return false;
 			}
-			else if(commGridSaveData(settingGrid).length > 0
+			else if(gf_gridSaveData(settingGrid).length > 0
 					){
-				if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+				if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
 					gridEventIgnore = true;	
 					detailGrid.setSelectedRows(args.previousSelectedRows);
 					return false;
@@ -136,11 +136,11 @@
 			var grid = args.grid;
 			var preRow = args.previousSelectedRows[0];
 			var selectedRowData = grid.getData().getItem(row);
-			var pk = selectedRowData.GRID_DETAIL_ID;
-			gridPk.prototype.constructor.GRID_DETAIL_ID = pk;
+			var pk = selectedRowData.COMM_GRID_DETAIL_ID;
+			gridPk.prototype.constructor.COMM_GRID_DETAIL_ID = pk;
 			
 			//상세조회
-			f_settingSearch(pk, preRow);
+// 			f_settingSearch(pk, preRow);
 			
 	    });
 	    
@@ -155,24 +155,24 @@
   		
   		var fData = new FormData();
 		fData.set('QUERY_ID', 'com.S_GRID_MANAGE_MENU');
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
-  					if((commGridSaveData(masterGrid).length > 0
-  					|| commGridSaveData(detailGrid).length > 0
-  					|| commGridSaveData(contextGrid).length > 0
-  					|| commGridSaveData(settingGrid).length > 0
+  					if((gf_gridSaveData(masterGrid).length > 0
+  					|| gf_gridSaveData(detailGrid).length > 0
+  					|| gf_gridSaveData(contextGrid).length > 0
+  					|| gf_gridSaveData(settingGrid).length > 0
   					)
   					){
-  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+  						if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
   							return false;
   						}
   					}
   					
-  					commGridClear(masterGrid);
-  					commGridClear(detailGrid);
-  					commGridClear(contextGrid);
-  					commGridClear(settingGrid);
+  					gf_gridClear(masterGrid);
+  					gf_gridClear(detailGrid);
+  					gf_gridClear(contextGrid);
+  					gf_gridClear(settingGrid);
   					
   				}
   				, function(data){
@@ -202,16 +202,16 @@
 	var f_masterSearch = function(pk, preRow){
 		
 		var fData = new FormData();
-		fData.set('QUERY_ID', 'com.S_GRID_MASTER');
-		fData.set('MENU_CD', pk);
+		fData.set('QUERY_ID', 'com.S_COMM_GRID_MASTER');
+		fData.set('MENU_CODE', pk);
 		
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
-  					commGridClear(masterGrid);
-  					commGridClear(contextGrid);
-  					commGridClear(detailGrid);
-  					commGridClear(settingGrid);
+  					gf_gridClear(masterGrid);
+  					gf_gridClear(contextGrid);
+  					gf_gridClear(detailGrid);
+  					gf_gridClear(settingGrid);
   					
   				}
   				, function(data){
@@ -241,18 +241,18 @@
 	
 	var f_contextSearch = function(pk, preRow){
 	  	
-  		if(commNvl(pk, '') == ''){
-  			commGridClear(contextGrid);
+  		if(gf_nvl(pk, '') == ''){
+  			gf_gridClear(contextGrid);
   			return false;
   		}
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'com.S_GRID_CONTEXT');
-		fData.set('GRID_MASTER_ID', pk);
+		fData.set('QUERY_ID', 'com.S_COMM_GRID_CONTEXT');
+		fData.set('COMM_GRID_MASTER_ID', pk);
 		
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   			
-  					commGridClear(contextGrid);
+  					gf_gridClear(contextGrid);
   					
   				}
   				, function(data){
@@ -282,19 +282,19 @@
 	
   	var f_detailSearch = function(pk, preRow){
   	
-  		if(commNvl(pk, '') == ''){
-  			commGridClear(detailGrid);
+  		if(gf_nvl(pk, '') == ''){
+  			gf_gridClear(detailGrid);
   			return false;
   		}
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'com.S_GRID_DETAIL');
-		fData.set('GRID_MASTER_ID', pk);
+		fData.set('QUERY_ID', 'com.S_COMM_GRID_DETAIL');
+		fData.set('COMM_GRID_MASTER_ID', pk);
 		
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   			
-  					commGridClear(detailGrid);
-  					commGridClear(settingGrid);
+  					gf_gridClear(detailGrid);
+  					gf_gridClear(settingGrid);
   					
   				}
   				, function(data){
@@ -324,18 +324,18 @@
   	
   	var f_settingSearch = function(pk, preRow){
   		
-  		if(commNvl(pk, '') == ''){
-  			commGridClear(settingGrid);
+  		if(gf_nvl(pk, '') == ''){
+  			gf_gridClear(settingGrid);
   			return false;
   		}
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'com.S_GRID_COMBO_POPUP');
-		fData.set('GRID_DETAIL_ID', pk);
+		fData.set('QUERY_ID', 'com.S_COMM_GRID_COMBO_POPUP');
+		fData.set('COMM_GRID_DETAIL_ID', pk);
 		
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   			
-  					commGridClear(settingGrid);
+  					gf_gridClear(settingGrid);
   					
   				}
   				, function(data){
@@ -364,21 +364,21 @@
   	
   	var f_save = function(){
   		
-  		var masterData = commGridSaveData(masterGrid);
-  		var contextData = commGridSaveData(contextGrid);
-  		var detailData = commGridSaveData(detailGrid);
-  		var settingData = commGridSaveData(settingGrid);
+  		var masterData = gf_gridSaveData(masterGrid);
+  		var contextData = gf_gridSaveData(contextGrid);
+  		var detailData = gf_gridSaveData(detailGrid);
+  		var settingData = gf_gridSaveData(settingGrid);
   		
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(masterData));
 		fData.set('contextGrid', JSON.stringify(contextData));
 		fData.set('detailGrid', JSON.stringify(detailData));
 		fData.set('settingGrid', JSON.stringify(settingData));
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
   					if(masterData.length == 0 && contextGrid.length == 0 && detailData.length == 0 && settingData.length == 0){
-  						toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
+  						gf_toast('${pb:msg(pageContext.request, "저장할_데이터가_없습니다")}', 'info');
   						return false;
   					}
   					else{
@@ -424,12 +424,12 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
-  						commGridClear(menuGrid);
-  						commGridClear(masterGrid);
-  						commGridClear(contextGrid);
-  						commGridClear(detailGrid);
-  						commGridClear(settingGrid);
+  						gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
+  						gf_gridClear(menuGrid);
+  						gf_gridClear(masterGrid);
+  						gf_gridClear(contextGrid);
+  						gf_gridClear(detailGrid);
+  						gf_gridClear(settingGrid);
   	  					f_search();	
 					}
 					
@@ -444,8 +444,8 @@
 <body>
 	<div id='content' class="pd-15">
 		<div class='btn-area'>
-			<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "save")}</button>
-			<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "search")}</button>
+			<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "저장")}</button>
+			<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "조회")}</button>
 		</div>
 		<div class="grid-area">
 			<div id='menuGridContainer' class='gridContainer'

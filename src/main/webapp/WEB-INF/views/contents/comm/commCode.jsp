@@ -63,7 +63,7 @@
   		
   		var fData = new FormData();
 		fData.set('QUERY_ID', 'com.S_CODE_MASTER');
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
   					if((commGridSaveData(masterGrid).length > 0
@@ -107,7 +107,7 @@
 		fData.set('QUERY_ID', 'com.S_CODE_DETAIL');
 		fData.set('CODE_MASTER_ID', pk);
 		
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
   					if(commGridSaveData(detailGrid).length > 0){
@@ -153,11 +153,11 @@
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(masterData));
 		fData.set('detailGrid', JSON.stringify(detailData));
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
   					if(masterData.length == 0 && detailData.length == 0){
-  						toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
+  						gf_toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
   						return false;
   					}
   					else{
@@ -185,7 +185,7 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
+  						gf_toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
   						commGridClear(masterGrid);
   						commGridClear(detailGrid);
   	  					f_search('saveAfter');	

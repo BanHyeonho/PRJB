@@ -21,13 +21,13 @@
   	
 	var f_msgRefresh = function(e){
   		
-  		commAjax( {}, null
+  		gf_ajax( {}, null
   				, function(data){
   					if(data.result == 'success'){
-  						toast('${pb:msg(pageContext.request, "refreshSuccess")}', 'success');	
+  						gf_toast('${pb:msg(pageContext.request, "refreshSuccess")}', 'success');	
   					}
   					else{
-  						toast(data, 'danger');
+  						gf_toast(data, 'danger');
   					}
   					
 				},null,null,'/setMlg',true,'get',false);
@@ -38,7 +38,7 @@
   		
   		var fData = new FormData();
 		fData.set('QUERY_ID', 'com.S_COMM_MLG');
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
   					if(commGridSaveData(masterGrid).length > 0){
@@ -65,11 +65,11 @@
   		
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(saveData));
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
   					if(saveData.length == 0){
-  						toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
+  						gf_toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
   						return false;
   					}
   					else{
@@ -83,7 +83,7 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
+  						gf_toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
   						commGridClear(masterGrid);
   	  					f_search();	
 					}

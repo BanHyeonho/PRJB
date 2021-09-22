@@ -3,19 +3,10 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
-	
-	<!-- 생성자,수정자 SQL블럭 -->
-	<sql id="cidColumn">
-		, CID
-		, CDT
-		, CIP
-		, MID
-		, MDT
-		, MIP
-	</sql>
-	
+		
 	<!-- 그리드별 컨텍스트메뉴 -->
-	<select id="S_GRID_COMBO_POPUP" resultType="HashMap" parameterType="HashMap" >
+	<select id="S_COMM_GRID_COMBO_POPUP" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_GRID_COMBO_POPUP */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.GRID_COMBO_POPUP_ID
 			 , A.COMM_GRID_DETAIL_ID
@@ -31,21 +22,8 @@
 	</select>
 	
 	<!-- 그리드컨텍스트메뉴저장 -->
-	<sql id="P_COMM_GRID_CONTEXT">
-		MERGE INTO COMM_GRID_CONTEXT A
-    	USING DUAL
-           ON (A.COMM_GRID_MASTER_ID = ${COMM_GRID_MASTER_ID} AND A.FUNCTION_CODE = ${FUNCTION_CODE})
-    	 WHEN MATCHED THEN
-			UPDATE SET A.USE_YN = ${USE_YN}
-					 , A.DESCRIPTION = ${DESCRIPTION}
-					 , A.MID = ${MID}
-					 , A.MDT = SYSDATE
-    	 WHEN NOT MATCHED THEN
-        	INSERT (A.COMM_GRID_CONTEXT_ID, A.COMM_GRID_MASTER_ID, A.FUNCTION_CODE, A.USE_YN, A.DESCRIPTION, A.CID, A.CDT, A.MID, A.MDT)
-        	VALUES (COMM_GRID_CONTEXT_S.NEXTVAL, ${COMM_GRID_MASTER_ID}, ${FUNCTION_CODE}, ${USE_YN}, ${DESCRIPTION}, ${MID}, SYSDATE, ${MID}, SYSDATE)
-	</sql>
 	<insert id="I_COMM_GRID_CONTEXT" parameterType="HashMap" >
-		<include refid="P_COMM_GRID_CONTEXT">
+		<include refid="config.P_COMM_GRID_CONTEXT">
 			<property name="COMM_GRID_MASTER_ID" value="#{COMM_GRID_MASTER_ID}"/>
 			<property name="FUNCTION_CODE" value="#{FUNCTION_CODE}"/>
 			<property name="USE_YN" value="#{USE_YN}"/>
@@ -54,7 +32,7 @@
 		</include>
 	</insert>
 	<update id="U_COMM_GRID_CONTEXT" parameterType="HashMap" >
-		<include refid="P_COMM_GRID_CONTEXT">
+		<include refid="config.P_COMM_GRID_CONTEXT">
 			<property name="COMM_GRID_MASTER_ID" value="#{COMM_GRID_MASTER_ID}"/>
 			<property name="FUNCTION_CODE" value="#{FUNCTION_CODE}"/>
 			<property name="USE_YN" value="#{USE_YN}"/>
@@ -64,8 +42,9 @@
 	</update>
 	<!-- 그리드별 컨텍스트메뉴 -->
 	<select id="S_COMM_GRID_CONTEXT" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_GRID_CONTEXT */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
-			 , A.CODE AS FUNCTION_CODE
+			 , A.DETAIL_CODE AS FUNCTION_CODE
 			<choose>
 			 	<when test="LANG_CODE == 'KO'">
 			 	, C.MLG_KO AS FUNCTION_NAME
@@ -79,15 +58,19 @@
 		  	 , B.COMM_GRID_CONTEXT_ID
 		  	 , #{COMM_GRID_MASTER_ID} AS COMM_GRID_MASTER_ID
 		  FROM COMM_CODE_DETAIL A
-	 LEFT JOIN COMM_GRID_CONTEXT B ON A.CODE = B.FUNCTION_CODE AND B.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
+	 LEFT JOIN COMM_GRID_CONTEXT B ON A.DETAIL_CODE = B.FUNCTION_CODE AND B.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
 	 LEFT JOIN COMM_MLG	   C ON A.MLG_CODE = C.MLG_CODE AND C.CODE_YN = '1'
 		 WHERE A.COMM_CODE_MASTER_ID = 4
-		   AND A.USE_YN = '1'
+		 <![CDATA[
+		   AND TO_DATE(A.START_DATE) <= SYSDATE
+		   AND TO_DATE(NVL(A.END_DATE, TO_CHAR(SYSDATE, 'YYYYMMDD'))) <= SYSDATE
+		   ]]>
 		 ORDER BY A.SEQ
 	</select>
 	
 	<!-- 화면별 그리드 컨텍스트 셋팅데이터 -->
 	<select id="S_COMM_GRID_CONTEXT_DATA" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_GRID_CONTEXT_DATA */
 		SELECT C.GRID_NAME 
 			 , LISTAGG(A.FUNCTION_CODE, ',') WITHIN GROUP(ORDER BY B.SEQ) AS CONTEXT_MENU
 		  FROM COMM_GRID_CONTEXT A
@@ -103,6 +86,7 @@
 	
 	<!-- 화면별 그리드셋팅데이터 -->
 	<select id="S_GRID_DATA" resultType="HashMap" parameterType="HashMap" >
+		/* S_GRID_DATA */
 		SELECT C.GRID_NAME 
 			 , C.FILTER_YN 
 			 , C.SORT_YN
@@ -200,7 +184,7 @@
 			 , SUBSTR( SYS_CONNECT_BY_PATH(ROWNUM, '_')
 	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
 	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1	AS "parent"
-			 , A.COMM_MENU_ID 
+			 , A.COMM_MENU_ID
 			 , A.MENU_CODE
 			 <choose>
 			 	<when test="LANG_CODE == 'KO'">
@@ -458,7 +442,7 @@
 							, PWD 
 							, USER_NAME 
 							, USE_YN
-							<include refid="cidColumn"></include>
+							<include refid="config.cidColumn"></include>
 							)
 					  VALUES( #{COMM_USER_ID}
 							, #{LOGIN_ID}
@@ -484,7 +468,7 @@
 		INSERT INTO COMM_USER_SALT(COMM_USER_SALT_ID
 								 , COMM_USER_ID 
 								 , SALT
-								 <include refid="cidColumn"></include>
+								 <include refid="config.cidColumn"></include>
 								  )
 						   VALUES( #{COMM_USER_SALT_ID} 
 								 , #{COMM_USER_ID}

@@ -22,8 +22,8 @@
 	var regist = function(){
 		
 		var fData = new FormData($('#registForm')[0]);
-		fData.set('PWD', gf_commSecurePw( $('#registForm [name=PWD]').val() , '${publicKey}' ));
-		gf_commAjax(fData, function(){
+		fData.set('PWD', gf_securePw( $('#registForm [name=PWD]').val() , '${publicKey}' ));
+		gf_ajax(fData, function(){
 			
 			var rs = gf_chkRequire(["registForm"]);
 			

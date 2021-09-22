@@ -91,7 +91,7 @@
   		
   		var fData = new FormData();
 		fData.set('QUERY_ID', 'com.S_CODE_MASTER');
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
   					if(makeData().length > 0 && type != 'saveAfter'){
@@ -129,7 +129,7 @@
 		fData.set('QUERY_ID', 'com.S_CODE_DETAIL');
 		fData.set('CODE_MASTER_ID', pk);
 		
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
   					if(makeData().length > 0 && type != 'saveAfter'){
@@ -167,7 +167,7 @@
   		var gridData = new Function('return ' + grid + 'Data')();
   		$.each(masterGridData,function(index, item){
   			//INSERT, UPDATE
-  			if(commNvl(item['gState'], '') != ''){
+  			if(gf_nvl(item['gState'], '') != ''){
   				saveData.push(item);
   			}
   		});
@@ -186,11 +186,11 @@
   		
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(saveData));
-  		commAjax( fData
+  		gf_ajax( fData
   				, function(){
   					
   					if(saveData.length == 0){
-  						toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
+  						gf_toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
   						return false;
   					}
   					else{
@@ -204,7 +204,7 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
+  						gf_toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
   	  					f_search('saveAfter');	
 					}
 					
