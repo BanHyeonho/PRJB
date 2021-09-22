@@ -58,10 +58,10 @@
 	var commandYn = false; 
 	
 	$(document).ready(function() {
-		masterGrid = commGridInit('masterGrid', masterGridColumns, masterGridData, {
+		masterGrid = gf_gridInit('masterGrid', masterGridColumns, masterGridData, {
 	    	'defaultInsert' : {'USE_YN' : '1'}
 	    });
-		detailGrid = commGridInit('detailGrid', detailGridColumns, detailGridData, {
+		detailGrid = gf_gridInit('detailGrid', detailGridColumns, detailGridData, {
 	    	'defaultInsert' : {'USE_YN' : '1'}
 	    });
 		
@@ -95,7 +95,7 @@
   				, function(){
   					
   					if(makeData().length > 0 && type != 'saveAfter'){
-  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+  						if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
   							return false;
   						}
   					}
@@ -133,7 +133,7 @@
   				, function(){
   					
   					if(makeData().length > 0 && type != 'saveAfter'){
-  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+  						if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
   							commandYn = true;
   							masterGrid.setSelectedRows([preRow]);
   							return false;
@@ -181,7 +181,7 @@
   	
   	var f_save = function(){
   		
-//   		commGridSaveData(grid);
+//   		gf_gridSaveData(grid);
   		var saveData = makeData();
   		
   		var fData = new FormData();
@@ -190,7 +190,7 @@
   				, function(){
   					
   					if(saveData.length == 0){
-  						gf_toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
+  						gf_toast('${pb:msg(pageContext.request, "저장할_데이터가_없습니다")}', 'info');
   						return false;
   					}
   					else{
@@ -204,7 +204,7 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						gf_toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
+  						gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
   	  					f_search('saveAfter');	
 					}
 					

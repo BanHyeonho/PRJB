@@ -28,12 +28,12 @@
 		gf_ajax( fData
   				, function(){
   					
-  					if(gf_commGridSaveData(masterGrid).length > 0){
-  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+  					if(gf_gf_gridSaveData(masterGrid).length > 0){
+  						if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
   							return false;
   						}
   					}
-  					gf_commGridClear(masterGrid);
+  					gf_gf_gridClear(masterGrid);
   				}
   				, function(data){
   					
@@ -47,7 +47,7 @@
   	
   	var f_save = function(){
   		
-  		var saveData = gf_commGridSaveData(masterGrid);
+  		var saveData = gf_gf_gridSaveData(masterGrid);
   		
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(saveData));
@@ -55,7 +55,7 @@
   				, function(){
   					
   					if(saveData.length == 0){
-  						gf_toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
+  						gf_toast('${pb:msg(pageContext.request, "저장할_데이터가_없습니다")}', 'info');
   						return false;
   					}
   					else{
@@ -69,8 +69,8 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						gf_toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
-  						gf_commGridClear(masterGrid);
+  						gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
+  						gf_gf_gridClear(masterGrid);
   	  					f_search('saveAfter');
 					}
 				}

@@ -207,35 +207,35 @@ function gf_gridInit(gridDiv, option) {
 			let contextText;
 			switch (vContextMenu[i]) {
 				//행추가
-				case "add":
+				case "grid_add":
 					contextLi = $('<li>').attr('onclick', 'gf_gridAddRow("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('행추가'));
 					contextText = $('<div><span class="ui-icon ui-icon-plus"></span></div>');
 	
 					break;
 				//여러행추가
-				case "adds":
+				case "grid_adds":
 					contextLi = $('<li>').attr('onclick', 'gf_gridAddMultiRow("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('여러_행추가'));
 					contextText = $('<div><span class="ui-icon ui-icon-plusthick"></span></div>');
 	
 					break;
 				//행삭제
-				case "remove":
+				case "grid_remove":
 					contextLi = $('<li>').attr('onclick', 'gf_gridRemoveRow("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('행삭제'));
 					contextText = $('<div><span class="ui-icon ui-icon-minus"></span></div>');
 	
 					break;
 				//선택된행삭제
-				case "removes":
+				case "grid_removes":
 					contextLi = $('<li>').attr('onclick', 'gf_gridRemoveMultiRow("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('선택된_행삭제'));
 					contextText = $('<div><span class="ui-icon ui-icon-minusthick"></span></div>');
 	
 					break;
 				//그리드 새로고침
-				case "refresh":
+				case "grid_refresh":
 					contextLi = $('<li>').attr('onclick', 'gf_gridRefresh("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('그리드_새로고침'));
 					contextText = $('<div><span class="ui-icon ui-icon-arrowrefresh-1-e"></span></div>');
@@ -953,6 +953,77 @@ function PopulateSelect(select, dataSource, addBlank) {
 	});
 };
 
+  function CheckboxEditor(args) {
+    var $select;
+    var defaultValue;
+    var scope = this;
+    this.args = args;
+
+    this.init = function () {
+      $select = $("<INPUT type=checkbox class='editor-checkbox' hideFocus>");
+      $select.appendTo(args.container);
+      $select.focus();
+
+      // trigger onCompositeEditorChange event when input checkbox changes and it's a Composite Editor
+      if (args.compositeEditorOptions) {
+        $select.on("change", function () {
+          var activeCell = args.grid.getActiveCell();
+
+          // when valid, we'll also apply the new value to the dataContext item object
+          if (scope.validate().valid) {
+            scope.applyValue(scope.args.item, scope.serializeValue());
+          }
+          scope.applyValue(scope.args.compositeEditorOptions.formValues, scope.serializeValue());
+          args.grid.onCompositeEditorChange.notify({ row: activeCell.row, cell: activeCell.cell, item: scope.args.item, column: scope.args.column, formValues: scope.args.compositeEditorOptions.formValues });
+        });
+      }
+    };
+
+    this.destroy = function () {
+      $select.remove();
+    };
+
+    this.focus = function () {
+      $select.focus();
+    };
+
+    this.loadValue = function (item) {
+	
+      defaultValue = (item[args.column.field] == '1') ? true : false;
+      if (defaultValue) {
+        $select.prop('checked', true);
+      } else {
+        $select.prop('checked', false);
+      }
+    };
+
+    this.preClick = function () {
+      $select.prop('checked', !$select.prop('checked'));
+    };
+
+    this.serializeValue = function () {
+      return $select.prop('checked') ? '1' : '0';
+    };
+
+    this.applyValue = function (item, state) {
+	
+      item[args.column.field] = state;
+    };
+
+    this.isValueChanged = function () {
+      return (this.serializeValue() !== defaultValue);
+    };
+
+    this.validate = function () {
+      return {
+        valid: true,
+        msg: null
+      };
+    };
+
+    this.init();
+  }
+
 function gf_chkEditFunc(row, cell, grid, tag){
 	
 	var chk = $(tag).is(':checked');
@@ -1003,7 +1074,7 @@ function gf_slickGridFormatter(row, cell, value, columnDef, dataContext){
 		}
 		//체크박스
 		else if(columnDef.editor.name == 'CheckboxEditor'){
-			var tag = '<input type="checkbox" class="editor-checkbox" onchange="chkEditFunc('
+			var tag = '<input type="checkbox" class="editor-checkbox" onchange="gf_chkEditFunc('
 								+ row  + ','
 								+ cell + ','
 								+ columnDef.formatter.arguments[5].getContainerNode().id + ',this);" ' + (value == '1' ? "checked" :  "" ) + '>'

@@ -6,13 +6,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${pb:msg(pageContext.request, "msgRegist")}</title>
+<title>${pb:msg(pageContext.request, "다국어등록")}</title>
 </head>
 <%@ include file="../../gridData.jsp"%>
 <script>
 	
 	$(document).ready(function() {
-	    masterGrid = commGridInit('masterGrid');    
+	    masterGrid = gf_gridInit('masterGrid');    
 	    $('#searchBtn').on('click', f_search);
 	    $('#saveBtn').on('click', f_save);
 	    $('#refreshBtn').on('click', f_msgRefresh);	    
@@ -24,7 +24,7 @@
   		gf_ajax( {}, null
   				, function(data){
   					if(data.result == 'success'){
-  						gf_toast('${pb:msg(pageContext.request, "refreshSuccess")}', 'success');	
+  						gf_toast('${pb:msg(pageContext.request, "갱신_되었습니다")}', 'success');	
   					}
   					else{
   						gf_toast(data, 'danger');
@@ -41,12 +41,12 @@
   		gf_ajax( fData
   				, function(){
   					
-  					if(commGridSaveData(masterGrid).length > 0){
-  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+  					if(gf_gridSaveData(masterGrid).length > 0){
+  						if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
   							return false;
   						}
   					}
-  					commGridClear(masterGrid);
+  					gf_gridClear(masterGrid);
   				}
   				, function(data){
   					
@@ -61,7 +61,7 @@
   	
   	var f_save = function(){
   		
-  		var saveData = commGridSaveData(masterGrid);
+  		var saveData = gf_gridSaveData(masterGrid);
   		
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(saveData));
@@ -69,7 +69,7 @@
   				, function(){
   					
   					if(saveData.length == 0){
-  						gf_toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
+  						gf_toast('${pb:msg(pageContext.request, "저장할_데이터가_없습니다")}', 'info');
   						return false;
   					}
   					else{
@@ -83,8 +83,8 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						gf_toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
-  						commGridClear(masterGrid);
+  						gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
+  						gf_gridClear(masterGrid);
   	  					f_search();	
 					}
 					
@@ -95,9 +95,9 @@
   	}
 </script>
 <body>
-<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "save")}</button>
-<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "search")}</button>
-<button type="button" id='refreshBtn'>${pb:msg(pageContext.request, "mlgRefresh")}</button>
+<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "저장")}</button>
+<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "조회")}</button>
+<button type="button" id='refreshBtn'>${pb:msg(pageContext.request, "다국어갱신")}</button>
 	<div id='content' class="pd-15">
 		<div id='masterGridContainer' class='gridContainer'>
 			<div id="masterGrid" class="grid"></div>

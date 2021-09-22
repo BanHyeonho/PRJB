@@ -16,10 +16,10 @@
 	};
 	
 	$(document).ready(function() {
-		masterGrid = commGridInit('masterGrid', masterGridColumns, {
+		masterGrid = gf_gridInit('masterGrid', masterGridColumns, {
 	    	'defaultInsert' : {'USE_YN' : '1'}
 	    });
-		detailGrid = commGridInit('detailGrid', detailGridColumns, {
+		detailGrid = gf_gridInit('detailGrid', detailGridColumns, {
 	    	'defaultInsert' : {'USE_YN' : '1'
 	    					,'CODE_MASTER_ID' : gridPk
 	    					}
@@ -31,9 +31,9 @@
 				gridEventIgnore = false;
 				return false;
 			}
-			else if(commGridSaveData(detailGrid).length > 0
+			else if(gf_gridSaveData(detailGrid).length > 0
 					){
-				if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+				if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
 					gridEventIgnore = true;	
 					masterGrid.setSelectedRows(args.previousSelectedRows);
 					return false;
@@ -66,16 +66,16 @@
   		gf_ajax( fData
   				, function(){
   					
-  					if((commGridSaveData(masterGrid).length > 0
-  					|| commGridSaveData(detailGrid).length > 0 )
+  					if((gf_gridSaveData(masterGrid).length > 0
+  					|| gf_gridSaveData(detailGrid).length > 0 )
   					&& type != 'saveAfter'){
-  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+  						if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
   							return false;
   						}
   					}
 
-  					commGridClear(masterGrid);
-  					commGridClear(detailGrid);
+  					gf_gridClear(masterGrid);
+  					gf_gridClear(detailGrid);
   				}
   				, function(data){
   					
@@ -110,14 +110,14 @@
   		gf_ajax( fData
   				, function(){
   					
-  					if(commGridSaveData(detailGrid).length > 0){
-  						if(!confirm('${pb:msg(pageContext.request, "searchConfirm")}')){
+  					if(gf_gridSaveData(detailGrid).length > 0){
+  						if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
   							commandYn = true;
   							masterGrid.setSelectedRows([preRow]);
   							return false;
   						}
   					}
-  					commGridClear(detailGrid);
+  					gf_gridClear(detailGrid);
   					
   				}
   				, function(data){
@@ -148,8 +148,8 @@
   	
   	var f_save = function(){
   		
-  		var masterData = commGridSaveData(masterGrid);
-  		var detailData = commGridSaveData(detailGrid);
+  		var masterData = gf_gridSaveData(masterGrid);
+  		var detailData = gf_gridSaveData(detailGrid);
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(masterData));
 		fData.set('detailGrid', JSON.stringify(detailData));
@@ -157,7 +157,7 @@
   				, function(){
   					
   					if(masterData.length == 0 && detailData.length == 0){
-  						gf_toast('${pb:msg(pageContext.request, "noSaveData")}', 'info');
+  						gf_toast('${pb:msg(pageContext.request, "저장할_데이터가_없습니다")}', 'info');
   						return false;
   					}
   					else{
@@ -185,9 +185,9 @@
   				, function(data){
 					
   					if(data.result == 'success'){
-  						gf_toast('${pb:msg(pageContext.request, "saveSuccess")}', 'success');
-  						commGridClear(masterGrid);
-  						commGridClear(detailGrid);
+  						gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
+  						gf_gridClear(masterGrid);
+  						gf_gridClear(detailGrid);
   	  					f_search('saveAfter');	
 					}
 					
