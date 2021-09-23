@@ -3,7 +3,60 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
+	
+	<!-- 다국어일괄등록 -->
+	<insert id="P_MLG_BATCH_REGIST" parameterType="HashMap" >
+		/* P_MLG_BATCH_REGIST */
+		DECLARE
+		BEGIN
 		
+			FOR CS IN (
+						select A.${MLG_COLUMN} AS MLG_CODE
+						  from ${TABLE_NAME} A
+						 WHERE NOT EXISTS (
+						                    SELECT COMM_MLG_ID
+						                      FROM COMM_MLG Z
+						                     WHERE Z.MLG_CODE = A.${MLG_COLUMN}
+						                       AND Z.${COMPARE_COLUMN} = '1'
+						                  )
+						)
+			LOOP
+				
+				MERGE INTO COMM_MLG A
+					 USING DUAL B
+					    ON (A.MLG_CODE = CS.MLG_CODE)
+					  WHEN MATCHED THEN
+					  UPDATE SET ${COMPARE_COLUMN} = '1'
+					  		   , MID = #{MID}
+					  		   , MDT = SYSDATE
+					  		   , MIP = #{MIP}
+					  WHEN NOT MATCHED THEN
+					  INSERT(COMM_MLG_ID   
+							,MLG_CODE      
+							,MLG_KO     
+							,${COMPARE_COLUMN}     
+							,CID           
+							,CDT           
+							,CIP           
+							,MID           
+							,MDT           
+							,MIP)
+					  VALUES(COMM_MLG_S.NEXTVAL   
+							,CS.MLG_CODE      
+							,REPLACE(CS.MLG_CODE, '_', ' ')     
+							,'1'
+							,#{CID}           
+							,SYSDATE           
+							,#{CIP}           
+							,#{MID}           
+							,SYSDATE           
+							,#{MIP})
+							;
+								
+			END LOOP;
+		END;
+	</insert>
+	
 	<!-- 그리드별 컨텍스트메뉴 -->
 	<select id="S_COMM_GRID_COMBO_POPUP" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_GRID_COMBO_POPUP */
@@ -23,21 +76,25 @@
 	
 	<!-- 그리드컨텍스트메뉴저장 -->
 	<insert id="I_COMM_GRID_CONTEXT" parameterType="HashMap" >
+		/* I_COMM_GRID_CONTEXT */
 		<include refid="config.P_COMM_GRID_CONTEXT">
 			<property name="COMM_GRID_MASTER_ID" value="#{COMM_GRID_MASTER_ID}"/>
 			<property name="FUNCTION_CODE" value="#{FUNCTION_CODE}"/>
 			<property name="USE_YN" value="#{USE_YN}"/>
 			<property name="DESCRIPTION" value="#{DESCRIPTION}"/>
 			<property name="MID" value="#{MID}"/>
+			<property name="MIP" value="#{MIP}"/>
 		</include>
 	</insert>
 	<update id="U_COMM_GRID_CONTEXT" parameterType="HashMap" >
+		/* U_COMM_GRID_CONTEXT */
 		<include refid="config.P_COMM_GRID_CONTEXT">
 			<property name="COMM_GRID_MASTER_ID" value="#{COMM_GRID_MASTER_ID}"/>
 			<property name="FUNCTION_CODE" value="#{FUNCTION_CODE}"/>
 			<property name="USE_YN" value="#{USE_YN}"/>
 			<property name="DESCRIPTION" value="#{DESCRIPTION}"/>
 			<property name="MID" value="#{MID}"/>
+			<property name="MIP" value="#{MIP}"/>
 		</include>
 	</update>
 	<!-- 그리드별 컨텍스트메뉴 -->
@@ -232,16 +289,24 @@
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.COMM_CODE_DETAIL_ID 
 			 , A.COMM_CODE_MASTER_ID 
-			 , A.CODE 
-			 , A.MLG_CODE 
-			 , NVL(A.USE_YN, '0') AS USE_YN	 
+       		 , A.MASTER_CODE			 
+			 , A.DETAIL_CODE 
+			 , A.MLG_CODE
+			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS CODE_NAME
+			 , A.START_DATE
+			 , A.END_DATE
+			 , A.SEQ
 			 , A.DESCRIPTION 
-			 , A.ATTR1 
-			 , A.ATTR2 
-			 , A.ATTR3 
-			 , A.ATTR4 
-			 , A.ATTR5 
-			 , A.SEQ 
+			 , A.ATTRIBUTE1 
+			 , A.ATTRIBUTE2 
+			 , A.ATTRIBUTE3 
+			 , A.ATTRIBUTE4 
+			 , A.ATTRIBUTE5
+			 , A.ATTRIBUTE6
+			 , A.ATTRIBUTE7
+			 , A.ATTRIBUTE8
+			 , A.ATTRIBUTE9
+			 , A.ATTRIBUTE10
 		  FROM COMM_CODE_DETAIL A
 		 WHERE A.COMM_CODE_MASTER_ID = #{COMM_CODE_MASTER_ID}
 		 ORDER BY A.SEQ ASC
@@ -251,15 +316,23 @@
 	<select id="S_COMM_CODE_MASTER" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_CODE_MASTER */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
-			 , A.COMM_CODE_MASTER_ID 
-			 , A.MLG_CODE 
-			 , NVL(A.USE_YN, '0') AS USE_YN 
+			 , A.COMM_CODE_MASTER_ID
+			 , A.MASTER_CODE 
+			 , A.MLG_CODE
+			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS CODE_NAME
+			 , NVL(A.USE_YN, '0') AS USE_YN
+			 , NVL(A.SYSTEM_CODE_YN, '0') AS SYSTEM_CODE_YN
 			 , A.DESCRIPTION 
-			 , A.ATTR1 
-			 , A.ATTR2 
-			 , A.ATTR3 
-			 , A.ATTR4 
-			 , A.ATTR5
+			 , A.ATTRIBUTE1 
+			 , A.ATTRIBUTE2 
+			 , A.ATTRIBUTE3 
+			 , A.ATTRIBUTE4 
+			 , A.ATTRIBUTE5
+			 , A.ATTRIBUTE6
+			 , A.ATTRIBUTE7
+			 , A.ATTRIBUTE8
+			 , A.ATTRIBUTE9
+			 , A.ATTRIBUTE10
 		  FROM COMM_CODE_MASTER A
 		 ORDER BY A.COMM_CODE_MASTER_ID DESC
 	</select>

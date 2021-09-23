@@ -6,22 +6,24 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${pb:msg(pageContext.request, "commCode")}</title>
+<title>${pb:msg(pageContext.request, "공통코드관리")}</title>
 <%@ include file="../../gridData.jsp"%>
 </head>
 	<script type="text/javascript">
 	
 	var gridPk = function(){
-		this.CODE_MASTER_ID;
+		this.COMM_CODE_MASTER_ID;
+		this.MASTER_CODE;
 	};
 	
 	$(document).ready(function() {
-		masterGrid = gf_gridInit('masterGrid', masterGridColumns, {
+		masterGrid = gf_gridInit('masterGrid', {
 	    	'defaultInsert' : {'USE_YN' : '1'}
 	    });
-		detailGrid = gf_gridInit('detailGrid', detailGridColumns, {
+		detailGrid = gf_gridInit('detailGrid', {
 	    	'defaultInsert' : {'USE_YN' : '1'
-	    					,'CODE_MASTER_ID' : gridPk
+	    					,'COMM_CODE_MASTER_ID' : gridPk
+	    					,'MASTER_CODE' : gridPk
 	    					}
 	    });
 		
@@ -47,22 +49,65 @@
 			var grid = args.grid;
 			var preRow = args.previousSelectedRows[0];
 			var selectedRowData = grid.getData().getItem(row);
-			var pk = selectedRowData.CODE_MASTER_ID;
-			gridPk.prototype.constructor.CODE_MASTER_ID = pk;
-						
+			var pk = selectedRowData.COMM_CODE_MASTER_ID;
+			var pk2 = selectedRowData.MASTER_CODE;
+			
+			gridPk.prototype.constructor.COMM_CODE_MASTER_ID = pk;
+			gridPk.prototype.constructor.MASTER_CODE = pk2;
+			
 			//상세조회
 			f_detailSearch(pk, preRow);
 	    });
 		
 	    $('#searchBtn').on('click', f_search);
 	    $('#saveBtn').on('click', f_save);
+	    $('#masterMlgRegistBtn').on('click', f_mlg_regist);
+	    $('#detailMlgRegistBtn').on('click', f_mlg_regist2);
+	   
 	    f_search();
   	});
 
+	//다국어등록
+	var f_mlg_regist = function(){
+		if(confirm('${pb:msg(pageContext.request, "다국어를_등록하시겠습니까?")}')){
+			var fData = new FormData();
+			fData.set('QUERY_ID', 'com.P_MLG_BATCH_REGIST');
+			fData.set('TABLE_NAME', 'COMM_CODE_MASTER');
+			fData.set('MLG_COLUMN', 'MLG_CODE');
+			fData.set('COMPARE_COLUMN', 'CODE_YN');
+	  		gf_ajax( fData
+	  				, null
+	  				, function(data){
+	  					
+			  			if(data.result == 'success'){
+							gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
+						}
+						
+					});
+		}
+	}
+	var f_mlg_regist2 = function(){
+		if(confirm('${pb:msg(pageContext.request, "다국어를_등록하시겠습니까?")}')){
+			var fData = new FormData();
+			fData.set('QUERY_ID', 'com.P_MLG_BATCH_REGIST');
+			fData.set('TABLE_NAME', 'COMM_CODE_DETAIL');
+			fData.set('MLG_COLUMN', 'MLG_CODE');
+			fData.set('COMPARE_COLUMN', 'CODE_YN');
+	  		gf_ajax( fData
+	  				, null
+	  				, function(data){
+	  					
+			  			if(data.result == 'success'){
+							gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
+						}
+						
+					});
+		}
+	}
   	var f_search = function(type){
   		
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'com.S_CODE_MASTER');
+		fData.set('QUERY_ID', 'com.S_COMM_CODE_MASTER');
   		gf_ajax( fData
   				, function(){
   					
@@ -103,9 +148,14 @@
   	
   	var f_detailSearch = function(pk, preRow){
   	
+  		if(gf_nvl(pk, '') == ''){
+  			gf_gridClear(detailGrid);
+  			return false;
+  		}
+  		
   		var fData = new FormData();
-		fData.set('QUERY_ID', 'com.S_CODE_DETAIL');
-		fData.set('CODE_MASTER_ID', pk);
+		fData.set('QUERY_ID', 'com.S_COMM_CODE_DETAIL');
+		fData.set('COMM_CODE_MASTER_ID', pk);
 		
   		gf_ajax( fData
   				, function(){
@@ -150,6 +200,9 @@
   		
   		var masterData = gf_gridSaveData(masterGrid);
   		var detailData = gf_gridSaveData(detailGrid);
+  		$.each(detailData, function(idx, item){
+  			item['MASTER_DETAIL_CODE'] = item['MASTER_CODE'] + item['DETAIL_CODE']; 
+  		});
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(masterData));
 		fData.set('detailGrid', JSON.stringify(detailData));
@@ -165,7 +218,7 @@
   						//마스터그리드
   						if(masterData.length > 0){
   							masterData.unshift({
-  	  							 'TALBE_NAME' : 'CODE_MASTER'
+  	  							 'TALBE_NAME' : 'COMM_CODE_MASTER'
   	  							,'QUERY_ID' : 'com.COMM_QUERY'
   	  						});
   	  						fData.set('masterGrid', JSON.stringify(masterData));
@@ -174,7 +227,7 @@
   						//디테일그리드
   						if(detailData.length > 0){
   							detailData.unshift({
-  	  							 'TALBE_NAME' : 'CODE_DETAIL'
+  	  							 'TALBE_NAME' : 'COMM_CODE_DETAIL'
   	  							,'QUERY_ID' : 'com.COMM_QUERY'
   	  						});
   	  						fData.set('detailGrid', JSON.stringify(detailData));
@@ -200,8 +253,10 @@
   	
 	</script>
 <body>
-<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "save")}</button>
-<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "search")}</button>
+<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "저장")}</button>
+<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "조회")}</button>
+<button type="button" id='masterMlgRegistBtn'>${pb:msg(pageContext.request, "마스터_다국어_일괄등록")}</button>
+<button type="button" id='detailMlgRegistBtn'>${pb:msg(pageContext.request, "상세_다국어_일괄등록")}</button>
 <div id='content' class="pd-15">
 	<div id='masterGridContainer' class='gridContainer' style="height: 50%;">
 		<div id='masterGrid' class="grid">

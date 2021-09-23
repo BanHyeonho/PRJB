@@ -35,6 +35,7 @@
 	    	'defaultInsert' : {'USE_YN' : '1'
 	    					,'REQUIRE_YN' : '0'
     						,'FIXED_YN' : '0'
+    						,'HIDDEN_YN' : '0'
  							,'WIDTH' : '100'
    							,'TEXT_ALIGN' : 'CENTER'
 	    					,'COMM_GRID_MASTER_ID' : gridPk
@@ -146,10 +147,30 @@
 	    
 	    $('#searchBtn').on('click', f_search);
 	    $('#saveBtn').on('click', f_save);
+	    $('#mlgRegistBtn').on('click', f_mlg_regist);
+	    
 	    f_search();
   	});
 	
-	
+	//다국어등록
+	var f_mlg_regist = function(){
+		if(confirm('${pb:msg(pageContext.request, "다국어를_등록하시겠습니까?")}')){
+			var fData = new FormData();
+			fData.set('QUERY_ID', 'com.P_MLG_BATCH_REGIST');
+			fData.set('TABLE_NAME', 'COMM_GRID_DETAIL');
+			fData.set('MLG_COLUMN', 'MLG_CODE');
+			fData.set('COMPARE_COLUMN', 'GRID_YN');
+	  		gf_ajax( fData
+	  				, null
+	  				, function(data){
+	  					
+			  			if(data.result == 'success'){
+							gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
+						}
+						
+					});
+		}
+	}
 	
   	var f_search = function(){
   		
@@ -396,7 +417,7 @@
   						if(contextData.length > 0){
   							contextData.unshift({
   	  							 'TALBE_NAME' : 'COMM_GRID_CONTEXT'
-  	  							,'QUERY_ID' : 'com.GRID_CONTEXT'
+  	  							,'QUERY_ID' : 'com.COMM_GRID_CONTEXT'
   	  						});
   	  						fData.set('contextGrid', JSON.stringify(contextData));
   						}
@@ -446,6 +467,7 @@
 		<div class='btn-area'>
 			<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "저장")}</button>
 			<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "조회")}</button>
+			<button type="button" id='mlgRegistBtn'>${pb:msg(pageContext.request, "다국어_일괄등록")}</button>
 		</div>
 		<div class="grid-area">
 			<div id='menuGridContainer' class='gridContainer'

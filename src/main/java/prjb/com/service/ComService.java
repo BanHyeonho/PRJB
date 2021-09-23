@@ -384,6 +384,7 @@ public class ComService {
 					
 					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 					for (Map map : tableLayout) {
+						
 						map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
 					}
 					paramMap.put("TALBE_NAME", tableNm);
@@ -503,6 +504,8 @@ public class ComService {
 		else if( queryId.contains(".P_")) {
 			
 			paramMap.put("CID", cId);
+			paramMap.put("MID", cId);
+			paramMap.put("CIP", ip);
 			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 			comDao.selectOne(queryId, paramMap);
