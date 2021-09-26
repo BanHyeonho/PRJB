@@ -30,7 +30,7 @@
   						gf_toast(data, 'danger');
   					}
   					
-				},null,null,'/setMlg',true,'get',false);
+				},null,null,'/broad/setMlg',true,'get',false);
   		 
   	}
   	

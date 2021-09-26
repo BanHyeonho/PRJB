@@ -157,18 +157,5 @@ public class ComController {
 		return resultMap;
 	}
 	
-	/**
-	 * 다국어 갱신
-	 */
-	@RequestMapping(value = "/setMlg")
-	public @ResponseBody Map setMlg(HttpServletRequest request) throws Exception {
-		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		Map<String, Object> resultMap = new HashMap();
-		
-		comService.setMlg();
-		resultMap.put("result", "success");
-		
-		return resultMap;
-	}
 	
 }
