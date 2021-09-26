@@ -29,22 +29,33 @@ public class  BroadController{
 	ComService comService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(BroadController.class);
-	
+	private static final String[] tomcats = {"sub"};
+			
 	/**
 	 * 다국어 갱신
 	 */
 	@RequestMapping(value = "/setMlg")
 	public @ResponseBody Map setMlg(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		response.sendRedirect("/broad/sub/setMlg");
+		
+		for (String tomcat : tomcats) {
+			response.sendRedirect("/broad/" + tomcat + "/setMlg");	
+		}
 		return setMlgExec(request, response);
 	}
 	@RequestMapping(value = "/sub/setMlg")
-	public @ResponseBody Map setMlgExec(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public @ResponseBody Map setMlgExec(HttpServletRequest request, HttpServletResponse response){
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, Object> resultMap = new HashMap();
 		
-		comService.setMlg();
-		resultMap.put("result", "success");
+		try {
+			comService.setMlg();
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			resultMap.put("message", e.getMessage());
+			resultMap.put("result", "fail");
+		}
 		
 		return resultMap;
 	}
