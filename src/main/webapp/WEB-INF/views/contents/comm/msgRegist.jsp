@@ -23,11 +23,9 @@
   		
   		gf_ajax( {}, null
   				, function(data){
-  					if(data.result == 'success'){
+  					
+  					if(data.status == 'success'){
   						gf_toast('${pb:msg(pageContext.request, "갱신_되었습니다")}', 'success');	
-  					}
-  					else{
-  						gf_toast(data, 'danger');
   					}
   					
 				},null,null,'/broad/setMlg',true,'get',false);

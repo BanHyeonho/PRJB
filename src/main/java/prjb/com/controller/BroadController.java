@@ -1,6 +1,8 @@
 package prjb.com.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,10 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import prjb.com.service.ComService;
+import prjb.com.util.HttpUtil;
 
 /**
  * 로드밸런싱 되지않고, 모든톰캣에서 실행되어야 하는 url
@@ -29,35 +34,45 @@ public class  BroadController{
 	ComService comService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(BroadController.class);
-	private static final String[] tomcats = {"sub"};
+	private static final String[] tomcats = {"main", "sub"};
 			
 	/**
 	 * 다국어 갱신
 	 */
 	@RequestMapping(value = "/setMlg")
-	public @ResponseBody Map setMlg(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public @ResponseBody Map setMlg(HttpServletRequest request, HttpServletResponse response){
 		
-		for (String tomcat : tomcats) {
-			response.sendRedirect("/broad/" + tomcat + "/setMlg");	
-		}
-		return setMlgExec(request, response);
-	}
-	@RequestMapping(value = "/sub/setMlg")
-	public @ResponseBody Map setMlgExec(HttpServletRequest request, HttpServletResponse response){
-		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, Object> resultMap = new HashMap();
-		
-		try {
-			comService.setMlg();
-			resultMap.put("result", "success");
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			resultMap.put("message", e.getMessage());
-			resultMap.put("result", "fail");
+		List resultList = new ArrayList();
+		for (String tomcat : tomcats) {
+			try {
+				Map httpParam = new HashMap();
+				String url = request.getRequestURL().toString().replaceAll(request.getRequestURI(), "");
+				httpParam.put("url", url + "/broad/" + tomcat + "/setMlg");
+				httpParam.put("method", RequestMethod.GET);
+				Map dataParam = new HashMap();
+				dataParam.put("tomcat", tomcat);
+				httpParam.put("data", dataParam);
+				Map result = HttpUtil.call(httpParam);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
+		resultMap.put("status", "success");
 		return resultMap;
 	}
+	@RequestMapping(value = "/{tomcat}/setMlg")
+	public @ResponseBody Map setMlgExec(@PathVariable("tomcat") String tomcat, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		Map<String, Object> resultMap = new HashMap();
+		comService.setMlg();
+		resultMap.put("status", "success");
+		resultMap.put("url", request.getRequestURI());
+		return resultMap;
+	}
+	
+	
 	
 }
