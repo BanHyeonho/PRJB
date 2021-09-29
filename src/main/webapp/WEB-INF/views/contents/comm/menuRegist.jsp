@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${pb:msg(pageContext.request, "menuRegist")}</title>
+<title>${pb:msg(pageContext.request, "메뉴등록")}</title>
 </head>
 <%@ include file="../../gridData.jsp"%>
 <script>
@@ -18,9 +18,31 @@
 	    
 	    $('#searchBtn').on('click', f_search);
 	    $('#saveBtn').on('click', f_save);
+	    $('#mlgRegistBtn').on('click', f_mlg_regist);
+	    
 	    f_search();
   	});
   	
+	//다국어등록
+	var f_mlg_regist = function(){
+		if(confirm('${pb:msg(pageContext.request, "다국어를_등록하시겠습니까?")}')){
+			var fData = new FormData();
+			fData.set('QUERY_ID', 'com.P_MLG_BATCH_REGIST');
+			fData.set('TABLE_NAME', 'COMM_MENU');
+			fData.set('MLG_COLUMN', 'MLG_CODE');
+			fData.set('COMPARE_COLUMN', 'MENU_YN');
+	  		gf_ajax( fData
+	  				, null
+	  				, function(data){
+	  					
+			  			if(data.result == 'success'){
+							gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
+						}
+						
+					});
+		}
+	}
+	
   	var f_search = function(){
   		
   		var fData = new FormData();
@@ -28,12 +50,12 @@
 		gf_ajax( fData
   				, function(){
   					
-  					if(gf_gf_gridSaveData(masterGrid).length > 0){
+  					if(gf_gridSaveData(masterGrid).length > 0){
   						if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
   							return false;
   						}
   					}
-  					gf_gf_gridClear(masterGrid);
+  					gf_gridClear(masterGrid);
   				}
   				, function(data){
   					
@@ -47,7 +69,7 @@
   	
   	var f_save = function(){
   		
-  		var saveData = gf_gf_gridSaveData(masterGrid);
+  		var saveData = gf_gridSaveData(masterGrid);
   		
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(saveData));
@@ -70,7 +92,7 @@
 					
   					if(data.result == 'success'){
   						gf_toast('${pb:msg(pageContext.request, "저장_되었습니다")}', 'success');
-  						gf_gf_gridClear(masterGrid);
+  						gf_gridClear(masterGrid);
   	  					f_search('saveAfter');
 					}
 				}
@@ -80,8 +102,9 @@
   	}
 </script>
 <body>
-<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "save")}</button>
-<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "search")}</button>
+<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "저장")}</button>
+<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "조회")}</button>
+<button type="button" id='mlgRegistBtn'>${pb:msg(pageContext.request, "다국어_일괄등록")}</button>
 <div id='masterGridContainer' class='gridContainer' style="height: 100%;">
 	<div id="masterGrid" class="grid"></div>
 </div>

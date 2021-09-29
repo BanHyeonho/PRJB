@@ -24,19 +24,19 @@
 		 </choose>
 		  FROM COMM_MLG A
 		 WHERE A.COMM_MLG_ID = A.COMM_MLG_ID
-		 <if test="@com.util.CommUtil@nvl(MSG_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(MSG_YN, '') != ''">
 		 	AND A.MSG_YN = #{MSG_YN}
 		 </if>
-		 <if test="@com.util.CommUtil@nvl(MENU_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(MENU_YN, '') != ''">
 		 	AND A.MENU_YN = #{MENU_YN}
 		 </if>
-		 <if test="@com.util.CommUtil@nvl(CODE_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(CODE_YN, '') != ''">
 		 	AND A.CODE_YN = #{CODE_YN}
 		 </if>
-		 <if test="@com.util.CommUtil@nvl(GRID_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(GRID_YN, '') != ''">
 		 	AND A.GRID_YN = #{GRID_YN}
 		 </if>
-		 <if test="@com.util.CommUtil@nvl(FUNCTION_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(FUNCTION_YN, '') != ''">
 		 	AND A.FUNCTION_YN = #{FUNCTION_YN}
 		 </if>
 		 <choose>
@@ -50,33 +50,30 @@
 		 
 	</select>
 	
-	<select id="S_CODE_DETAIL" resultType="HashMap" parameterType="HashMap" >
-		SELECT A.CODE_DETAIL_ID
-			 , A.CODE_MASTER_ID
-			 , A.CODE AS CODE_VALUE
-			 , A.CODE
-			 , A.MLG_CODE
-			 , A.USE_YN
-			 , A.DESCRIPTION
-			 , A.ATTR1
-			 , A.ATTR2
-			 , A.ATTR3
-			 , A.ATTR4
-			 , A.ATTR5
+	<select id="S_SYS_CODE" resultType="HashMap" parameterType="HashMap" >
+		SELECT A.COMM_CODE_DETAIL_ID
+			 , A.COMM_CODE_MASTER_ID
+			 , A.DETAIL_CODE AS CODE_VALUE
+			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS CODE_NAME
+			 , A.ATTRIBUTE1
+			 , A.ATTRIBUTE2
+			 , A.ATTRIBUTE3
+			 , A.ATTRIBUTE4
+			 , A.ATTRIBUTE5
+			 , A.ATTRIBUTE6
+			 , A.ATTRIBUTE7
+			 , A.ATTRIBUTE8
+			 , A.ATTRIBUTE9
+			 , A.ATTRIBUTE10
 			 , A.SEQ
-		 <choose>
-		 	<when test="LANG_CODE == 'KO'">
-		 	, B.MLG_KO AS CODE_NAME
-		 	</when>
-		 	<otherwise>
-		 	, B.MLG_EN AS CODE_NAME
-		 	</otherwise>
-		 </choose>
-		  FROM CODE_DETAIL A
-     LEFT JOIN COMM_MLG B ON A.MLG_CODE = B.MLG_CODE 
-     					 AND B.CODE_YN = '1'
-		 WHERE A.CODE_MASTER_ID = #{CODE_MASTER_ID}
-		   AND A.USE_YN = #{USE_YN}
+		  FROM COMM_CODE_DETAIL A
+		  JOIN COMM_CODE_MASTER B ON A.COMM_CODE_MASTER_ID = B.COMM_CODE_MASTER_ID
+		 WHERE B.USE_YN = '1'
+		   AND B.SYSTEM_CODE_YN = '1'
+		   AND B.MASTER_CODE = #{MASTER_CODE}
+		   <![CDATA[
+		   AND (TO_DATE(A.START_DATE) <= SYSDATE AND NVL(TO_DATE(A.END_DATE), SYSDATE) <= SYSDATE)
+		   ]]>
 		 ORDER BY A.SEQ ASC
 	</select>
 	

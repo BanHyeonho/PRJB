@@ -131,17 +131,21 @@ public class ComService {
 			gridData.add(detailGridList);
 			
 			for (Map<String, String> map2 : detailGridList) {
-				if("COMBO".equals(map2.get("FIELD_TYPE")) && !"".equals(map2.get("QUERY_ID"))) {
-					map2.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
-					map2.put("USE_YN", "1");
-					List<Map> comboPopupParamList = comDao.selectList("com.S_GRID_COMBO_POPUP", map2);
-					Map<String, String> paramMap = new HashMap();
-					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
-					for (Map<String, String> map3 : comboPopupParamList) {
-						paramMap.put(map3.get("PARAM_NAME"), map3.get("PARAM_VALUE"));
-					}
-					List<Map> comboPopupResult = comDao.selectList(map2.get("QUERY_ID"), paramMap);
-					mv.addObject( m.get("GRID_NAME") + "." + map2.get("FIELD") + "_SOURCE", comboPopupResult);
+				if("COMBO".equals(map2.get("FIELD_TYPE")) ) {
+					
+//					if( !"null".equals(String.valueOf(map2.get("QUERY_ID"))) ) {
+						map2.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+						map2.put("USE_YN", "1");
+						List<Map> comboPopupParamList = comDao.selectList("com.S_COMM_GRID_COMBO_POPUP", map2);
+						Map<String, String> paramMap = new HashMap();
+						paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+						for (Map<String, String> map3 : comboPopupParamList) {
+							paramMap.put(map3.get("PARAM_NAME"), map3.get("PARAM_VALUE"));
+						}
+						List<Map> comboPopupResult = comDao.selectList(map2.get("QUERY_ID"), paramMap);
+						mv.addObject( m.get("GRID_NAME") + "." + map2.get("FIELD") + "_SOURCE", comboPopupResult);
+//					}
+					
 				}
 			}
 			

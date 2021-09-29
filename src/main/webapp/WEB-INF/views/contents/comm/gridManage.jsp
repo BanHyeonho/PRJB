@@ -42,10 +42,10 @@
 	    					}
 	    });
 		
-// 		settingGrid = gf_gridInit('settingGrid',{
-// 	    	'defaultInsert' : {'USE_YN' : '1'
-// 	    					 ,'COMM_GRID_DETAIL_ID' : gridPk}
-// 	    });
+		comboPopupGrid = gf_gridInit('comboPopupGrid',{
+	    	'defaultInsert' : {'USE_YN' : '1'
+	    					 ,'COMM_GRID_DETAIL_ID' : gridPk}
+	    });
 		
 		
 		menuGrid.onSelectedRowsChanged.subscribe(function (e, args) {
@@ -56,7 +56,7 @@
 			}
 			else if(gf_gridSaveData(masterGrid).length > 0
 			|| gf_gridSaveData(detailGrid).length > 0 
-			|| gf_gridSaveData(settingGrid).length > 0
+			|| gf_gridSaveData(comboPopupGrid).length > 0
 			){
 				if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
 					gridEventIgnore = true;	
@@ -89,7 +89,7 @@
 			}
 			else if(gf_gridSaveData(detailGrid).length > 0
 				 || gf_gridSaveData(contextGrid).length > 0
-				 || gf_gridSaveData(settingGrid).length > 0
+				 || gf_gridSaveData(comboPopupGrid).length > 0
 					){
 				if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
 					gridEventIgnore = true;	
@@ -121,7 +121,7 @@
 				gridEventIgnore = false;
 				return false;
 			}
-			else if(gf_gridSaveData(settingGrid).length > 0
+			else if(gf_gridSaveData(comboPopupGrid).length > 0
 					){
 				if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
 					gridEventIgnore = true;	
@@ -141,7 +141,7 @@
 			gridPk.prototype.constructor.COMM_GRID_DETAIL_ID = pk;
 			
 			//상세조회
-// 			f_settingSearch(pk, preRow);
+			f_comboPopupSearch(pk, preRow);
 			
 	    });
 	    
@@ -182,7 +182,7 @@
   					if((gf_gridSaveData(masterGrid).length > 0
   					|| gf_gridSaveData(detailGrid).length > 0
   					|| gf_gridSaveData(contextGrid).length > 0
-  					|| gf_gridSaveData(settingGrid).length > 0
+  					|| gf_gridSaveData(comboPopupGrid).length > 0
   					)
   					){
   						if(!confirm('${pb:msg(pageContext.request, "수정된_데이터를_저장하지_않고,_조회_하시겠습니까?")}')){
@@ -193,7 +193,7 @@
   					gf_gridClear(masterGrid);
   					gf_gridClear(detailGrid);
   					gf_gridClear(contextGrid);
-  					gf_gridClear(settingGrid);
+  					gf_gridClear(comboPopupGrid);
   					
   				}
   				, function(data){
@@ -232,7 +232,7 @@
   					gf_gridClear(masterGrid);
   					gf_gridClear(contextGrid);
   					gf_gridClear(detailGrid);
-  					gf_gridClear(settingGrid);
+  					gf_gridClear(comboPopupGrid);
   					
   				}
   				, function(data){
@@ -315,7 +315,7 @@
   				, function(){
   			
   					gf_gridClear(detailGrid);
-  					gf_gridClear(settingGrid);
+  					gf_gridClear(comboPopupGrid);
   					
   				}
   				, function(data){
@@ -343,10 +343,10 @@
   		
   	}
   	
-  	var f_settingSearch = function(pk, preRow){
+  	var f_comboPopupSearch = function(pk, preRow){
   		
   		if(gf_nvl(pk, '') == ''){
-  			gf_gridClear(settingGrid);
+  			gf_gridClear(comboPopupGrid);
   			return false;
   		}
   		var fData = new FormData();
@@ -356,28 +356,28 @@
   		gf_ajax( fData
   				, function(){
   			
-  					gf_gridClear(settingGrid);
+  					gf_gridClear(comboPopupGrid);
   					
   				}
   				, function(data){
   					
-  					settingGridIdx = data.result.length;
-  					settingGrid.getData().setItems(data.result);
-					settingGrid.invalidate();
-					settingGrid.updateRowCount(); //로우 카운트 업데이트
-					settingGrid.render(); //다시 그리기
+  					comboPopupGridIdx = data.result.length;
+  					comboPopupGrid.getData().setItems(data.result);
+					comboPopupGrid.invalidate();
+					comboPopupGrid.updateRowCount(); //로우 카운트 업데이트
+					comboPopupGrid.render(); //다시 그리기
 					
-					if(settingGrid.getSelectedRows().length > 0
-					&& Math.max.apply(null, settingGrid.getSelectedRows()) < settingGrid.getData().getItemCount() ){
+					if(comboPopupGrid.getSelectedRows().length > 0
+					&& Math.max.apply(null, comboPopupGrid.getSelectedRows()) < comboPopupGrid.getData().getItemCount() ){
 						var args = {
-								rows : settingGrid.getSelectedRows(),
-								grid : settingGrid,
-								previousSelectedRows : settingGrid.getSelectedRows()
+								rows : comboPopupGrid.getSelectedRows(),
+								grid : comboPopupGrid,
+								previousSelectedRows : comboPopupGrid.getSelectedRows()
 						}
-						settingGrid.onSelectedRowsChanged.notify(args);	
+						comboPopupGrid.onSelectedRowsChanged.notify(args);	
 					}
 					else{
-						settingGrid.getSelectionModel().setSelectedRanges("");
+						comboPopupGrid.getSelectionModel().setSelectedRanges("");
 					}
 					
 				});
@@ -388,17 +388,17 @@
   		var masterData = gf_gridSaveData(masterGrid);
   		var contextData = gf_gridSaveData(contextGrid);
   		var detailData = gf_gridSaveData(detailGrid);
-  		var settingData = gf_gridSaveData(settingGrid);
+  		var comboPopupData = gf_gridSaveData(comboPopupGrid);
   		
   		var fData = new FormData();
 		fData.set('masterGrid', JSON.stringify(masterData));
 		fData.set('contextGrid', JSON.stringify(contextData));
 		fData.set('detailGrid', JSON.stringify(detailData));
-		fData.set('settingGrid', JSON.stringify(settingData));
+		fData.set('comboPopupGrid', JSON.stringify(comboPopupData));
   		gf_ajax( fData
   				, function(){
   					
-  					if(masterData.length == 0 && contextGrid.length == 0 && detailData.length == 0 && settingData.length == 0){
+  					if(masterData.length == 0 && contextGrid.length == 0 && detailData.length == 0 && comboPopupData.length == 0){
   						gf_toast('${pb:msg(pageContext.request, "저장할_데이터가_없습니다")}', 'info');
   						return false;
   					}
@@ -432,13 +432,13 @@
   						}
   						
   						//콤보,팝업 설정그리드
-//   						if(settingData.length > 0){
-//   							settingData.unshift({
-//   	  							 'TALBE_NAME' : 'GRID_COMBO_POPUP'
-//   	  							,'QUERY_ID' : 'com.COMM_QUERY'
-//   	  						});
-//   	  						fData.set('settingGrid', JSON.stringify(settingData));
-//   						}
+  						if(comboPopupData.length > 0){
+  							comboPopupData.unshift({
+  	  							 'TALBE_NAME' : 'COMM_GRID_COMBO_POPUP'
+  	  							,'QUERY_ID' : 'com.COMM_QUERY'
+  	  						});
+  	  						fData.set('comboPopupGrid', JSON.stringify(comboPopupData));
+  						}
   					
   					}
   				}
@@ -450,7 +450,7 @@
   						gf_gridClear(masterGrid);
   						gf_gridClear(contextGrid);
   						gf_gridClear(detailGrid);
-  						gf_gridClear(settingGrid);
+  						gf_gridClear(comboPopupGrid);
   	  					f_search();	
 					}
 					
@@ -486,9 +486,9 @@
 				style="display: inline-block; width: 80%; height: 50%;">
 				<div id='detailGrid' class="grid"></div>
 			</div>
-			<div id='settingGridContainer' class='gridContainer'
+			<div id='comboPopupGridContainer' class='gridContainer'
 				style="display: inline-block; width: 20%; height: 50%;">
-				<div id='settingGrid' class="grid"></div>
+				<div id='comboPopupGrid' class="grid"></div>
 			</div>
 		</div>
 	</div>

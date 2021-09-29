@@ -168,7 +168,14 @@ function gf_gridInit(gridDiv, option) {
 		columnFilters = new Function('return ' + gridDiv + 'Filters')();
 	} catch (e) {}
 
-	let columns = new Function('return ' + gridDiv + 'Columns')();
+
+	let columns;
+	try {
+		columns = new Function('return ' + gridDiv + 'Columns')();
+	} catch (e) {
+		console.error(gridDiv + ' - 그리드컬럼이 없습니다.');
+		return false;
+	}
 	
 	//////그리드생성 옵션셋팅	-START
 	let vContextMenu = [];

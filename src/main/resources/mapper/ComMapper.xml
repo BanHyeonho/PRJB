@@ -57,19 +57,19 @@
 		END;
 	</insert>
 	
-	<!-- 그리드별 컨텍스트메뉴 -->
+	<!-- 그리드콤보 팝업 -->
 	<select id="S_COMM_GRID_COMBO_POPUP" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_GRID_COMBO_POPUP */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
-			 , A.GRID_COMBO_POPUP_ID
+			 , A.COMM_GRID_COMBO_POPUP_ID
 			 , A.COMM_GRID_DETAIL_ID
 			 , A.PARAM_NAME
 			 , A.PARAM_VALUE
 			 , A.TARGET
 			 , A.USE_YN
-		  FROM GRID_COMBO_POPUP A
+		  FROM COMM_GRID_COMBO_POPUP A
 		 WHERE A.COMM_GRID_DETAIL_ID = #{COMM_GRID_DETAIL_ID}
-		 <if test="@com.util.CommUtil@nvl(USE_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(USE_YN, '') != ''">
 		 	AND A.USE_YN = #{USE_YN}
 		 </if>
 	</select>
@@ -102,14 +102,7 @@
 		/* S_COMM_GRID_CONTEXT */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.DETAIL_CODE AS FUNCTION_CODE
-			<choose>
-			 	<when test="LANG_CODE == 'KO'">
-			 	, C.MLG_KO AS FUNCTION_NAME
-			 	</when>
-			 	<otherwise>
-			 	, C.MLG_EN AS FUNCTION_NAME
-			 	</otherwise>
-			 </choose>
+			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS FUNCTION_NAME
 		  	 , NVL(B.USE_YN, 0) AS USE_YN
 		  	 , B.DESCRIPTION
 		  	 , B.COMM_GRID_CONTEXT_ID
@@ -117,7 +110,6 @@
 		  FROM COMM_CODE_DETAIL A
 		  JOIN COMM_CODE_MASTER A2 ON A.COMM_CODE_MASTER_ID = A2.COMM_CODE_MASTER_ID
 	 LEFT JOIN COMM_GRID_CONTEXT B ON A.DETAIL_CODE = B.FUNCTION_CODE AND B.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
-	 LEFT JOIN COMM_MLG	   C ON A.MLG_CODE = C.MLG_CODE AND C.CODE_YN = '1'
 		 WHERE A2.SYSTEM_CODE_YN = '1'
 		   AND A2.USE_YN = '1'
 		   AND A2.MASTER_CODE = 'GRID_CONTEXT'
@@ -163,18 +155,13 @@
 			 , A.SEQ
 			 , A.FIELD
 			 , A.MLG_CODE
-			 <choose>
-			 	<when test="LANG_CODE == 'KO'">
-			 	, D.MLG_KO AS FIELD_NAME
-			 	</when>
-			 	<otherwise>
-			 	, D.MLG_EN AS FIELD_NAME
-			 	</otherwise>
-			 </choose>
+			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS FIELD_NAME
 			 , A.GROUP_MLG_CODE
 			 , A.WIDTH
 			 , A.TEXT_ALIGN
-			 , A.FIELD_TYPE
+			 , CASE WHEN A.FIELD_TYPE = 'COMBO' AND A.QUERY_ID IS NULL
+			 		THEN 'EDIT'
+			 		ELSE A.FIELD_TYPE END AS FIELD_TYPE
 			 , A.REQUIRE_YN
 			 , A.FIXED_YN
 			 , A.USE_YN
@@ -200,9 +187,10 @@
 				    <![CDATA[
 					 AND (TO_DATE(Y.START_DATE) <= SYSDATE AND SYSDATE <= NVL(TO_DATE(Y.END_DATE), SYSDATE))
 					 ]]>
-	 			) B ON A.FIELD_TYPE = B.DETAIL_CODE 
+	 			) B ON CASE WHEN A.FIELD_TYPE = 'COMBO' AND A.QUERY_ID IS NULL
+					 		THEN 'EDIT'
+					 		ELSE A.FIELD_TYPE END = B.DETAIL_CODE
 	 LEFT JOIN COMM_GRID_MASTER C ON A.COMM_GRID_MASTER_ID = C.COMM_GRID_MASTER_ID
-	 LEFT JOIN COMM_MLG	   D ON A.MLG_CODE = D.MLG_CODE AND D.GRID_YN = '1'
 		 WHERE C.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
 		 ORDER BY A.SEQ
 	</select>
@@ -237,15 +225,8 @@
 		/* S_COMM_GRID_MASTER */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.COMM_GRID_MASTER_ID 
-			 , A.MENU_CODE 
-			 <choose>
-			 	<when test="LANG_CODE == 'KO'">
-			 	, C.MLG_KO AS MENU_NAME
-			 	</when>
-			 	<otherwise>
-			 	, C.MLG_EN AS MENU_NAME
-			 	</otherwise>
-			 </choose>
+			 , A.MENU_CODE
+			 , COMM_UTIL_PKG.lang(B.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
 			 , A.GRID_NAME 
 			 , A.FILTER_YN 
 			 , A.DESCRIPTION
@@ -253,7 +234,6 @@
 			 , A.TREE_YN
 		  FROM COMM_GRID_MASTER A
 	 LEFT JOIN COMM_MENU B ON A.MENU_CODE = B.MENU_CODE
-	 LEFT JOIN COMM_MLG C ON B.MLG_CODE = C.MLG_CODE AND C.MENU_YN = '1'
 		 WHERE A.MENU_CODE = #{MENU_CODE}
 	</select>
 	
@@ -267,16 +247,8 @@
 	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1	AS "parent"
 			 , A.COMM_MENU_ID
 			 , A.MENU_CODE
-			 <choose>
-			 	<when test="LANG_CODE == 'KO'">
-			 	, B.MLG_KO AS MENU_NAME
-			 	</when>
-			 	<otherwise>
-			 	, B.MLG_EN AS MENU_NAME
-			 	</otherwise>
-			 </choose>
+			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
 		  FROM COMM_MENU A
-     LEFT JOIN COMM_MLG B ON A.MLG_CODE = B.MLG_CODE
      	 WHERE A.USE_YN = '1'
 		 START WITH A.UP_MENU_CODE IS null 
 		CONNECT BY PRIOR A.MENU_CODE = A.UP_MENU_CODE
@@ -406,19 +378,19 @@
 		 	 , DESCRIPTION
 		  FROM COMM_MLG
 		 WHERE COMM_MLG_ID = COMM_MLG_ID
-		 <if test="@com.util.CommUtil@nvl(MENU_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(MENU_YN, '') != ''">
 		 	AND MENU_YN = #{MENU_YN}
 		 </if>
-		 <if test="@com.util.CommUtil@nvl(MSG_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(MSG_YN, '') != ''">
 		 	AND MSG_YN = #{MSG_YN}
 		 </if>
-		 <if test="@com.util.CommUtil@nvl(CODE_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(CODE_YN, '') != ''">
 		 	AND CODE_YN = #{CODE_YN}
 		 </if>
-		 <if test="@com.util.CommUtil@nvl(GRID_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(GRID_YN, '') != ''">
 		 	AND GRID_YN = #{GRID_YN}
 		 </if>
-		 <if test="@com.util.CommUtil@nvl(FUNCTION_YN, '') != ''">
+		 <if test="@prjb.com.util.ComUtil@nvl(FUNCTION_YN, '') != ''">
 		 	AND FUNCTION_YN = #{FUNCTION_YN}
 		 </if>
 		 ORDER BY MLG_KO
