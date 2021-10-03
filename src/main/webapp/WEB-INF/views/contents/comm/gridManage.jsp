@@ -398,7 +398,7 @@
   		gf_ajax( fData
   				, function(){
   					
-  					if(masterData.length == 0 && contextGrid.length == 0 && detailData.length == 0 && comboPopupData.length == 0){
+  					if(masterData.length == 0 && contextData.length == 0 && detailData.length == 0 && comboPopupData.length == 0){
   						gf_toast('${pb:msg(pageContext.request, "저장할_데이터가_없습니다")}', 'info');
   						return false;
   					}
