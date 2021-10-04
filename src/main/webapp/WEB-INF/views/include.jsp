@@ -42,6 +42,7 @@
 <link  href="/css/reset.css?v=${pb:jsNow()}" rel="stylesheet" />
 <script src="/script/common.js?v=${pb:jsNow()}"></script>
 <link  href="/css/common.css?v=${pb:jsNow()}" rel="stylesheet" />
+<link  href="/css/common-laptop.css?v=${pb:jsNow()}" rel="stylesheet" />
 
 <!-- 공통실행함수 -->
 <script type="text/javascript">
@@ -80,6 +81,8 @@
 		
 		//툴팁 클래스적용
 		$( document ).tooltip( { tooltipClass: "common-tooltip" } );
+		
+		$('#content-title').text(parent.$('li[aria-selected="true"] span.menu-span').text());
 	});
 </script>
 

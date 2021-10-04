@@ -265,7 +265,7 @@
 	</head>
 	<body>
 		<div id="indexTab">
-			<ul>
+			<ul style="background-color: #FFFFFF;">
 				<li id='mainTab' class='indexTabLi' title='MAIN'>
 					<a href="#tabs-1"><span class="menu-span">MAIN</span></a>
 				</li>

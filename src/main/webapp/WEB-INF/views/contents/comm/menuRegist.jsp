@@ -102,11 +102,19 @@
   	}
 </script>
 <body>
-<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "저장")}</button>
-<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "조회")}</button>
-<button type="button" id='mlgRegistBtn'>${pb:msg(pageContext.request, "다국어_일괄등록")}</button>
-<div id='masterGridContainer' class='gridContainer' style="height: 100%;">
-	<div id="masterGrid" class="grid"></div>
-</div>
+	<div id='content'>		
+		<div id="content-header-1" class="content-panel">
+			<label id="content-title"></label>
+			<div class="btn-area">
+				<button type="button" id='saveBtn' class="btn btn-st1 fl-right">${pb:msg(pageContext.request, "저장")}</button>
+				<button type="button" id='searchBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "조회")}</button>
+				<button type="button" id='mlgRegistBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "다국어_일괄등록")}</button>
+			</div>
+		</div>
+		
+		<div id='masterGridContainer' class='content-panel ht-pl-1-1'>
+			<div id="masterGrid" class="grid"></div>
+		</div>
+	</div>
 </body>
 </html>

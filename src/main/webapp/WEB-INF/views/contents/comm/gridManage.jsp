@@ -463,33 +463,31 @@
   	
 	</script>
 <body>
-	<div id='content' class="pd-15">
-		<div class='btn-area'>
-			<button type="button" id='saveBtn'>${pb:msg(pageContext.request, "저장")}</button>
-			<button type="button" id='searchBtn'>${pb:msg(pageContext.request, "조회")}</button>
-			<button type="button" id='mlgRegistBtn'>${pb:msg(pageContext.request, "다국어_일괄등록")}</button>
+
+<div id='content'>
+		<div id="content-header-1" class="content-panel">
+			<label id="content-title"></label>
+			<div class="btn-area">
+				<button type="button" id='saveBtn' class="btn btn-st1 fl-right">${pb:msg(pageContext.request, "저장")}</button>
+				<button type="button" id='searchBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "조회")}</button>
+				<button type="button" id='mlgRegistBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "다국어_일괄등록")}</button>
+			</div>
 		</div>
-		<div class="grid-area">
-			<div id='menuGridContainer' class='gridContainer'
-				style="display: inline-block; width: 20%; height: 50%;">
-				<div id='menuGrid' class="grid"></div>
-			</div>
-			<div id='masterGridContainer' class='gridContainer'
-				style="display: inline-block; width: 60%; height: 50%;">
-				<div id='masterGrid' class="grid"></div>
-			</div>
-			<div id='contextGridContainer' class='gridContainer'
-				style="display: inline-block; width: 20%; height: 50%;">
-				<div id='contextGrid' class="grid"></div>
-			</div>
-			<div id='detailGridContainer' class='gridContainer'
-				style="display: inline-block; width: 80%; height: 50%;">
-				<div id='detailGrid' class="grid"></div>
-			</div>
-			<div id='comboPopupGridContainer' class='gridContainer'
-				style="display: inline-block; width: 20%; height: 50%;">
-				<div id='comboPopupGrid' class="grid"></div>
-			</div>
+				
+		<div id='menuGridContainer' class='content-panel no-mg-tp wd-pl-1 ht-pl-2-1'>
+			<div id="menuGrid" class="grid"></div>
+		</div>
+		<div id='masterGridContainer' class='content-panel no-mg-tp wd-pl-2 no-mg-lt ht-pl-2-1'>
+			<div id='masterGrid' class="grid"></div>
+		</div>
+		<div id='contextGridContainer' class='content-panel no-mg-tp wd-pl-1 no-mg-lt ht-pl-2-1'>
+			<div id='contextGrid' class="grid"></div>
+		</div>
+		<div id='detailGridContainer' class='content-panel wd-pl-3 no-mg-tp ht-pl-2-1'>
+			<div id='detailGrid' class="grid"></div>
+		</div>
+		<div id='comboPopupGridContainer' class='content-panel wd-pl-1 no-mg-tp no-mg-lt ht-pl-2-1'>
+			<div id='comboPopupGrid' class="grid"></div>
 		</div>
 	</div>
 </body>

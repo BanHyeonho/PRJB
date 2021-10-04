@@ -1,0 +1,31 @@
+@charset "UTF-8";
+/* 사용자정의CSS - 노트북 사이즈 */
+@media screen and (max-width: 1280px) {
+	.content-panel {
+		background-color: #FFFFFF !important;
+		padding: 10px;
+		margin: 7px;
+	}
+	.wd-pl-1 {
+		display: inline-block;
+		width: 23.1%;
+	}
+	.wd-pl-2 {
+		display: inline-block;
+		width: 46%;
+	}
+	.wd-pl-3 {
+		display: inline-block;
+		width: 71.6%;
+	}
+	.ht-pl-1 {
+		height : 73vh;
+	}
+	.ht-pl-2 {
+		height : 34vh;
+	}
+	/* 조회조건이없을때 */
+	.ht-pl-1-1 {
+		height : 83vh;
+	}
+}

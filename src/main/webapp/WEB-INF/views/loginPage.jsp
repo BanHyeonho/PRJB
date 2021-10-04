@@ -21,7 +21,7 @@
 			
 			var rs = gf_chkRequire(["loginForm"]);
 			for (var i = 0; i < rs.tags.length; i++) {
-				gf_toast(gf_msg('${pb:msg(pageContext.request, "을(를)_입력하세요.")}', {
+				gf_toast(gf_msg('${pb:msg(pageContext.request, "을(를)_입력하세요")}', {
 					param : $(rs.tags[i]).attr('placeholder')
 				}), 'info');
 			}
@@ -34,7 +34,7 @@
 			}
 			//아이디, 비밀번호 오류
 			else if( data.result == 'chkIdPwd'){
-				gf_toast('${pb:msg(pageContext.request, "아이디_또는_비밀번호가_일치하지_않습니다.")}', 'info');
+				gf_toast('${pb:msg(pageContext.request, "아이디_또는_비밀번호가_일치하지_않습니다")}', 'info');
 				$('#loginForm [name=pwd]').val('');
 				$('#loginForm [name=pwd]').focus();
 			}

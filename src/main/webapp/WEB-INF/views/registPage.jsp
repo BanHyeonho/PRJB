@@ -28,7 +28,7 @@
 			var rs = gf_chkRequire(["registForm"]);
 			
 			for (var i = 0; i < rs.tags.length; i++) {
-				gf_toast(gf_msg('${pb:msg(pageContext.request, "을(를)_입력하세요.")}', {
+				gf_toast(gf_msg('${pb:msg(pageContext.request, "을(를)_입력하세요")}', {
 					param : $(rs.tags[i]).attr('placeholder')
 				}), 'info');
 			}
@@ -41,7 +41,7 @@
 			}
 			//아이디중복
 			else if( data.result == 'duplicatedId'){
-				gf_toast('${pb:msg(pageContext.request, "이미존재하는_아이디_입니다.")}', 'info');
+				gf_toast('${pb:msg(pageContext.request, "이미_존재하는_아이디_입니다")}', 'info');
 				$('#registForm [name=LOGIN_ID]').focus();
 			}
 			

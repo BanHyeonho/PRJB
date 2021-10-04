@@ -304,9 +304,9 @@ function gf_gridInit(gridDiv, option) {
         container: '#'+ gridDiv + 'Container',
         calculateAvailableSizeBy: 'container',
         rightPadding: 0,    // defaults to 0
-        bottomPadding: 40,  // defaults to 20
-        minHeight: 180,     // defaults to 180
-        minWidth: 300      // defaults to 300
+        bottomPadding: 0,  // defaults to 20
+        minHeight: 100,     // defaults to 180
+        minWidth: 100      // defaults to 300
 	}));
 	
 	vGrid.registerPlugin(new Slick.AutoTooltips({enableForHeaderCells : true}));
