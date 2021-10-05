@@ -82,7 +82,20 @@
 		//툴팁 클래스적용
 		$( document ).tooltip( { tooltipClass: "common-tooltip" } );
 		
+		//메뉴명
 		$('#content-title').text(parent.$('li[aria-selected="true"] span.menu-span').text());
+		
+		//엔터키 조회
+		$('.search-area input').keydown(function(e) {
+   			if (e.keyCode == 13) {
+   				e.preventDefault();
+   				e.stopPropagation();
+   				if(typeof f_search === 'function'){
+   					f_search();
+   				}
+   			}
+		});
+		
 	});
 </script>
 

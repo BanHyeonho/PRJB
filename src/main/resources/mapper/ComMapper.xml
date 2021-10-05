@@ -306,6 +306,12 @@
 			 , A.ATTRIBUTE9
 			 , A.ATTRIBUTE10
 		  FROM COMM_CODE_MASTER A
+		 WHERE A.COMM_CODE_MASTER_ID = A.COMM_CODE_MASTER_ID
+		 <if test="@prjb.com.util.ComUtil@nvl(p_masterCode, '') != ''">
+		 	<![CDATA[
+		 	AND ( instr(A.MASTER_CODE, #{p_masterCode}) > 0 OR instr(COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}), #{p_masterCode}) > 0 )
+		 	]]> 
+		 </if>
 		 ORDER BY A.COMM_CODE_MASTER_ID DESC
 	</select>
 	
@@ -411,6 +417,12 @@
 		 	 , NVL(FUNCTION_YN, '0')	AS FUNCTION_YN
 		 	 , DESCRIPTION
 		  FROM COMM_MLG
+		  WHERE COMM_MLG_ID = COMM_MLG_ID
+		 <if test="@prjb.com.util.ComUtil@nvl(p_mlgCode, '') != ''">
+		 	<![CDATA[
+		 	AND ( instr(MLG_CODE, #{p_mlgCode}) > 0 OR instr(MLG_KO, #{p_mlgCode}) > 0 )
+		 	]]> 
+		 </if>
 		 ORDER BY COMM_MLG_ID DESC
 	</select>
 	
@@ -550,5 +562,35 @@
 								 , #{MIP}
 								 )
 	</insert>
-		
+	
+	<!-- 사용자관리 조회 -->
+	<select id="S_COMM_USER" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_USER */
+		SELECT 'id_' || (ROWNUM-1) 			AS "id"
+			 , A.LOGIN_ID					AS LOGIN_ID
+			 , A.USER_NAME					AS USER_NAME
+			 , A.USE_YN						AS USE_YN
+			 , A.LOCK_YN					AS LOCK_YN
+			 , TO_CHAR(A.CDT, 'YYYY-MM-DD')	AS CDT
+			 , A.COMM_USER_ID				AS COMM_USER_ID
+		  FROM COMM_USER A
+		 WHERE A.COMM_USER_ID = A.COMM_USER_ID
+		 <if test="@prjb.com.util.ComUtil@nvl(p_loginId, '') != ''">
+		 	<![CDATA[
+		 	AND ( instr(A.LOGIN_ID, #{p_loginId}) > 0 OR instr(A.USER_NAME, #{p_loginId}) > 0 )
+		 	]]> 
+		 </if>
+		 ORDER BY A.CDT DESC
+	</select>
+	<!-- 사용자관리 수정 -->
+	<update id="U_COMM_USER" parameterType="HashMap" >
+		/* U_COMM_USER */
+		UPDATE COMM_USER
+		   SET USE_YN = #{USE_YN}
+		     , LOCK_YN = #{LOCK_YN}
+		   	 , MID = #{MID}
+		   	 , MDT = SYSDATE
+		   	 , MIP = #{MIP}
+		 WHERE COMM_USER_ID = #{COMM_USER_ID}
+	</update>
 </mapper>

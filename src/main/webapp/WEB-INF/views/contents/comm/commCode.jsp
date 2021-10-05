@@ -106,10 +106,10 @@
 	}
   	var f_search = function(type){
   		
-  		var fData = new FormData();
-		fData.set('QUERY_ID', 'com.S_COMM_CODE_MASTER');
-  		gf_ajax( fData
-  				, function(){
+  		gf_ajax({
+					QUERY_ID : 'com.S_COMM_CODE_MASTER',
+					p_masterCode : $('#searchParam1').val()
+				}, function(){
   					
   					if((gf_gridSaveData(masterGrid).length > 0
   					|| gf_gridSaveData(detailGrid).length > 0 )
@@ -265,7 +265,7 @@
 			<div class="search-area mg-tp-default2">
 				<div class="div-2">
 					<label class="form">${pb:msg(pageContext.request, "코드/코드명")}</label>
-					<input class="form form-text mg-tp-default" type="text">
+					<input class="form form-text mg-tp-default" type="text" id="searchParam1">
 				</div>
 			</div>
 		</div>

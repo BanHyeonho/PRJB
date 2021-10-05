@@ -6,40 +6,23 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${pb:msg(pageContext.request, "다국어등록")}</title>
+<title>${pb:msg(pageContext.request, "사용자관리")}</title>
 </head>
 <%@ include file="../../gridData.jsp"%>
 <script>
 	$(document).ready(function() {
 		
-		
 	    masterGrid = gf_gridInit('masterGrid');    
 	    $('#searchBtn').on('click', f_search);
-	    $('#saveBtn').on('click', f_save);
-	    $('#refreshBtn').on('click', f_msgRefresh);	    
-	    f_search();
+	    $('#saveBtn').on('click', f_save);	    
+// 	    f_search();
   	});
-  	
-	var f_msgRefresh = function(e){
-  		
-  		gf_ajax( {}, null
-  				, function(data){
-  					
-  					if(data.status == 'success'){
-  						gf_toast('${pb:msg(pageContext.request, "갱신_되었습니다")}', 'success');	
-  					}
-  					
-				},null,null,'/broad/setMlg',true,'get',false);
-  		 
-  	}
-  	
+  	  	
   	var f_search = function(){
   		
-  		var fData = new FormData();
-		fData.set('QUERY_ID', 'com.S_COMM_MLG');
   		gf_ajax({
-  					QUERY_ID : 'com.S_COMM_MLG',
-  					p_mlgCode : $('#searchParam1').val()
+		  			QUERY_ID : 'com.S_COMM_USER',
+		  			p_loginId : $('#searchParam1').val()
   				}, function(){
   					
   					if(gf_gridSaveData(masterGrid).length > 0){
@@ -75,8 +58,8 @@
   					}
   					else{
   						saveData.unshift({
-  							 'TALBE_NAME' : 'COMM_MLG'
-  							,'QUERY_ID' : 'com.COMM_QUERY'
+  							 'TALBE_NAME' : 'COMM_USER'
+  							,'QUERY_ID' : 'com.COMM_USER'
   						});
   						fData.set('masterGrid', JSON.stringify(saveData));
   					}
@@ -102,11 +85,10 @@
 			<div class="btn-area">
 				<button type="button" id='saveBtn' class="btn btn-st1 fl-right">${pb:msg(pageContext.request, "저장")}</button>
 				<button type="button" id='searchBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "조회")}</button>
-				<button type="button" id='refreshBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "다국어갱신")}</button>
 			</div>
 			<div class="search-area mg-tp-default2">
 				<div class="div-2">
-					<label class="form">${pb:msg(pageContext.request, "다국어코드/한국어")}</label>
+					<label class="form">${pb:msg(pageContext.request, "아이디/사용자명")}</label>
 					<input class="form form-text mg-tp-default" type="text" id="searchParam1">
 				</div>
 			</div>

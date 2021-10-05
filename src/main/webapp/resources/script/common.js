@@ -119,6 +119,7 @@ function gf_ajax(p_param, p_before, p_success, p_error, p_complete, p_url, p_asy
 		v_enctype = 'multipart/form-data';
 		v_contentType = false;
 		v_processData = false;
+		
 	}
 	else if (typeof v_param == 'string') {
 		v_enctype = 'application/x-www-form-urlencoded';
