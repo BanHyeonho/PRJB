@@ -258,12 +258,16 @@ iframe {
 #content{
 	height: 100vh;
 }
-
+#header-dummy{
+	height: 15px;
+}
 #content-header {
 	height: 100px;
+	margin-top: 0 !important;
 }
 #content-header-1{
 	height: 30px;
+	margin-top: 0 !important;
 }
 
 #content-title {

@@ -317,7 +317,7 @@
 	
 	<!-- 메뉴 URL 조회 -->
 	<select id="S_MENU_URL" resultType="HashMap" parameterType="HashMap" >
-		/* S_MY_MENU */
+		/* S_MENU_URL */
 		SELECT A.MENU_URL
 		  FROM COMM_MENU A
 		 WHERE A.USE_YN = '1'

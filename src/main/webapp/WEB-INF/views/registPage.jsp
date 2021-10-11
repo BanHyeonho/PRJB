@@ -58,9 +58,7 @@
 		<div class="center-table">
 			<form action="#" id='registForm'>
 				<div class="center-table mg-bt-default2" style="height: 0;">
-					<label class="title">
-					${pb:msg(pageContext.request, "회원가입")}
-					</label>
+					<span class="title">${pb:msg(pageContext.request, "회원가입")}</span>
 				</div>
 				<div class="content-panel clearfix">
 					<input type="text" class="input-text font-size-36 mg-default2 input-st1" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}' >

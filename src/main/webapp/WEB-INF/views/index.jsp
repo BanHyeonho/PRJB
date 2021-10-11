@@ -61,7 +61,6 @@
 
 			//메뉴셋팅
 			getMenu();
-			
 		    tabs = $("#indexTab").tabs();
 		    tabs.find( ".ui-tabs-nav" ).sortable({
 				axis: "x",
@@ -121,26 +120,71 @@
 	  		gf_ajax( fData
 	  				, null
 	  				, function(data){
-	  					$.each(data.result, function( index, item){
-	  						var depth = item.MENU_DEPTH;
+	  					for(let i=0; i<data.result.length; i++){
+	  						var item = data.result[i];
+	  						var depth = Number(item.MENU_DEPTH);
+	  						var upMenuCode = item.UP_MENU_CODE;
 	  						var menuCode = item.MENU_CODE;
 	  						var menuUrl = item.MENU_URL;
 	  						var menuNm = gf_mlg(item.MLG_CODE);
 	  						
-	  						var tag;
-	  						if(gf_nvl(menuUrl, '') == ''){
-	  							tag = $('<span>' + menuNm + '</span>');
+	  						var tag = $('<div></div>').addClass('menu-div').attr('id', menuCode);
+	  						var menuName = $('<span></span>').addClass("menu-text").text(menuNm);
+	  						var menuDepth;
+	  						
+	  						if(depth == 0){
+	  							menuDepth = menuName;
 	  						}
 	  						else{
-	  							tag = $('<button id="' + menuCode +'" >' + menuNm + '</button>');
+	  							menuDepth = $('<div></div>').addClass('menu-depth');
+	  							for(let j=1; j<depth; j++){
+	  								if(menuDepth.find('.menu-depth:last').length == 0){
+		  								menuDepth.append($('<div></div>').addClass('menu-depth'));
+		  							}
+		  							else{
+		  								menuDepth.find('.menu-depth:last').append($('<div></div>').addClass('menu-depth'));
+		  							}
+		  						}
+	  							
+	  							if(menuDepth.find('.menu-depth:last').length == 0){
+	  								menuDepth.append(menuName);
+	  							}
+	  							else{
+	  								menuDepth.find('.menu-depth:last').append(menuName);
+	  							}
+	  							
 	  						}
-	  						$('#menuList').append(tag);
 	  						
-	  						$('#' + menuCode).on('click', {
-	  							 'menuNm' : menuNm
-	  							,'menuCode' : menuCode
-	  						}, addPage);
-	  					});
+							tag.append(menuDepth);
+							
+							//최상위
+	  						if(gf_nvl(upMenuCode, '') == ''){
+	  							$('#menuList').append(tag);	
+	  							$('#menuList').append($('<div style="display:none;"></div>').attr('name', menuCode));
+	  							tag.on('click', function(e){
+	  								$('div[name=' + $(e.target).closest('div .menu-div').attr('id') + ']').slideToggle();
+	  							});
+	  						}
+							//중메뉴
+	  						else if(data.result.filter(x=>x.UP_MENU_CODE == menuCode).length > 0){
+	  							$('div[name=' + upMenuCode +']').append(tag);
+	  							$('div[name=' + upMenuCode +']').append($('<div style="display:none;"></div>').attr('name', menuCode));
+	  							tag.on('click', function(e){
+	  								$('div[name=' + $(e.target).closest('div .menu-div').attr('id') + ']').slideToggle();
+	  							});
+	  						}
+							//최하위
+	  						else{
+	  							$('div[name=' + upMenuCode +']').append(tag);
+	  						}
+	  						
+	  						if(gf_nvl(menuUrl, '') != ''){
+	  							$('#' + menuCode).on('click', {
+		  							 'menuNm' : menuNm
+		  							,'menuCode' : menuCode
+		  						}, addPage);	
+	  						}
+	  					}
 					});
 	  		
 		}
@@ -262,6 +306,19 @@
 		}
 		
 		</script>
+		<style type="text/css">
+			.menu-div{
+				border-bottom: 1px solid #ddd;
+				padding: 10px;
+				cursor: pointer;
+			}
+			.menu-depth{
+				margin-left: 20px;
+			}
+			.menu-text{
+				font-size: 16px;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="indexTab">
@@ -281,9 +338,9 @@
 			</button>
 		</div>
 		
-		<div id="menu" title='${pb:msg(pageContext.request, "메뉴")}' style="display: none;">
-			<div id="menuList" style="width: 30%; height:100%; float: left; padding-right: 5px; box-sizing: border-box;">
-<!-- 			메뉴셋팅 -->
+		<div id="menu" title='${pb:msg(pageContext.request, "메뉴")}' style="display: none; padding-left: 0;">
+			<div id="menuList" style="width: 30%; height:100%; float: left; padding-right: 5px; box-sizing: border-box; overflow-y: auto;">
+			<!-- 메뉴셋팅 -->
 			</div>
 			<div id="quickMenu" style="width: 68%; height:100%; float: left; padding-left: 10px; border-left: 5px solid #e9e9e9;">
 				<div class="column">

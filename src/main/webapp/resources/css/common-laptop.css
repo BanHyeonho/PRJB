@@ -1,6 +1,9 @@
 @charset "UTF-8";
 /* 사용자정의CSS - 노트북 사이즈 */
 @media screen and (max-width: 1280px) {
+	#header-dummy{
+		height: 7px;
+	}
 	.content-panel {
 		background-color: #FFFFFF !important;
 		padding: 10px;
