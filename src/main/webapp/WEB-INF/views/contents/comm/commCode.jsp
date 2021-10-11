@@ -257,15 +257,15 @@
 		<div id="content-header" class="content-panel">
 			<label id="content-title"></label>
 			<div class="btn-area">
-				<button type="button" id='saveBtn' class="btn btn-st1 fl-right">${pb:msg(pageContext.request, "저장")}</button>
-				<button type="button" id='searchBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "조회")}</button>
+				<button type="button" id='searchBtn' tabindex="99" class="btn btn-st1 fl-right">${pb:msg(pageContext.request, "조회")}</button>
+				<button type="button" id='saveBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "저장")}</button>
 				<button type="button" id='masterMlgRegistBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "마스터_다국어_일괄등록")}</button>
 				<button type="button" id='detailMlgRegistBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "상세_다국어_일괄등록")}</button>
 			</div>
 			<div class="search-area mg-tp-default2">
 				<div class="div-2">
 					<label class="form">${pb:msg(pageContext.request, "코드/코드명")}</label>
-					<input class="form form-text mg-tp-default" type="text" id="searchParam1">
+					<input class="form form-text mg-tp-default" type="text" tabindex="1" enter-exec='99' id="searchParam1">
 				</div>
 			</div>
 		</div>

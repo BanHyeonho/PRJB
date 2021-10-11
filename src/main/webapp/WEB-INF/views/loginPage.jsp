@@ -7,7 +7,7 @@
 	<title>${pb:msg(pageContext.request, "로그인")}</title>
 	<script type="text/javascript">
 	$(document).ready(function () {
-		
+		$('#title').text(location.host);
 		$('#loginBtn').on('click', login);
 		$('#registBtn').on('click', regist);
 	});
@@ -48,13 +48,19 @@
 	</script>
 </head>
 <body>
-	<div class="background-img">
+	<div class="background">
 		<div class="center-table">
 			<form action="#" id='loginForm'>
-				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}'>
-				<input type="password" class="input-text font-size-36 mg-bt-15 input-green" data-enter='3' tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "비밀번호")}' >
-				<button type="button" class="font-size-24 fl-right mg-lt-15 btn btn-green" tabindex="3" id='loginBtn'>${pb:msg(pageContext.request, "로그인")}</button>
-				<button type="button" class="font-size-24 fl-right btn btn-green" tabindex="4" id='registBtn'>${pb:msg(pageContext.request, "회원가입")}</button>
+				<div class="center-table mg-bt-default2" style="height: 0;">
+					<label class="title" id="title">
+					</label>
+				</div>
+				<div class="content-panel clearfix">
+					<input type="text" class="input-text font-size-36 mg-default2 input-st1" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}'>
+					<input type="password" class="input-text font-size-36 mg-default2 input-st1" enter-exec='3' tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "비밀번호")}' >
+					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="3" id='loginBtn'>${pb:msg(pageContext.request, "로그인")}</button>
+					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="4" id='registBtn'>${pb:msg(pageContext.request, "회원가입")}</button>
+				</div>
 			</form>
 		</div>
 	</div>

@@ -49,16 +49,26 @@
 	}
 	
 	</script>
+	<style type="text/css">
+	
+	</style>
 </head>
 <body>
-	<div class="background-img">
+	<div class="background">
 		<div class="center-table">
 			<form action="#" id='registForm'>
-				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}' >
-				<input type="password" class="input-text font-size-36 mg-bt-15 input-green" tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "비밀번호")}' >
-				<input type="text" class="input-text font-size-36 mg-bt-15 input-green" data-enter='4' tabindex="3" name="USER_NAME" require="true" placeholder='${pb:msg(pageContext.request, "이름")}' >
-				<button type="button" class="font-size-24 fl-right mg-lt-15 btn btn-green" tabindex="5" id='goBackBtn'>${pb:msg(pageContext.request, "뒤로")}</button>
-				<button type="button" class="font-size-24 fl-right btn btn-green" tabindex="4" id='registBtn'>${pb:msg(pageContext.request, "가입")}</button>
+				<div class="center-table mg-bt-default2" style="height: 0;">
+					<label class="title">
+					${pb:msg(pageContext.request, "회원가입")}
+					</label>
+				</div>
+				<div class="content-panel clearfix">
+					<input type="text" class="input-text font-size-36 mg-default2 input-st1" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}' >
+					<input type="password" class="input-text font-size-36 mg-default2 input-st1" tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "비밀번호")}' >
+					<input type="text" class="input-text font-size-36 mg-default2 input-st1" enter-exec='4' tabindex="3" name="USER_NAME" require="true" placeholder='${pb:msg(pageContext.request, "이름")}' >
+					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="5" id='goBackBtn'>${pb:msg(pageContext.request, "뒤로")}</button>
+					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="4" id='registBtn'>${pb:msg(pageContext.request, "가입")}</button>
+				</div>
 			</form>
 		</div>
 	</div>

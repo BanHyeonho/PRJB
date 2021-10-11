@@ -56,11 +56,13 @@
 		$('input').attr('autocomplete', 'off');
 		
 		//엔터입력시 실행
-		$('[data-enter]').on('keydown',function(e){
+		$('[enter-exec]').on('keydown',function(e){
 			//엔터
 			if(e.which == 13){
-				var enterIdx = $(e.currentTarget).attr('data-enter');
-				$(e.currentTarget).parents('form').children('[tabindex=' + enterIdx + ']').click();
+				e.preventDefault();
+				e.stopPropagation();
+				var execIdx = $(e.currentTarget).attr('enter-exec');
+				$('[tabindex=' + execIdx + ']').click();
 			}
 		});
 		
@@ -84,18 +86,7 @@
 		
 		//메뉴명
 		$('#content-title').text(parent.$('li[aria-selected="true"] span.menu-span').text());
-		
-		//엔터키 조회
-		$('.search-area input').keydown(function(e) {
-   			if (e.keyCode == 13) {
-   				e.preventDefault();
-   				e.stopPropagation();
-   				if(typeof f_search === 'function'){
-   					f_search();
-   				}
-   			}
-		});
-		
+				
 	});
 </script>
 
