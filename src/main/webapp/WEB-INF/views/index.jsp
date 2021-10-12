@@ -162,7 +162,10 @@
 	  							$('#menuList').append(tag);	
 	  							$('#menuList').append($('<div style="display:none;"></div>').attr('name', menuCode));
 	  							tag.on('click', function(e){
+	  								
+	  								$('.menu-div').removeClass('selected-menu');
 	  								$('div[name=' + $(e.target).closest('div .menu-div').attr('id') + ']').slideToggle();
+	  								$(e.target).closest('div .menu-div').addClass('selected-menu');
 	  							});
 	  						}
 							//중메뉴
@@ -170,7 +173,9 @@
 	  							$('div[name=' + upMenuCode +']').append(tag);
 	  							$('div[name=' + upMenuCode +']').append($('<div style="display:none;"></div>').attr('name', menuCode));
 	  							tag.on('click', function(e){
+	  								$('.menu-div').removeClass('selected-menu');
 	  								$('div[name=' + $(e.target).closest('div .menu-div').attr('id') + ']').slideToggle();
+	  								$(e.target).closest('div .menu-div').addClass('selected-menu');
 	  							});
 	  						}
 							//최하위
@@ -233,7 +238,8 @@
 		
 		//메뉴열기
 		var addPage = function(e){
-			
+			$('.menu-div').removeClass('selected-menu');
+			$(e.target).closest('div .menu-div').addClass('selected-menu');
 			var label = e.data.menuNm;
 	        var id = "tabs-" + (++tabCounter);
 	        var showLabel = label.length > 8 ? label.substr(0,8) + '...' : label;

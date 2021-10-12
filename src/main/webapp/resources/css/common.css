@@ -6,6 +6,10 @@
 	height: 100%;
 }
 
+.selected-menu{
+	background-color : #F1F9FF;
+}
+
 .menu-btn{
 	background-image: url(/resources/img/menu-icon.png);
     background-size: contain;

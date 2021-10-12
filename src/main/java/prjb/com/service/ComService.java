@@ -154,6 +154,14 @@ public class ComService {
 		mv.addObject("gridData", gridData);
 		
 		mv.setViewName("contents/"+ menuUrl.replace("_", "/"));
+		
+		//메뉴오픈이력
+		Map histParam = new HashMap();
+		histParam.put("COMM_MENU_ID", map.get("COMM_MENU_ID"));
+		histParam.put("COMM_USER_ID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
+		histParam.put("CIP", ComUtil.getAddress(request));
+		comDao.insert("com.I_COMM_MENU_OPEN_HIST", histParam);
+		
 		return mv;
 	}
 	

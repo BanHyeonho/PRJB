@@ -4,6 +4,104 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
+	<!-- 즐겨찾기 추가 -->
+	<insert id="I_COMM_USER_BOOKMARK" parameterType="HashMap" >
+		/* I_COMM_USER_BOOKMARK */
+		MERGE INTO COMM_USER_BOOKMARK
+       		 USING DUAL
+        		ON (COMM_MENU_ID = #{COMM_MENU_ID} AND COMM_USER_ID = #{COMM_USER_ID})
+       		  WHEN MATCHED THEN
+       		UPDATE SET MID = #{COMM_USER_ID}
+		             , MDT = SYSDATE
+		             , MIP = #{CIP}
+       		WHEN NOT MATCHED THEN
+		       INSERT(COMM_USER_BOOKMARK_ID
+		          , COMM_MENU_ID
+		          , COMM_USER_ID
+		          , CID    
+		          , CDT    
+		          , CIP    
+		          , MID    
+		          , MDT    
+		          , MIP)
+		       VALUES(COMM_USER_BOOKMARK_S.NEXTVAL
+		          , #{COMM_MENU_ID}
+		          , #{COMM_USER_ID}
+		          , #{COMM_USER_ID}
+		          , SYSDATE
+		          , #{CIP}
+		          , #{COMM_USER_ID}
+		          , SYSDATE    
+		          , #{CIP})
+	</insert>
+	<!-- 즐겨찾기 삭제 -->
+	<delete id="D_COMM_USER_BOOKMARK" parameterType="HashMap" >
+		/* D_COMM_USER_BOOKMARK */
+		DELETE
+		  FROM COMM_USER_BOOKMARK
+		 WHERE COMM_USER_ID = #{COMM_USER_ID}
+		   AND COMM_MENU_ID = #{COMM_MENU_ID}
+	</delete>
+	<!-- 사용자별 메뉴오픈이력 저장 -->
+	<insert id="I_COMM_MENU_OPEN_HIST" parameterType="HashMap" >
+		/* I_COMM_MENU_OPEN_HIST */
+		INSERT INTO COMM_MENU_OPEN_HIST(COMM_MENU_OPEN_HIST_ID
+									  , COMM_MENU_ID
+									  , COMM_USER_ID
+									  , CID    
+									  , CDT    
+									  , CIP    
+									  , MID    
+									  , MDT    
+									  , MIP)
+								 VALUES(COMM_MENU_OPEN_HIST_S.NEXTVAL
+									  , #{COMM_MENU_ID}
+									  , #{COMM_USER_ID}
+									  , #{COMM_USER_ID}
+									  , SYSDATE
+									  , #{CIP}
+									  , #{COMM_USER_ID}
+									  , SYSDATE    
+									  , #{CIP})
+	</insert>
+	<!-- 테이블리스트 조회 -->
+	<select id="S_COMM_TABLE" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_TABLE */
+		SELECT 'id_' || (ROWNUM-1) 	AS "id"
+			 , A.TABLE_NAME 		AS TABLE_NAME
+			 , B.COMMENTS			AS COMMENTS
+			 , C.LAST_NUMBER		AS SEQ_CURRVAL 
+		  FROM ALL_TABLES A
+		  JOIN ALL_TAB_COMMENTS B ON A.TABLE_NAME = B.TABLE_NAME 
+		  						 AND B.TABLE_TYPE = 'TABLE'
+	 LEFT JOIN USER_SEQUENCES C ON A.TABLE_NAME || '_S' = C.SEQUENCE_NAME 
+		 WHERE A.OWNER = 'PRJB'
+		 <if test="@prjb.com.util.ComUtil@nvl(p_tableNm, '') != ''">
+		 	<![CDATA[
+		 	AND ( instr(A.TABLE_NAME, #{p_tableNm}) > 0 OR instr(B.COMMENTS, #{p_tableNm}) > 0 )
+		 	]]>
+		 </if>
+		 ORDER BY A.TABLE_NAME ASC
+	</select>
+	<!-- 테이블 상세 조회 -->
+	<select id="S_COMM_TABLE_DETAIL" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_TABLE_DETAIL */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.TABLE_NAME
+		     , A.COLUMN_NAME
+		     , B.COMMENTS
+		     , A.DATA_TYPE
+		     , A.DATA_LENGTH
+		     , CASE WHEN A.NULLABLE = 'Y'
+		     		THEN '1'
+		     		ELSE '0' END AS NULLABLE
+		  FROM ALL_TAB_COLUMNS A
+		  JOIN ALL_COL_COMMENTS B ON A.TABLE_NAME = B.TABLE_NAME 
+		  						 AND A.COLUMN_NAME = B.COLUMN_NAME
+		 WHERE A.TABLE_NAME = #{TABLE_NAME}
+		 ORDER BY A.COLUMN_ID ASC
+	</select>
+	
 	<!-- 다국어일괄등록 -->
 	<insert id="P_MLG_BATCH_REGIST" parameterType="HashMap" >
 		/* P_MLG_BATCH_REGIST */
@@ -319,6 +417,7 @@
 	<select id="S_MENU_URL" resultType="HashMap" parameterType="HashMap" >
 		/* S_MENU_URL */
 		SELECT A.MENU_URL
+			 , A.COMM_MENU_ID
 		  FROM COMM_MENU A
 		 WHERE A.USE_YN = '1'
 		   AND A.MENU_CODE = #{MENU_CODE}
