@@ -53,7 +53,7 @@
 		var tabs;
 		var tabTitle = $( "#tab_title" );
 	    var tabContent = $( "#tab_content" );
-	    var tabTemplate = "<li class='indexTabLi' ><a href='@href@'><span class='menu-span'>@label@</span><span class='ui-icon ui-icon-closethick' role='presentation'>Remove Tab</span></a></li>";
+	    var tabTemplate = "<li class='indexTabLi' menu-code='@menuCode@' ><a href='@href@'><span class='menu-span'>@label@</span><span class='ui-icon ui-icon-closethick' role='presentation'>Remove Tab</span></a></li>";
 	    var tabCounter = 1;
 	    var selectedTabId = '';
 	    
@@ -85,11 +85,45 @@
 		    $('#closeRightBtn').on('click', tabRightClose);
 		    $('#closeOthersBtn').on('click', tabOtherClose);
 		    $('#refreshTabBtn').on('click', tabRefresh);
+		    $('#favoriteTabBtn').on('click', f_menuBookmark);
 		    
 		  	//메뉴 우측 퀵메뉴 셋팅		    
 		    setQuickMenu();
 		  	
 		});
+		
+		//즐겨찾기
+		function f_menuBookmark(e){
+			
+			var v_menuCode = $('[aria-controls=' + selectedTabId + ']').attr('menu-code');
+			if(gf_nvl(v_menuCode, '') == ''){
+				return;
+			}
+			
+			var fData = new FormData();
+			fData.set('insertQUERY', JSON.stringify({
+				QUERY_ID : 'com.P_COMM_USER_BOOKMARK',
+				MENU_CODE : v_menuCode
+			}));
+			fData.set('selectQuery', JSON.stringify({
+				QUERY_ID : 'com.S_COMM_USER_BOOKMARK'
+			}));
+			
+	  		gf_ajax( fData
+	  				, null
+	  				, function(data){
+	  			
+	  					var result = data.result.selectQuery;
+	  					var cnt = result.filter(x=>x.MENU_CODE == v_menuCode).length;
+	  					
+	  					if(cnt > 0){
+	  						gf_toast('${pb:msg(pageContext.request, "즐겨찾기를_추가하였습니다")}', 'info');	
+	  					}
+	  					else{
+	  						gf_toast('${pb:msg(pageContext.request, "즐겨찾기를_삭제하였습니다")}', 'info');	
+	  					}
+					});
+		}
 		
 		//메뉴 우측 퀵메뉴 셋팅
 		function setQuickMenu(){
@@ -243,7 +277,7 @@
 			var label = e.data.menuNm;
 	        var id = "tabs-" + (++tabCounter);
 	        var showLabel = label.length > 8 ? label.substr(0,8) + '...' : label;
-	        var li = $( tabTemplate.replace( /@href@/g, "#" + id ).replace( /@label@/g, showLabel ) );
+	        var li = $( tabTemplate.replace( /@href@/g, "#" + id ).replace( /@label@/g, showLabel ).replace( /@menuCode@/g, e.data.menuCode ) );
 	        
 	        li.attr('title', label);
 	        

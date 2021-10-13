@@ -4,19 +4,27 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
-	<!-- 즐겨찾기 추가 -->
-	<insert id="I_COMM_USER_BOOKMARK" parameterType="HashMap" >
-		/* I_COMM_USER_BOOKMARK */
+	<!-- 즐겨찾기 조회 -->
+	<select id="S_COMM_USER_BOOKMARK" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_USER_BOOKMARK */
+		SELECT COMM_USER_BOOKMARK_ID
+			 , MENU_CODE
+			 , COMM_USER_ID
+		  FROM COMM_USER_BOOKMARK
+		 WHERE COMM_USER_ID = #{CID}
+	</select>
+	<!-- 즐겨찾기 추가/삭제 -->
+	<insert id="P_COMM_USER_BOOKMARK" parameterType="HashMap" >
+		/* P_COMM_USER_BOOKMARK */
 		MERGE INTO COMM_USER_BOOKMARK
        		 USING DUAL
-        		ON (COMM_MENU_ID = #{COMM_MENU_ID} AND COMM_USER_ID = #{COMM_USER_ID})
+        		ON (MENU_CODE = #{MENU_CODE} AND COMM_USER_ID = #{CID})
        		  WHEN MATCHED THEN
-       		UPDATE SET MID = #{COMM_USER_ID}
-		             , MDT = SYSDATE
-		             , MIP = #{CIP}
+       		UPDATE SET MID = MID
+       		DELETE WHERE COMM_USER_ID = #{CID} AND MENU_CODE = #{MENU_CODE}
        		WHEN NOT MATCHED THEN
 		       INSERT(COMM_USER_BOOKMARK_ID
-		          , COMM_MENU_ID
+		          , MENU_CODE
 		          , COMM_USER_ID
 		          , CID    
 		          , CDT    
@@ -25,23 +33,15 @@
 		          , MDT    
 		          , MIP)
 		       VALUES(COMM_USER_BOOKMARK_S.NEXTVAL
-		          , #{COMM_MENU_ID}
-		          , #{COMM_USER_ID}
-		          , #{COMM_USER_ID}
+		          , #{MENU_CODE}
+		          , #{CID}
+		          , #{CID}
 		          , SYSDATE
 		          , #{CIP}
-		          , #{COMM_USER_ID}
+		          , #{CID}
 		          , SYSDATE    
 		          , #{CIP})
 	</insert>
-	<!-- 즐겨찾기 삭제 -->
-	<delete id="D_COMM_USER_BOOKMARK" parameterType="HashMap" >
-		/* D_COMM_USER_BOOKMARK */
-		DELETE
-		  FROM COMM_USER_BOOKMARK
-		 WHERE COMM_USER_ID = #{COMM_USER_ID}
-		   AND COMM_MENU_ID = #{COMM_MENU_ID}
-	</delete>
 	<!-- 사용자별 메뉴오픈이력 저장 -->
 	<insert id="I_COMM_MENU_OPEN_HIST" parameterType="HashMap" >
 		/* I_COMM_MENU_OPEN_HIST */

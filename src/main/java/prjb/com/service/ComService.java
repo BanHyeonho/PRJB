@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -443,12 +444,56 @@ public class ComService {
 	public Object ajax(HttpServletRequest request) throws Exception{
 		Object result = null;
 		
+		String langCode = String.valueOf(request.getSession().getAttribute("LANG_CODE"));
 		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
 		String ip = ComUtil.getAddress(request);
-		Map<String, Object> paramMap = ComUtil.getParameterMap(request);
+		Map<String, Object> paramMap = ComUtil.getParameterMap(request, "SORT");
 		
-		String tableNm = String.valueOf(paramMap.get("TALBE_NAME"));
+		String queryId = (String)paramMap.get("QUERY_ID");
+		
+		//queryId 가 없는경우 멀티ajax
+		if(queryId == null) {
+			
+			result = new HashMap();
+			for ( Map.Entry<String, Object> param : paramMap.entrySet() ) {
+				String key = param.getKey();
+				JSONObject json = new JSONObject(param.getValue().toString());
+				Map p = json.toMap();
+				
+				p.put("langCode", langCode);
+				p.put("ip", ip);
+				p.put("cId", cId);
+				((Map)result).put(key, ajaxExec(p));				
+			}
+		}
+		else {
+			
+			paramMap.put("langCode", langCode);
+			paramMap.put("ip", ip);
+			paramMap.put("cId", cId);
+			result = ajaxExec(paramMap);
+			
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * ajax요청처리실행
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public Object ajaxExec(Map<String, Object> paramMap) throws Exception{
+		Object result = null;
 		String queryId = String.valueOf(paramMap.get("QUERY_ID"));
+		String tableNm = String.valueOf(paramMap.get("TALBE_NAME"));
+		
+		String langCode = String.valueOf(paramMap.get("langCode"));
+		String cId = String.valueOf(paramMap.get("cId"));
+		String ip = String.valueOf(paramMap.get("ip"));
+		
 		List<Map> tableLayout = null;
 		
 		//공통쿼리일경우
@@ -462,7 +507,7 @@ public class ComService {
 		if(queryId.contains(".S_")) {
 			
 			paramMap.put("CID", cId);
-			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+			paramMap.put("LANG_CODE", String.valueOf(langCode));
 			
 			result = comDao.selectList(queryId, paramMap);
 			
@@ -474,7 +519,7 @@ public class ComService {
 			paramMap.put("MID", cId);
 			paramMap.put("CIP", ip);
 			paramMap.put("MIP", ip);
-			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+			paramMap.put("LANG_CODE", String.valueOf(langCode));
 			for (Map map : tableLayout) {
 				map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
 			}
@@ -490,7 +535,7 @@ public class ComService {
 			String whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
 			paramMap.put("MID", cId);
 			paramMap.put("MIP", ip);
-			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+			paramMap.put("LANG_CODE", String.valueOf(langCode));
 			for (Map map : tableLayout) {
 				map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
 			}
@@ -519,7 +564,7 @@ public class ComService {
 			paramMap.put("MID", cId);
 			paramMap.put("CIP", ip);
 			paramMap.put("MIP", ip);
-			paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+			paramMap.put("LANG_CODE", String.valueOf(langCode));
 			comDao.selectOne(queryId, paramMap);
 			
 			result = "success";
