@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>접근오류</title>
+<meta name="google" content="notranslate">
 </head>
 <body>
 잘못된 접근을 하였습니다.<br>

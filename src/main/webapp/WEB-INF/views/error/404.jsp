@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>페이지를 찾을수 없습니다.</title>
+<meta name="google" content="notranslate">
 </head>
 <body>
 페이지를 찾을수 없습니다.

@@ -43,6 +43,7 @@
 	    });
 	});
 	</script>
+	<meta name="google" content="notranslate">
 </head>
 <body>
 	<h1>SlickGrid Examples</h1>
