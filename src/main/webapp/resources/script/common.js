@@ -50,26 +50,22 @@ function gf_chkRequire(formList) {
 }
 
 //다국어 반환
-function gf_mlg(p_mlg_code, p_type){
+function gf_mlg(p_mlg_code, p_param){
 	
-	return mlg.hasOwnProperty(p_mlg_code) ? mlg[p_mlg_code].VALUE : p_mlg_code;
-	
-}
-//다국어 메시지 파라미터 치환
-function gf_msg(p_text, p_param){
-	
+	var v_text = mlg.hasOwnProperty(p_mlg_code) ? mlg[p_mlg_code].VALUE : p_mlg_code;
 	var paramKey = Object.keys(gf_nvl(p_param, {}));
 	for (var i = 0; i < paramKey.length; i++) {
 		var chgKey = '\\[\\@;' + paramKey[i] + ';\\@\\]';
 		var reg = new RegExp(chgKey, 'g');
-		p_text = p_text.replace(reg, p_param[paramKey[i]]);
+		v_text = v_text.replace(reg, p_param[paramKey[i]]);
 	}
 	// 모든변수부분 삭제
 	var regExp = new RegExp('\\[\\@;.*;\\@\\]', 'g');
-	p_text = p_text.replace(regExp, '');
+	v_text = v_text.replace(regExp, '');
 	
-	return p_text;
+	return v_text;
 }
+
 /********************************************************************************** */
 /*													 								*/
 /*	AJAX 											 								*/

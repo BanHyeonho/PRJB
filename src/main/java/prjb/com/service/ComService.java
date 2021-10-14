@@ -40,8 +40,6 @@ public class ComService {
 	 */
 	public ModelAndView page(HttpServletRequest request, ModelAndView mv) throws Exception {
 		
-		
-		
 		Map<String, String> param = new HashMap();
 		param.put("MENU_CODE", request.getParameter("menuCode"));
 		param.put("CID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
@@ -153,7 +151,7 @@ public class ComService {
 		}
 		mv.addObject("gridContextData", gridContextData);
 		mv.addObject("gridData", gridData);
-		
+		mv.addObject("jsLink", "/viewJs/contents/" +  menuUrl.replace("_", "/") + ".js");
 		mv.setViewName("contents/"+ menuUrl.replace("_", "/"));
 		
 		//메뉴오픈이력

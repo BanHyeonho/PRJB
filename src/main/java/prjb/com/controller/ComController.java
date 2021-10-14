@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,9 +33,9 @@ public class ComController {
 	 * 메인화면
 	 */
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
-	public String main(HttpServletRequest request) {
+	public String main(HttpServletRequest request, Model m) {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		
+		m.addAttribute("jsLink", "/viewJs/contents" + request.getRequestURI() + ".js");
 		return "contents/main";
 	}
 	
@@ -42,10 +43,10 @@ public class ComController {
 	 * 로그인 페이지이동
 	 */
 	@RequestMapping(value = "/loginPage", method = RequestMethod.GET)
-	public String loginPage(HttpServletRequest request) throws Exception {
+	public String loginPage(HttpServletRequest request, Model m) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		ComUtil.getKeyPair(request);
-		
+		m.addAttribute("jsLink", "/viewJs" + request.getRequestURI() + ".js");
 		return "loginPage";
 	}
 	
@@ -53,9 +54,9 @@ public class ComController {
 	 * 회원가입 페이지이동
 	 */
 	@RequestMapping(value = "/registPage", method = RequestMethod.GET)
-	public String registPage(HttpServletRequest request) {
+	public String registPage(HttpServletRequest request, Model m) {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-				
+		m.addAttribute("jsLink", "/viewJs" + request.getRequestURI() + ".js");
 		return "registPage";
 	}
 	
@@ -101,10 +102,9 @@ public class ComController {
 	 * 메인화면 호출
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String index(HttpServletRequest request) {
+	public String index(HttpServletRequest request, Model m) {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		
-		
+		m.addAttribute("jsLink", "/viewJs/index.js");
 		return "index";
 	}
 	

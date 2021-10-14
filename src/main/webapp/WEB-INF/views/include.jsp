@@ -40,54 +40,24 @@
 
 <!-- 사용자정의 -->
 <link  href="/css/reset.css?v=${pb:jsNow()}" rel="stylesheet" />
-<script src="/script/common.js?v=${pb:jsNow()}"></script>
 <link  href="/css/common.css?v=${pb:jsNow()}" rel="stylesheet" />
 <link  href="/css/common-laptop.css?v=${pb:jsNow()}" rel="stylesheet" />
+<script src="/script/common.js?v=${pb:jsNow()}"></script>
 
-<!-- 공통실행함수 -->
+<!-- 다국어 -->
 <script type="text/javascript">
-
-	//다국어
-	const mlg = ${MLG};
-	
-	$(document).ready(function() {
-		
-		//자동완성 사용안함
-		$('input').attr('autocomplete', 'off');
-		
-		//엔터입력시 실행
-		$('[enter-exec]').on('keydown',function(e){
-			//엔터
-			if(e.which == 13){
-				e.preventDefault();
-				e.stopPropagation();
-				var execIdx = $(e.currentTarget).attr('enter-exec');
-				$('[tabindex=' + execIdx + ']').click();
-			}
-		});
-		
-		//우클릭막기
-		$(document).on('contextmenu', function() {
-			  return false;
-		});
-		
-		$('body').on('click',function(e){
-			parent.$('.context').css({
-	    		'top' : 0
-				 , 'left' : 0
-				 , 'z-index': '-1'
-				 , 'display' : 'none'
-		    });
-			parent.selectedTabId = '';
-		});
-		
-		//툴팁 클래스적용
-		$( document ).tooltip( { tooltipClass: "common-tooltip" } );
-		
-		//메뉴명
-		$('#content-title').text(parent.$('li[aria-selected="true"] span.menu-span').text());
-				
-	});
+const mlg = ${MLG};
 </script>
 
-        
+<!-- 그리드설정 -->
+<c:if test="${gridData.size() > 0}">
+	<%@ include file="./gridData.jsp"%>
+</c:if>
+
+<!-- 글로벌변수 -->
+<script src="/viewJs/variable.js?v=${pb:jsNow()}"></script>
+<!-- 공통 document ready -->
+<script src="/viewJs/commonReady.js?v=${pb:jsNow()}"></script>
+
+<%-- 각 화면 스크립트 --%>
+<script src="${jsLink}?v=${pb:jsNow()}"></script>

@@ -1,8 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <script type="text/javascript">
-
-var gridMlg = {};
 <c:forEach var="item" items="${gridContextData}">
 	var ${item.get("GRID_NAME")}Context = '${item.get("CONTEXT_MENU")}'.split(',');
 </c:forEach>
