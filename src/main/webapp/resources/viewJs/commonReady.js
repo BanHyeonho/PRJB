@@ -21,6 +21,14 @@ $(document).ready(function() {
 	$(document).on('contextmenu', function() {
 		  return false;
 	});
+	//드래그 막기
+	$(document).on('dragstart', function() {
+		  return false;
+	});
+	//선택막기
+	$(document).on('selectstart', function() {
+		  return false;
+	});
 	
 	$('body').on('click',function(e){
 		parent.$('.context').css({
@@ -33,7 +41,7 @@ $(document).ready(function() {
 	});
 	
 	//툴팁 클래스적용
-	$( document ).tooltip( { tooltipClass: "common-tooltip" } );
+	//$( document ).tooltip( { tooltipClass: "common-tooltip" } );
 	
 	//메뉴명
 	$('#content-title').text(parent.$('li[aria-selected="true"] span.menu-span').text());

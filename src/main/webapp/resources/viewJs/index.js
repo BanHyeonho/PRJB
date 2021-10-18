@@ -150,7 +150,7 @@ function getMenu(){
 						tag.on('click', function(e){
 							
 							$('.menu-div').removeClass('selected-menu');
-							$('div[name=' + $(e.target).closest('div .menu-div').attr('id') + ']').slideToggle();
+							$('div[name=' + $(e.target).closest('div .menu-div').attr('id') + ']').slideToggle('fast');
 							$(e.target).closest('div .menu-div').addClass('selected-menu');
 						});
 					}
@@ -160,7 +160,7 @@ function getMenu(){
 						$('div[name=' + upMenuCode +']').append($('<div style="display:none;"></div>').attr('name', menuCode));
 						tag.on('click', function(e){
 							$('.menu-div').removeClass('selected-menu');
-							$('div[name=' + $(e.target).closest('div .menu-div').attr('id') + ']').slideToggle();
+							$('div[name=' + $(e.target).closest('div .menu-div').attr('id') + ']').slideToggle('fast');
 							$(e.target).closest('div .menu-div').addClass('selected-menu');
 						});
 					}

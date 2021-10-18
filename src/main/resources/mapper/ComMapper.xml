@@ -4,6 +4,114 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
+	<!-- 메뉴에 추가/삭제 -->
+	<update id="U_COMM_MENU_FUNC" parameterType="HashMap" >
+		/* U_COMM_MENU_FUNC */
+		MERGE INTO COMM_MENU_FUNC
+       		 USING DUAL
+        		ON (COMM_MENU_ID = #{COMM_MENU_ID} 
+        		AND COMM_FUNCTION_ID = #{COMM_FUNCTION_ID}
+        		<![CDATA[
+        		AND #{USE_YN} <> '1'
+        		]]>
+        		)
+       		  WHEN MATCHED THEN
+       		UPDATE SET MID = MID
+       		DELETE WHERE COMM_MENU_ID = #{COMM_MENU_ID} AND COMM_FUNCTION_ID = #{COMM_FUNCTION_ID}
+       		WHEN NOT MATCHED THEN
+		       INSERT(COMM_MENU_FUNC_ID
+		          , COMM_MENU_ID
+		          , COMM_FUNCTION_ID
+		          , DESCRIPTION
+		          , CID    
+		          , CDT    
+		          , CIP    
+		          , MID    
+		          , MDT    
+		          , MIP)
+		       VALUES(COMM_MENU_FUNC_S.NEXTVAL
+		          , #{COMM_MENU_ID}
+		          , #{COMM_FUNCTION_ID}
+		          , #{DESCRIPTION}
+		          , #{MID}
+		          , SYSDATE
+		          , #{MIP}
+		          , #{MID}
+		          , SYSDATE    
+		          , #{MIP})
+	</update>
+	
+	<!-- 기능 별 메뉴조회 -->
+	<select id="S_COMM_FUNCTION_MENU" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_FUNCTION_MENU */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+	         , LEVEL-1 AS "indent"
+	         , SUBSTR( SYS_CONNECT_BY_PATH(ROWNUM, '_')
+	           , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
+	           , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1  AS "parent"
+	         , #{COMM_FUNCTION_ID}							AS COMM_FUNCTION_ID
+	         , A.COMM_MENU_ID 								AS COMM_MENU_ID
+	         , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
+	         , CASE WHEN B.COMM_MENU_FUNC_ID IS NULL
+	                THEN '0'
+	                ELSE '1' END 							AS USE_YN
+      	  FROM COMM_MENU A
+	 LEFT JOIN COMM_MENU_FUNC B ON A.COMM_MENU_ID = B.COMM_MENU_ID AND B.COMM_FUNCTION_ID = #{COMM_FUNCTION_ID}
+	     START WITH A.UP_MENU_CODE IS null 
+	    CONNECT BY PRIOR A.MENU_CODE = A.UP_MENU_CODE
+	    ORDER SIBLINGS BY A.SEQ
+	</select>
+	
+	<!-- 기능 조회 -->
+	<select id="S_COMM_FUNCTION" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_FUNCTION */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.COMM_FUNCTION_ID 
+			 , A.FUNCTION_CODE    
+			 , A.MLG_CODE
+			 , A.DESCRIPTION      
+			 , A.ATTRIBUTE1       
+			 , A.ATTRIBUTE2       
+			 , A.ATTRIBUTE3       
+			 , A.ATTRIBUTE4       
+			 , A.ATTRIBUTE5       
+			 , A.ATTRIBUTE6       
+			 , A.ATTRIBUTE7       
+			 , A.ATTRIBUTE8       
+			 , A.ATTRIBUTE9       
+			 , A.ATTRIBUTE10      
+		  FROM COMM_FUNCTION A
+		 WHERE A.COMM_FUNCTION_ID = A.COMM_FUNCTION_ID
+		 <if test="@prjb.com.util.ComUtil@nvl(p_functionCode, '') != ''">
+		 	<![CDATA[
+		 	AND ( instr(A.FUNCTION_CODE, #{p_functionCode}) > 0 OR instr(COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}), #{p_functionCode}) > 0 )
+		 	]]> 
+		 </if>
+		 ORDER BY A.MLG_CODE ASC
+	</select>
+	
+	<!-- 최근사용메뉴 조회 -->
+	<select id="S_LAST_MENU_OPEN_LIST" resultType="HashMap" parameterType="HashMap" >
+		/* S_LAST_MENU_OPEN_LIST */
+		SELECT A.MENU_CODE
+			 , A.MENU_URL
+			 , A.OPEN_DATE
+		  FROM (
+				SELECT B.MENU_CODE	AS MENU_CODE
+				     , B.MENU_URL	AS MENU_URL
+				     , MAX(A.MDT) 	AS OPEN_DATE
+				  FROM COMM_MENU_OPEN_HIST A
+				  JOIN COMM_MENU B ON A.COMM_MENU_ID = B.COMM_MENU_ID
+				 WHERE B.USE_YN = '1'
+				   AND A.COMM_USER_ID = #{CID}
+				 GROUP BY B.MENU_CODE, B.MENU_URL 
+				 ORDER BY MAX(A.MDT) DESC
+				 ) A
+		 WHERE 1=1
+		 <![CDATA[
+		   AND ROWNUM < 10
+		 ]]>
+	</select>
 	<!-- 즐겨찾기 조회 -->
 	<select id="S_COMM_USER_BOOKMARK" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_USER_BOOKMARK */

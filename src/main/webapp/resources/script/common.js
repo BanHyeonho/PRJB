@@ -262,7 +262,6 @@ function gf_gridInit(gridDiv, option) {
 	//정렬
     vGrid.onSort.subscribe(function (e, args) {
 		var cols = args.sortCols;
-		var editorNm = cols[cols.length-1].sortCol.editor.name;
 		
 		vGrid.getData().getItems().sort(function (dataRow1, dataRow2) {
 			

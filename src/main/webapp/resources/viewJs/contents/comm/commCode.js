@@ -106,7 +106,7 @@ var f_search = function(type){
 				
 				if((gf_gridSaveData(masterGrid).length > 0
 				|| gf_gridSaveData(detailGrid).length > 0 )
-				&& type != 'saveAfter'){
+				){
 				
 					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
 						return false;
@@ -237,7 +237,7 @@ var f_save = function(){
 					gf_toast(gf_mlg('저장_되었습니다'), 'success');
 					gf_gridClear(masterGrid);
 					gf_gridClear(detailGrid);
-  					f_search('saveAfter');	
+  					f_search();	
 				}
 				
 			}
