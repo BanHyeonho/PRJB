@@ -135,8 +135,6 @@ var f_save = function(){
 	var menuData = gf_gridSaveData(menuGrid);
 	
 	var fData = new FormData();
-	fData.set('functionGrid', JSON.stringify(functionData));
-	fData.set('menuGrid', JSON.stringify(menuData));
 	
 	gf_ajax( fData
 			, function(){

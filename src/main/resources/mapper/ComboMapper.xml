@@ -4,53 +4,9 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="combo">
 
-	<select id="S_COMM_MLG" resultType="HashMap" parameterType="HashMap" >
-		SELECT A.MLG_CODE AS CODE_VALUE
-			 , A.COMM_MLG_ID
-			 , A.MLG_CODE
-			 , A.DESCRIPTION
-			 , A.MSG_YN
-			 , A.MENU_YN
-			 , A.CODE_YN
-			 , A.GRID_YN
-			 , A.FUNCTION_YN
-		 <choose>
-		 	<when test="LANG_CODE == 'KO'">
-		 	, A.MLG_KO AS CODE_NAME
-		 	</when>
-		 	<otherwise>
-		 	, A.MLG_EN AS CODE_NAME
-		 	</otherwise>
-		 </choose>
-		  FROM COMM_MLG A
-		 WHERE A.COMM_MLG_ID = A.COMM_MLG_ID
-		 <if test="@prjb.com.util.ComUtil@nvl(MSG_YN, '') != ''">
-		 	AND A.MSG_YN = #{MSG_YN}
-		 </if>
-		 <if test="@prjb.com.util.ComUtil@nvl(MENU_YN, '') != ''">
-		 	AND A.MENU_YN = #{MENU_YN}
-		 </if>
-		 <if test="@prjb.com.util.ComUtil@nvl(CODE_YN, '') != ''">
-		 	AND A.CODE_YN = #{CODE_YN}
-		 </if>
-		 <if test="@prjb.com.util.ComUtil@nvl(GRID_YN, '') != ''">
-		 	AND A.GRID_YN = #{GRID_YN}
-		 </if>
-		 <if test="@prjb.com.util.ComUtil@nvl(FUNCTION_YN, '') != ''">
-		 	AND A.FUNCTION_YN = #{FUNCTION_YN}
-		 </if>
-		 <choose>
-		 	<when test="LANG_CODE == 'KO'">
-		 ORDER BY A.MLG_KO ASC
-		 	</when>
-		 	<otherwise>
-		 ORDER BY A.MLG_EN ASC
-		 	</otherwise>
-		 </choose>
-		 
-	</select>
-	
+	<!-- 시스템코드 조회 -->	
 	<select id="S_SYS_CODE" resultType="HashMap" parameterType="HashMap" >
+		/* S_SYS_CODE */
 		SELECT A.COMM_CODE_DETAIL_ID
 			 , A.COMM_CODE_MASTER_ID
 			 , A.DETAIL_CODE AS CODE_VALUE
@@ -75,6 +31,28 @@
 		   AND (TO_DATE(A.START_DATE) <= SYSDATE AND NVL(TO_DATE(A.END_DATE), SYSDATE) <= SYSDATE)
 		   ]]>
 		 ORDER BY A.SEQ ASC
+	</select>
+	
+	<!-- 기능코드 조회 -->	
+	<select id="S_FUNCTION_COMBO" resultType="HashMap" parameterType="HashMap" >
+		/* S_FUNCTION_COMBO */
+		SELECT A.COMM_FUNCTION_ID AS CODE_VALUE
+			 , A.FUNCTION_CODE    
+			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) || ' (' || A.FUNCTION_CODE || ')'	AS CODE_NAME
+			 , A.DESCRIPTION      
+			 , A.ATTRIBUTE1       
+			 , A.ATTRIBUTE2       
+			 , A.ATTRIBUTE3       
+			 , A.ATTRIBUTE4       
+			 , A.ATTRIBUTE5       
+			 , A.ATTRIBUTE6       
+			 , A.ATTRIBUTE7       
+			 , A.ATTRIBUTE8       
+			 , A.ATTRIBUTE9       
+			 , A.ATTRIBUTE10      
+		  FROM COMM_FUNCTION A
+		 WHERE A.COMM_FUNCTION_ID = A.COMM_FUNCTION_ID
+		 ORDER BY A.MLG_CODE ASC
 	</select>
 	
 </mapper>

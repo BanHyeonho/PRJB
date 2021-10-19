@@ -4,6 +4,20 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
+	<!-- 메뉴등록(기능조회) -->
+	<select id="S_COMM_MENU_FUNC" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_MENU_FUNC */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+	         , A.COMM_MENU_FUNC_ID
+	         , A.COMM_MENU_ID
+	         , A.COMM_FUNCTION_ID
+	         , A.DESCRIPTION
+	         , A.SEQ
+      	  FROM COMM_MENU_FUNC A
+      	 WHERE A.COMM_MENU_ID = #{COMM_MENU_ID}
+      	 ORDER BY A.SEQ ASC
+	</select>
+	
 	<!-- 메뉴에 추가/삭제 -->
 	<update id="U_COMM_MENU_FUNC" parameterType="HashMap" >
 		/* U_COMM_MENU_FUNC */
@@ -61,8 +75,7 @@
 	    CONNECT BY PRIOR A.MENU_CODE = A.UP_MENU_CODE
 	    ORDER SIBLINGS BY A.SEQ
 	</select>
-	
-	<!-- 기능 조회 -->
+	<!-- 기능관리(기능 조회) -->
 	<select id="S_COMM_FUNCTION" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_FUNCTION */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
@@ -86,7 +99,7 @@
 		 	<![CDATA[
 		 	AND ( instr(A.FUNCTION_CODE, #{p_functionCode}) > 0 OR instr(COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}), #{p_functionCode}) > 0 )
 		 	]]> 
-		 </if>
+		 </if>		 
 		 ORDER BY A.MLG_CODE ASC
 	</select>
 	

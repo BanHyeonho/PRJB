@@ -384,10 +384,7 @@ var f_save = function(){
 	var comboPopupData = gf_gridSaveData(comboPopupGrid);
 	
 	var fData = new FormData();
-	fData.set('masterGrid', JSON.stringify(masterData));
-	fData.set('contextGrid', JSON.stringify(contextData));
-	fData.set('detailGrid', JSON.stringify(detailData));
-	fData.set('comboPopupGrid', JSON.stringify(comboPopupData));
+
 	gf_ajax( fData
 			, function(){
 				

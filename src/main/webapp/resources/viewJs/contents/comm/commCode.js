@@ -154,13 +154,6 @@ var f_detailSearch = function(pk, preRow){
 	gf_ajax( fData
 			, function(){
 				
-				if(gf_gridSaveData(detailGrid).length > 0){
-					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
-						commandYn = true;
-						masterGrid.setSelectedRows([preRow]);
-						return false;
-					}
-				}
 				gf_gridClear(detailGrid);
 				
 			}
@@ -198,8 +191,7 @@ var f_save = function(){
 		item['MASTER_DETAIL_CODE'] = item['MASTER_CODE'] + item['DETAIL_CODE']; 
 	});
 	var fData = new FormData();
-	fData.set('masterGrid', JSON.stringify(masterData));
-	fData.set('detailGrid', JSON.stringify(detailData));
+	
 	gf_ajax( fData
 			, function(){
 				

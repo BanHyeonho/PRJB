@@ -57,7 +57,7 @@ var f_save = function(){
 	var saveData = gf_gridSaveData(masterGrid);
 	
 	var fData = new FormData();
-	fData.set('masterGrid', JSON.stringify(saveData));
+	
 	gf_ajax( fData
 			, function(){
 				
