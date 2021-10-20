@@ -4,6 +4,31 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
+	<!-- 권한조회 -->
+	<select id="S_COMM_AUTH_GROUP" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_AUTH_GROUP */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+	         , A.COMM_AUTH_GROUP_ID
+			 , A.GROUP_NANE
+			 , A.DESCRIPTION
+      	  FROM COMM_AUTH_GROUP A
+      	 ORDER BY A.GROUP_NANE ASC
+	</select>
+	<!-- 권한 사용자 조회 -->
+	<select id="S_COMM_AUTH_GROUP_USER" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_AUTH_GROUP_USER */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+	         , A.COMM_AUTH_GROUP_USER_ID
+			 , A.COMM_AUTH_GROUP_ID
+			 , A.COMM_USER_ID
+			 , A.DESCRIPTION
+      	  FROM COMM_AUTH_GROUP_USER A
+      	  JOIN COMM_USER B ON A.COMM_USER_ID = B.COMM_USER_ID
+      	 WHERE A.COMM_AUTH_GROUP_ID = #{COMM_AUTH_GROUP_ID}
+      	   AND B.USE_YN = '1'
+      	 ORDER BY B.USER_NAME ASC
+	</select>
+	
 	<!-- 메뉴등록(기능조회) -->
 	<select id="S_COMM_MENU_FUNC" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_MENU_FUNC */
@@ -13,8 +38,10 @@
 	         , A.COMM_FUNCTION_ID
 	         , A.DESCRIPTION
 	         , A.SEQ
+	         , A.USE_YN
       	  FROM COMM_MENU_FUNC A
       	 WHERE A.COMM_MENU_ID = #{COMM_MENU_ID}
+      	   AND A.USE_YN = '1'
       	 ORDER BY A.SEQ ASC
 	</select>
 	
@@ -25,27 +52,24 @@
        		 USING DUAL
         		ON (COMM_MENU_ID = #{COMM_MENU_ID} 
         		AND COMM_FUNCTION_ID = #{COMM_FUNCTION_ID}
-        		<![CDATA[
-        		AND #{USE_YN} <> '1'
-        		]]>
         		)
        		  WHEN MATCHED THEN
-       		UPDATE SET MID = MID
-       		DELETE WHERE COMM_MENU_ID = #{COMM_MENU_ID} AND COMM_FUNCTION_ID = #{COMM_FUNCTION_ID}
+       		UPDATE SET USE_YN = #{USE_YN}
+       				 , MID = #{MID}
+       				 , MDT = SYSDATE
+       				 , MIP = #{MIP}
        		WHEN NOT MATCHED THEN
 		       INSERT(COMM_MENU_FUNC_ID
 		          , COMM_MENU_ID
 		          , COMM_FUNCTION_ID
+		          , USE_YN
 		          , DESCRIPTION
-		          , CID    
-		          , CDT    
-		          , CIP    
-		          , MID    
-		          , MDT    
-		          , MIP)
+		          <include refid="config.cidColumn"></include>
+		          )
 		       VALUES(COMM_MENU_FUNC_S.NEXTVAL
 		          , #{COMM_MENU_ID}
 		          , #{COMM_FUNCTION_ID}
+		          , #{USE_YN}
 		          , #{DESCRIPTION}
 		          , #{MID}
 		          , SYSDATE
@@ -66,9 +90,7 @@
 	         , #{COMM_FUNCTION_ID}							AS COMM_FUNCTION_ID
 	         , A.COMM_MENU_ID 								AS COMM_MENU_ID
 	         , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
-	         , CASE WHEN B.COMM_MENU_FUNC_ID IS NULL
-	                THEN '0'
-	                ELSE '1' END 							AS USE_YN
+	         , NVL(B.USE_YN, '0') 							AS USE_YN
       	  FROM COMM_MENU A
 	 LEFT JOIN COMM_MENU_FUNC B ON A.COMM_MENU_ID = B.COMM_MENU_ID AND B.COMM_FUNCTION_ID = #{COMM_FUNCTION_ID}
 	     START WITH A.UP_MENU_CODE IS null 
@@ -147,12 +169,8 @@
 		       INSERT(COMM_USER_BOOKMARK_ID
 		          , MENU_CODE
 		          , COMM_USER_ID
-		          , CID    
-		          , CDT    
-		          , CIP    
-		          , MID    
-		          , MDT    
-		          , MIP)
+		          <include refid="config.cidColumn"></include>
+		          )
 		       VALUES(COMM_USER_BOOKMARK_S.NEXTVAL
 		          , #{MENU_CODE}
 		          , #{CID}
@@ -169,12 +187,8 @@
 		INSERT INTO COMM_MENU_OPEN_HIST(COMM_MENU_OPEN_HIST_ID
 									  , COMM_MENU_ID
 									  , COMM_USER_ID
-									  , CID    
-									  , CDT    
-									  , CIP    
-									  , MID    
-									  , MDT    
-									  , MIP)
+									  <include refid="config.cidColumn"></include>
+									  )
 								 VALUES(COMM_MENU_OPEN_HIST_S.NEXTVAL
 									  , #{COMM_MENU_ID}
 									  , #{COMM_USER_ID}
@@ -254,12 +268,8 @@
 							,MLG_CODE      
 							,MLG_KO     
 							,${COMPARE_COLUMN}     
-							,CID           
-							,CDT           
-							,CIP           
-							,MID           
-							,MDT           
-							,MIP)
+							<include refid="config.cidColumn"></include>
+							)
 					  VALUES(COMM_MLG_S.NEXTVAL   
 							,CS.MLG_CODE      
 							,REPLACE(CS.MLG_CODE, '_', ' ')     
@@ -781,6 +791,28 @@
 								 , SYSDATE
 								 , #{MIP}
 								 )
+	</insert>
+	
+	<!-- 회원가입 시 초기 그룹권한부여 -->
+	<insert id="I_ADD_AUTH_GROUP_USER" parameterType="HashMap" >
+		/* I_ADD_AUTH_GROUP_USER */
+		INSERT INTO COMM_AUTH_GROUP_USER(COMM_AUTH_GROUP_USER_ID
+										,COMM_AUTH_GROUP_ID
+										,COMM_USER_ID
+										,DESCRIPTION
+										<include refid="config.cidColumn"></include>
+										)
+								  VALUES( COMM_AUTH_GROUP_USER_S.NEXTVAL
+										, 2 --일반사용자그룹ID
+										, #{COMM_USER_ID}
+										, '회원가입'
+										, #{COMM_USER_ID}
+										, SYSDATE
+										, #{CIP}
+										, #{COMM_USER_ID}
+										, SYSDATE
+										, #{MIP}
+										)
 	</insert>
 	
 	<!-- 사용자관리 조회 -->

@@ -1,5 +1,5 @@
 /**
- * 테이블조회
+ * 사용자관리
  */
 $(document).ready(function() {
 	

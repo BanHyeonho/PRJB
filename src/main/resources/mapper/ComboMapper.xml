@@ -55,4 +55,14 @@
 		 ORDER BY A.MLG_CODE ASC
 	</select>
 	
+	<!-- 권한사용자 콤보 조회 -->	
+	<select id="S_AUTH_GROUP_USER_COMBO" resultType="HashMap" parameterType="HashMap" >
+		/* S_AUTH_GROUP_USER_COMBO */
+		SELECT A.COMM_USER_ID 							AS CODE_VALUE
+			 , A.USER_NAME || ' (' || A.LOGIN_ID || ')'	AS CODE_NAME   
+		  FROM COMM_USER A
+		 WHERE A.USE_YN = '1'
+		 ORDER BY A.USER_NAME ASC
+	</select>
+	
 </mapper>

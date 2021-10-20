@@ -1,5 +1,5 @@
 /**
- * 테이블조회
+ * 다국어관리
  */
 $(document).ready(function() {
 	

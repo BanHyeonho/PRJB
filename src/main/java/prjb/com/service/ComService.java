@@ -220,14 +220,8 @@ public class ComService {
 		Map<String, String> paramMap = (param == null ? ComUtil.getParameterMap(request) : param);
 		
 		String result;
-		String pwd;
-		try {
-			pwd = ComUtil.decrypt(request.getSession().getAttribute("privateKey").toString(), paramMap.get("PWD"));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new Exception("JAVA-0001");
-		}
+		
+		String pwd = ComUtil.decrypt(request.getSession().getAttribute("privateKey").toString(), paramMap.get("PWD"));
 		
 		Map<String,String> salt = comDao.selectOne("com.S_SALT", paramMap);
 		
@@ -273,15 +267,10 @@ public class ComService {
 		String result;
 		String originPwd;
 		String pwd;
-		try {
-			originPwd = paramMap.get("PWD");
-			pwd = ComUtil.decrypt(request.getSession().getAttribute("privateKey").toString(), originPwd);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new Exception("JAVA-0001");
-		}
 		
+		originPwd = paramMap.get("PWD");
+		pwd = ComUtil.decrypt(request.getSession().getAttribute("privateKey").toString(), originPwd);
+
 		String salt = ComUtil.getSalt();
 		String encrytPwd = ComUtil.getSHA512( pwd , salt);
 		String ip = ComUtil.getAddress(request);
@@ -292,17 +281,17 @@ public class ComService {
 		paramMap.put("CIP", ip);
 		paramMap.put("MIP", ip);
 		try {
+			//사용자테이블
 			comDao.insert("com.I_COMM_USER", paramMap);
+			//패스워드SALT
 			comDao.insert("com.I_SALT", paramMap);
+			//초기권한(일반사용자/ID:2)
+			comDao.insert("com.I_ADD_AUTH_GROUP_USER", paramMap);
 			paramMap.put("PWD", originPwd);
 			result = loginAction(request, paramMap);
 		}
 		catch (DuplicateKeyException e) {
 			result = "duplicatedId";
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new Exception(e.getMessage());
 		}
 		
 		return result;

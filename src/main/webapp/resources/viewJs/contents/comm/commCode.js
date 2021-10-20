@@ -1,5 +1,5 @@
 /**
- * 테이블조회
+ * 공통코드관리
  */
 var gridPk = function(){
 	this.COMM_CODE_MASTER_ID;

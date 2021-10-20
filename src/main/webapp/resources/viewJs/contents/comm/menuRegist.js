@@ -1,5 +1,5 @@
 /**
- * 테이블조회
+ * 메뉴등록
  */
 var gridPk = function(){
 	this.COMM_MENU_ID;

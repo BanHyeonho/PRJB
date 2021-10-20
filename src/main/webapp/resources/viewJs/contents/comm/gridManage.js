@@ -1,5 +1,5 @@
 /**
- * 테이블조회
+ * 그리드관리
  */
 var gridPk = function(){
 	this.MENU_CODE;
