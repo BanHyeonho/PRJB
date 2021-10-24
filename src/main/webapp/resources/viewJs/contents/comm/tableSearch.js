@@ -38,6 +38,7 @@ var f_search = function(){
 				masterGrid.updateRowCount(); //로우 카운트 업데이트
 				masterGrid.render(); //다시 그리기
 				masterGrid.getSelectionModel().setSelectedRanges("");
+				
 			});
 }
 

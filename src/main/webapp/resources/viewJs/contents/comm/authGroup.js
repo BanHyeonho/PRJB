@@ -67,25 +67,8 @@ var f_userSearch = function(pk, preRow){
 			}
 			, function(data){
 				
-				userGridIdx = data.result.length;
-				userGrid.getData().setItems(data.result);
-				userGrid.invalidate();
-				userGrid.updateRowCount(); //로우 카운트 업데이트
-				userGrid.render(); //다시 그리기
-				
-				if(userGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, userGrid.getSelectedRows()) < userGrid.getData().getItemCount() ){
-					var args = {
-							rows : userGrid.getSelectedRows(),
-							grid : userGrid,
-							previousSelectedRows : userGrid.getSelectedRows()
-					}
-					userGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					userGrid.getSelectionModel().setSelectedRanges("");
-				}
-				
+				gf_gridCallback('userGrid', data);
+								
 			});
 	
 }
@@ -112,25 +95,8 @@ var f_search = function(){
 			}
 			, function(data){
 				
-				groupGridIdx = data.result.length;
-				groupGrid.getData().setItems(data.result);
-				groupGrid.invalidate();
-				groupGrid.updateRowCount(); //로우 카운트 업데이트
-				groupGrid.render(); //다시 그리기
-				
-				if(groupGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, groupGrid.getSelectedRows()) < groupGrid.getData().getItemCount() ){
-					var args = {
-							rows : groupGrid.getSelectedRows(),
-							grid : groupGrid,
-							previousSelectedRows : groupGrid.getSelectedRows()
-					}
-					groupGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					groupGrid.getSelectionModel().setSelectedRanges("");
-				}
-				
+				gf_gridCallback('groupGrid', data);
+								
 			});
 }
   	

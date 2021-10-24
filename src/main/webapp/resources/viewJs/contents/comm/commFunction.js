@@ -66,25 +66,7 @@ var f_search = function(){
 			}
 			, function(data){
 				
-				functionGridIdx = data.result.length;
-				
-				functionGrid.getData().setItems(data.result);
-				functionGrid.invalidate();
-				functionGrid.updateRowCount(); //로우 카운트 업데이트
-				functionGrid.render(); //다시 그리기
-				
-				if(functionGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, functionGrid.getSelectedRows()) < functionGrid.getData().getItemCount() ){
-					var args = {
-							rows : functionGrid.getSelectedRows(),
-							grid : functionGrid,
-							previousSelectedRows : functionGrid.getSelectedRows()
-					}
-					functionGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					functionGrid.getSelectionModel().setSelectedRanges("");
-				}
+				gf_gridCallback('functionGrid', data);
 				
 			});
 }
@@ -107,24 +89,7 @@ var f_menuSearch = function(pk, preRow){
 			}
 			, function(data){
 				
-				menuGridIdx = data.result.length;
-				menuGrid.getData().setItems(data.result);
-				menuGrid.invalidate();
-				menuGrid.updateRowCount(); //로우 카운트 업데이트
-				menuGrid.render(); //다시 그리기
-				
-				if(menuGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, menuGrid.getSelectedRows()) < menuGrid.getData().getItemCount() ){
-					var args = {
-							rows : menuGrid.getSelectedRows(),
-							grid : menuGrid,
-							previousSelectedRows : menuGrid.getSelectedRows()
-					}
-					menuGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					menuGrid.getSelectionModel().setSelectedRanges("");
-				}
+				gf_gridCallback('menuGrid', data);
 				
 			});
 	

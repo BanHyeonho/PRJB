@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${pb:msg(pageContext.request, "그리드 관리")}</title>
+<title>${pb:msg(pageContext.request, "그리드관리")}</title>
 <meta name="google" content="notranslate">
 </head>
 <body>

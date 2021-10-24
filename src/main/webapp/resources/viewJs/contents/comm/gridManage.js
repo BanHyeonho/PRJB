@@ -191,23 +191,7 @@ var f_search = function(){
 			}
 			, function(data){
 				
-				menuGrid.getData().setItems(data.result);
-				menuGrid.invalidate();
-				menuGrid.updateRowCount(); //로우 카운트 업데이트
-				menuGrid.render(); //다시 그리기
-				
-				if(menuGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, menuGrid.getSelectedRows()) < menuGrid.getData().getItemCount() ){
-					var args = {
-							rows : menuGrid.getSelectedRows(),
-							grid : menuGrid,
-							previousSelectedRows : menuGrid.getSelectedRows()
-					}
-					menuGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					menuGrid.getSelectionModel().setSelectedRanges("");
-				}
+				gf_gridCallback('menuGrid', data);
 				
 			});
 	
@@ -230,25 +214,8 @@ var f_masterSearch = function(pk, preRow){
 			}
 			, function(data){
 				
-				masterGridIdx = data.result.length;
-				masterGrid.getData().setItems(data.result);
-				masterGrid.invalidate();
-				masterGrid.updateRowCount(); //로우 카운트 업데이트
-				masterGrid.render(); //다시 그리기
-				
-				if(masterGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, masterGrid.getSelectedRows()) < masterGrid.getData().getItemCount() ){
-					var args = {
-							rows : masterGrid.getSelectedRows(),
-							grid : masterGrid,
-							previousSelectedRows : masterGrid.getSelectedRows()
-					}
-					masterGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					masterGrid.getSelectionModel().setSelectedRanges("");
-				}
-				
+				gf_gridCallback('masterGrid', data);
+								
 			});
 	
 }
@@ -271,24 +238,7 @@ var f_contextSearch = function(pk, preRow){
 			}
 			, function(data){
 				
-				contextGridIdx = data.result.length;
-				contextGrid.getData().setItems(data.result);
-				contextGrid.invalidate();
-				contextGrid.updateRowCount(); //로우 카운트 업데이트
-				contextGrid.render(); //다시 그리기
-				
-				if(contextGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, contextGrid.getSelectedRows()) < contextGrid.getData().getItemCount() ){
-					var args = {
-							rows : contextGrid.getSelectedRows(),
-							grid : contextGrid,
-							previousSelectedRows : contextGrid.getSelectedRows()
-					}
-					contextGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					contextGrid.getSelectionModel().setSelectedRanges("");
-				}
+				gf_gridCallback('contextGrid', data);
 				
 			});
 	
@@ -313,24 +263,7 @@ var f_detailSearch = function(pk, preRow){
 			}
 			, function(data){
 				
-				detailGridIdx = data.result.length;
-				detailGrid.getData().setItems(data.result);
-				detailGrid.invalidate();
-				detailGrid.updateRowCount(); //로우 카운트 업데이트
-				detailGrid.render(); //다시 그리기
-				
-				if(detailGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, detailGrid.getSelectedRows()) < detailGrid.getData().getItemCount() ){
-					var args = {
-							rows : detailGrid.getSelectedRows(),
-							grid : detailGrid,
-							previousSelectedRows : detailGrid.getSelectedRows()
-					}
-					detailGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					detailGrid.getSelectionModel().setSelectedRanges("");
-				}
+				gf_gridCallback('detailGrid', data);
 				
 			});
 	
@@ -354,25 +287,8 @@ var f_comboPopupSearch = function(pk, preRow){
 			}
 			, function(data){
 				
-				comboPopupGridIdx = data.result.length;
-				comboPopupGrid.getData().setItems(data.result);
-				comboPopupGrid.invalidate();
-				comboPopupGrid.updateRowCount(); //로우 카운트 업데이트
-				comboPopupGrid.render(); //다시 그리기
-				
-				if(comboPopupGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, comboPopupGrid.getSelectedRows()) < comboPopupGrid.getData().getItemCount() ){
-					var args = {
-							rows : comboPopupGrid.getSelectedRows(),
-							grid : comboPopupGrid,
-							previousSelectedRows : comboPopupGrid.getSelectedRows()
-					}
-					comboPopupGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					comboPopupGrid.getSelectionModel().setSelectedRanges("");
-				}
-				
+				gf_gridCallback('comboPopupGrid', data);
+								
 			});
 }
   	

@@ -26,7 +26,7 @@
 				</div>
 			</div>
 		</div>
-		<div id='masterGridContainer' class='content-panel ht-pl-1'>
+		<div id='masterGridContainer' class='content-panel ht-pl-1 wd-pl-4 no-mg-tp'>
 			<div id="masterGrid" class="grid"></div>
 		</div>
 	</div>

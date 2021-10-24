@@ -10,16 +10,16 @@
 		margin: 7px;
 	}
 	.wd-pl-1 {
-		display: inline-block;
-		width: 23.1%;
+		width: 22.7%;
 	}
 	.wd-pl-2 {
-		display: inline-block;
-		width: 46%;
+		width: 47.7%;
 	}
 	.wd-pl-3 {
-		display: inline-block;
-		width: 71.6%;
+		width: 72.5%;
+	}
+	.wd-pl-4 {
+		width: 97.4%;
 	}
 	.ht-pl-1 {
 		height : 73vh;

@@ -320,6 +320,7 @@ iframe {
 
 .content-panel {
 	background-color: #FFFFFF !important;
+	box-shadow : 3px 3px 3px rgb(51 51 51 / 20%);
 	padding: 15px;
 	margin: 15px;
 }
@@ -333,30 +334,38 @@ iframe {
 
 .wd-pl-1 {
 	display: inline-block;
-	width: 22.8%;
+	width: 22.4%;
 }
 .wd-pl-2 {
 	display: inline-block;
-	width: 46%;
+	width: 47.3%;
 }
 .wd-pl-3 {
 	display: inline-block;
-	width: 71.4%;
+	width: 72.1%;
+}
+.wd-pl-4 {
+	display: inline-block;
+	width: 97%;
 }
 /* 조회조건이1줄 일때 */
 .ht-pl-1 {
 	height : 78vh;
+	float: left;
 }
 .ht-pl-2 {
 	height : 36vh;
+	float: left;
 }
 
 /* 조회조건이없을때 */
 .ht-pl-1-1 {
 	height : 85vh;
+	float: left;
 }
 .ht-pl-2-1 {
 	height : 40vh;
+	float: left;
 }
 
 .no-mg-tp{

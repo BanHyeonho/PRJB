@@ -804,6 +804,30 @@ function gf_gridRemoveMultiRow(gridDiv) {
 
 }
 
+//그리드 조회후 데이터 셋팅
+var gf_gridCallback = function(p_gridNm, data){
+	
+	var gird = new Function('return ' + p_gridNm + ';')();
+	new Function('length', p_gridNm + 'Idx = length')( data.result.length );
+	gird.getData().setItems(data.result);
+	gird.invalidate();
+	gird.updateRowCount(); //로우 카운트 업데이트
+	gird.render(); //다시 그리기
+	
+	if(gird.getSelectedRows().length > 0
+	&& Math.max.apply(null, gird.getSelectedRows()) < gird.getData().getItemCount() ){
+		var args = {
+				rows : gird.getSelectedRows(),
+				grid : gird,
+				previousSelectedRows : gird.getSelectedRows()
+		}
+		gird.onSelectedRowsChanged.notify(args);	
+	}
+	else{
+		gird.getSelectionModel().setSelectedRanges("");
+	}
+	
+}
 /********************************************************************************** */
 /*													 								*/
 /*	그리드에디터 										 								*/

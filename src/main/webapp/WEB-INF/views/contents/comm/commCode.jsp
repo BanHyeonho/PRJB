@@ -28,10 +28,10 @@
 			</div>
 		</div>
 		
-		<div id='masterGridContainer' class='content-panel ht-pl-2'>
+		<div id='masterGridContainer' class='content-panel wd-pl-4 ht-pl-2 no-mg-tp'>
 			<div id="masterGrid" class="grid"></div>
 		</div>
-		<div id='detailGridContainer' class='content-panel ht-pl-2'>
+		<div id='detailGridContainer' class='content-panel wd-pl-4 ht-pl-2 no-mg-tp'>
 			<div id='detailGrid' class="grid"></div>
 		</div>
 	</div>

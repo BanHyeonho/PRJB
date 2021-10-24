@@ -43,12 +43,7 @@ var f_search = function(){
 			}
 			, function(data){
 				
-				masterGridIdx = data.result.length;
-				
-				masterGrid.getData().setItems(data.result);
-				masterGrid.invalidate();
-				masterGrid.updateRowCount(); //로우 카운트 업데이트
-				masterGrid.render(); //다시 그리기
+				gf_gridCallback('masterGrid', data);
 			});
 }
   	

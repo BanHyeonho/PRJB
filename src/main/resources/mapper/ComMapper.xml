@@ -4,6 +4,68 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
+	<!-- 권한별 메뉴조회(그리드컨텍스트) -->
+	<select id="S_COMM_AUTH_GROUP_MENU_CONTEXT" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_AUTH_GROUP_MENU_CONTEXT */
+	  SELECT 'id_' || (ROWNUM-1) AS "id"
+	  	   , COMM_UTIL_PKG.comm_code_attr('GRID_CONTEXT', C.FUNCTION_CODE, 'NAME', 'KO') AS FUNCTION_NAME
+	  	   , C.DESCRIPTION AS DESCRIPTION
+        FROM COMM_MENU A
+        JOIN COMM_GRID_MASTER B ON A.MENU_CODE = B.MENU_CODE
+        JOIN COMM_GRID_CONTEXT C ON B.COMM_GRID_MASTER_ID = C.COMM_GRID_MASTER_ID
+       WHERE A.COMM_MENU_ID = #{COMM_MENU_ID}
+         AND B.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
+         AND C.USE_YN = '1'
+       ORDER BY TO_NUMBER(COMM_UTIL_PKG.comm_code_attr('GRID_CONTEXT', C.FUNCTION_CODE, 'SEQ', #{LANG_CODE})) ASC
+	</select>
+	
+	<!-- 권한별 메뉴조회(기능) -->
+	<select id="S_COMM_AUTH_GROUP_MENU_FUNC" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_AUTH_GROUP_MENU_FUNC */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+             , COMM_UTIL_PKG.lang(COMM_UTIL_PKG.function_mlg(A.COMM_FUNCTION_ID), #{LANG_CODE}) as FUNCTION_NAME
+             , A.COMM_FUNCTION_ID 
+			 , CASE WHEN B.COMM_AUTH_GROUP_MENU_FUNC_ID IS NULL
+			 		THEN '0'
+			 		ELSE '1'
+			 		 END AS USE_YN
+			 , COMM_UTIL_PKG.comm_code_attr('BTN_AREA', A.BTN_AREA, 'NAME', #{LANG_CODE}) AS BTN_AREA
+			 , A.SEQ
+          FROM COMM_MENU_FUNC A
+     LEFT JOIN COMM_AUTH_GROUP_MENU_FUNC B ON A.COMM_MENU_FUNC_ID = B.COMM_MENU_FUNC_ID
+     	 WHERE A.USE_YN = '1'
+     	   AND A.COMM_MENU_ID = #{COMM_MENU_ID}
+     	 ORDER BY A.BTN_AREA ASC, A.SEQ ASC
+	</select>
+	
+	<!-- 권한별 메뉴조회 -->
+	<select id="S_COMM_AUTH_GROUP_MENU" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_AUTH_GROUP_MENU */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+             , LEVEL-1 AS "indent"
+             , SUBSTR( SYS_CONNECT_BY_PATH(ROWNUM, '_')
+	             , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
+	             , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1  AS "parent"
+             , A.COMM_MENU_ID                 AS COMM_MENU_ID
+             , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
+             , B.COMM_AUTH_GROUP_MENU_ID
+             , CASE WHEN B.COMM_AUTH_GROUP_MENU_ID IS NULL
+             		THEN '0'
+             		ELSE '1'
+             		 END AS USE_YN
+          FROM COMM_MENU A
+     LEFT JOIN (
+               SELECT Y.COMM_AUTH_GROUP_MENU_ID
+                    , Y.COMM_MENU_ID
+                 FROM COMM_AUTH_GROUP Z
+                 JOIN COMM_AUTH_GROUP_MENU Y ON Z.COMM_AUTH_GROUP_ID = Y.COMM_AUTH_GROUP_ID
+                WHERE Z.COMM_AUTH_GROUP_ID = #{COMM_AUTH_GROUP_ID}
+             ) B ON A.COMM_MENU_ID = B.COMM_MENU_ID          
+       START WITH A.UP_MENU_CODE IS null 
+      CONNECT BY PRIOR A.MENU_CODE = A.UP_MENU_CODE
+      ORDER SIBLINGS BY A.SEQ
+	</select>
+	
 	<!-- 권한조회 -->
 	<select id="S_COMM_AUTH_GROUP" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_AUTH_GROUP */
@@ -37,12 +99,13 @@
 	         , A.COMM_MENU_ID
 	         , A.COMM_FUNCTION_ID
 	         , A.DESCRIPTION
+	         , A.BTN_AREA
 	         , A.SEQ
 	         , A.USE_YN
       	  FROM COMM_MENU_FUNC A
       	 WHERE A.COMM_MENU_ID = #{COMM_MENU_ID}
       	   AND A.USE_YN = '1'
-      	 ORDER BY A.SEQ ASC
+      	 ORDER BY A.BTN_AREA ASC, A.SEQ ASC
 	</select>
 	
 	<!-- 메뉴에 추가/삭제 -->
@@ -449,7 +512,7 @@
 		 ORDER BY A.SEQ
 	</select>
 	
-	<!-- 그리드 관리 마스터그리드 조회 -->
+	<!-- 그리드 관리 마스터그리드 / 권한메뉴관리 그리드 조회 -->
 	<select id="S_COMM_GRID_MASTER" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_GRID_MASTER */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
@@ -463,7 +526,13 @@
 			 , A.TREE_YN
 		  FROM COMM_GRID_MASTER A
 	 LEFT JOIN COMM_MENU B ON A.MENU_CODE = B.MENU_CODE
-		 WHERE A.MENU_CODE = #{MENU_CODE}
+		 WHERE A.COMM_GRID_MASTER_ID = A.COMM_GRID_MASTER_ID
+		 <if test="@prjb.com.util.ComUtil@nvl(MENU_CODE, '') != ''">
+		 	AND A.MENU_CODE = #{MENU_CODE}
+		 </if>
+		 <if test="@prjb.com.util.ComUtil@nvl(COMM_MENU_ID, '') != ''">
+		 	AND B.COMM_MENU_ID = #{COMM_MENU_ID}
+		 </if>
 	</select>
 	
 	<!-- 그리드 관리 메뉴 조회 -->

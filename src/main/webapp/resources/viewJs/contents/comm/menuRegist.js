@@ -41,7 +41,9 @@ $(document).ready(function() {
     });
 
 	functionGrid = gf_gridInit('functionGrid', {
-    	'defaultInsert' : {'COMM_MENU_ID' : gridPk}
+    	'defaultInsert' : {'COMM_MENU_ID' : gridPk,
+							'BTN_AREA' : 'BTN_AREA1',
+						}
     });
 
     $('#searchBtn').on('click', f_search);
@@ -70,24 +72,7 @@ var f_functionSearch = function(pk, preRow){
 			}
 			, function(data){
 				
-				functionGridIdx = data.result.length;
-				functionGrid.getData().setItems(data.result);
-				functionGrid.invalidate();
-				functionGrid.updateRowCount(); //로우 카운트 업데이트
-				functionGrid.render(); //다시 그리기
-				
-				if(functionGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, functionGrid.getSelectedRows()) < functionGrid.getData().getItemCount() ){
-					var args = {
-							rows : functionGrid.getSelectedRows(),
-							grid : functionGrid,
-							previousSelectedRows : functionGrid.getSelectedRows()
-					}
-					functionGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					functionGrid.getSelectionModel().setSelectedRanges("");
-				}
+				gf_gridCallback('functionGrid', data);
 				
 			});
 	
@@ -136,24 +121,7 @@ var f_search = function(){
 			}
 			, function(data){
 				
-				masterGridIdx = data.result.length;
-				masterGrid.getData().setItems(data.result);
-				masterGrid.invalidate();
-				masterGrid.updateRowCount(); //로우 카운트 업데이트
-				masterGrid.render(); //다시 그리기
-				
-				if(masterGrid.getSelectedRows().length > 0
-				&& Math.max.apply(null, masterGrid.getSelectedRows()) < masterGrid.getData().getItemCount() ){
-					var args = {
-							rows : masterGrid.getSelectedRows(),
-							grid : masterGrid,
-							previousSelectedRows : masterGrid.getSelectedRows()
-					}
-					masterGrid.onSelectedRowsChanged.notify(args);	
-				}
-				else{
-					masterGrid.getSelectionModel().setSelectedRanges("");
-				}
+				gf_gridCallback('masterGrid', data);
 				
 			});
 }
