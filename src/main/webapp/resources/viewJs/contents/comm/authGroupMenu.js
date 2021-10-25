@@ -141,17 +141,11 @@ var f_gridContextSearch = function(preRow){
 	fData.set('QUERY_ID', 'com.S_COMM_AUTH_GROUP_MENU_CONTEXT');
 	fData.set('COMM_GRID_MASTER_ID', gridPk.COMM_GRID_MASTER_ID);
 	fData.set('COMM_MENU_ID', gridPk.COMM_MENU_ID);
+	fData.set('COMM_AUTH_GROUP_ID', gridPk.COMM_AUTH_GROUP_ID);
 	
 	gf_ajax( fData
 			, function(){
 		
-				if((gf_gridSaveData(gridContextGrid).length > 0
-				)
-				){
-					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
-						return false;
-					}
-				}
 				gf_gridClear(gridContextGrid);
 				
 			}
@@ -172,20 +166,13 @@ var f_gridMasterSearch = function(preRow){
 	gf_ajax( fData
 			, function(){
 		
-				if((gf_gridSaveData(gridContextGrid).length > 0
-				)
-				){
-					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
-						return false;
-					}
-				}
 				gf_gridClear(gridMasterGrid);
-				
+				gf_gridClear(gridContextGrid);
 			}
 			, function(data){
 				
 				gf_gridCallback('gridMasterGrid', data);
-				gf_gridClear(gridContextGrid);
+				
 				
 			});
 }
@@ -196,17 +183,11 @@ var f_functionSearch = function(preRow){
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'com.S_COMM_AUTH_GROUP_MENU_FUNC');
 	fData.set('COMM_MENU_ID', gridPk.COMM_MENU_ID);
+	fData.set('COMM_AUTH_GROUP_ID', gridPk.COMM_AUTH_GROUP_ID);
 	
 	gf_ajax( fData
 			, function(){
 		
-				if((gf_gridSaveData(functionGrid).length > 0
-				)
-				){
-					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
-						return false;
-					}
-				}
 				gf_gridClear(functionGrid);
 				
 			}
@@ -226,15 +207,6 @@ var f_menuSearch = function(preRow){
 	
 	gf_ajax( fData
 			, function(){
-		
-				if((gf_gridSaveData(functionGrid).length > 0
-				|| gf_gridSaveData(gridContextGrid).length > 0
-				)
-				){
-					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
-						return false;
-					}
-				}
 		
 				gf_gridClear(menuGrid);
 				gf_gridClear(functionGrid);
@@ -261,6 +233,7 @@ var f_search = function(){
 				)
 				){
 					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
+						gridEventIgnore = true;
 						return false;
 					}
 				}
@@ -283,8 +256,17 @@ var f_search = function(){
 var f_save = function(){
 	
 	var menuData = gf_gridSaveData(menuGrid);
+	$.each(menuData, function(idx, item){
+		item['COMM_AUTH_GROUP_ID'] = gridPk.COMM_AUTH_GROUP_ID; 
+	});
 	var functionData = gf_gridSaveData(functionGrid);
+	$.each(functionData, function(idx, item){
+		item['COMM_AUTH_GROUP_ID'] = gridPk.COMM_AUTH_GROUP_ID;
+	});
 	var gridContextData = gf_gridSaveData(gridContextGrid);
+	$.each(gridContextData, function(idx, item){
+		item['COMM_AUTH_GROUP_ID'] = gridPk.COMM_AUTH_GROUP_ID;
+	});
 	
 	var fData = new FormData();
 
@@ -301,8 +283,8 @@ var f_save = function(){
 					//메뉴그리드
 					if(menuData.length > 0){
 						menuData.unshift({
-  							 'TALBE_NAME' : 'COMM_GRID_MASTER'
-  							,'QUERY_ID' : 'com.COMM_QUERY'
+  							 'TALBE_NAME' : 'COMM_AUTH_GROUP_MENU'
+  							,'QUERY_ID' : 'com.COMM_AUTH_GROUP_MENU'
   						});
   						fData.set('menuGrid', JSON.stringify(menuData));
 					}
@@ -310,8 +292,8 @@ var f_save = function(){
 					//기능그리드
 					if(functionData.length > 0){
 						functionData.unshift({
-  							 'TALBE_NAME' : 'COMM_GRID_CONTEXT'
-  							,'QUERY_ID' : 'com.COMM_GRID_CONTEXT'
+  							 'TALBE_NAME' : 'COMM_AUTH_GROUP_MENU_FUNC'
+  							,'QUERY_ID' : 'com.COMM_AUTH_GROUP_MENU_FUNC'
   						});
   						fData.set('functionGrid', JSON.stringify(functionData));
 					}
@@ -319,8 +301,8 @@ var f_save = function(){
 					//컨텍스트그리드
 					if(gridContextData.length > 0){
 						gridContextData.unshift({
-  							 'TALBE_NAME' : 'COMM_GRID_DETAIL'
-  							,'QUERY_ID' : 'com.COMM_QUERY'
+  							 'TALBE_NAME' : 'COMM_AUTH_GROUP_CONTEXT'
+  							,'QUERY_ID' : 'com.COMM_AUTH_GROUP_CONTEXT'
   						});
   						fData.set('gridContextGrid', JSON.stringify(gridContextData));
 					}

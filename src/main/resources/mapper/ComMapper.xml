@@ -4,15 +4,122 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
+	<!-- 권한메뉴에 그리드컨텍스트 추가/삭제 -->
+	<update id="U_COMM_AUTH_GROUP_CONTEXT" parameterType="HashMap" >
+		/* U_COMM_AUTH_GROUP_CONTEXT */
+		MERGE INTO COMM_AUTH_GROUP_CONTEXT
+			 USING DUAL
+			    ON (COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
+			    AND COMM_GRID_CONTEXT_ID = #{COMM_GRID_CONTEXT_ID} 
+			    AND COMM_AUTH_GROUP_ID = #{COMM_AUTH_GROUP_ID}
+			    )
+			  WHEN MATCHED THEN
+			UPDATE SET USE_YN = #{USE_YN}
+					 , MID = #{MID}
+					 , MDT = SYSDATE
+					 , MIP = #{MIP}
+			  WHEN NOT MATCHED THEN
+			  INSERT(COMM_AUTH_GROUP_CONTEXT_ID
+		          , COMM_AUTH_GROUP_ID
+		          , COMM_GRID_MASTER_ID
+		          , COMM_GRID_CONTEXT_ID
+		          , USE_YN
+		          <include refid="config.cidColumn"></include>
+		          )
+		       VALUES(COMM_AUTH_GROUP_CONTEXT_S.NEXTVAL
+		          , #{COMM_AUTH_GROUP_ID}
+		          , #{COMM_GRID_MASTER_ID}
+		          , #{COMM_GRID_CONTEXT_ID}
+		          , #{USE_YN}
+		          , #{MID}
+		          , SYSDATE
+		          , #{MIP}
+		          , #{MID}
+		          , SYSDATE    
+		          , #{MIP})
+	</update>
+	<!-- 권한메뉴에 기능 추가/삭제 -->
+	<update id="U_COMM_AUTH_GROUP_MENU_FUNC" parameterType="HashMap" >
+		/* U_COMM_AUTH_GROUP_MENU_FUNC */
+		MERGE INTO COMM_AUTH_GROUP_MENU_FUNC
+			 USING DUAL
+			    ON (COMM_MENU_FUNC_ID = #{COMM_MENU_FUNC_ID} 
+			    AND COMM_AUTH_GROUP_ID = #{COMM_AUTH_GROUP_ID}
+			    )
+			  WHEN MATCHED THEN
+			UPDATE SET USE_YN = #{USE_YN}
+					 , MID = #{MID}
+					 , MDT = SYSDATE
+					 , MIP = #{MIP}
+			  WHEN NOT MATCHED THEN
+			  INSERT(COMM_AUTH_GROUP_MENU_FUNC_ID
+		          , COMM_AUTH_GROUP_ID
+		          , COMM_MENU_FUNC_ID
+		          , USE_YN
+		          , DESCRIPTION
+		          <include refid="config.cidColumn"></include>
+		          )
+		       VALUES(COMM_AUTH_GROUP_MENU_FUNC_S.NEXTVAL
+		          , #{COMM_AUTH_GROUP_ID}
+		          , #{COMM_MENU_FUNC_ID}
+		          , #{USE_YN}
+		          , #{DESCRIPTION}
+		          , #{MID}
+		          , SYSDATE
+		          , #{MIP}
+		          , #{MID}
+		          , SYSDATE    
+		          , #{MIP})
+	</update>
+	
+	<!-- 권한메뉴에 메뉴추가/삭제 -->
+	<update id="U_COMM_AUTH_GROUP_MENU" parameterType="HashMap" >
+		/* U_COMM_AUTH_GROUP_MENU */
+		MERGE INTO COMM_AUTH_GROUP_MENU
+			 USING DUAL
+			    ON (COMM_MENU_ID = #{COMM_MENU_ID} 
+			    AND COMM_AUTH_GROUP_ID = #{COMM_AUTH_GROUP_ID}
+			    )
+			  WHEN MATCHED THEN
+			UPDATE SET USE_YN = #{USE_YN}
+					 , MID = #{MID}
+					 , MDT = SYSDATE
+					 , MIP = #{MIP}
+			  WHEN NOT MATCHED THEN
+			  INSERT(COMM_AUTH_GROUP_MENU_ID
+		          , COMM_AUTH_GROUP_ID
+		          , COMM_MENU_ID
+		          , USE_YN
+		          , DESCRIPTION
+		          <include refid="config.cidColumn"></include>
+		          )
+		       VALUES(COMM_AUTH_GROUP_MENU_S.NEXTVAL
+		          , #{COMM_AUTH_GROUP_ID}
+		          , #{COMM_MENU_ID}
+		          , #{USE_YN}
+		          , #{DESCRIPTION}
+		          , #{MID}
+		          , SYSDATE
+		          , #{MIP}
+		          , #{MID}
+		          , SYSDATE    
+		          , #{MIP})
+	</update>
 	<!-- 권한별 메뉴조회(그리드컨텍스트) -->
 	<select id="S_COMM_AUTH_GROUP_MENU_CONTEXT" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_AUTH_GROUP_MENU_CONTEXT */
 	  SELECT 'id_' || (ROWNUM-1) AS "id"
 	  	   , COMM_UTIL_PKG.comm_code_attr('GRID_CONTEXT', C.FUNCTION_CODE, 'NAME', 'KO') AS FUNCTION_NAME
 	  	   , C.DESCRIPTION AS DESCRIPTION
+	  	   , B.COMM_GRID_MASTER_ID
+	  	   , C.COMM_GRID_CONTEXT_ID
+	  	   , NVL(D.USE_YN, '0') AS USE_YN
         FROM COMM_MENU A
         JOIN COMM_GRID_MASTER B ON A.MENU_CODE = B.MENU_CODE
         JOIN COMM_GRID_CONTEXT C ON B.COMM_GRID_MASTER_ID = C.COMM_GRID_MASTER_ID
+   LEFT JOIN COMM_AUTH_GROUP_CONTEXT D ON C.COMM_GRID_MASTER_ID = D.COMM_GRID_MASTER_ID 
+   									  AND C.COMM_GRID_CONTEXT_ID = D.COMM_GRID_CONTEXT_ID 
+   									  AND D.COMM_AUTH_GROUP_ID = #{COMM_AUTH_GROUP_ID}
        WHERE A.COMM_MENU_ID = #{COMM_MENU_ID}
          AND B.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
          AND C.USE_YN = '1'
@@ -24,15 +131,12 @@
 		/* S_COMM_AUTH_GROUP_MENU_FUNC */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
              , COMM_UTIL_PKG.lang(COMM_UTIL_PKG.function_mlg(A.COMM_FUNCTION_ID), #{LANG_CODE}) as FUNCTION_NAME
-             , A.COMM_FUNCTION_ID 
-			 , CASE WHEN B.COMM_AUTH_GROUP_MENU_FUNC_ID IS NULL
-			 		THEN '0'
-			 		ELSE '1'
-			 		 END AS USE_YN
+             , A.COMM_MENU_FUNC_ID 
+			 , NVL(B.USE_YN, '0') AS USE_YN
 			 , COMM_UTIL_PKG.comm_code_attr('BTN_AREA', A.BTN_AREA, 'NAME', #{LANG_CODE}) AS BTN_AREA
 			 , A.SEQ
           FROM COMM_MENU_FUNC A
-     LEFT JOIN COMM_AUTH_GROUP_MENU_FUNC B ON A.COMM_MENU_FUNC_ID = B.COMM_MENU_FUNC_ID
+     LEFT JOIN COMM_AUTH_GROUP_MENU_FUNC B ON A.COMM_MENU_FUNC_ID = B.COMM_MENU_FUNC_ID AND B.COMM_AUTH_GROUP_ID = #{COMM_AUTH_GROUP_ID}
      	 WHERE A.USE_YN = '1'
      	   AND A.COMM_MENU_ID = #{COMM_MENU_ID}
      	 ORDER BY A.BTN_AREA ASC, A.SEQ ASC
@@ -49,14 +153,12 @@
              , A.COMM_MENU_ID                 AS COMM_MENU_ID
              , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
              , B.COMM_AUTH_GROUP_MENU_ID
-             , CASE WHEN B.COMM_AUTH_GROUP_MENU_ID IS NULL
-             		THEN '0'
-             		ELSE '1'
-             		 END AS USE_YN
+             , NVL(B.USE_YN, '0') AS USE_YN
           FROM COMM_MENU A
      LEFT JOIN (
                SELECT Y.COMM_AUTH_GROUP_MENU_ID
                     , Y.COMM_MENU_ID
+                    , Y.USE_YN
                  FROM COMM_AUTH_GROUP Z
                  JOIN COMM_AUTH_GROUP_MENU Y ON Z.COMM_AUTH_GROUP_ID = Y.COMM_AUTH_GROUP_ID
                 WHERE Z.COMM_AUTH_GROUP_ID = #{COMM_AUTH_GROUP_ID}
@@ -681,6 +783,7 @@
 		 	 , NVL(GRID_YN, '0')	AS GRID_YN
 		 	 , NVL(FUNCTION_YN, '0')	AS FUNCTION_YN
 		 	 , DESCRIPTION
+		 	 , MSG_TYPE_CODE
 		  FROM COMM_MLG
 		 WHERE COMM_MLG_ID = COMM_MLG_ID
 		 <if test="@prjb.com.util.ComUtil@nvl(MENU_YN, '') != ''">
@@ -715,6 +818,7 @@
 		 	 , NVL(GRID_YN, '0')	AS GRID_YN
 		 	 , NVL(FUNCTION_YN, '0')	AS FUNCTION_YN
 		 	 , DESCRIPTION
+		 	 , MSG_TYPE_CODE
 		  FROM COMM_MLG
 		  WHERE COMM_MLG_ID = COMM_MLG_ID
 		 <if test="@prjb.com.util.ComUtil@nvl(p_mlgCode, '') != ''">
