@@ -136,8 +136,6 @@ $(document).ready(function() {
 		
     });
     
-    $('#searchBtn').on('click', f_search);
-    $('#saveBtn').on('click', f_save);
     $('#mlgRegistBtn').on('click', f_mlg_regist);
     
     f_search();

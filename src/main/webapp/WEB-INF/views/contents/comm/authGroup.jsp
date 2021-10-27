@@ -14,9 +14,7 @@
 		<div id='header-dummy'></div>
 		<div id="content-header-1" class="content-panel">
 			<span id="content-title"></span>
-			<div class="btn-area">
-				<button type="button" id='searchBtn' class="btn btn-st1 fl-right">${pb:msg(pageContext.request, "조회")}</button>
-				<button type="button" id='saveBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "저장")}</button>
+			<div class="btn-area" id='BTN_AREA1'>
 			</div>
 		</div>
 		

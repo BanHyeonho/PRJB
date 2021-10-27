@@ -9,8 +9,6 @@ $(document).ready(function() {
 	
     functionGrid = gf_gridInit('functionGrid');
     menuGrid = gf_gridInit('menuGrid');
-    $('#searchBtn').on('click', f_search); 
-	$('#saveBtn').on('click', f_save);
 	
     functionGrid.onSelectedRowsChanged.subscribe(function (e, args) {
 

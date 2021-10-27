@@ -44,9 +44,10 @@
 <link  href="/css/common-laptop.css?v=${pb:jsNow()}" rel="stylesheet" />
 <script src="/script/common.js?v=${pb:jsNow()}"></script>
 
-<!-- 다국어 -->
+<!-- 다국어/버튼 -->
 <script type="text/javascript">
 const mlg = ${MLG};
+const btnList = JSON.parse(gf_nvl('${btnList}', '[]'));
 </script>
 
 <!-- 그리드설정 -->

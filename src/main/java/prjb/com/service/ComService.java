@@ -2,7 +2,6 @@ package prjb.com.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,109 +40,132 @@ public class ComService {
 	public ModelAndView page(HttpServletRequest request, ModelAndView mv) throws Exception {
 		
 		Map<String, String> param = new HashMap();
-		param.put("MENU_CODE", request.getParameter("menuCode"));
-		param.put("CID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
-		param.put("CIP", ComUtil.getAddress(request));
-		param.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		String cIp = ComUtil.getAddress(request);
+		String langCode = String.valueOf(request.getSession().getAttribute("LANG_CODE"));
+		String menuCode = String.valueOf(request.getParameter("menuCode"));
+		
+		param.put("MENU_CODE", menuCode);
+		param.put("CID", cId);
+		param.put("CIP", cIp);
+		param.put("LANG_CODE", langCode);
 		Map<String, String> map = comDao.selectOne("com.S_MENU_URL", param);
 		
 		String menuUrl = (map == null ? null : map.get("MENU_URL") );
+		String menuId = (map == null ? null : String.valueOf(map.get("COMM_MENU_ID")) );
+		String menuUseYn = (map == null ? null : map.get("USE_YN") );
 		//메뉴url이 없는경우
 		if(menuUrl == null) {
 			mv.setViewName("error/404");
 			return mv;
 		}
+		else if("0".equals(menuUseYn)) {
+			mv.setViewName("error/401");
+			return mv;
+		}
 		//메뉴등록
-		else if("comm_menuRegist".equals(menuUrl)){
-			
-			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
-			List<Map<String, String>> menuLang = new ArrayList();
-			Iterator<String> keys = msgMap.keySet().iterator();
-	        while( keys.hasNext() ){
-	            String key = keys.next();
-	            if("1".equals(msgMap.get(key).get("MENU_YN"))) {
-	            	
-	            	param = new HashMap();
-	            	param.put("MLG_CODE", key);
-	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
-	            	menuLang.add(param);
-	            	
-	            }
-	        }
-	        
-			mv.addObject("menuLang", menuLang);
+//		else if("comm_menuRegist".equals(menuUrl)){
+//			
+//			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
+//			List<Map<String, String>> menuLang = new ArrayList();
+//			Iterator<String> keys = msgMap.keySet().iterator();
+//	        while( keys.hasNext() ){
+//	            String key = keys.next();
+//	            if("1".equals(msgMap.get(key).get("MENU_YN"))) {
+//	            	
+//	            	param = new HashMap();
+//	            	param.put("MLG_CODE", key);
+//	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
+//	            	menuLang.add(param);
+//	            	
+//	            }
+//	        }
+//	        
+//			mv.addObject("menuLang", menuLang);
+//		}
+//		//공통코드
+//		else if("comm_commCode".equals(menuUrl)){
+//			
+//			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
+//			List<Map<String, String>> menuLang = new ArrayList();
+//			Iterator<String> keys = msgMap.keySet().iterator();
+//	        while( keys.hasNext() ){
+//	            String key = keys.next();
+//	            if("1".equals(msgMap.get(key).get("CODE_YN"))) {
+//	            	
+//	            	param = new HashMap();
+//	            	param.put("MLG_CODE", key);
+//	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
+//	            	menuLang.add(param);
+//	            	
+//	            }
+//	        }
+//	        
+//			mv.addObject("codeLang", menuLang);
+//		}
+//		//그리드관리
+//		else if("comm_gridManage".equals(menuUrl)){
+//			
+//			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
+//			List<Map<String, String>> lang = new ArrayList();
+//			Iterator<String> keys = msgMap.keySet().iterator();
+//	        while( keys.hasNext() ){
+//	            String key = keys.next();
+//	            if("1".equals(msgMap.get(key).get("GRID_YN"))) {
+//	            	
+//	            	param = new HashMap();
+//	            	param.put("MLG_CODE", key);
+//	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
+//	            	lang.add(param);
+//	            	
+//	            }
+//	        }
+//	        
+//			mv.addObject("gridLang", lang);
+//		}
+		
+		//화면별 버튼 조회
+		param = new HashMap();
+		param.put("CID", cId);
+		param.put("COMM_MENU_ID", menuId);
+		param.put("LANG_CODE", langCode);
+		List<Map> btnListMap = comDao.selectList("com.S_AUTH_MENU_BTN", param);
+		List btnList = new ArrayList();
+		for ( Map<String, Object> listMap : btnListMap ) {
+			JSONObject json = new JSONObject(listMap);
+			btnList.add(json);	
 		}
-		//공통코드
-		else if("comm_commCode".equals(menuUrl)){
-			
-			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
-			List<Map<String, String>> menuLang = new ArrayList();
-			Iterator<String> keys = msgMap.keySet().iterator();
-	        while( keys.hasNext() ){
-	            String key = keys.next();
-	            if("1".equals(msgMap.get(key).get("CODE_YN"))) {
-	            	
-	            	param = new HashMap();
-	            	param.put("MLG_CODE", key);
-	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
-	            	menuLang.add(param);
-	            	
-	            }
-	        }
-	        
-			mv.addObject("codeLang", menuLang);
-		}
-		//그리드관리
-		else if("comm_gridManage".equals(menuUrl)){
-			
-			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
-			List<Map<String, String>> lang = new ArrayList();
-			Iterator<String> keys = msgMap.keySet().iterator();
-	        while( keys.hasNext() ){
-	            String key = keys.next();
-	            if("1".equals(msgMap.get(key).get("GRID_YN"))) {
-	            	
-	            	param = new HashMap();
-	            	param.put("MLG_CODE", key);
-	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
-	            	lang.add(param);
-	            	
-	            }
-	        }
-	        
-			mv.addObject("gridLang", lang);
-		}
+		mv.addObject("btnList", btnList);
 		
 		//화면별 그리드 조회
 		List gridData = new ArrayList();
 		List gridContextData = new ArrayList();
 		param = new HashMap();
-		param.put("MENU_CODE", request.getParameter("menuCode"));
+		param.put("MENU_CODE", menuCode);
 		List<Map> masterGridList = comDao.selectList("com.S_COMM_GRID_MASTER", param);
 		for (Map m : masterGridList) {
 			
+			m.put("CID", cId);
 			Map gridContextMap = comDao.selectOne("com.S_COMM_GRID_CONTEXT_DATA", m);
 			gridContextData.add(gridContextMap);
 			
-			m.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+			m.put("LANG_CODE", langCode);
 			List<Map> detailGridList = comDao.selectList("com.S_GRID_DATA", m);
 			gridData.add(detailGridList);
 			
 			for (Map<String, String> map2 : detailGridList) {
 				if("COMBO".equals(map2.get("FIELD_TYPE")) ) {
 					
-//					if( !"null".equals(String.valueOf(map2.get("QUERY_ID"))) ) {
-						map2.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
-						map2.put("USE_YN", "1");
-						List<Map> comboPopupParamList = comDao.selectList("com.S_COMM_GRID_COMBO_POPUP", map2);
-						Map<String, String> paramMap = new HashMap();
-						paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
-						for (Map<String, String> map3 : comboPopupParamList) {
-							paramMap.put(map3.get("PARAM_NAME"), map3.get("PARAM_VALUE"));
-						}
-						List<Map> comboPopupResult = comDao.selectList(map2.get("QUERY_ID"), paramMap);
-						mv.addObject( m.get("GRID_NAME") + "." + map2.get("FIELD") + "_SOURCE", comboPopupResult);
-//					}
+					map2.put("LANG_CODE", langCode);
+					map2.put("USE_YN", "1");
+					List<Map> comboPopupParamList = comDao.selectList("com.S_COMM_GRID_COMBO_POPUP", map2);
+					Map<String, String> paramMap = new HashMap();
+					paramMap.put("LANG_CODE", langCode);
+					for (Map<String, String> map3 : comboPopupParamList) {
+						paramMap.put(map3.get("PARAM_NAME"), map3.get("PARAM_VALUE"));
+					}
+					List<Map> comboPopupResult = comDao.selectList(map2.get("QUERY_ID"), paramMap);
+					mv.addObject( m.get("GRID_NAME") + "." + map2.get("FIELD") + "_SOURCE", comboPopupResult);
 					
 				}
 			}
@@ -156,9 +178,9 @@ public class ComService {
 		
 		//메뉴오픈이력
 		Map histParam = new HashMap();
-		histParam.put("COMM_MENU_ID", map.get("COMM_MENU_ID"));
-		histParam.put("COMM_USER_ID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
-		histParam.put("CIP", ComUtil.getAddress(request));
+		histParam.put("COMM_MENU_ID", menuId);
+		histParam.put("COMM_USER_ID", cId);
+		histParam.put("CIP", cIp);
 		comDao.insert("com.I_COMM_MENU_OPEN_HIST", histParam);
 		
 		return mv;

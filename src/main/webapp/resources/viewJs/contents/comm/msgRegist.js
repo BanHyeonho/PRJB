@@ -4,9 +4,7 @@
 $(document).ready(function() {
 	
     masterGrid = gf_gridInit('masterGrid');    
-    $('#searchBtn').on('click', f_search);
-    $('#saveBtn').on('click', f_save);
-    $('#refreshBtn').on('click', f_msgRefresh);	    
+    
     f_search();
 });
   	

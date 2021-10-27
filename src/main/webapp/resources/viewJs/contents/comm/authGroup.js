@@ -42,9 +42,6 @@ $(document).ready(function() {
     	'defaultInsert' : {'COMM_AUTH_GROUP_ID' : gridPk}
     });
 
-    $('#searchBtn').on('click', f_search);
-    $('#saveBtn').on('click', f_save);
-    
     f_search();
 });
 

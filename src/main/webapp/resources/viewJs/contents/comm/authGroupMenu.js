@@ -16,10 +16,6 @@ $(document).ready(function() {
 	f_setFunctionGrid();
 	f_setGridMasterGrid();
 	f_setGridContextGrid();
-
-    
-    $('#searchBtn').on('click', f_search);
-    $('#saveBtn').on('click', f_save);
     
     f_search();
 });

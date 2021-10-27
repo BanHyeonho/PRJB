@@ -5,7 +5,6 @@ $(document).ready(function() {
 	
     masterGrid = gf_gridInit('masterGrid');
     detailGrid = gf_gridInit('detailGrid');
-    $('#searchBtn').on('click', f_search); 
 	
     masterGrid.onSelectedRowsChanged.subscribe(function (e, args) {
 					

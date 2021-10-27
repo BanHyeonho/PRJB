@@ -3,6 +3,26 @@
  */
 $(document).ready(function() {
 	
+	//버튼생성
+	$.each(btnList, function(idx, item){
+		var btnArea = item.BTN_AREA;
+		var tabIndex = item.TAB_INDEX;
+		var btnId = item.BTN_ID;
+		var functionCode = item.FUNCTION_CODE;
+		var functionName = item.FUNCTION_NAME;
+		
+		var btn = $('<button type="button" onclick="' + functionCode + '();"></button>')
+					.attr('id', btnId).attr('tabindex', tabIndex)			
+					.addClass('btn').addClass('btn-st1').addClass('fl-right')
+					.text(functionName);
+		
+		if(idx > 0){
+			btn.addClass('mg-rt-default');
+		}
+		$('#' + btnArea).append(btn);
+		
+	});
+	
 	//자동완성 사용안함
 	$('input').attr('autocomplete', 'off');
 	

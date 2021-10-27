@@ -50,8 +50,6 @@ $(document).ready(function() {
 		f_detailSearch(pk, preRow);
     });
 	
-    $('#searchBtn').on('click', f_search);
-    $('#saveBtn').on('click', f_save);
     $('#masterMlgRegistBtn').on('click', f_mlg_regist);
     $('#detailMlgRegistBtn').on('click', f_mlg_regist2);
    
