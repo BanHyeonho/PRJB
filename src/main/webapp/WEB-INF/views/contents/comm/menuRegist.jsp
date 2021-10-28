@@ -15,7 +15,6 @@
 		<div id="content-header-1" class="content-panel">
 			<span id="content-title"></span>
 			<div class="btn-area" id='BTN_AREA1'>
-<%-- 				<button type="button" id='mlgRegistBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "다국어_일괄등록")}</button> --%>
 			</div>
 		</div>
 		

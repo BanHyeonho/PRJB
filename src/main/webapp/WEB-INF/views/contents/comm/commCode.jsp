@@ -15,8 +15,6 @@
 		<div id="content-header" class="content-panel">
 			<span id="content-title"></span>
 			<div class="btn-area" id='BTN_AREA1'>
-<%-- 				<button type="button" id='masterMlgRegistBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "마스터_다국어_일괄등록")}</button> --%>
-<%-- 				<button type="button" id='detailMlgRegistBtn' class="btn btn-st1 fl-right mg-rt-default">${pb:msg(pageContext.request, "상세_다국어_일괄등록")}</button> --%>
 			</div>
 			<div class="search-area mg-tp-default2">
 				<div class="div-2">

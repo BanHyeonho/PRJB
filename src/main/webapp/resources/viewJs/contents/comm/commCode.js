@@ -49,10 +49,7 @@ $(document).ready(function() {
 		//상세조회
 		f_detailSearch(pk, preRow);
     });
-	
-    $('#masterMlgRegistBtn').on('click', f_mlg_regist);
-    $('#detailMlgRegistBtn').on('click', f_mlg_regist2);
-   
+	   
     f_search();
 });
 

@@ -135,9 +135,7 @@ $(document).ready(function() {
 		f_comboPopupSearch(pk, preRow);
 		
     });
-    
-    $('#mlgRegistBtn').on('click', f_mlg_regist);
-    
+        
     f_search();
 });
 	

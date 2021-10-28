@@ -243,7 +243,11 @@ function gf_gridInit(gridDiv, option) {
 					contextLi = $('<li>').attr('onclick', 'gf_gridRefresh("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('그리드_새로고침'));
 					contextText = $('<div><span class="ui-icon ui-icon-arrowrefresh-1-e"></span></div>');
-	
+				//그리드 엑셀다운로드
+				case "grid_export":
+					contextLi = $('<li>').attr('onclick', 'gf_gridExport("' + gridDiv + '")');
+					contextTextSpan = $('<span>').text(gf_mlg('엑셀_내보내기'));
+					contextText = $('<div><span class="ui-icon ui-icon-arrowrefresh-1-e"></span></div>');
 					break;
 			}
 			contextText.append(contextTextSpan);

@@ -41,7 +41,29 @@ $(document).ready(function() {
     });
 	
 });
-  	
+
+//다국어등록
+var f_mlg_regist = function(){
+
+	if(confirm(gf_mlg('다국어를_등록하시겠습니까?'))){
+		var fData = new FormData();
+		fData.set('QUERY_ID', 'com.P_MLG_BATCH_REGIST');
+		fData.set('TABLE_NAME', 'COMM_FUNCTION');
+		fData.set('MLG_COLUMN', 'MLG_CODE');
+		fData.set('COMPARE_COLUMN', 'FUNCTION_YN');
+  		gf_ajax( fData
+  				, null
+  				, function(data){
+  					
+		  			if(data.result == 'success'){
+			
+						gf_toast(gf_mlg('저장_되었습니다'), 'success');
+					}
+					
+				});
+	}
+}
+
 var f_search = function(){
 	
 	

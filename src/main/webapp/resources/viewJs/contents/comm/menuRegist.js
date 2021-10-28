@@ -45,8 +45,6 @@ $(document).ready(function() {
 							'BTN_AREA' : 'BTN_AREA1',
 						}
     });
-
-    $('#mlgRegistBtn').on('click', f_mlg_regist);
     
     f_search();
 });
