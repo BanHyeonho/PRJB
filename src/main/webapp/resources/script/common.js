@@ -215,34 +215,31 @@ function gf_gridInit(gridDiv, option) {
 					contextLi = $('<li>').attr('onclick', 'gf_gridAddRow("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('행추가'));
 					contextText = $('<div><span class="ui-icon ui-icon-plus"></span></div>');
-	
 					break;
 				//여러행추가
 				case "grid_adds":
 					contextLi = $('<li>').attr('onclick', 'gf_gridAddMultiRow("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('여러_행추가'));
 					contextText = $('<div><span class="ui-icon ui-icon-plusthick"></span></div>');
-	
 					break;
 				//행삭제
 				case "grid_remove":
 					contextLi = $('<li>').attr('onclick', 'gf_gridRemoveRow("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('행삭제'));
 					contextText = $('<div><span class="ui-icon ui-icon-minus"></span></div>');
-	
 					break;
 				//선택된행삭제
 				case "grid_removes":
 					contextLi = $('<li>').attr('onclick', 'gf_gridRemoveMultiRow("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('선택된_행삭제'));
 					contextText = $('<div><span class="ui-icon ui-icon-minusthick"></span></div>');
-	
 					break;
 				//그리드 새로고침
 				case "grid_refresh":
 					contextLi = $('<li>').attr('onclick', 'gf_gridRefresh("' + gridDiv + '")');
 					contextTextSpan = $('<span>').text(gf_mlg('그리드_새로고침'));
 					contextText = $('<div><span class="ui-icon ui-icon-arrowrefresh-1-e"></span></div>');
+					break;
 				//그리드 엑셀다운로드
 				case "grid_export":
 					contextLi = $('<li>').attr('onclick', 'gf_gridExport("' + gridDiv + '")');
@@ -831,6 +828,16 @@ var gf_gridCallback = function(p_gridNm, data){
 		gird.getSelectionModel().setSelectedRanges("");
 	}
 	
+}
+//탭클릭시 그리드리사이즈
+var gf_gridResize = function(p_gridList){
+	var v_gridList = gf_nvl(p_gridList, []);
+	for (var i = 0; i < v_gridList.length; i++) {
+		var grid = new Function('return ' + v_gridList[i])();
+		if(grid instanceof Slick.Grid){
+			grid.getPluginByName('Resizer').resizeGrid();
+		}
+	}
 }
 /********************************************************************************** */
 /*													 								*/

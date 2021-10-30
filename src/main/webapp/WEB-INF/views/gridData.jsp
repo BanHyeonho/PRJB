@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <script type="text/javascript">
+var gridList = [];
 <c:forEach var="item" items="${gridContextData}">
 	var ${item.get("GRID_NAME")}Context = '${item.get("CONTEXT_MENU")}'.split(',');
 </c:forEach>
@@ -9,6 +10,7 @@
 	<c:forEach var="item" items="${detail}" varStatus="status">
 		<c:choose>
 			<c:when test="${status.first}">
+				gridList.push('${item.get("GRID_NAME")}');
 				var ${item.get("GRID_NAME")};
 				var ${item.get("GRID_NAME")}DataDel = [];
 				var ${item.get("GRID_NAME")}Filters = {};

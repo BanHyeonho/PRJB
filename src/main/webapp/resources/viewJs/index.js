@@ -4,14 +4,14 @@
 var tabs;
 var tabTitle = $( "#tab_title" );
 var tabContent = $( "#tab_content" );
-var tabTemplate = "<li class='indexTabLi' menu-code='@menuCode@' ><a href='@href@'><span class='menu-span'>@label@</span><span class='ui-icon ui-icon-closethick' role='presentation'>Remove Tab</span></a></li>";
+var tabTemplate = "<li class='indexTabLi' menu-code='@menuCode@' onclick='f_selectFrame(this);'><a href='@href@'><span class='menu-span'>@label@</span><span class='ui-icon ui-icon-closethick' role='presentation'>Remove Tab</span></a></li>";
 var tabCounter = 1;
 var selectedTabId = '';
 	    
 $(document).ready(function () {
 
 	//메뉴셋팅
-	getMenu();
+	f_getMenu();
     tabs = $("#indexTab").tabs();
     tabs.find( ".ui-tabs-nav" ).sortable({
 		axis: "x",
@@ -27,19 +27,19 @@ $(document).ready(function () {
 		tabs.tabs( "refresh" );
     });
     $('#tabContextUl').menu();
-    attachTabEvent();
+    f_attachTabEvent();
     
     //메인탭 기능(컨텍스트)셋팅
-    $('#menuBtn').on('click', menuOpen);
-    $('#logoutBtn').on('click', logout);
-    $('#closeTabBtn').on('click', tabClose);
-    $('#closeRightBtn').on('click', tabRightClose);
-    $('#closeOthersBtn').on('click', tabOtherClose);
-    $('#refreshTabBtn').on('click', tabRefresh);
+    $('#menuBtn').on('click', f_menuOpen);
+    $('#logoutBtn').on('click', f_logout);
+    $('#closeTabBtn').on('click', f_tabClose);
+    $('#closeRightBtn').on('click', f_tabRightClose);
+    $('#closeOthersBtn').on('click', f_tabOtherClose);
+    $('#refreshTabBtn').on('click', f_tabRefresh);
     $('#favoriteTabBtn').on('click', f_menuBookmark);
     
   	//메뉴 우측 퀵메뉴 셋팅		    
-    setQuickMenu();
+    f_setQuickMenu();
 		  	
 });
 		
@@ -78,7 +78,7 @@ function f_menuBookmark(e){
 }
 		
 //메뉴 우측 퀵메뉴 셋팅
-function setQuickMenu(){
+function f_setQuickMenu(){
 	$(".column" ).sortable({
 		connectWith: ".column",
 		handle: ".portlet-header",
@@ -99,7 +99,7 @@ function setQuickMenu(){
 }
 		
 //메뉴셋팅
-function getMenu(){
+function f_getMenu(){
 	
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'com.S_MY_MENU');
@@ -173,7 +173,7 @@ function getMenu(){
 						$('#' + menuCode).on('click', {
   							 'menuNm' : menuNm
   							,'menuCode' : menuCode
-  						}, addPage);	
+  						}, f_addPage);	
 					}
 				}
 			});
@@ -181,7 +181,7 @@ function getMenu(){
 }
 		
 //탭 우클릭 컨텍스트
-function attachTabEvent(){
+function f_attachTabEvent(){
 	$('.indexTabLi').off('mousedown');
 	$('.indexTabLi').on('mousedown', function(e){
 		
@@ -213,7 +213,7 @@ function attachTabEvent(){
 }
 		
 //메뉴목록 열기
-var menuOpen = function(){
+var f_menuOpen = function(){
 	$( "#menu" ).dialog({
 	      resizable: true,
 	      height: "630",
@@ -223,7 +223,7 @@ var menuOpen = function(){
 }
 		
 //메뉴열기
-var addPage = function(e){
+var f_addPage = function(e){
 	$('.menu-div').removeClass('selected-menu');
 	$(e.target).closest('div .menu-div').addClass('selected-menu');
 	var label = e.data.menuNm;
@@ -239,21 +239,32 @@ var addPage = function(e){
   	tabs.append( "<div id='" + id + "'>" + tabContentHtml + "</div>" );
 	tabs.tabs( "refresh" );
 // 	$( "#menu" ).dialog( "close" );
-	attachTabEvent();
+	f_attachTabEvent();
 	$("#indexTab").tabs({active : tabs.find('li').length -1});
 			
 }
-		
+//탭 선택시
+var f_selectFrame = function(me){
+	var tabId = $(me).attr('aria-controls');
+	var tabFrame = $('#' + tabId + ' iframe')[0].contentWindow;
+	//메뉴명
+	tabFrame.$('#content-title').text($(me).find('span.menu-span').text());
+	
+	//그리드 리사이즈
+	var v_gridList = tabFrame.gridList;
+	tabFrame.gf_gridResize(v_gridList);
+}
+
 //로그아웃
-var logout = function(){
+var f_logout = function(){
 	 
 	if(confirm(gf_mlg('로그아웃_하시겠습니까?'))){
 		location.replace('/logout');	
 	}
 }
-		
+
 //탭닫기
-var tabClose = function(){
+var f_tabClose = function(){
 	if(selectedTabId != ''){
 		var panelId = $('.indexTabLi[aria-controls=' + selectedTabId + ']').remove().attr( "aria-controls" );
 		$( "#" + panelId ).remove();
@@ -262,7 +273,7 @@ var tabClose = function(){
 }
 		
 //우측탭 닫기
-var tabRightClose = function(){
+var f_tabRightClose = function(){
 	if(selectedTabId != ''){
 		var removeIdx = $('.indexTabLi[aria-controls=' + selectedTabId + ']').index();
 		$.each($('.indexTabLi:gt(' + removeIdx + ')'), function(index, item){
@@ -277,7 +288,7 @@ var tabRightClose = function(){
 }
 		
 //다른탭 닫기
-var tabOtherClose = function(){
+var f_tabOtherClose = function(){
 	if(selectedTabId != ''){
 		$.each($('.indexTabLi[aria-controls!=' + selectedTabId + ']'), function(index, item){
 			//메인탭은 삭제할수없다.
@@ -291,7 +302,7 @@ var tabOtherClose = function(){
 }
 		
 //탭새로고침
-var tabRefresh = function(){
+var f_tabRefresh = function(){
 	if(selectedTabId != ''){
 		$('#' + selectedTabId).find('iframe').contents().get(0).location.reload(true);
 	}
