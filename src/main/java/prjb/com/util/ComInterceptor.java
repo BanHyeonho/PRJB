@@ -1,11 +1,17 @@
 package prjb.com.util;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.mobile.device.Device;
+import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -18,7 +24,9 @@ public class ComInterceptor extends HandlerInterceptorAdapter {
 		// TODO Auto-generated method stub
 		String requestURI = request.getRequestURI();
 		String loginSessionYn = String.valueOf(request.getSession().getAttribute("LOGIN_SESSION_YN"));
-//		
+
+		info(request);
+		
 //		//로그인 상태가 아니면서 특정 url 접근시 허용하지 않는다.
 		//비로그인 상태
 		if( !"1".equals(loginSessionYn) ) {
@@ -88,5 +96,54 @@ public class ComInterceptor extends HandlerInterceptorAdapter {
 		}
 		
 	}
-	
+
+	private void info(HttpServletRequest request) {
+		
+		Device device = DeviceUtils.getCurrentDevice(request);        
+		if (device == null) {
+			System.out.println("device is null");
+        }
+		else {
+			String deviceType = "unknown";
+	        if (device.isNormal()) {
+	            deviceType = "nomal";
+	        } else if (device.isMobile()) {
+	            deviceType = "mobile";
+	        } else if (device.isTablet()) {
+	            deviceType = "tablet";
+	        }
+	        System.out.println("deviceType : " + deviceType);
+		}
+        
+		InetAddress ip;
+	    try {
+	  
+	        ip = InetAddress.getLocalHost();
+	        System.out.println("Current host name : " + ip.getHostName());
+	        System.out.println("Current IP address : " + ip.getHostAddress());
+	        NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+	  
+	        byte[] mac = network.getHardwareAddress();
+	  
+	        StringBuilder sb = new StringBuilder();
+	        for (int i = 0; i < mac.length; i++) {
+	            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));     
+	        }
+	        System.out.println("Current MAC address : " + sb.toString());
+	  
+	    } catch (UnknownHostException e) {
+	  
+	        e.printStackTrace();
+	  
+	    } catch (SocketException e){
+	  
+	        e.printStackTrace();
+	  
+	    }
+	    catch (Exception e){
+	  
+	        e.printStackTrace();
+	  
+	    }
+	}
 }

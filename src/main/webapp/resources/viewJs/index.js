@@ -37,12 +37,48 @@ $(document).ready(function () {
     $('#closeOthersBtn').on('click', f_tabOtherClose);
     $('#refreshTabBtn').on('click', f_tabRefresh);
     $('#favoriteTabBtn').on('click', f_menuBookmark);
-    
+        
   	//메뉴 우측 퀵메뉴 셋팅		    
     f_setQuickMenu();
 		  	
 });
-		
+
+//최근사용메뉴 조회
+function f_openMenuList(){
+	
+	var fData = new FormData();
+	fData.set('selectQuery', JSON.stringify({
+		QUERY_ID : 'com.S_LAST_MENU_OPEN_LIST'
+	}));
+	
+	gf_ajax( fData
+			, null
+			, function(data){
+				if(data.result.selectQuery.length > 0){
+					
+						
+				}
+			});
+	
+}
+//즐겨찾기메뉴 조회
+function f_bookmarkMenuList(){
+	
+	var fData = new FormData();
+	fData.set('selectQuery', JSON.stringify({
+		QUERY_ID : 'com.S_COMM_USER_BOOKMARK'
+	}));
+	
+	gf_ajax( fData
+			, null
+			, function(data){
+				if(data.result.selectQuery.length > 0){
+					
+						console.log(data);
+				}
+			});
+	
+}
 //즐겨찾기
 function f_menuBookmark(e){
 	
@@ -220,6 +256,12 @@ var f_menuOpen = function(){
 	      minWidth: '840',
 	      modal: true
 	});
+	
+    //즐겨찾기가져오기
+    f_bookmarkMenuList();
+    
+	//최근사용메뉴 가져오기
+	f_openMenuList();
 }
 		
 //메뉴열기

@@ -43,6 +43,7 @@ $(document).ready(function() {
 	functionGrid = gf_gridInit('functionGrid', {
     	'defaultInsert' : {'COMM_MENU_ID' : gridPk,
 							'BTN_AREA' : 'BTN_AREA1',
+							'USE_YN' : '1'
 						}
     });
     
