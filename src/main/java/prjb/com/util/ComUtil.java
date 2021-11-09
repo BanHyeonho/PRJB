@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -41,6 +43,35 @@ public class ComUtil {
 		String ip = request.getHeader("X-FORWARDED-FOR") == null ? request.getRemoteAddr() : request.getHeader("X-FORWARDED-FOR");
 		
 		return ip;
+	}
+	
+	/**
+	 * 클라이언트 MAC 주소
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	public static String getMACAddress(){
+	
+		String macAddress = null;
+		try {
+			
+			InetAddress inetAddress = InetAddress.getLocalHost();
+			NetworkInterface network = NetworkInterface.getByInetAddress(inetAddress);
+			byte[] mac = network.getHardwareAddress();
+	
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < mac.length; i++) {
+				sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+			}
+			macAddress = sb.toString();
+		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return macAddress;
 	}
 	
 	/**
