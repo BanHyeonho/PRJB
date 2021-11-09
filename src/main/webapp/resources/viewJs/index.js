@@ -74,7 +74,7 @@ function f_bookmarkMenuList(){
 			, function(data){
 				if(data.result.selectQuery.length > 0){
 					
-						console.log(data);
+						console.log('f_bookmarkMenuList : ' , data);
 				}
 			});
 	

@@ -36,7 +36,7 @@ var gridList = [];
 					,align:'${item.get("TEXT_ALIGN")}'
 					,name: '${item.get("FIELD_NAME")}'
 					,field: '${item.get("FIELD")}'
-					,width: '${item.get("WIDTH")}'
+					,width: Number('${item.get("WIDTH")}')
 					<c:if test="${item.get(\"FOOTER\") != null}">
 					,footer: '${item.get("FOOTER")}'
 					</c:if>
@@ -82,7 +82,7 @@ var gridList = [];
 							,align:'${item.get("TEXT_ALIGN")}'
 							,name: '${item.get("FIELD_NAME")}'
 							,field: '${item.get("FIELD")}'
-							,width: '${item.get("WIDTH")}'
+							,width: Number('${item.get("WIDTH")}')
 							<c:if test="${item.get(\"FOOTER\") != null}">
 							,footer: '${item.get("FOOTER")}'
 							</c:if>

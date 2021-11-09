@@ -44,36 +44,7 @@ public class ComUtil {
 		
 		return ip;
 	}
-	
-	/**
-	 * 클라이언트 MAC 주소
-	 * @param request
-	 * @return
-	 * @throws Exception 
-	 */
-	public static String getMACAddress(){
-	
-		String macAddress = null;
-		try {
-			
-			InetAddress inetAddress = InetAddress.getLocalHost();
-			NetworkInterface network = NetworkInterface.getByInetAddress(inetAddress);
-			byte[] mac = network.getHardwareAddress();
-	
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < mac.length; i++) {
-				sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-			}
-			macAddress = sb.toString();
 		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return macAddress;
-	}
-	
 	/**
 	 * 접속브라우저의 언어설정 첫번째가 한글인지 체크
 	 * @param request

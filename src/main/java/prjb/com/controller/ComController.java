@@ -44,10 +44,7 @@ public class ComController {
 	 */
 	@RequestMapping(value = "/loginPage", method = RequestMethod.GET)
 	public String loginPage(HttpServletRequest request, Model m) throws Exception {
-		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		
-		logger.info("MAC is {}.", "[" + ComUtil.getMACAddress() + "]");
-		
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");		
 		ComUtil.getKeyPair(request);
 		m.addAttribute("jsLink", "/viewJs" + request.getRequestURI() + ".js");
 		return "loginPage";

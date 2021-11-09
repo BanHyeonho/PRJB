@@ -18,7 +18,7 @@ public class ComInterceptor extends HandlerInterceptorAdapter {
 		// TODO Auto-generated method stub
 		String requestURI = request.getRequestURI();
 		String loginSessionYn = String.valueOf(request.getSession().getAttribute("LOGIN_SESSION_YN"));
-
+		
 //		//로그인 상태가 아니면서 특정 url 접근시 허용하지 않는다.
 		//비로그인 상태
 		if( !"1".equals(loginSessionYn) ) {
@@ -65,12 +65,8 @@ public class ComInterceptor extends HandlerInterceptorAdapter {
 			
 		}
 		
-		
-		
 		return true;
 	}
-
-
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
