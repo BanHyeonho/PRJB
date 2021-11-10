@@ -74,8 +74,9 @@
 	  	</div>
 	</div>
 		
-	<div style="position: absolute;right: .4em;top:.15em;">
-		<button type="button" id='menuBtn' title='${pb:msg(pageContext.request, "메뉴")}' class="menu-btn" style="width: 45px; height: 45px;">
+	<div style="position: absolute; right:0.5%; top:0.5%;">
+		<button type="button" id='menuBtn' title='${pb:msg(pageContext.request, "메뉴")}' class="menu-btn">
+			<i class="fi fi-rr-Menu-burger"></i>
 		</button>
 	</div>
 		

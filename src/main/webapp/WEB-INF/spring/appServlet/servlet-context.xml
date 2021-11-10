@@ -20,6 +20,7 @@
 	<resources mapping="/script/**" location="/resources/script/" />
 	<resources mapping="/viewJs/**" location="/resources/viewJs/" />
 	<resources mapping="/css/**" location="/resources/css/" />
+	<resources mapping="/icon/**" location="/resources/icon/" />
 	<resources mapping="/img/**" location="/resources/img/" />
 	<resources mapping="/plugin/**" location="/resources/plugin/" />
 	<resources mapping="/favicon.ico" location="/resources/img/favicon.ico" />

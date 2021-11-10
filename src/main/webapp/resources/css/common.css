@@ -11,11 +11,11 @@
 }
 
 .menu-btn{
-	background-image: url(/resources/img/menu-icon.png);
-    background-size: contain;
-    background-repeat: no-repeat;
+	width: 40px; 
+	height: 40px;
+	font-size: 30px;
     padding: 0;
-    border: 1px solid #c8c8c8;
+    border: 1px solid #c5c5c5;
 	cursor: pointer;
 }
 

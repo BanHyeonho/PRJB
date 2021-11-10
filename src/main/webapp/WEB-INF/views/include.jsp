@@ -38,6 +38,9 @@
 <!-- 암호화 -->
 <script src="/script/jsencrypt.min.js?v=${pb:jsNow()}"></script>
 
+<!-- 아이콘 -->
+<link rel="stylesheet" type="text/css" href="/icon/flaticon/css/uicons-regular-rounded.css" />
+
 <!-- 사용자정의 -->
 <link  href="/css/reset.css?v=${pb:jsNow()}" rel="stylesheet" />
 <link  href="/css/common.css?v=${pb:jsNow()}" rel="stylesheet" />

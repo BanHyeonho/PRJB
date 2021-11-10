@@ -149,13 +149,17 @@ function f_getMenu(){
 					var menuCode = item.MENU_CODE;
 					var menuUrl = item.MENU_URL;
 					var menuNm = gf_mlg(item.MLG_CODE);
+					var iconClass = gf_nvl(item.ATTRIBUTE1, 'fi fi-rr-Minus-small');
 					
 					var tag = $('<div></div>').addClass('menu-div').attr('id', menuCode);
 					var menuName = $('<span></span>').addClass("menu-text").text(menuNm);
+					var icon = $('<i style="margin-right:5px;"></i>').addClass(iconClass);
+					
 					var menuDepth;
 					
 					if(depth == 0){
 						menuDepth = menuName;
+						tag.append(icon);
 					}
 					else{
 						menuDepth = $('<div></div>').addClass('menu-depth');
@@ -169,13 +173,16 @@ function f_getMenu(){
   						}
 						
 						if(menuDepth.find('.menu-depth:last').length == 0){
+							menuDepth.append(icon);
 							menuDepth.append(menuName);
 						}
 						else{
+							menuDepth.find('.menu-depth:last').append(icon);
 							menuDepth.find('.menu-depth:last').append(menuName);
 						}
 						
 					}
+					
 					
 					tag.append(menuDepth);
 					
