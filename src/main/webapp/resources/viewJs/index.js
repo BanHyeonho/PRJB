@@ -149,7 +149,16 @@ function f_getMenu(){
 					var menuCode = item.MENU_CODE;
 					var menuUrl = item.MENU_URL;
 					var menuNm = gf_mlg(item.MLG_CODE);
-					var iconClass = gf_nvl(item.ATTRIBUTE1, 'fi fi-rr-Minus-small');
+					var iconClass;
+					//중메뉴
+					if(gf_nvl(item.CHILD_YN, '0') == '1'){
+						iconClass = gf_nvl(item.ATTRIBUTE1, 'fi fi-rr-Caret-down');
+					}
+					//말단메뉴
+					else{
+						iconClass = gf_nvl(item.ATTRIBUTE1, 'fi fi-rr-Minus-small');	
+					}
+					
 					
 					var tag = $('<div></div>').addClass('menu-div').attr('id', menuCode);
 					var menuName = $('<span></span>').addClass("menu-text").text(menuNm);

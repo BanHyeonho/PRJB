@@ -781,32 +781,43 @@
 	<!-- 로그인한 계정의 메뉴 조회 -->
 	<select id="S_MY_MENU" resultType="HashMap" parameterType="HashMap" >
 		/* S_MY_MENU */
-		SELECT LEVEL-1 AS MENU_DEPTH
-			 , SYS_CONNECT_BY_PATH(A.MENU_CODE, '@') AS MENU_PATH
-			 , A.COMM_MENU_ID 
-			 , A.MENU_CODE 
-			 , A.MLG_CODE
-			 , A.MENU_URL 
-			 , A.UP_MENU_CODE 
-			 , A.USE_YN 
-			 , A.DESCRIPTION 
-			 , A.SEQ
-			 , A.ATTRIBUTE1
-		  FROM COMM_MENU A
-		  JOIN (
-		  	SELECT C.COMM_MENU_ID
-		  		 , MAX(C.USE_YN) AS USE_YN
-			  FROM COMM_AUTH_GROUP A
-			  JOIN COMM_AUTH_GROUP_USER B ON A.COMM_AUTH_GROUP_ID = B.COMM_AUTH_GROUP_ID
-			  JOIN COMM_AUTH_GROUP_MENU C ON A.COMM_AUTH_GROUP_ID = C.COMM_AUTH_GROUP_ID
-			 WHERE B.COMM_USER_ID = #{CID}
-			 GROUP BY C.COMM_MENU_ID
-		  		) B ON A.COMM_MENU_ID = B.COMM_MENU_ID
-		 WHERE A.USE_YN = '1'
-		   AND B.USE_YN = '1'
-		 START WITH UP_MENU_CODE IS null 
-		CONNECT BY PRIOR MENU_CODE = UP_MENU_CODE
-		ORDER SIBLINGS BY SEQ
+		  WITH TEMP AS(
+					  SELECT LEVEL-1 AS MENU_DEPTH
+					       , SYS_CONNECT_BY_PATH(A.MENU_CODE, '@') AS MENU_PATH
+					       , A.COMM_MENU_ID 
+					       , A.MENU_CODE 
+					       , A.MLG_CODE
+					       , A.MENU_URL 
+					       , A.UP_MENU_CODE 
+					       , A.USE_YN 
+					       , A.DESCRIPTION 
+					       , A.SEQ
+					       , A.ATTRIBUTE1
+					      FROM COMM_MENU A
+					      JOIN (
+					        SELECT C.COMM_MENU_ID
+					           , MAX(C.USE_YN) AS USE_YN
+					        FROM COMM_AUTH_GROUP A
+					        JOIN COMM_AUTH_GROUP_USER B ON A.COMM_AUTH_GROUP_ID = B.COMM_AUTH_GROUP_ID
+					        JOIN COMM_AUTH_GROUP_MENU C ON A.COMM_AUTH_GROUP_ID = C.COMM_AUTH_GROUP_ID
+					       WHERE B.COMM_USER_ID = #{CID}
+					       GROUP BY C.COMM_MENU_ID
+					          ) B ON A.COMM_MENU_ID = B.COMM_MENU_ID
+					     WHERE A.USE_YN = '1'
+					       AND B.USE_YN = '1'
+					     START WITH UP_MENU_CODE IS null 
+					    CONNECT BY PRIOR MENU_CODE = UP_MENU_CODE
+					    ORDER SIBLINGS BY SEQ
+					  )
+		  SELECT A.*
+		  	   , (
+		          SELECT CASE WHEN COUNT(0) > 0
+		                      THEN '1'
+		                      ELSE '0' END
+		            FROM TEMP
+		           WHERE UP_MENU_CODE = A.MENU_CODE
+		          ) AS CHILD_YN
+		    FROM TEMP A
 	</select>
 	
 	<!-- 메뉴 조회 -->
