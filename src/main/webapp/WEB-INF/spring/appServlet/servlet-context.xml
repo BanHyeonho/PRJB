@@ -28,6 +28,8 @@
 	<interceptors>
 		<interceptor>
 			<mapping path="/*" />
+			<exclude-mapping path="/favicon.ico"/>
+			<exclude-mapping path="/logout"/>
 			<beans:bean class="prjb.com.util.ComInterceptor" />
 		</interceptor>
 	</interceptors>

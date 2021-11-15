@@ -55,6 +55,17 @@ const btnList = JSON.parse(gf_nvl('${btnList}', '[]'));
 
 <!-- 그리드설정 -->
 <c:if test="${gridData.size() > 0}">
+
+	<!-- 슬릭그리드엑셀 -->
+	<script src="/plugin/slickGrid/plugins/require.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/underscore.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/jquery.slickgrid.export.excel.js?v=${pb:jsNow()}"></script>
+	<script type="text/javascript">
+	requirejs.config({
+		baseUrl: '/plugin/slickGrid/plugins/'  //give the location of the folder which contains require, excel-builder, etc
+	});
+	</script>
+
 	<%@ include file="./gridData.jsp"%>
 </c:if>
 

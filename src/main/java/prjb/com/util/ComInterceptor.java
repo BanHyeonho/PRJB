@@ -32,8 +32,6 @@ public class ComInterceptor extends HandlerInterceptorAdapter {
 					return true;
 				case "/loginAction":
 					return true;
-				case "/logout":
-					return true;
 				case "/":
 					response.sendRedirect("/loginPage");
 					break;
