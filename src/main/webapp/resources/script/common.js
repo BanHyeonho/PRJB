@@ -209,6 +209,7 @@ function gf_gridInit(gridDiv, option) {
 			let contextLi;
 			let contextTextSpan;
 			let contextText;
+			let contextA;
 			switch (vContextMenu[i]) {
 				//행추가
 				case "grid_add":
@@ -243,7 +244,8 @@ function gf_gridInit(gridDiv, option) {
 				//그리드 엑셀다운로드
 				case "grid_export":
 					contextLi = $('<li>').attr('onclick', 'gf_gridExport("' + gridDiv + '")');
-					contextTextSpan = $('<span>').text(gf_mlg('엑셀_내보내기'));
+					contextA = $('<a>').css({'text-decoration-line' : 'none'}).attr('id', gridDiv + 'Excel').text(gf_mlg('엑셀_내보내기'));
+					contextTextSpan = $('<span>').html(contextA);
 					contextText = $('<div><span class="ui-icon ui-icon-arrowrefresh-1-e"></span></div>');
 					break;
 			}
@@ -253,7 +255,7 @@ function gf_gridInit(gridDiv, option) {
 		}
 		contextDiv.append(contextUl);
 		$('body').append(contextDiv);
-	
+		
 		$('#' + gridDiv + 'ContextUl').menu();
 		
 	}
@@ -397,7 +399,10 @@ function gf_gridInit(gridDiv, option) {
 			var removeEvent = gf_nvl($('#' + gridDiv + 'Context li[onclick^=gf_gridRemoveRow]').attr('onclick'), '');
 			removeEvent = (removeEvent.indexOf(',') > 0 ? removeEvent.substr(0, removeEvent.indexOf(',')) + ')' : removeEvent);
 			$('#' + gridDiv + 'Context li[onclick^=gf_gridRemoveRow]').attr('onclick', removeEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
-
+			
+			var exportData = gf_gridExportData(gridDiv); 
+			$('#' + gridDiv).exportToExcel(gridDiv + ".xlsx", "Sheet1", exportData, gv_excelOptions, function (response) {});
+			
 			$('#' + gridDiv + 'Context').css({
 				'top': e.pageY
 				, 'left': e.pageX
@@ -611,6 +616,48 @@ function gf_gridClear(grid){
 /*	그리드 컨텍스트기능									 								*/
 /*													 								*/
 /********************************************************************************** */
+//그리드엑셀내보내기
+function gf_gridExport(gridDiv) {
+	gf_gridRefresh(gridDiv);
+}
+//그리드 엑셀데이터 생성
+function gf_gridExportData(gridDiv) {
+	
+	var result = [];
+	var column = [];
+	
+	$.each(new Function('return ' + gridDiv + 'Columns')(), function(idx, item){				
+		var m = {};
+		m[item.id] = {
+			name : item.name,
+			editor : item.editor.name,
+			dataSource : item.dataSource,
+		}
+		column.push(m);
+	});
+	var values = new Function('return ' + gridDiv + '.getData().getItems();')();
+	$.each(values, function(idx, item){
+					
+		var val = {};
+		$.each(column, function(idx2, item2){
+			
+			var id = Object.keys(item2)[0];
+			var name = item2[id].name;
+			var editor = item2[id].editor;
+			var dataSource = item2[id].dataSource;
+			
+			if(editor == 'Select2Editor'){
+				val[name] = gf_nvl(dataSource[item[id]], null);
+			}
+			else{
+				val[name] = gf_nvl(item[id], null);	
+			}
+			
+		});
+		result.push(val);
+	});
+	return result;
+}
 //그리드 새로고침
 function gf_gridRefresh(gridDiv) {
 
