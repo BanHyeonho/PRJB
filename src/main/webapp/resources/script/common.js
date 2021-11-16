@@ -630,7 +630,7 @@ function gf_gridExportData(gridDiv) {
 		var m = {};
 		m[item.id] = {
 			name : item.name,
-			editor : item.editor.name,
+			editor : gf_nvl(item.editor, {}).name,
 			dataSource : item.dataSource,
 		}
 		column.push(m);
