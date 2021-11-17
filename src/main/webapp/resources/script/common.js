@@ -400,8 +400,9 @@ function gf_gridInit(gridDiv, option) {
 			removeEvent = (removeEvent.indexOf(',') > 0 ? removeEvent.substr(0, removeEvent.indexOf(',')) + ')' : removeEvent);
 			$('#' + gridDiv + 'Context li[onclick^=gf_gridRemoveRow]').attr('onclick', removeEvent.replace(')', ',' + JSON.stringify(cell) + ')'));
 			
-			var exportData = gf_gridExportData(gridDiv); 
-			$('#' + gridDiv).exportToExcel(gridDiv + ".xlsx", "Sheet1", exportData, gv_excelOptions, function (response) {});
+			var exportData = gf_gridExportData(gridDiv);
+			var excelFileNm = gf_nvl(new Function('return ' + gridDiv + 'Columns[0].excelFileNm')(), gridDiv);
+			$('#' + gridDiv).exportToExcel(excelFileNm + ".xlsx", "Sheet1", exportData, gv_excelOptions, function (response) {});
 			
 			$('#' + gridDiv + 'Context').css({
 				'top': e.pageY

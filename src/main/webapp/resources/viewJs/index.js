@@ -40,7 +40,7 @@ $(document).ready(function () {
         
   	//메뉴 우측 퀵메뉴 셋팅		    
     f_setQuickMenu();
-		  	
+    
 });
 
 //최근사용메뉴 조회
@@ -56,7 +56,7 @@ function f_openMenuList(){
 			, function(data){
 				if(data.result.selectQuery.length > 0){
 					
-						
+						console.log('f_openMenuList', data);
 				}
 			});
 	
@@ -121,7 +121,6 @@ function f_setQuickMenu(){
 		cancel: ".portlet-toggle",
 		placeholder: "portlet-placeholder ui-corner-all"
 	});
-   
 	$(".portlet").addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
 				.find( ".portlet-header" )
 				.addClass( "ui-widget-header ui-corner-all" )
@@ -231,7 +230,7 @@ function f_getMenu(){
 			});
 	
 }
-		
+
 //탭 우클릭 컨텍스트
 function f_attachTabEvent(){
 	$('.indexTabLi').off('mousedown');

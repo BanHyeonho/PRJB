@@ -58,6 +58,9 @@ var gridList = [];
 					<c:if test="${item.get(\"PASTE_YN\") == '1'}">
 					,pasteYn: '1'
 					</c:if>
+					<c:if test="${item.get(\"ATTRIBUTE1\") != null}">
+					,excelFileNm: '${item.get("ATTRIBUTE1")}'
+					</c:if>
 					,formatter: gf_slickGridFormatter
 				}];
 			</c:when>
@@ -97,6 +100,9 @@ var gridList = [];
 							</c:if>
 							<c:if test="${item.get(\"PASTE_YN\") == '1'}">
 							,pasteYn: '1'
+							</c:if>
+							<c:if test="${item.get(\"ATTRIBUTE1\") != null}">
+							,excelFileNm: '${item.get("ATTRIBUTE1")}'
 							</c:if>
 							,formatter: gf_slickGridFormatter
 						});
