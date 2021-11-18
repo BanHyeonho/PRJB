@@ -7,7 +7,9 @@ var tabContent = $( "#tab_content" );
 var tabTemplate = "<li class='indexTabLi' menu-code='@menuCode@' onclick='f_selectFrame(this);'><a href='@href@'><span class='menu-span'>@label@</span><span class='ui-icon ui-icon-closethick' role='presentation'>Remove Tab</span></a></li>";
 var tabCounter = 1;
 var selectedTabId = '';
-	    
+
+let menuSearchData = [];
+
 $(document).ready(function () {
 
 	//메뉴셋팅
@@ -37,11 +39,41 @@ $(document).ready(function () {
     $('#closeOthersBtn').on('click', f_tabOtherClose);
     $('#refreshTabBtn').on('click', f_tabRefresh);
     $('#favoriteTabBtn').on('click', f_menuBookmark);
-        
-  	//메뉴 우측 퀵메뉴 셋팅		    
-    f_setQuickMenu();
-    
+           
 });
+
+//메뉴검색
+function f_searchMenu(){
+	$.widget("custom.catcomplete", $.ui.autocomplete, {
+	      _create: function() {
+	        this._super();
+	        this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+	      },
+	      _renderMenu: function( ul, items ) {
+	        var that = this,
+	          currentCategory = "";
+	        $.each( items, function( index, item ) {
+	          var li;
+	          if ( item.category != currentCategory ) {
+	            ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+	            currentCategory = item.category;
+	          }
+	          li = that._renderItemData( ul, item );
+	          if ( item.category ) {
+	            li.attr( "aria-label", item.category + " : " + item.label );
+	          }
+	        });
+	      }
+	});
+	$("#menuSearch" ).catcomplete({
+		delay: 0,
+		source: menuSearchData,
+		minLength: 0,
+		select: function( event, ui ) {
+				$('#' + ui.item.menuCode).trigger('click');
+			}
+	});
+}
 
 //최근사용메뉴 조회
 function f_openMenuList(){
@@ -56,7 +88,28 @@ function f_openMenuList(){
 			, function(data){
 				if(data.result.selectQuery.length > 0){
 					
-						console.log('f_openMenuList', data);
+						$('#openMenu .portlet').remove();
+						if(data.result.selectQuery.length > 0){
+							
+							for (var i = 0; i < data.result.selectQuery.length; i++) {
+								var item = data.result.selectQuery[i];
+								var menuNm = item.MENU_NAME;
+								var menuCode = item.MENU_CODE
+								
+								var portlet = $('<div>').addClass('portlet');
+								var portletHeader = $('<div>').addClass('portlet-header').text(menuNm);
+								var portletContent = $('<div>').addClass('portlet-content').text('최근사용메뉴');
+								
+								portlet.append(portletHeader).append(portletContent);
+								$('#openMenu').append(portlet);
+							}
+							
+								console.log('f_openMenuList : ' , data);
+								
+								//메뉴 우측 퀵메뉴 셋팅		    
+							    f_setQuickMenu('openMenu');
+						}
+						
 				}
 			});
 	
@@ -72,9 +125,27 @@ function f_bookmarkMenuList(){
 	gf_ajax( fData
 			, null
 			, function(data){
+				$('#bookMark .portlet').remove();
 				if(data.result.selectQuery.length > 0){
 					
+					for (var i = 0; i < data.result.selectQuery.length; i++) {
+						var item = data.result.selectQuery[i];
+						var menuNm = item.MENU_NAME;
+						var menuCode = item.MENU_CODE;
+						
+						var portlet = $('<div>').addClass('portlet');
+						var portletHidden = $('<input type="hidden" name="menuCode"/>').val(menuCode);
+						var portletHeader = $('<div>').addClass('portlet-header').text(menuNm);
+						var portletContent = $('<div>').addClass('portlet-content').text('즐겨찾기');
+						
+						portlet.append(portletHidden).append(portletHeader).append(portletContent);
+						$('#bookMark').append(portlet);
+					}
+					
 						console.log('f_bookmarkMenuList : ' , data);
+						
+						//메뉴 우측 퀵메뉴 셋팅		    
+					    f_setQuickMenu('bookMark');
 				}
 			});
 	
@@ -86,6 +157,10 @@ function f_menuBookmark(e){
 	if(gf_nvl(v_menuCode, '') == ''){
 		return;
 	}
+	
+	f_menuBookmarkExec(v_menuCode);
+}
+function f_menuBookmarkExec(v_menuCode){
 	
 	var fData = new FormData();
 	fData.set('insertQUERY', JSON.stringify({
@@ -112,27 +187,48 @@ function f_menuBookmark(e){
 				}
 			});
 }
-		
 //메뉴 우측 퀵메뉴 셋팅
-function f_setQuickMenu(){
-	$(".column" ).sortable({
-		connectWith: ".column",
+function f_setQuickMenu(type){
+	
+	var sortableClass;
+	
+	if(type == 'bookMark'){
+		sortableClass = 'column-bookMark';
+	}
+	else{
+		sortableClass = 'column-openMenu';
+	}
+	
+	$("." + sortableClass).sortable({
+		connectWith: "." + sortableClass,
 		handle: ".portlet-header",
 		cancel: ".portlet-toggle",
 		placeholder: "portlet-placeholder ui-corner-all"
 	});
-	$(".portlet").addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-				.find( ".portlet-header" )
-				.addClass( "ui-widget-header ui-corner-all" )
-				.prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+	
+	if(type == 'bookMark'){
+		$(".portlet").addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+					.find( ".portlet-header" )
+					.addClass( "ui-widget-header ui-corner-all" )
+					.prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
    
-	$( ".portlet-toggle" ).on( "click", function() {
-		var icon = $( this );
-		icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
-		icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
-	});
+	
+		$( ".portlet-toggle" ).on( "click", function() {
+			
+			var menuCode = $( this ).parent().siblings('input[name="menuCode"]').val();
+			f_menuBookmarkExec(menuCode);
+			$( this ).closest('.portlet').remove();
+			
+		});
+	}
+	else{
+		$(".portlet").addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+					.find( ".portlet-header" )
+					.addClass( "ui-widget-header ui-corner-all" );
+	}
+	
 }
-		
+
 //메뉴셋팅
 function f_getMenu(){
 	
@@ -141,6 +237,10 @@ function f_getMenu(){
 	gf_ajax( fData
 			, null
 			, function(data){
+		
+				menuSearchData = [];
+				var bigMenus = data.result.filter(x=>x.MENU_DEPTH==0);
+				
 				for(let i=0; i<data.result.length; i++){
 					var item = data.result[i];
 					var depth = Number(item.MENU_DEPTH);
@@ -155,7 +255,16 @@ function f_getMenu(){
 					}
 					//말단메뉴
 					else{
-						iconClass = gf_nvl(item.ATTRIBUTE1, 'fi fi-rr-Minus-small');	
+						iconClass = gf_nvl(item.ATTRIBUTE1, 'fi fi-rr-Minus-small');
+						
+						var bigMenuCode = item.MENU_PATH.split('@')[1];
+						var bigMenu = bigMenus.find(x=>x.MENU_CODE==bigMenuCode);
+						menuSearchData.push({
+							label : menuNm, 
+							category : gf_mlg(bigMenu.MLG_CODE),
+							value : menuNm,
+							menuCode : menuCode
+						});
 					}
 					
 					
@@ -268,7 +377,8 @@ var f_menuOpen = function(){
 	$( "#menu" ).dialog({
 	      resizable: true,
 	      height: "630",
-	      minWidth: '840',
+	      width: '880',
+	      maxWidth: '900',
 	      modal: true
 	});
 	
@@ -277,6 +387,9 @@ var f_menuOpen = function(){
     
 	//최근사용메뉴 가져오기
 	f_openMenuList();
+	
+	//메뉴검색
+	f_searchMenu();
 }
 		
 //메뉴열기

@@ -8,12 +8,12 @@
 <meta charset="UTF-8">
 <title>Home</title>
 <style type="text/css">
-.column {
+.column-bookMark {
 	width: 170px;
 	float: left;
 	padding-bottom: 100px;
 }
-.column2 {
+.column-openMenu {
 	width: 170px;
 	float: left;
 	padding-bottom: 100px;
@@ -62,6 +62,18 @@
 .menu-text{
 	font-size: 16px;
 }
+
+.ui-autocomplete-category {
+    font-weight: bold;
+    padding: .2em .4em;
+    margin: .8em 0 .2em;
+    line-height: 1.5;
+}
+.ui-autocomplete{
+	overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 500px;
+}
 </style>
 <meta name="google" content="notranslate">
 </head>
@@ -89,8 +101,11 @@
 		<!-- 메뉴셋팅 -->
 		</div>
 		<div id="quickMenu" style="width: 68%; height:100%; float: left; padding-left: 10px; border-left: 5px solid #e9e9e9;">
-			<div id="bookMark" style="">
-				<div class="column">
+			<div class="div-4" style="float: right;">
+				<input id="menuSearch" class="form form-text mg-tp-default" placeholder='${pb:msg(pageContext.request, "메뉴검색")}'>
+			</div>
+			<div class="div-6">
+				<div class="column-bookMark" id="bookMark">
 				  <div class="portlet">
 				    <div class="portlet-header">Feeds</div>
 				    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
@@ -103,7 +118,7 @@
 				 
 				</div>
 				 
-				<div class="column">
+				<div class="column-openMenu" id="openMenu">
 				 
 				  <div class="portlet">
 				    <div class="portlet-header">Shopping</div>

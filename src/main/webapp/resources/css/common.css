@@ -306,7 +306,26 @@ iframe {
 	display : inline-block;
 	width : 50%;
 }
-
+.div-6{
+	display : inline-block;
+	width : 60%;
+}
+.div-7{
+	display : inline-block;
+	width : 70%;
+}
+.div-8{
+	display : inline-block;
+	width : 80%;
+}
+.div-9{
+	display : inline-block;
+	width : 90%;
+}
+.div-10{
+	display : inline-block;
+	width : 100%;
+}
 .form{
 	display : inline-block;
 	width : 100%;
