@@ -206,26 +206,22 @@ function f_setQuickMenu(type){
 		placeholder: "portlet-placeholder ui-corner-all"
 	});
 	
-	if(type == 'bookMark'){
-		$(".portlet").addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-					.find( ".portlet-header" )
-					.addClass( "ui-widget-header ui-corner-all" )
-					.prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
-   
+	$(".portlet").addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+				.find( ".portlet-header" )
+				.addClass( "ui-widget-header ui-corner-all" )
+				.prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+
+
+	$( ".portlet-toggle" ).on( "click", function() {
 	
-		$( ".portlet-toggle" ).on( "click", function() {
-			
-			var menuCode = $( this ).parent().siblings('input[name="menuCode"]').val();
-			f_menuBookmarkExec(menuCode);
-			$( this ).closest('.portlet').remove();
-			
-		});
-	}
-	else{
-		$(".portlet").addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-					.find( ".portlet-header" )
-					.addClass( "ui-widget-header ui-corner-all" );
-	}
+		var menuCode = $( this ).parent().siblings('input[name="menuCode"]').val();
+		f_menuBookmarkExec(menuCode);
+		$( this ).closest('.portlet').remove();
+		
+	});
+	
+	//최근메뉴이력은 삭제불가
+	$('.column-openMenu .ui-icon').remove();
 	
 }
 
