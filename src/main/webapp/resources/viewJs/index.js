@@ -98,7 +98,8 @@ function f_openMenuList(){
 								
 								var portlet = $('<div>').addClass('portlet');
 								var portletHeader = $('<div>').addClass('portlet-header').text(menuNm);
-								var portletContent = $('<div>').addClass('portlet-content').text('최근사용메뉴');
+								var portletAtag = $('<a>').attr('href', 'javascript:$("#' + menuCode + '").trigger("click");').text(gf_mlg('이동'));
+								var portletContent = $('<div>').addClass('portlet-content').html(portletAtag);
 								
 								portlet.append(portletHeader).append(portletContent);
 								$('#openMenu').append(portlet);
@@ -136,16 +137,15 @@ function f_bookmarkMenuList(){
 						var portlet = $('<div>').addClass('portlet');
 						var portletHidden = $('<input type="hidden" name="menuCode"/>').val(menuCode);
 						var portletHeader = $('<div>').addClass('portlet-header').text(menuNm);
-						var portletContent = $('<div>').addClass('portlet-content').text('즐겨찾기');
+						var portletAtag = $('<a>').attr('href', 'javascript:$("#' + menuCode + '").trigger("click");').text(gf_mlg('이동'));
+						var portletContent = $('<div>').addClass('portlet-content').html(portletAtag);
 						
 						portlet.append(portletHidden).append(portletHeader).append(portletContent);
 						$('#bookMark').append(portlet);
 					}
 					
-						console.log('f_bookmarkMenuList : ' , data);
-						
-						//메뉴 우측 퀵메뉴 셋팅		    
-					    f_setQuickMenu('bookMark');
+					//메뉴 우측 퀵메뉴 셋팅		    
+				    f_setQuickMenu('bookMark');
 				}
 			});
 	
@@ -212,11 +212,14 @@ function f_setQuickMenu(type){
 				.prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
 
 
-	$( ".portlet-toggle" ).on( "click", function() {
-	
+	$( ".portlet-toggle" ).on( "click", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
+		
 		var menuCode = $( this ).parent().siblings('input[name="menuCode"]').val();
-		f_menuBookmarkExec(menuCode);
 		$( this ).closest('.portlet').remove();
+		f_menuBookmarkExec(menuCode);
 		
 	});
 	
@@ -371,10 +374,11 @@ function f_attachTabEvent(){
 //메뉴목록 열기
 var f_menuOpen = function(){
 	$( "#menu" ).dialog({
-	      resizable: true,
+	      resizable: false,
 	      height: "630",
-	      width: '880',
-	      maxWidth: '900',
+	      width: '900',
+//	      maxWidth: '900',
+//	      maxHeight: '640',
 	      modal: true
 	});
 	

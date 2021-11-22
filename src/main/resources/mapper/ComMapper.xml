@@ -312,7 +312,7 @@
 				 ) A
 		 WHERE 1=1
 		 <![CDATA[
-		   AND ROWNUM < 10
+		   AND ROWNUM < 8
 		 ]]>
 	</select>
 	<!-- 즐겨찾기 조회 -->

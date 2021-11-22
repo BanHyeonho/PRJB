@@ -76,6 +76,7 @@
 }
 </style>
 <meta name="google" content="notranslate">
+
 </head>
 <body>
 	<div id="indexTab">
@@ -96,48 +97,29 @@
 		</button>
 	</div>
 		
-	<div id="menu" title='${pb:msg(pageContext.request, "메뉴")}' style="display: none; padding-left: 0;">
+	<div id="menu" title='${pb:msg(pageContext.request, "메뉴")}' style="display: none; overflow:hidden; padding-left: 0;">
 		<div id="menuList" style="width: 30%; height:100%; float: left; padding-right: 5px; box-sizing: border-box; overflow-y: auto;">
 		<!-- 메뉴셋팅 -->
 		</div>
 		<div id="quickMenu" style="width: 68%; height:100%; float: left; padding-left: 10px; border-left: 5px solid #e9e9e9;">
 			<div class="div-4" style="float: right;">
-				<input id="menuSearch" class="form form-text mg-tp-default" placeholder='${pb:msg(pageContext.request, "메뉴검색")}'>
+				<input id="menuSearch" class="form form-text mg-default" placeholder='${pb:msg(pageContext.request, "메뉴검색")}'>
 			</div>
-			<div class="div-6">
+			<div class="div-6" style="height: 100%; overflow: auto;">
 				<div class="column-bookMark" id="bookMark">
-				  <div class="portlet">
-				    <div class="portlet-header">Feeds</div>
-				    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-				  </div>
-				 
-				  <div class="portlet">
-				    <div class="portlet-header">News</div>
-				    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-				  </div>
+				
+<!-- 				  <div class="portlet"> -->
+<!-- 				    <div class="portlet-header">Feeds</div> -->
+<!-- 				    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div> -->
+<!-- 				  </div> -->
 				 
 				</div>
 				 
 				<div class="column-openMenu" id="openMenu">
 				 
-				  <div class="portlet">
-				    <div class="portlet-header">Shopping</div>
-				    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-				  </div>
-				 <div class="portlet">
-				    <div class="portlet-header">Links</div>
-				    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-				  </div>
-				  <div class="portlet">
-				    <div class="portlet-header">Images</div>
-				    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-				  </div>
 				</div>
-				 	
 			</div>
-
 		</div>
-		
 	</div>
 
 
