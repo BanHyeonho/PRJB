@@ -29,15 +29,7 @@ var f_search = function(){
 				gf_gridClear(masterGrid);
 			}
 			, function(data){
-				
-				masterGridIdx = data.result.length;
-				
-				masterGrid.getData().setItems(data.result);
-				masterGrid.invalidate();
-				masterGrid.updateRowCount(); //로우 카운트 업데이트
-				masterGrid.render(); //다시 그리기
-				masterGrid.getSelectionModel().setSelectedRanges("");
-				
+				gf_gridCallback('masterGrid', data);
 			});
 }
 
@@ -56,14 +48,7 @@ var f_detailSearch = function(p_tableName){
 				gf_gridClear(detailGrid);
 			}
 			, function(data){
-				
-				detailGridIdx = data.result.length;
-				detailGrid.getData().setItems(data.result);
-				detailGrid.invalidate();
-				detailGrid.updateRowCount(); //로우 카운트 업데이트
-				detailGrid.render(); //다시 그리기
-				detailGrid.getSelectionModel().setSelectedRanges("");
-									
+				gf_gridCallback('detailGrid', data);
 			});
 	
 }

@@ -63,66 +63,6 @@ public class ComService {
 			mv.setViewName("error/401");
 			return mv;
 		}
-		//메뉴등록
-//		else if("comm_menuRegist".equals(menuUrl)){
-//			
-//			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
-//			List<Map<String, String>> menuLang = new ArrayList();
-//			Iterator<String> keys = msgMap.keySet().iterator();
-//	        while( keys.hasNext() ){
-//	            String key = keys.next();
-//	            if("1".equals(msgMap.get(key).get("MENU_YN"))) {
-//	            	
-//	            	param = new HashMap();
-//	            	param.put("MLG_CODE", key);
-//	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
-//	            	menuLang.add(param);
-//	            	
-//	            }
-//	        }
-//	        
-//			mv.addObject("menuLang", menuLang);
-//		}
-//		//공통코드
-//		else if("comm_commCode".equals(menuUrl)){
-//			
-//			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
-//			List<Map<String, String>> menuLang = new ArrayList();
-//			Iterator<String> keys = msgMap.keySet().iterator();
-//	        while( keys.hasNext() ){
-//	            String key = keys.next();
-//	            if("1".equals(msgMap.get(key).get("CODE_YN"))) {
-//	            	
-//	            	param = new HashMap();
-//	            	param.put("MLG_CODE", key);
-//	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
-//	            	menuLang.add(param);
-//	            	
-//	            }
-//	        }
-//	        
-//			mv.addObject("codeLang", menuLang);
-//		}
-//		//그리드관리
-//		else if("comm_gridManage".equals(menuUrl)){
-//			
-//			Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
-//			List<Map<String, String>> lang = new ArrayList();
-//			Iterator<String> keys = msgMap.keySet().iterator();
-//	        while( keys.hasNext() ){
-//	            String key = keys.next();
-//	            if("1".equals(msgMap.get(key).get("GRID_YN"))) {
-//	            	
-//	            	param = new HashMap();
-//	            	param.put("MLG_CODE", key);
-//	            	param.put("VALUE", msgMap.get(key).get("VALUE"));
-//	            	lang.add(param);
-//	            	
-//	            }
-//	        }
-//	        
-//			mv.addObject("gridLang", lang);
-//		}
 		
 		//화면별 버튼 조회
 		param = new HashMap();

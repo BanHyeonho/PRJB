@@ -20,7 +20,7 @@ public class ExceptionService {
 	@ResponseBody
 	@ExceptionHandler(Exception.class)
 	public Object custom(HttpServletRequest request, HttpServletResponse response, Exception e){
-		
+		e.printStackTrace();
 		Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
 		Map<String, String> returnMap = new HashMap();
 		String errorMsg = e.getMessage();

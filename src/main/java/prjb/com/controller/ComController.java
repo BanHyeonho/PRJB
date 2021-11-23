@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j2;
 import prjb.com.service.ComService;
 import prjb.com.util.ComUtil;
 

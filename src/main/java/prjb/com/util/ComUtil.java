@@ -6,8 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,78 @@ import org.springframework.jdbc.support.JdbcUtils;
 
 public class ComUtil {
 
+
+	/**
+	 * 난수발생
+	 * @return
+	 */
+	public static String getRandomKey() {
+		
+		StringBuffer temp = new StringBuffer();
+		Random rnd = new Random();
+		
+		for (int i = 0; i < 20; i++) {
+		    int rIndex = rnd.nextInt(3);
+		    switch (rIndex) {
+		    case 0:
+		        // a-z
+		        temp.append((char) ((int) (rnd.nextInt(26)) + 97));
+		        break;
+		    case 1:
+		        // A-Z
+		        temp.append((char) ((int) (rnd.nextInt(26)) + 65));
+		        break;
+		    case 2:
+		        // 0-9
+		        temp.append((rnd.nextInt(10)));
+		        break;
+		    }
+		}
+
+		return temp.toString();
+	}
+	
+	/**
+	 * 브라우저 확인
+	 * @param request
+	 * @return
+	 */
+	public static String getBrowser(HttpServletRequest request) {
+		String header = request.getHeader("User-Agent");
+		if (header.indexOf("MSIE") > -1 || header.indexOf("Trident") > -1)
+			return "MSIE";
+		else if (header.indexOf("Chrome") > -1)
+			return "Chrome";
+		else if (header.indexOf("Opera") > -1)
+			return "Opera";
+		return "Firefox";
+	}
+
+	public static String getDisposition(String filename, String browser) throws Exception {
+		String dispositionPrefix = "attachment;filename=";
+		String encodedFilename = null;
+		if (browser.equals("MSIE")) {
+			encodedFilename = URLEncoder.encode(filename, "UTF-8").replaceAll("\\+", "%20");
+		} else if (browser.equals("Firefox")) {
+			encodedFilename = "\"" + new String(filename.getBytes(StandardCharsets.UTF_8), "8859_1") + "\"";
+		} else if (browser.equals("Opera")) {
+			encodedFilename = "\"" + new String(filename.getBytes(StandardCharsets.UTF_8), "8859_1") + "\"";
+		} else if (browser.equals("Chrome")) {
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < filename.length(); i++) {
+				char c = filename.charAt(i);
+				if(c == ' '){
+					sb.append(c);
+				}
+				else{
+					sb.append(URLEncoder.encode("" + c, "UTF-8"));
+				}
+
+			}
+			encodedFilename = sb.toString();
+		}
+		return dispositionPrefix + encodedFilename;
+	}
 	
 	/**
 	 * 클라이언트 IP 리턴
