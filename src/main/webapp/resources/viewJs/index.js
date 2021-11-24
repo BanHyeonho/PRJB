@@ -394,16 +394,31 @@ var f_menuOpen = function(){
 		
 //메뉴열기
 var f_addPage = function(e){
+	
+	var v_param = {
+		target : e.target,
+		menuNm : e.data.menuNm,
+		menuCode : e.data.menuCode
+	};
+	
+	f_addPageExec(v_param);
+}
+var f_addPageExec = function(p_param){
+	
 	$('.menu-div').removeClass('selected-menu');
-	$(e.target).closest('div .menu-div').addClass('selected-menu');
-	var label = e.data.menuNm;
+	
+	if(gf_nvl(p_param.target, '') != ''){
+		$(p_param.target).closest('div .menu-div').addClass('selected-menu');	
+	}
+	
+	var label = p_param.menuNm;
     var id = "tabs-" + (++tabCounter);
     var showLabel = label.length > 8 ? label.substr(0,8) + '...' : label;
-    var li = $( tabTemplate.replace( /@href@/g, "#" + id ).replace( /@label@/g, showLabel ).replace( /@menuCode@/g, e.data.menuCode ) );
+    var li = $( tabTemplate.replace( /@href@/g, "#" + id ).replace( /@label@/g, showLabel ).replace( /@menuCode@/g, p_param.menuCode ) );
         
     li.attr('title', label);
         
-    var tabContentHtml = '<iframe src="/page?menuCode=' + e.data.menuCode + '" scrolling="no"></iframe>';
+    var tabContentHtml = '<iframe src="/page?menuCode=' + p_param.menuCode + '" scrolling="no"></iframe>';
  
   	tabs.find( ".ui-tabs-nav" ).append( li );
   	tabs.append( "<div id='" + id + "'>" + tabContentHtml + "</div>" );
@@ -411,8 +426,8 @@ var f_addPage = function(e){
 // 	$( "#menu" ).dialog( "close" );
 	f_attachTabEvent();
 	$("#indexTab").tabs({active : tabs.find('li').length -1});
-			
 }
+
 //탭 선택시
 var f_selectFrame = function(me){
 	var tabId = $(me).attr('aria-controls');

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bbs">
+
+	<!-- 게시판 사용모듈 조회 -->	
+	<select id="S_BBS_MODULE" resultType="HashMap" parameterType="HashMap" >
+		/* S_BBS_MODULE */
+		SELECT 'id_' || (ROWNUM-1) AS "id" 
+			 , A.DETAIL_CODE 								AS MODULE_CODE
+			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MODULE_NAME
+		  FROM COMM_CODE_DETAIL A
+		  JOIN COMM_CODE_MASTER B ON A.COMM_CODE_MASTER_ID = B.COMM_CODE_MASTER_ID
+		 WHERE B.USE_YN = '1'
+		   AND B.SYSTEM_CODE_YN = '1'
+		   AND B.MASTER_CODE = 'MODULE'
+		   AND A.ATTRIBUTE1 = '1'
+		   <![CDATA[
+		   AND (TO_DATE(A.START_DATE) <= SYSDATE AND NVL(TO_DATE(A.END_DATE), SYSDATE) <= SYSDATE)
+		   ]]>
+		 ORDER BY A.SEQ ASC
+	</select>
+	
+	<!-- 게시판 카테고리 조회 -->	
+	<select id="S_BBS_SETTING" resultType="HashMap" parameterType="HashMap" >
+		/* S_BBS_SETTING */
+		SELECT 'id_' || (ROWNUM-1) AS "id" 
+			 , A.BBS_SETTING_ID 
+			 , A.MODULE_CODE    
+			 , A.SEQ
+			 , A.CATEGORY_CODE  
+			 , A.CATEGORY_NAME  
+			 , A.DESCRIPTION    
+			 , A.USE_YN         
+			 , COMM_UTIL_PKG.comm_code_attr('MODULE', A.MODULE_CODE, 'NAME', #{LANG_CODE}) AS MODULE_NAME
+		  FROM BBS_SETTING A
+		 WHERE A.MODULE_CODE = #{MODULE_CODE}
+		 ORDER BY A.SEQ ASC
+	</select>
+	
+	<!-- 게시판 리스트 카테고리 조회 (권한적용)-->	
+	<select id="S_BBS_CATEGORY" resultType="HashMap" parameterType="HashMap" >
+		/* S_BBS_CATEGORY */
+		SELECT 'id_' || (ROWNUM-1) AS "id" 
+			 , A.CATEGORY_CODE  
+			 , COMM_UTIL_PKG.lang(A.CATEGORY_NAME, #{LANG_CODE}) as CATEGORY_NAME
+		  FROM BBS_SETTING A
+		 WHERE A.USE_YN = '1'
+		   AND A.MODULE_CODE = #{MODULE_CODE}
+		 ORDER BY A.SEQ ASC
+	</select>
+	
+</mapper>

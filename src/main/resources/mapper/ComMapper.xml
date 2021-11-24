@@ -890,6 +890,13 @@
 					          ) B ON A.COMM_MENU_ID = B.COMM_MENU_ID
 					     WHERE A.USE_YN = '1'
 					       AND B.USE_YN = '1'
+					       <![CDATA[
+					       AND (
+					       		A.MENU_CODE <> 'HIDDEN'
+					       		OR
+					       		A.UP_MENU_CODE <> 'HIDDEN' 
+					       		)
+					       ]]>
 					     START WITH UP_MENU_CODE IS null 
 					    CONNECT BY PRIOR MENU_CODE = UP_MENU_CODE
 					    ORDER SIBLINGS BY SEQ
