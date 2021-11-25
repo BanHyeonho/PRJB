@@ -35,7 +35,7 @@ var f_write = function(){
 	
 	var v_param = {
 		menuNm : '영상게시글쓰기',
-		menuCode : 'HIDE001'
+		menuCode : 'HIDDEN001'
 	};
 		
 	parent.f_addPageExec(v_param);

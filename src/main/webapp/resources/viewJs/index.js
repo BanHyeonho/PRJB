@@ -258,6 +258,7 @@ function f_getMenu(){
 						
 						var bigMenuCode = item.MENU_PATH.split('@')[1];
 						var bigMenu = bigMenus.find(x=>x.MENU_CODE==bigMenuCode);
+						
 						menuSearchData.push({
 							label : menuNm, 
 							category : gf_mlg(bigMenu.MLG_CODE),

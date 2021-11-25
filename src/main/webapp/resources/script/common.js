@@ -1174,7 +1174,20 @@ function gf_slickGridFormatter(row, cell, value, columnDef, dataContext){
 }
 
 
+function gf_getFileSize(p_size){
+	
+	if ((p_size / 1024) < 1) {
+        p_size = p_size + 'byte';
+    } else if ((p_size / 1024 / 1024) < 1) {
+        p_size = (p_size / 1024).toFixed(1) + 'KB';
+    } else if ((p_size / 1024 / 1024 / 1024) < 1) {
+        p_size = (p_size / 1024 / 1024).toFixed(1) + 'MB';
+    } else if ((p_size / 1024 / 1024 / 1024 / 1024) < 1) {
+        p_size = (p_size / 1024 / 1024 / 1024).toFixed(1) + 'GB';
+    }
 
+    return p_size;
+}
 /********************************************************************************** */
 /*													 								*/
 /*	토스트 											 								*/
@@ -1200,13 +1213,13 @@ function gf_toast(text, p_type) {
 	//정보알림
 	else if (p_type == 'info') {
 		option = {
-			duration: 2000
+			duration: 3000
 			, type: p_type
 		};
 	}
 	else {
 		option = {
-			duration: 2000
+			duration: 3000
 		};
 	}
 	$.toast(text, option);

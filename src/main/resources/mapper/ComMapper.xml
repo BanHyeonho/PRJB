@@ -389,6 +389,13 @@
 				  JOIN COMM_MENU B ON A.COMM_MENU_ID = B.COMM_MENU_ID
 				 WHERE B.USE_YN = '1'
 				   AND A.COMM_USER_ID = #{CID}
+		   <![CDATA[
+			       AND (
+			       		instr(B.MENU_CODE, 'HIDDEN') = 0 
+			       		OR
+			       		instr(B.UP_MENU_CODE, 'HIDDEN') = 0
+			       		)
+			       ]]>
 				 GROUP BY B.MENU_CODE, B.MENU_URL, B.MLG_CODE
 				 ORDER BY MAX(A.MDT) DESC
 				 ) A
@@ -892,9 +899,9 @@
 					       AND B.USE_YN = '1'
 					       <![CDATA[
 					       AND (
-					       		A.MENU_CODE <> 'HIDDEN'
+					       		instr(A.MENU_CODE, 'HIDDEN') = 0 
 					       		OR
-					       		A.UP_MENU_CODE <> 'HIDDEN' 
+					       		instr(A.UP_MENU_CODE, 'HIDDEN') = 0
 					       		)
 					       ]]>
 					     START WITH UP_MENU_CODE IS null 

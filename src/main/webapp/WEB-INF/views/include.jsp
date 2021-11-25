@@ -5,15 +5,15 @@
 <%@ taglib uri="/resources/tld/PRJBTagLib.tld" prefix="pb" %>
 
 <!-- Jquery -->
-<script src="/script/jquery-3.5.1.min.js?v=${pb:jsNow()}"></script>
+<script src="/script/jquery-3.6.0.min.js?v=${pb:jsNow()}"></script>
 
 <!-- Jquery-UI -->
-<script src="/plugin/jquery-ui-1.12.1/jquery-ui.min.js?v=${pb:jsNow()}"></script>
-<link  href="/plugin/jquery-ui-1.12.1/jquery-ui.min.css?v=${pb:jsNow()}" rel="stylesheet" />
+<script src="/plugin/jquery-ui-1.13.0/jquery-ui.min.js?v=${pb:jsNow()}"></script>
+<link  href="/plugin/jquery-ui-1.13.0/jquery-ui.min.css?v=${pb:jsNow()}" rel="stylesheet" />
 
 <!-- SlickGrid -->
 <script src="/plugin/slickGrid/lib/jquery.event.drag-2.3.0.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/lib/jquery.event.drop-2.3.0.js?v=${pb:jsNow()}"></script>
+<%-- <script src="/plugin/slickGrid/lib/jquery.event.drop-2.3.0.js?v=${pb:jsNow()}"></script> --%>
 <script src="/plugin/slickGrid/slick.core.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/slickGrid/slick.dataview.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/slickGrid/slick.editors.js?v=${pb:jsNow()}"></script>
@@ -31,12 +31,12 @@
 <link  href="/plugin/slickGrid/slick.grid.css?v=${pb:jsNow()}" rel="stylesheet" />
 <link  href="/plugin/slickGrid/css/select2.css?v=${pb:jsNow()}" rel="stylesheet" />
 
+<!-- 암호화 -->
+<script src="/script/jsencrypt.min.js?v=${pb:jsNow()}"></script>
+
 <!-- Jquery.toast -->
 <script src="/plugin/jquery-toast/jquery.toast.js?v=${pb:jsNow()}"></script>
 <link  href="/plugin/jquery-toast/jquery.toast.css?v=${pb:jsNow()}" rel="stylesheet" />
-
-<!-- 암호화 -->
-<script src="/script/jsencrypt.min.js?v=${pb:jsNow()}"></script>
 
 <!-- 아이콘 -->
 <link rel="stylesheet" type="text/css" href="/icon/flaticon/css/uicons-regular-rounded.css" />
@@ -73,6 +73,5 @@ const btnList = JSON.parse(gf_nvl('${btnList}', '[]'));
 <script src="/viewJs/variable.js?v=${pb:jsNow()}"></script>
 <!-- 공통 document ready -->
 <script src="/viewJs/commonReady.js?v=${pb:jsNow()}"></script>
-
 <%-- 각 화면 스크립트 --%>
 <script src="${jsLink}?v=${pb:jsNow()}"></script>

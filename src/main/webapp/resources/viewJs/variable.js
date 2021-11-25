@@ -2,7 +2,7 @@
  * 글로벌변수선언
  * 변수선언은 let 으로 하며, 글로벌 gv_ 를 붙여서 선언한다.
  */
-
+//그리드엑셀다운로드 스타일
 let gv_excelOptions = {
 	      headerStyle: {
 	          font: {
@@ -29,3 +29,6 @@ let gv_excelOptions = {
 	          }
 	      },
 	  };
+
+//첨부파일 최대용량 20GB
+let gv_fileMaxSize = 21474836480;
