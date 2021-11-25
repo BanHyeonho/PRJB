@@ -34,7 +34,7 @@ var f_setBoardGrid = function(){
 var f_write = function(){
 	
 	var v_param = {
-		menuNm : '영상게시글쓰기',
+		menuNm : gf_mlg('영상_게시글_작성'),
 		menuCode : 'HIDDEN001'
 	};
 		

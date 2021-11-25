@@ -56,7 +56,9 @@ var fileAttachment = function (dragDrop) {
                 var fileExt = file.name.substring(file.name.lastIndexOf('.'), file.name.length).toLowerCase();
                 
                 //폴더 또는 용량이 없는 파일
-                if(file.size == 0){
+                if(file.size == 0
+        		|| file.name.lastIndexOf('.') == -1
+        		){
                   gf_toast(gf_mlg('폴더_또는_용량이_없는_파일은_업로드_할_수_없습니다'));
                     return false;   
                 }

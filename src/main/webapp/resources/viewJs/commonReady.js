@@ -64,6 +64,6 @@ $(document).ready(function() {
 	//$( document ).tooltip( { tooltipClass: "common-tooltip" } );
 	
 	//메뉴명
-	$('#content-title').text(parent.$('li[aria-selected="true"] span.menu-span').text());
+	$('#content-title').text(parent.$('li[aria-selected="true"]').attr('title'));
 			
 });
