@@ -8,9 +8,12 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 import org.apache.ibatis.reflection.wrapper.MapWrapper;
 
+import prjb.com.init.InitBean;
+import prjb.com.util.CryptoUtil;
+
 public class HashBean extends MapWrapper{
 
-	private final ArrayList<String> ENCRYPT_ARRAY = AES256Util.encryptArray;
+	private final ArrayList<String> ENCRYPT_ARRAY = InitBean.encryptArray;
 	private Map<String, Object> map;
 	
 	public HashBean(MetaObject metaObject, Object map) {
@@ -36,7 +39,7 @@ public class HashBean extends MapWrapper{
             	}
             	//암호화
             	else {
-            		return AES256Util.encrypt(String.class.cast(this.map.get(prop.getName())));
+            		return CryptoUtil.encrypt(String.class.cast(this.map.get(prop.getName())));
             	}
         	}
         	
@@ -62,7 +65,7 @@ public class HashBean extends MapWrapper{
     	        	}
     	        	//암호화
     	        	else {
-    	        		m.put("COLUMN_VALUE", AES256Util.encrypt(String.class.cast(m.get("COLUMN_VALUE"))));
+    	        		m.put("COLUMN_VALUE", CryptoUtil.encrypt(String.class.cast(m.get("COLUMN_VALUE"))));
     	        		this.map.put(prop.getName(), m);
     	        	}
             		
@@ -73,7 +76,7 @@ public class HashBean extends MapWrapper{
     	        	}
     	        	//복호화
     	        	else {
-    	        		this.map.put(prop.getName(), AES256Util.decrypt(String.class.cast(value)));
+    	        		this.map.put(prop.getName(), CryptoUtil.decrypt(String.class.cast(value)));
     	        	}
     			}
         	}

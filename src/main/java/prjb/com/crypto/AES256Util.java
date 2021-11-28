@@ -2,56 +2,41 @@ package prjb.com.crypto;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+
+import prjb.com.util.CryptoUtil;
 
 /**
  * 양방향 암호화 알고리즘인 AES256 암호화를 지원하는 클래스
  */
-@Component
-final class AES256Util {
+public final class AES256Util implements CryptoUtil{
 	
 	private static final String CIPHER_TRANSFORMATION = "AES/CBC/PKCS5Padding";
 	private static final String ALGORITHM_AES = "AES";
     private static final String CHARACTER_ENCODING = "UTF-8";
-    private static String key;
 	private static String iv;
 	private static Key keySpec;
-	private static String[] encryptList;
-	public static ArrayList<String> encryptArray;
-	
+
 	/**
 	 * 16자리의 키값으로 초기화한다. -키값의 길이는 16자리보다 커야한다.
 	 * @throws UnsupportedEncodingException 
 	 * 
 	 */
-	@Value("#{commonConfig['encrytKey']}")
-	private void setKey(String p_key) throws UnsupportedEncodingException{
-    	key = p_key;
+	@Override
+	public String setKey(String p_key) throws UnsupportedEncodingException{
+    	String key = p_key;
     	iv = key.substring(0, 16);
 		byte[] keyBytes = new byte[16];
 		byte[] b = key.getBytes(CHARACTER_ENCODING);
 		int len = (b.length > keyBytes.length ? keyBytes.length : b.length);
 		System.arraycopy(b, 0, keyBytes, 0, len);
 		keySpec = new SecretKeySpec(keyBytes, ALGORITHM_AES);
-    }
-
-	@Value("#{commonConfig['encrytList']}")
-	private void setList(String encrytList){
-		if(encrytList == null) {
-			encryptArray = new ArrayList<String>();
-		}else {
-			encryptList = encrytList.split(",");
-			encryptArray = new ArrayList(Arrays.asList(encryptList));	
-		}
+		return key;
     }
 	
 	/**

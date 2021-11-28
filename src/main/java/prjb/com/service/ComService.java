@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -29,6 +31,8 @@ public class ComService {
 	@Autowired
 	ComDao comDao;
 	
+	@Autowired
+	FileService fileService;
 	
 	/**
 	 * 메뉴코드로 화면 리턴
@@ -267,9 +271,13 @@ public class ComService {
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public String save(HttpServletRequest request) throws Exception {
+
+		String langCode = String.valueOf(request.getSession().getAttribute("LANG_CODE"));
+		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		String ip = ComUtil.getAddress(request);
 		
 		Map<String, Object> paramMap = ComUtil.getParameterMap(request, "SORT");
-		
+				
 		for ( Map.Entry<String, Object> param : paramMap.entrySet() ) {
 			
 			String key = param.getKey();
@@ -288,9 +296,22 @@ public class ComService {
 			//폼
 			else if(key.endsWith("Form")) {
 				
+				Map formMap = new JSONObject(value.toString()).toMap();
+				formMap.put("langCode", langCode);
+				formMap.put("ip", ip);
+				formMap.put("cId", cId);
+				
+				ajaxExec(formMap);
 			}
 			//파일
 			else if(key.endsWith("File")) {
+				
+				Map fileMap = new JSONObject(value.toString()).toMap();
+				fileMap.put("langCode", langCode);
+				fileMap.put("ip", ip);
+				fileMap.put("cId", cId);
+				fileMap.put("files", key);
+				fileService.fileUpload(request, fileMap);
 				
 			}
 						

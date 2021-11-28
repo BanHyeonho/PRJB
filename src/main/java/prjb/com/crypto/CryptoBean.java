@@ -12,6 +12,7 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 import org.apache.ibatis.reflection.wrapper.BeanWrapper;
 
 import prjb.com.util.ComUtil;
+import prjb.com.util.CryptoUtil;
 
 public class CryptoBean extends BeanWrapper {
     
@@ -57,7 +58,7 @@ public class CryptoBean extends BeanWrapper {
             try {
                 Object value = method.invoke(object, NO_ARGUMENTS);
                 Field field = ComUtil.getField(object.getClass(), prop.getName());
-                return String.class.isInstance(value) && null != field.getAnnotation(Crypto.class) ? AES256Util.encrypt(String.class.cast(value)) : value;
+                return String.class.isInstance(value) && null != field.getAnnotation(Crypto.class) ? CryptoUtil.encrypt(String.class.cast(value)) : value;
             } catch (Throwable var6) {
                 throw ExceptionUtil.unwrapThrowable(var6);
             }
@@ -72,7 +73,7 @@ public class CryptoBean extends BeanWrapper {
         try {
             Field field = ComUtil.getField(object.getClass(), prop.getName());
             if (String.class.isInstance(value) && null != field.getAnnotation(Crypto.class)) {
-                value = AES256Util.decrypt(String.class.cast(value));
+                value = CryptoUtil.decrypt(String.class.cast(value));
             }
 
             Invoker method = this.metaClass.getSetInvoker(prop.getName());

@@ -32,39 +32,38 @@ public class FileService {
 	@Autowired
 	ComDao comDao;
 	
-	
 	/**
 	 * 파일업로드
 	 * @param request
-	 * @param response
+	 * @param param
 	 * @return
 	 * @throws Exception
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public Object fileUpload(HttpServletRequest request, HttpServletResponse response) throws Exception{
+	public Object fileUpload(HttpServletRequest request, Map p_param) throws Exception{
 
 		Map<String, String> result = new HashMap();
-
-		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
-		String ip = ComUtil.getAddress(request);
 		
-		String moduleCode = String.valueOf(request.getParameter("MODULE_CODE"));
-		String categoryCode = String.valueOf(request.getParameter("CATEGORY_CODE"));
-		String groupId = String.valueOf(request.getParameter("GROUP_ID"));
+		String cId = String.valueOf(p_param.get("cId"));
+		String ip = String.valueOf(p_param.get("ip"));
+		String files = String.valueOf(p_param.get("files"));
+		
+		String moduleCode = String.valueOf(p_param.get("MODULE_CODE"));
+		String groupId = String.valueOf(p_param.get("GROUP_ID"));
 
 		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
 
 		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
 		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
-
-		//파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/ea_draft/2021/05/암호화(20210525112412_test) --확장자는 따로저장
-		String filePath = file_root + moduleCode + File.separator + categoryCode +  File.separator + year +  File.separator + month +  File.separator;
+		String day = String.format("%02d", cal.get(Calendar.DATE));
+		
+		//파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
+		String filePath = file_root + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
 
 		Map param = new HashMap();
 
 		param.put("FILE_PATH", filePath);
 		param.put("MODULE_CODE", moduleCode);
-		param.put("CATEGORY_CODE", categoryCode);
 		param.put("GROUP_ID", groupId);
 		param.put("CIP", ip);
 		param.put("CID", cId);
@@ -81,7 +80,7 @@ public class FileService {
 		}
 
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-		List<MultipartFile> fileList = multipartRequest.getFiles("attachedFile");
+		List<MultipartFile> fileList = multipartRequest.getFiles(files);
 
 		/***** 파일읽기 *****/
 		for ( MultipartFile attachedFile : fileList) {
@@ -128,6 +127,102 @@ public class FileService {
 		}
 		return result;
 	}
+	
+//	/**
+//	 * 파일업로드
+//	 * @param request
+//	 * @param response
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@Transactional(rollbackFor = Exception.class)
+//	public Object fileUpload(HttpServletRequest request, HttpServletResponse response) throws Exception{
+//
+//		Map<String, String> result = new HashMap();
+//
+//		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+//		String ip = ComUtil.getAddress(request);
+//		
+//		String moduleCode = String.valueOf(request.getParameter("MODULE_CODE"));
+//		String categoryCode = String.valueOf(request.getParameter("CATEGORY_CODE"));
+//		String groupId = String.valueOf(request.getParameter("GROUP_ID"));
+//
+//		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
+//
+//		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
+//		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+//
+//		//파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/ea_draft/2021/05/암호화(20210525112412_test) --확장자는 따로저장
+//		String filePath = file_root + moduleCode + File.separator + categoryCode +  File.separator + year +  File.separator + month +  File.separator;
+//
+//		Map param = new HashMap();
+//
+//		param.put("FILE_PATH", filePath);
+//		param.put("MODULE_CODE", moduleCode);
+//		param.put("CATEGORY_CODE", categoryCode);
+//		param.put("GROUP_ID", groupId);
+//		param.put("CIP", ip);
+//		param.put("CID", cId);
+//		param.put("MIP", ip);
+//		param.put("MID", cId);
+//
+//		Map fileMaster = comDao.selectOne("com.S_COMM_FILE_MASTER", param);
+//
+//		if(fileMaster == null || fileMaster.size() == 0){
+//			comDao.insert("com.I_COMM_FILE_MASTER", param);
+//			fileMaster = param;
+//		}else{
+//			filePath = (String) fileMaster.get("FILE_PATH");
+//		}
+//
+//		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+//		List<MultipartFile> fileList = multipartRequest.getFiles("attachedFile");
+//
+//		/***** 파일읽기 *****/
+//		for ( MultipartFile attachedFile : fileList) {
+//
+//			Map p = new HashMap();
+//			p.put("COMM_FILE_MASTER_ID", fileMaster.get("COMM_FILE_MASTER_ID"));
+//
+//			long fileSize = attachedFile.getSize();
+//
+//			String realFileName = attachedFile.getOriginalFilename();
+//			String fileextension = realFileName.substring(realFileName.lastIndexOf("."));
+//			String fileName = System.currentTimeMillis() + "_" + realFileName;
+//
+//			File path = new File(filePath);
+//
+//			if (!path.exists()) {
+//				path.mkdirs();
+//			}
+//
+//			File file = new File(filePath + fileName);
+//
+//			try {
+//
+//				attachedFile.transferTo(file);
+//
+//				p.put("FILE_NAME", realFileName);
+//				p.put("FILE_EXTENSION", fileextension);
+//				p.put("FILE_SIZE", fileSize);
+//				p.put("FILE_SERVER_NAME", fileName);
+//				p.put("CIP", ip);
+//				p.put("CID", cId);
+//				p.put("MIP", ip);
+//				p.put("MID", cId);
+//				p.put("RANDOM_KEY", ComUtil.getRandomKey());
+//				comDao.insert("I_COMM_FILE_DETAIL", p);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//				result.put("state", "fail");
+//			}
+//		}
+//
+//		if(!result.containsKey("state")){
+//			result.put("state", "success");
+//		}
+//		return result;
+//	}
 	
 	/**
 	 * 파일다운로드
