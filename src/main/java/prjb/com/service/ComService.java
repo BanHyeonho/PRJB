@@ -1,14 +1,19 @@
 package prjb.com.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,16 +29,17 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
+import prjb.com.util.FileUtil;
 
 @Service("ComService")
 public class ComService {
 	
+	@Value("#{config['file_root']}")
+	private String fileRoot;
+	
 	@Autowired
 	ComDao comDao;
-	
-	@Autowired
-	FileService fileService;
-	
+		
 	/**
 	 * 메뉴코드로 화면 리턴
 	 * @param request
@@ -270,8 +276,9 @@ public class ComService {
 	 * @throws Exception 
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public String save(HttpServletRequest request) throws Exception {
+	public Map save(HttpServletRequest request) throws Exception {
 
+		Map result = new HashMap();
 		String langCode = String.valueOf(request.getSession().getAttribute("LANG_CODE"));
 		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
 		String ip = ComUtil.getAddress(request);
@@ -290,7 +297,6 @@ public class ComService {
 				JsonNode json = mapper.readTree(String.valueOf(value));
 				ObjectReader reader = mapper.readerFor(new TypeReference<List>() {});
 				List<Map> list = reader.readValue(json);
-				
 				gridSave(list, request);
 			}
 			//폼
@@ -301,23 +307,33 @@ public class ComService {
 				formMap.put("ip", ip);
 				formMap.put("cId", cId);
 				
-				ajaxExec(formMap);
+				result.put(key, ajaxExec(formMap));
 			}
 			//파일
 			else if(key.endsWith("File")) {
 				
 				Map fileMap = new JSONObject(value.toString()).toMap();
+				if(fileMap.get("GET_PARAM") != null) {
+					
+					Map<String, String> getParam = (Map)fileMap.get("GET_PARAM");
+					for ( Map.Entry<String, String> p : getParam.entrySet() ) {
+						String paramKey = p.getKey();
+						String[] paramValue = p.getValue().split("[.]");
+						fileMap.put(paramKey, ((Map)((Map)result.get(paramValue[0])).get("result")).get(paramValue[1]) );
+					}
+				}
+				
 				fileMap.put("langCode", langCode);
 				fileMap.put("ip", ip);
 				fileMap.put("cId", cId);
 				fileMap.put("files", key);
-				fileService.fileUpload(request, fileMap);
+				fileSave(request, fileMap);
 				
 			}
 						
 		}
 		
-		return "success";
+		return result;
 	}
 	
 	/**
@@ -457,6 +473,8 @@ public class ComService {
 	@Transactional(rollbackFor = Exception.class)
 	public Object ajaxExec(Map<String, Object> paramMap) throws Exception{
 		Object result = null;
+		Map resultMap = new HashMap();
+		
 		String queryId = String.valueOf(paramMap.get("QUERY_ID"));
 		String tableNm = String.valueOf(paramMap.get("TALBE_NAME"));
 		
@@ -490,14 +508,19 @@ public class ComService {
 			paramMap.put("CIP", ip);
 			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(langCode));
-			for (Map map : tableLayout) {
-				map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
+			if(tableLayout != null) {
+				for (Map map : tableLayout) {
+					map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
+				}	
 			}
+			
 			paramMap.put("TALBE_NAME", tableNm);
 			paramMap.put("TABLE_LAYOUT", tableLayout);
 			comDao.insert(queryId, paramMap);
 				
-			result = "success";
+			resultMap.put("state", "success");
+			resultMap.put("result", paramMap);
+			result = resultMap;
 		}
 		//UPDATE
 		else if( queryId.contains(".U_")) {
@@ -506,8 +529,10 @@ public class ComService {
 			paramMap.put("MID", cId);
 			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(langCode));
-			for (Map map : tableLayout) {
-				map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
+			if(tableLayout != null) {
+				for (Map map : tableLayout) {
+					map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
+				}
 			}
 			paramMap.put("TALBE_NAME", tableNm);
 			paramMap.put("TABLE_LAYOUT", tableLayout);
@@ -515,7 +540,9 @@ public class ComService {
 			
 			comDao.update(queryId, paramMap);
 			
-			result = "success";
+			resultMap.put("state", "success");
+			resultMap.put("result", paramMap);
+			result = resultMap;
 		}
 		//DELETE
 		else if( queryId.contains(".D_")) {
@@ -525,7 +552,9 @@ public class ComService {
 			paramMap.put("WHERE_QUERY", whereQuery);
 			comDao.delete(queryId, paramMap);
 			
-			result = "success";
+			resultMap.put("state", "success");
+			resultMap.put("result", paramMap);
+			result = resultMap;
 		}
 		//PROCEDURE
 		else if( queryId.contains(".P_")) {
@@ -535,11 +564,133 @@ public class ComService {
 			paramMap.put("CIP", ip);
 			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(langCode));
-			comDao.selectOne(queryId, paramMap);
+			resultMap = comDao.selectOne(queryId, paramMap);
 			
-			result = "success";
+			resultMap = (resultMap == null) ? new HashMap() : resultMap;
+			
+			resultMap.put("state", "success");
+			result = resultMap;
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * 파일 저장
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void fileSave(HttpServletRequest request,  Map fileMap) throws Exception{
+		
+		String moduleCode = String.valueOf(fileMap.get("MODULE_CODE"));
+		String groupId = String.valueOf(fileMap.get("GROUP_ID"));
+		String langCode = String.valueOf(fileMap.get("langCode"));
+		String ip = String.valueOf(fileMap.get("ip"));
+		String cId = String.valueOf(fileMap.get("cId"));
+		String files = String.valueOf(fileMap.get("files"));
+
+		//파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
+		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
+		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
+		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+		String day = String.format("%02d", cal.get(Calendar.DATE));
+		String filePath = fileRoot + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
+				
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		List<MultipartFile> fileList = multipartRequest.getFiles(files);
+
+		/***** 파일읽기 *****/
+		for ( MultipartFile attachedFile : fileList) {
+			
+			Map<String, String> uploadResult = FileUtil.fileUpload(filePath, attachedFile);
+			if("success".equals(uploadResult.get("state"))) {
+				
+				Map<String, String> fileParam = new HashMap();
+				fileParam.put("MODULE_CODE", moduleCode);
+				fileParam.put("GROUP_ID", groupId);
+				fileParam.put("CID", cId);
+				fileParam.put("CIP", ip);
+				fileParam.put("FILE_PATH", filePath);
+				fileParam.put("FILE_SIZE", String.valueOf(uploadResult.get("fileSize")));
+				fileParam.put("FILE_EXTENSION", uploadResult.get("fileExtension"));
+				fileParam.put("FILE_NAME_ENCRYPT", uploadResult.get("fileName"));
+				fileParam.put("SERVER_FILE_NAME", uploadResult.get("serverFileName"));
+				fileParam.put("RANDOM_KEY", ComUtil.getRandomKey());
+				
+				comDao.insert("com.I_COMM_FILE", fileParam);
+			}
+		}
+		
+	}
+	/**
+	 * 파일 다운로드
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void fileDown(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		Map param = new HashMap();
+		param.put("COMM_FILE_ID", request.getParameter("COMM_FILE_ID"));
+		param.put("RANDOM_KEY", request.getParameter("RANDOM_KEY"));
+
+		Map result = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+
+		//db에 파일정보가 없을경우
+		if (result == null || result.size() == 0 ) {
+			response.setContentType("text/html");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write("<script>alert('can not find a file');</script>");
+			return;
+		}
+		
+		Map fileMap = new HashMap();
+		fileMap.put("FILE_PATH", result.get("FILE_PATH"));
+		fileMap.put("SERVER_FILE_NAME", result.get("SERVER_FILE_NAME"));
+		fileMap.put("FILE_NAME", result.get("FILE_NAME"));
+		fileMap.put("BROWSER", ComUtil.getBrowser(request));
+		boolean downResult = FileUtil.fileDownload(fileMap, response);
+
+		//서버에 파일 없을경우		
+		if (!downResult) {
+			response.setContentType("text/html");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write("<script>alert('can not find a file');</script>");
+			return;
+		}
+		
+	}
+	/**
+	 * 파일 삭제
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void fileDelete(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		Map param = new HashMap();
+		param.put("COMM_FILE_ID", request.getParameter("COMM_FILE_ID"));
+		param.put("RANDOM_KEY", request.getParameter("RANDOM_KEY"));
+
+		Map<String, String> result = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+		
+		if (result == null || result.size() == 0 ) {
+			return;
+		}
+		else {
+			comDao.delete("com.D_COMM_FILE", param);	
+		}
+		
+		Map fileMap = new HashMap();
+		fileMap.put("FILE_PATH", result.get("FILE_PATH"));
+		fileMap.put("SERVER_FILE_NAME", result.get("SERVER_FILE_NAME"));
+		fileMap.put("FILE_NAME", result.get("FILE_NAME"));
+		fileMap.put("BROWSER", ComUtil.getBrowser(request));
+		FileUtil.fileDelete(result.get("FILE_PATH"), result.get("SERVER_FILE_NAME"));
+		
 	}
 }

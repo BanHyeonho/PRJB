@@ -13,12 +13,16 @@ import prjb.com.util.CryptoUtil;
 
 public class HashBean extends MapWrapper{
 
-	private final ArrayList<String> ENCRYPT_ARRAY = InitBean.encryptArray;
+	private final ArrayList<String> ENCRYPT_ARRAY;
+	private final CryptoUtil CryptoUtil;
+	
 	private Map<String, Object> map;
 	
 	public HashBean(MetaObject metaObject, Object map) {
 		super(metaObject, (Map<String, Object>)map);
 		this.map = (Map<String, Object>)map;
+		this.CryptoUtil = InitBean.CryptoClass;
+		this.ENCRYPT_ARRAY = InitBean.encryptArray;
 	}
 
     @Override

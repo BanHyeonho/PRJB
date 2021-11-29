@@ -11,11 +11,13 @@ import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 import org.apache.ibatis.reflection.wrapper.BeanWrapper;
 
+import prjb.com.init.InitBean;
 import prjb.com.util.ComUtil;
 import prjb.com.util.CryptoUtil;
 
 public class CryptoBean extends BeanWrapper {
     
+	private final CryptoUtil CryptoUtil;
     private final Object object;
     private final MetaClass metaClass;
 
@@ -23,6 +25,7 @@ public class CryptoBean extends BeanWrapper {
         super(metaObject, object);
         this.object = object;
         this.metaClass = MetaClass.forClass(object.getClass(), null);
+        this.CryptoUtil = InitBean.CryptoClass;
     }
 
     @Override

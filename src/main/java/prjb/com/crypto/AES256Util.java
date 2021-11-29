@@ -44,7 +44,8 @@ public final class AES256Util implements CryptoUtil{
 	 * @param str
 	 * @return
 	 */
-	public static String encrypt(String str){
+	@Override
+	public String encrypt(String str){
 		
 		String encryptStr = str;
 		try {
@@ -64,7 +65,8 @@ public final class AES256Util implements CryptoUtil{
 	 * @param str
 	 * @return
 	 */
-	public static String decrypt(String str){
+	@Override
+	public String decrypt(String str){
 		
 		String decryptStr = str;
 		try {
@@ -83,7 +85,7 @@ public final class AES256Util implements CryptoUtil{
 	 * 이미 암호화된 데이터는 암호화 하지않는다.
 	 * @return
 	 */
-	private static boolean encryptYn(String str) {
+	private boolean encryptYn(String str) {
 		boolean result = true;
 		if(str == null) {
 			result = false;

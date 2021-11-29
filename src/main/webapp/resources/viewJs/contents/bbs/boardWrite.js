@@ -2,6 +2,8 @@
  * 게시글쓰기
  */
 var attachedFiles = [];
+let moduleCode = 'ST';
+let bbsBoardId;
 $(document).ready(function() {
     
 	$('#attachedFileBtn').on('click', function(){
@@ -125,15 +127,40 @@ var f_save = function(){
 		
 	var fData = new FormData();
 	
+	//게시글내용
+	var boardDara = {
+		QUERY_ID : 'bbs.I_BBS_BOARD',
+		MODULE_CODE : moduleCode,
+		BBS_BOARD_ID : bbsBoardId,
+		CATEGORY_CODE : $('#CATEGORY_CODE').val(),
+		TITLE : $('#TITLE').val(),
+		BOARD_CONTENTS : $('#BOARD_CONTENTS').val()
+	};
+	fData.set('boardForm', JSON.stringify(boardDara));
+
+		//첨부파일
+	$.each(attachedFiles, function(idx, item){
+		if(idx == 0){
+			var fileData = {
+					MODULE_CODE : 'ST',
+					GET_PARAM : {
+									GROUP_ID : 'boardForm.BBS_BOARD_ID'
+								}
+			};
+			fData.append('attachedFile', JSON.stringify(fileData));
+		}
+		fData.append('attachedFile', item);	
+	});
+	
 	gf_ajax( fData
 			, function(){
-				
+	
 			}
 			, function(data){
+				gf_toast(gf_mlg('저장_되었습니다'), 'success');
+				bbsBoardId = String(data.result.boardForm.result.BBS_BOARD_ID);
+				attachedFiles = [];
 				
-				if(data.result == 'success'){
-				
-				}
 			}
 			, null
 			, null

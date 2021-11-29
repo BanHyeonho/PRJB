@@ -135,7 +135,7 @@ public class ComController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public @ResponseBody Map save(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		Map<String, String> resultMap = new HashMap();
+		Map<String, Object> resultMap = new HashMap();
 		
 		resultMap.put("result", comService.save(request));
 		

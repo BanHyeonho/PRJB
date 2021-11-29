@@ -4,87 +4,63 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
-	<!-- 첨부파일 마스터 저장 -->
-	<insert id="I_COMM_FILE_MASTER" parameterType="HashMap" >
-		<selectKey resultType="HashMap" keyProperty="COMM_USER_ID" order="BEFORE">
-			SELECT COMM_FILE_MASTER_S.NEXTVAL as COMM_FILE_MASTER_ID
-			  FROM DUAL
-		</selectKey>
-		INSERT INTO COMM_FILE_MASTER( COMM_FILE_MASTER_ID
-									, MODULE_CODE        
-									, GROUP_ID           
-									, FILE_PATH          
-									, DESCRIPTION        
-									<include refid="config.cidColumn"></include>               
-									)
-							  VALUES( #{COMM_FILE_MASTER_ID}
-									, #{MODULE_CODE}
-									, #{GROUP_ID}
-									, #{FILE_PATH}          
-									, NULL        
-									, #{CID}
-						          	, SYSDATE
-							        , #{CIP}
-							        , #{MID}
-							        , SYSDATE    
-							        , #{MIP}        
-									)
+	<!-- 첨부파일 저장 -->
+	<insert id="I_COMM_FILE" parameterType="HashMap" >
+		INSERT INTO COMM_FILE( COMM_FILE_ID    
+							 , MODULE_CODE     
+							 , GROUP_ID        
+							 , FILE_PATH       
+							 , RANDOM_KEY      
+							 , FILE_NAME       
+							 , FILE_EXTENSION  
+							 , FILE_SIZE       
+							 , SERVER_FILE_NAME
+							<include refid="config.cidColumn"></include>               
+							)
+					  VALUES( COMM_FILE_S.NEXTVAL
+							, #{MODULE_CODE}
+							, #{GROUP_ID}
+							, #{FILE_PATH}
+							, #{RANDOM_KEY}
+							, #{FILE_NAME_ENCRYPT}
+							, #{FILE_EXTENSION}
+							, #{FILE_SIZE}
+							, #{SERVER_FILE_NAME}
+							, #{CID}
+				          	, SYSDATE
+					        , #{CIP}
+					        , #{CID}
+					        , SYSDATE    
+					        , #{CIP}        
+							)
 	</insert>
-	<!-- 첨부파일 마스터 상세 -->
-	<insert id="I_COMM_FILE_DETAIL" parameterType="HashMap" >
-		INSERT INTO COMM_FILE_DETAIL( COMM_FILE_DETAIL_ID
-									, COMM_FILE_MASTER_ID
-									, RANDOM_KEY         
-									, FILE_NAME          
-									, FILE_EXTENSION     
-									, FILE_SIZE          
-									, FILE_SERVER_NAME   
-									, DESCRIPTION           
-									<include refid="config.cidColumn"></include>               
-									)
-							  VALUES( COMM_FILE_DETAIL_S.NEXTVAL
-									, #{COMM_FILE_MASTER_ID}
-									, #{RANDOM_KEY}
-									, #{FILE_NAME}
-									, #{FILE_EXTENSION}
-									, #{FILE_SIZE}
-									, #{FILE_SERVER_NAME}
-									, NULL  
-									, #{CID}
-						          	, SYSDATE
-							        , #{CIP}
-							        , #{MID}
-							        , SYSDATE    
-							        , #{MIP}        
-									)
-	</insert>
-	<!-- 첨부파일 마스터 조회 -->
-	<select id="S_COMM_FILE_MASTER" resultType="HashMap" parameterType="HashMap" >
-		SELECT A.COMM_FILE_MASTER_ID
-			 , A.MODULE_CODE
-			 , A.GROUP_ID
-			 , A.FILE_PATH
-		  FROM COMM_FILE_MASTER A
+	<!-- 첨부파일 조회 -->
+	<select id="S_COMM_FILE" resultType="HashMap" parameterType="HashMap" >
+		SELECT A.COMM_FILE_ID
+			 , A.RANDOM_KEY
+			 , A.FILE_NAME
+			 , A.FILE_EXTENSION
+			 , A.FILE_SIZE
+		  FROM COMM_FILE A
 		 WHERE A,MODULE_CODE 	= #{MODULE_CODE}
 		   AND A.GROUP_ID 		= #{GROUP_ID}
 	</select>
 	<!-- 첨부파일 다운로드 -->
 	<select id="S_COMM_FILE_DOWN" resultType="HashMap" parameterType="HashMap" >
 		SELECT A.FILE_PATH
-			 , B.FILE_NAME
-			 , B.FILE_EXTENSION
-			 , B.FILE_SERVER_NAME
-		  FROM COMM_FILE_MASTER A
-		  JOIN COMM_FILE_DETAIL B ON A.COMM_FILE_MASTER_ID = B.COMM_FILE_MASTER_ID
-		 WHERE B.COMM_FILE_DETAIL_ID = #{COMM_FILE_DETAIL_ID}
-		   AND B.RANDOM_KEY = #{RANDOM_KEY}
+			 , A.FILE_NAME
+			 , A.FILE_EXTENSION
+			 , A.FILE_SERVER_NAME
+		  FROM COMM_FILE A
+		 WHERE A.COMM_FILE_ID = #{COMM_FILE_ID}
+		   AND A.RANDOM_KEY = #{RANDOM_KEY}
 	</select>
 	<!-- 첨부파일 삭제 -->
-	<delete id="D_COMM_FILE_DETAIL" parameterType="HashMap" >
+	<delete id="D_COMM_FILE" parameterType="HashMap" >
 		DELETE
-		  FROM COMM_FILE_DETAIL
+		  FROM COMM_FILE
 		 WHERE RANDOM_KEY = #{RANDOM_KEY}
-		   AND COMM_FILE_DETAIL_ID = #{COMM_FILE_DETAIL_ID}
+		   AND COMM_FILE_ID = #{COMM_FILE_ID}
 	</delete>
 	<!-- 권한메뉴에 그리드컨텍스트 추가/삭제 -->
 	<update id="U_COMM_AUTH_GROUP_CONTEXT" parameterType="HashMap" >

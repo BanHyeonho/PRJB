@@ -16,14 +16,13 @@ import prjb.com.util.CryptoUtil;
 @Component
 public class InitBean{
 
-	//암호화변수
-	private static CryptoUtil CryptoClass;
-	private static String key;
+	public static CryptoUtil CryptoClass;
 	public static ArrayList<String> encryptArray;
 	
 	//다국어
 	public static Map<String, Map<String,String>> msgMLGKO = null;
 	public static Map<String, Map<String,String>> msgMLGEN = null;
+	
 	
 	@Autowired
 	ComService comService;
@@ -49,7 +48,7 @@ public class InitBean{
         Class<?> dyClass = Class.forName(className);
         Object obj = dyClass.newInstance();
         CryptoClass = (CryptoUtil)obj;
-        key = CryptoClass.setKey(encrytKey);
+        CryptoClass.setKey(encrytKey);
         
         if(encrytList == null) {
         	encryptArray = new ArrayList<String>();

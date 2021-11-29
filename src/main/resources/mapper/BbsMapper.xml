@@ -4,6 +4,58 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="bbs">
 
+	<!-- 게시글 작성/수정 -->
+	<insert id="I_BBS_BOARD" parameterType="HashMap" >
+		<selectKey resultType="HashMap" keyProperty="BBS_BOARD_ID" order="BEFORE">
+			<choose>
+				<when test="@org.apache.commons.lang3.StringUtils@isBlank(BBS_BOARD_ID)">
+					SELECT BBS_BOARD_S.NEXTVAL as BBS_BOARD_ID
+				  	  FROM DUAL
+				</when>
+				<otherwise>
+					SELECT #{BBS_BOARD_ID} as BBS_BOARD_ID
+				  	  FROM DUAL
+				</otherwise>
+			</choose>
+		</selectKey>
+		/* P_BBS_BOARD */
+		MERGE INTO BBS_BOARD
+			 USING DUAL
+			    ON (BBS_BOARD_ID = #{BBS_BOARD_ID})
+			  WHEN MATCHED THEN
+			UPDATE SET CATEGORY_CODE 	= #{CATEGORY_CODE}
+					 , TITLE			= #{TITLE}
+					 , BOARD_CONTENTS	= #{BOARD_CONTENTS}
+					 , MID = #{MID}
+					 , MDT = SYSDATE
+					 , MIP = #{MIP}
+			  WHEN NOT MATCHED THEN
+			  INSERT(BBS_BOARD_ID
+		          , MODULE_CODE
+		          , CATEGORY_CODE
+		          , BOARD_NO
+		          , TITLE
+		          , BOARD_CONTENTS
+		          , HIT_CNT
+		          <include refid="config.cidColumn"></include>
+		          )
+		       VALUES(#{BBS_BOARD_ID}
+		       	  , #{MODULE_CODE}
+		          , #{CATEGORY_CODE}
+		          , (SELECT NVL(MAX(BOARD_NO), 0)
+		               FROM BBS_BOARD
+		              WHERE MODULE_CODE = #{MODULE_CODE}) +1
+		          , #{TITLE}
+		          , #{BOARD_CONTENTS}
+		          , 0
+		          , #{MID}
+		          , SYSDATE
+		          , #{MIP}
+		          , #{MID}
+		          , SYSDATE    
+		          , #{MIP})
+	</insert>
+	
 	<!-- 게시판 사용모듈 조회 -->	
 	<select id="S_BBS_MODULE" resultType="HashMap" parameterType="HashMap" >
 		/* S_BBS_MODULE */

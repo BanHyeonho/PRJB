@@ -20,6 +20,9 @@
 		</div>
 		
 		<div id='boardEditorContainer' class='content-panel ht-pl-1-1 wd-pl-3 no-mg-tp'>
+			<input type="text" id='CATEGORY_CODE' placeholder="카테고리코드" value='MOVIE'>
+			<input type="text" id='TITLE' placeholder="제목">
+			<input type="text" id='BOARD_CONTENTS' placeholder="내용">
 			<div id="editor"></div>
 		</div>
 		<!-- 첨부파일영역 -->
