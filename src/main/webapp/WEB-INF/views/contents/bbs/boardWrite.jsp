@@ -8,7 +8,6 @@
 <meta charset="UTF-8">
 <title>${pb:msg(pageContext.request, "게시글쓰기")}</title>
 <meta name="google" content="notranslate">
-<%-- <script src="/script/jquery-3.6.0.min.js?v=${pb:jsNow()}"></script> --%>
 </head>
 <body>
 	<div id='content'>		
@@ -22,8 +21,8 @@
 		<div id='boardEditorContainer' class='content-panel ht-pl-1-1 wd-pl-3 no-mg-tp'>
 			<input type="text" id='CATEGORY_CODE' placeholder="카테고리코드" value='MOVIE'>
 			<input type="text" id='TITLE' placeholder="제목">
-			<input type="text" id='BOARD_CONTENTS' placeholder="내용">
-			<div id="editor"></div>
+<!-- 			<input type="text" id='BOARD_CONTENTS' placeholder="내용"> -->
+			<iframe id='editor' src="/editor" style="height: 98%;" ></iframe>
 		</div>
 		<!-- 첨부파일영역 -->
 		<div id='attachedFileContainer' class='content-panel ht-pl-1-1 wd-pl-1 no-mg-tp no-mg-lt'>

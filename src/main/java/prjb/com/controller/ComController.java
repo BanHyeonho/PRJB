@@ -155,5 +155,23 @@ public class ComController {
 		return resultMap;
 	}
 	
+	/**
+	 * 에디터
+	 */
+	@RequestMapping(value = "/editor", method = RequestMethod.GET)
+	public String editor(HttpServletRequest request, Model m) {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		String domain = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+		m.addAttribute("domain", domain);
+		return "/editor";
+	}
 	
+	/**
+	 * 에디터 이미지
+	 */
+	@RequestMapping(value = "/ckeditor/image", method = RequestMethod.POST)
+	public @ResponseBody Map editorImage(HttpServletRequest request) {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		return new HashMap();
+	}
 }

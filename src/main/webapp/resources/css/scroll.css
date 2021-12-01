@@ -1,0 +1,51 @@
+@charset "UTF-8";
+/* 스크롤 CSS */
+::-webkit-scrollbar{
+  width: 10px;  /* 세로축 스크롤바 길이 */
+  height: 10px;  /* 가로축 스크롤바 길이 */
+}
+::-webkit-scrollbar-button{
+  background-color: #ddd;
+  width: 0;
+  height: 0;
+}
+::-webkit-scrollbar-button:start{
+	/* Top, Left 방향의 이동버튼 */
+	background-color: #ddd; 
+}
+::-webkit-scrollbar-button:end{
+	/* Bottom, Right 방향의 이동버튼 */
+	background-color: #ddd;
+}
+::-webkit-scrollbar-track{
+  background-color: transparent;
+}
+::-webkit-scrollbar-track-piece{
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb{
+  border-radius: 5px;
+  background-color: #ddd;
+}
+::-webkit-scrollbar-corner{
+  background-color: #ddd; /* 우측 하단의 코너 부분 */
+}
+::-webkit-resizer{
+  background-color: #ddd;
+}
+::-webkit-scrollbar-button:vertical:increment{
+	/* 상하방향스크롤바 버튼 모양 */
+/* 	background: url(arrow_down.png) no-repeat center 50%; */
+}
+::-webkit-scrollbar-button:vertical:decrement{
+	/* 상하방향스크롤바 버튼 모양 */
+/* 	background: url(arrow_up.png) no-repeat center 50%; */
+}
+::-webkit-scrollbar-button:horizontal:increment{
+	/* 좌우방향스크롤바 버튼 모양 */
+/* 	background: url(arrow_down.png) no-repeat center 50%; */
+}
+::-webkit-scrollbar-button:horizontal:decrement{
+	/* 좌우방향스크롤바 버튼 모양 */
+/* 	background: url(arrow_up.png) no-repeat center 50%; */
+}

@@ -1,11 +1,20 @@
 /**
  * 게시글쓰기
  */
-var attachedFiles = [];
+let attachedFiles = [];
 let moduleCode = 'ST';
 let bbsBoardId;
+
 $(document).ready(function() {
+	
     
+	//첨부파일세팅
+	f_setFile();
+    
+    f_search();
+});
+var f_setFile = function(){
+	//첨부파일
 	$('#attachedFileBtn').on('click', function(){
 		$('#attachedFile').click();
 	});
@@ -41,9 +50,8 @@ $(document).ready(function() {
         fileAttachment(files);
 
     });
-    
-    f_search();
-});
+}
+
 var fileAttachment = function (dragDrop) {
 
     var file_names = dragDrop ? dragDrop : $("#attachedFile").prop("files");
