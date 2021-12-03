@@ -116,15 +116,12 @@ var f_save = function(){
 			}
 			, function(data){
 				
-				if(data.result == 'success'){
-					
-					gf_toast(gf_mlg('저장_되었습니다'), 'success');
-					gf_gridClear(moduleGrid);
-					gf_gridClear(categoryGrid);
-					gf_gridClear(authGroupGrid);
-					gf_gridClear(bbsAuthGrid);
-  					f_search();	
-				}
+				gf_toast(gf_mlg('저장_되었습니다'), 'success');
+				gf_gridClear(moduleGrid);
+				gf_gridClear(categoryGrid);
+				gf_gridClear(authGroupGrid);
+				gf_gridClear(bbsAuthGrid);
+				f_search();	
 				
 			}
 			, null

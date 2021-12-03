@@ -1173,7 +1173,7 @@ function gf_slickGridFormatter(row, cell, value, columnDef, dataContext){
 	return result;
 }
 
-
+//파일사이즈 변환값
 function gf_getFileSize(p_size){
 	
 	if ((p_size / 1024) < 1) {
@@ -1187,6 +1187,108 @@ function gf_getFileSize(p_size){
     }
 
     return p_size;
+}
+
+//FormData 에서 공백,null,undefined 값제거
+function gf_delFormData(p_formData){
+	
+	var deleteKey = [];
+	for (var key of p_formData.keys()) {
+	   if(gf_nvl(p_formData.get(key), '') === ''){
+		   deleteKey.push(key);
+	   }
+	}
+	$.each(deleteKey, function(idx, item){
+		p_formData.delete(item);
+	});
+}
+
+//자동완성태그
+/**
+ * 
+ * @param p_tagId : 태그 id
+ * @param p_items : [{
+							label : 텍스트, 
+							category : 카테고리,	카테고리가 없는경우 '' 으로할것
+							value : 텍스트
+							..
+						}]
+ * @param p_callback : 선택시 실행함수
+ * @returns
+ */
+function gf_autoComplete(p_tagId, p_items, p_callback){
+	
+	//카테고리 없음
+	if(p_items.filter(x=>x.category != '').length == 0){
+		$.widget("custom.catcomplete", $.ui.autocomplete, {
+		      _create: function() {
+		        this._super();
+		        this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+		      },
+		      _renderMenu: function( ul, items ) {
+		        var that = this,
+		          currentCategory = "";
+		        $.each( items, function( index, item ) {
+		          that._renderItemData( ul, item );
+		        });
+		        ul.find('div').addClass('pd-default2');
+		      }
+		});
+	}
+	//카테고리 있음	
+	else{
+		$.widget("custom.catcomplete", $.ui.autocomplete, {
+		      _create: function() {
+		        this._super();
+		        this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+		      },
+		      _renderMenu: function( ul, items ) {
+		        var that = this,
+		          currentCategory = "";
+		        $.each( items, function( index, item ) {
+		          var li;
+		          if ( item.category != currentCategory ) {
+		            ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+		            currentCategory = item.category;
+		          }
+		          li = that._renderItemData( ul, item );
+		          if ( item.category ) {
+		            li.attr( "aria-label", item.category + " : " + item.label ).children();
+		          }
+		        });
+		      }
+		});
+	}
+	
+	
+	$("#" + p_tagId).catcomplete({
+		delay: 0,
+		source: p_items,
+		minLength: 0,
+		select: p_callback
+	});
+	
+}
+
+//에디터 값
+function gf_getEditorValue(p_editor){
+	
+	var val = $('#' + p_editor).get(0).contentWindow.document.getElementsByClassName('ck-content')[0].getInnerHTML();
+	
+    return val;
+}
+//에디터 값입력
+function gf_setEditorValue(p_editor, p_value){
+	$('#' + p_editor).get(0).contentWindow.watchdog.editor.setData(p_value);
+}
+//에디터 모드변경
+function gf_editorEditable(p_editor, p_value){
+	if(p_value){
+		$('#' + p_editor).get(0).contentWindow.watchdog.editor.isReadOnly = false;
+	}
+	else{
+		$('#' + p_editor).get(0).contentWindow.watchdog.editor.isReadOnly = true;
+	}
 }
 /********************************************************************************** */
 /*													 								*/

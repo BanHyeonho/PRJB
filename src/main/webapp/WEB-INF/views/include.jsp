@@ -8,8 +8,8 @@
 <script src="/script/jquery-3.6.0.min.js?v=${pb:jsNow()}"></script>
 
 <!-- Jquery-UI -->
-<script src="/plugin/jquery-ui-1.13.0/jquery-ui.min.js?v=${pb:jsNow()}"></script>
-<link  href="/plugin/jquery-ui-1.13.0/jquery-ui.min.css?v=${pb:jsNow()}" rel="stylesheet" />
+<script src="/plugin/jquery-ui-1.13.0/jquery-ui.js?v=${pb:jsNow()}"></script>
+<link  href="/plugin/jquery-ui-1.13.0/jquery-ui.css?v=${pb:jsNow()}" rel="stylesheet" />
 
 <!-- SlickGrid -->
 <script src="/plugin/slickGrid/lib/jquery.event.drag-2.3.0.js?v=${pb:jsNow()}"></script>

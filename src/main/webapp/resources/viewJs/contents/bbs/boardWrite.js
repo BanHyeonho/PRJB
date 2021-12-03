@@ -1,18 +1,37 @@
 /**
  * 게시글쓰기
  */
-let attachedFiles = [];
-let moduleCode = 'ST';
-let bbsBoardId;
+let boardInfo = {
+	attachedFiles : [],
+	moduleCode : 'ST',
+	bbsBoardId : '',
+	bbsBoardNo : ''
+}
 
 $(document).ready(function() {
+	var test = [{
+		category :'',
+		label : '영화',
+		code : 'MOVIE',
+	},{
+		category :'',
+		label : '애니',
+		code : 'ANI',
+	},{
+		category :'',
+		label : '드라마',
+		code : 'DRAMA',
+	}];
+	gf_autoComplete('CATEGORY_NAME', test, function(event, ui){
+//		$('#' + ui.item.menuCode).trigger('click');
+	});
 	
-    
 	//첨부파일세팅
 	f_setFile();
     
     f_search();
 });
+
 var f_setFile = function(){
 	//첨부파일
 	$('#attachedFileBtn').on('click', function(){
@@ -97,7 +116,7 @@ var fileAttachment = function (dragDrop) {
                     
                     $('#attachedFileTable tbody').append(tr);
 
-                    attachedFiles.push(file);
+                    boardInfo.attachedFiles.push(file);
                 }
 
             }, 1);
@@ -111,7 +130,7 @@ var fileAttachment = function (dragDrop) {
 var fileDelete = function (me, id) {
 
     $(me).closest('tr').remove();
-    attachedFiles = attachedFiles.filter((x, idx, array) => {
+    boardInfo.attachedFiles = boardInfo.attachedFiles.filter((x, idx, array) => {
         return x.id != id
     });
 
@@ -119,16 +138,37 @@ var fileDelete = function (me, id) {
 
 var f_search = function(){
 	
+	//내용 조회
 	var fData = new FormData();
-	fData.set('QUERY_ID', 'com.S_COMM_MENU');
+	fData.set('QUERY_ID', 'bbs.S_BBS_BOARD_ONE');
+	fData.set('MODULE_CODE', boardInfo.moduleCode);
+	fData.set('BBS_BOARD_ID', boardInfo.bbsBoardId);
+	fData.set('BOARD_NO', boardInfo.bbsBoardNo);
 	gf_ajax( fData
 			, function(){
-				
+		
+				if(gf_nvl(boardInfo.moduleCode, '') == ''
+				|| gf_nvl(boardInfo.bbsBoardId, '') == ''
+				|| gf_nvl(boardInfo.bbsBoardNo, '') == ''
+				){
+					return false;
+				}
+		
+				return true;
 			}
 			, function(data){
-				
-				
+				if(data.result.length > 0){
+					var result = data.result[0];
+					gf_setEditorValue('editor', result.BOARD_CONTENTS);
+				}
+				else{
+					parent.gf_toast(gf_mlg('존재하지_않는_게시글_입니다'));
+					parent.$('li[aria-selected="true"]').find('.tabCloseBtn').click();
+				}
 			});
+	
+	//첨부파일 조회
+	
 }
   	
 var f_save = function(){
@@ -138,19 +178,19 @@ var f_save = function(){
 	//게시글내용
 	var boardDara = {
 		QUERY_ID : 'bbs.I_BBS_BOARD',
-		MODULE_CODE : moduleCode,
-		BBS_BOARD_ID : bbsBoardId,
+		MODULE_CODE : 'ST',//boardInfo.moduleCode,
+		BBS_BOARD_ID : boardInfo.bbsBoardId,
 		CATEGORY_CODE : $('#CATEGORY_CODE').val(),
 		TITLE : $('#TITLE').val(),
-		BOARD_CONTENTS : $('#BOARD_CONTENTS').val()
+		BOARD_CONTENTS : gf_getEditorValue('editor')
 	};
 	fData.set('boardForm', JSON.stringify(boardDara));
 
 		//첨부파일
-	$.each(attachedFiles, function(idx, item){
+	$.each(boardInfo.attachedFiles, function(idx, item){
 		if(idx == 0){
 			var fileData = {
-					MODULE_CODE : 'ST',
+					MODULE_CODE : boardInfo.moduleCode,
 					GET_PARAM : {
 									GROUP_ID : 'boardForm.BBS_BOARD_ID'
 								}
@@ -162,15 +202,19 @@ var f_save = function(){
 	
 	gf_ajax( fData
 			, function(){
-	
+//				return false;
 			}
 			, function(data){
 				gf_toast(gf_mlg('저장_되었습니다'), 'success');
-				bbsBoardId = String(data.result.boardForm.result.BBS_BOARD_ID);
-				attachedFiles = [];
-				
+				boardInfo.bbsBoardId = String(data.result.boardForm.result.BBS_BOARD_ID);
+				f_search();
 			}
 			, null
 			, null
 			, '/save');
+}
+
+var f_delete = function(){
+	parent.gf_toast(gf_mlg('삭제_되었습니다'), 'success');
+	parent.$('li[aria-selected="true"]').find('.tabCloseBtn').click();
 }

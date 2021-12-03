@@ -137,13 +137,10 @@ var f_save = function(){
 			}
 			, function(data){
 				
-				if(data.result == 'success'){
-				
-					gf_toast(gf_mlg('저장_되었습니다'), 'success');
-					gf_gridClear(groupGrid);
-					gf_gridClear(userGrid);
-  					f_search();
-				}
+				gf_toast(gf_mlg('저장_되었습니다'), 'success');
+				gf_gridClear(groupGrid);
+				gf_gridClear(userGrid);
+				f_search();
 			}
 			, null
 			, null

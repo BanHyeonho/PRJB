@@ -4,7 +4,7 @@
 var tabs;
 var tabTitle = $( "#tab_title" );
 var tabContent = $( "#tab_content" );
-var tabTemplate = "<li class='indexTabLi' menu-code='@menuCode@' onclick='f_selectFrame(this);'><a href='@href@'><span class='menu-span'>@label@</span><span class='ui-icon ui-icon-closethick' role='presentation'>Remove Tab</span></a></li>";
+var tabTemplate = "<li class='indexTabLi' menu-code='@menuCode@' onclick='f_selectFrame(this);'><a href='@href@'><span class='menu-span'>@label@</span><span class='tabCloseBtn ui-icon ui-icon-closethick' role='presentation'>Remove Tab</span></a></li>";
 var tabCounter = 1;
 var selectedTabId = '';
 
@@ -44,35 +44,11 @@ $(document).ready(function () {
 
 //메뉴검색
 function f_searchMenu(){
-	$.widget("custom.catcomplete", $.ui.autocomplete, {
-	      _create: function() {
-	        this._super();
-	        this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
-	      },
-	      _renderMenu: function( ul, items ) {
-	        var that = this,
-	          currentCategory = "";
-	        $.each( items, function( index, item ) {
-	          var li;
-	          if ( item.category != currentCategory ) {
-	            ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
-	            currentCategory = item.category;
-	          }
-	          li = that._renderItemData( ul, item );
-	          if ( item.category ) {
-	            li.attr( "aria-label", item.category + " : " + item.label );
-	          }
-	        });
-	      }
+	
+	gf_autoComplete('menuSearch', menuSearchData, function(event, ui){
+		$('#' + ui.item.menuCode).trigger('click');
 	});
-	$("#menuSearch" ).catcomplete({
-		delay: 0,
-		source: menuSearchData,
-		minLength: 0,
-		select: function( event, ui ) {
-				$('#' + ui.item.menuCode).trigger('click');
-			}
-	});
+	
 }
 
 //최근사용메뉴 조회
@@ -104,11 +80,9 @@ function f_openMenuList(){
 								portlet.append(portletHeader).append(portletContent);
 								$('#openMenu').append(portlet);
 							}
-							
-								console.log('f_openMenuList : ' , data);
 								
-								//메뉴 우측 퀵메뉴 셋팅		    
-							    f_setQuickMenu('openMenu');
+							//메뉴 우측 퀵메뉴 셋팅		    
+						    f_setQuickMenu('openMenu');
 						}
 						
 				}

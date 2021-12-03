@@ -19,10 +19,16 @@
 		</div>
 		
 		<div id='boardEditorContainer' class='content-panel ht-pl-1-1 wd-pl-3 no-mg-tp'>
-			<input type="text" id='CATEGORY_CODE' placeholder="카테고리코드" value='MOVIE'>
-			<input type="text" id='TITLE' placeholder="제목">
-<!-- 			<input type="text" id='BOARD_CONTENTS' placeholder="내용"> -->
-			<iframe id='editor' src="/editor" style="height: 98%;" ></iframe>
+			<div class="div-2-1 mg-rt-default3">
+				<label class="form">${pb:msg(pageContext.request, "카테고리코드")}</label>
+				<input type="hidden" id='CATEGORY_CODE' value='MOVIE'>
+				<input type="text" class="form form-text mg-tp-default" id='CATEGORY_NAME' tabindex="1" value='영화'>
+			</div>
+			<div class="div-8">
+				<label class="form">${pb:msg(pageContext.request, "제목")}</label>
+				<input type="text" class="form form-text mg-tp-default" id='TITLE' tabindex="2">
+			</div>
+			<iframe id='editor' src="/editor" class="mg-tp-default" style="height: 90%;" ></iframe>
 		</div>
 		<!-- 첨부파일영역 -->
 		<div id='attachedFileContainer' class='content-panel ht-pl-1-1 wd-pl-1 no-mg-tp no-mg-lt'>

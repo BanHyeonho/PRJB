@@ -36,7 +36,7 @@
 		          , BOARD_NO
 		          , TITLE
 		          , BOARD_CONTENTS
-		          , HIT_CNT
+		          , VIEW_CNT
 		          <include refid="config.cidColumn"></include>
 		          )
 		       VALUES(#{BBS_BOARD_ID}
@@ -101,6 +101,48 @@
 		 WHERE A.USE_YN = '1'
 		   AND A.MODULE_CODE = #{MODULE_CODE}
 		 ORDER BY A.SEQ ASC
+	</select>
+	
+	<!-- 게시글 조회(한개)-->	
+	<select id="S_BBS_BOARD_ONE" resultMap="config.ClobMap" parameterType="HashMap" >
+		/* S_BBS_BOARD_ONE */
+		SELECT A.BBS_BOARD_ID  
+			 , A.MODULE_CODE   
+			 , A.CATEGORY_CODE 
+			 , A.BOARD_NO      
+			 , A.TITLE         
+			 , A.BOARD_CONTENTS
+		  FROM bbs_board A
+		 WHERE A.BBS_BOARD_ID = #{BBS_BOARD_ID}
+		   AND A.MODULE_CODE = #{MODULE_CODE}
+		   AND A.BOARD_NO = #{BOARD_NO}
+	</select>
+	
+	<!-- 게시글 리스트 조회-->	
+	<select id="S_BBS_BOARD" resultType="HashMap" parameterType="HashMap" >
+		/* S_BBS_BOARD */
+		SELECT 'id_' || (ROWNUM-1) AS "id" 
+			 , A.BBS_BOARD_ID  
+			 , A.MODULE_CODE   
+			 , A.CATEGORY_CODE 
+			 , A.BOARD_NO      
+			 , A.TITLE
+			 , COMM_UTIL_PKG.user_name(A.CID) AS WRITER
+			 , A.VIEW_CNT
+		  FROM BBS_BOARD A
+		 WHERE A.MODULE_CODE = #{MODULE_CODE}
+		   AND A.CATEGORY_CODE = #{CATEGORY_CODE}
+		   <if test="@prjb.com.util.ComUtil@nvl(WRITER, '') != ''">
+		 	<![CDATA[
+ 		 	AND instr(COMM_UTIL_PKG.user_name(A.CID), #{WRITER}) > 0
+ 		 	]]>
+		 </if>
+		 <if test="@prjb.com.util.ComUtil@nvl(TITLE, '') != ''">
+		 	<![CDATA[
+ 		 	AND instr(A.TITLE, #{TITLE}) > 0
+ 		 	]]>
+		 </if>
+		 ORDER BY A.BOARD_NO DESC
 	</select>
 	
 </mapper>

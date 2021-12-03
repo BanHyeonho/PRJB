@@ -28,8 +28,27 @@ var f_setCategoryGrid = function(){
 }
 var f_setBoardGrid = function(){
 	boardGrid = gf_gridInit('boardGrid', {
-    	showFooterRow: false
+//    	showFooterRow: false
     });
+	
+	boardGrid.onDblClick.subscribe(function (e, args){
+	    
+	    var boardInfo = boardGrid.getDataItem(args.row);
+	    
+	    var v_param = {
+	    		menuNm : gf_mlg('영상_게시글'),
+	    		menuCode : 'HIDDEN002',
+	    		p_param : {
+	    			BBS_BOARD_ID : boardInfo.BBS_BOARD_ID,
+	    			MODULE_CODE : boardInfo.MODULE_CODE,
+	    			BOARD_NO : boardInfo.BOARD_NO
+	    		}
+    	};
+	    		
+    	parent.f_addPageExec(v_param);
+	    	
+	});
+	
 }
 var f_write = function(){
 	
@@ -63,12 +82,15 @@ var f_boardSearch = function(p_categoryCode){
 		return false;
 	}
 	var fData = new FormData();
-	fData.set('QUERY_ID', 'com.S_COMM_TABLE_DETAIL');
+	fData.set('QUERY_ID', 'bbs.S_BBS_BOARD');
+	fData.set('MODULE_CODE', moduleCode);
 	fData.set('CATEGORY_CODE', p_categoryCode);
-	fData.set('PAGE', 1);
+	fData.set('WRITER', $('#WRITER').val());
+	fData.set('TITLE', $('#TITLE').val());
 	
 	gf_ajax( fData
 			, function(){
+				gf_delFormData(fData);
 				gf_gridClear(boardGrid);
 			}
 			, function(data){

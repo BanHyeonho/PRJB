@@ -63,12 +63,6 @@
 	font-size: 16px;
 }
 
-.ui-autocomplete-category {
-    font-weight: bold;
-    padding: .2em .4em;
-    margin: .8em 0 .2em;
-    line-height: 1.5;
-}
 .ui-autocomplete{
 	overflow-y: auto;
     overflow-x: hidden;

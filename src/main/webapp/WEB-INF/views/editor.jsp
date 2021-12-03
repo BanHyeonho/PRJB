@@ -24,7 +24,8 @@ body{
 /**
  * 에디터설정
  */
-	const watchdog = new CKSource.EditorWatchdog();
+	var watchdog = new CKSource.EditorWatchdog();
+	let toolbar_size = 0;
 	
 	window.watchdog = watchdog;
 	
@@ -48,30 +49,32 @@ body{
 			
 			//읽기모드 watchdog.editor.isReadOnly = true / false
 	        const toolbarElement = watchdog.editor.ui.view.toolbar.element;
+	        toolbar_size = toolbarElement.clientHeight;
 	        watchdog.editor.on( 'change:isReadOnly', ( evt, propertyName, isReadOnly ) => {
 	            if ( isReadOnly ) {
 	                toolbarElement.style.display = 'none';
+	                setSize(toolbar_size);
 	            } else {
 	                toolbarElement.style.display = 'flex';
+	                setSize(0);
 	            }
-	        } );
-	        
+	        } );	        
 	        window.onresize = function(event){
-	        	setSize();
+	        	setSize(0);
         	} 
 	        window.onload = function(event){
-	        	setSize();
+	        	setSize(0);
       		}
     	})
 		.catch( handleError );
 	
-	function setSize(){
+	function setSize(p_add_height){
 		var innerHeight = window.innerHeight;
 		var editHeight = innerHeight - 50;
 		editHeight = (editHeight < 100) ? 100 : editHeight;
 		var style = document.createElement('style');
 		style.innerHTML = "body{margin:0;} "
-						+ ".ck-editor__editable{min-height: " + editHeight + "px;}";
+						+ ".ck-editor__editable{min-height: " + (editHeight+p_add_height) + "px;}";
 		document.head.appendChild(style);
 	}
 	

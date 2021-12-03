@@ -152,10 +152,7 @@ var f_mlg_regist = function(){
   				, null
   				, function(data){
   					
-		  			if(data.result == 'success'){
-			
-						gf_toast(gf_mlg('저장_되었습니다'), 'success');
-					}
+  					gf_toast(gf_mlg('저장_되었습니다'), 'success');
 					
 				});
 	}
@@ -347,16 +344,13 @@ var f_save = function(){
 			}
 			, function(data){
 				
-				if(data.result == 'success'){
-				
-					gf_toast(gf_mlg('저장_되었습니다'), 'success');
-					gf_gridClear(menuGrid);
-					gf_gridClear(masterGrid);
-					gf_gridClear(contextGrid);
-					gf_gridClear(detailGrid);
-					gf_gridClear(comboPopupGrid);
-  					f_search();	
-				}
+				gf_toast(gf_mlg('저장_되었습니다'), 'success');
+				gf_gridClear(menuGrid);
+				gf_gridClear(masterGrid);
+				gf_gridClear(contextGrid);
+				gf_gridClear(detailGrid);
+				gf_gridClear(comboPopupGrid);
+				f_search();
 				
 			}
 			, null
