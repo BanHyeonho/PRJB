@@ -1,0 +1,97 @@
+@charset "UTF-8";
+/* div */
+.div-1-1{
+	display : inline-block;
+	width : 9%;
+	float: left;
+}
+.div-1{
+	display : inline-block;
+	width : 10%;
+	float: left;
+}
+.div-2-1{
+	display : inline-block;
+	width : 19%;
+	float: left;
+}
+.div-2{
+	display : inline-block;
+	width : 20%;
+	float: left;
+}
+.div-3-1{
+	display : inline-block;
+	width : 29%;
+	float: left;
+}
+.div-3{
+	display : inline-block;
+	width : 30%;
+	float: left;
+}
+.div-4-1{
+	display : inline-block;
+	width : 39%;
+	float: left;
+}
+.div-4{
+	display : inline-block;
+	width : 40%;
+	float: left;
+}
+.div-5-1{
+	display : inline-block;
+	width : 49%;
+	float: left;
+}
+.div-5{
+	display : inline-block;
+	width : 50%;
+	float: left;
+}
+.div-6-1{
+	display : inline-block;
+	width : 59%;
+	float: left;
+}
+.div-6{
+	display : inline-block;
+	width : 60%;
+	float: left;
+}
+.div-7-1{
+	display : inline-block;
+	width : 69%;
+	float: left;
+}
+.div-7{
+	display : inline-block;
+	width : 70%;
+	float: left;
+}
+.div-8-1{
+	display : inline-block;
+	width : 79%;
+	float: left;
+}
+.div-8{
+	display : inline-block;
+	width : 80%;
+	float: left;
+}
+.div-9-1{
+	display : inline-block;
+	width : 89%;
+	float: left;
+}
+.div-9{
+	display : inline-block;
+	width : 90%;
+	float: left;
+}
+.div-10{
+	display : inline-block;
+	width : 100%;
+	float: left;
+}

@@ -1,0 +1,20 @@
+@charset "UTF-8";
+/* padding */
+.pd-tp-default{
+	padding-top: 15px;
+}
+.pd-lt-default{
+	padding-left: 15px;
+}
+.pd-rt-default{
+	padding-right: 15px;
+}
+.pd-bt-default{
+	padding-bottom: 15px;
+}
+.pd-default{
+	padding: 15px;
+}
+.pd-default2{
+	padding: 10px !important;
+}
