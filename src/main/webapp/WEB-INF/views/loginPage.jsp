@@ -16,7 +16,7 @@
 					<span class="title" id="title">
 					</span>
 				</div>
-				<div class="content-panel clearfix">
+				<div class="content-panel clearfix pd-default">
 					<input type="text" class="input-text font-size-36 mg-default2 input-st1" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}'>
 					<input type="password" class="input-text font-size-36 mg-default2 input-st1" enter-exec='3' tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "비밀번호")}' >
 					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="3" id='loginBtn'>${pb:msg(pageContext.request, "로그인")}</button>

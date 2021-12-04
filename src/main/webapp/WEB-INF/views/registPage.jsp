@@ -16,7 +16,7 @@
 				<div class="center-table mg-bt-default2" style="height: 0;">
 					<span class="title">${pb:msg(pageContext.request, "회원가입")}</span>
 				</div>
-				<div class="content-panel clearfix">
+				<div class="content-panel clearfix pd-default">
 					<input type="text" class="input-text font-size-36 mg-default2 input-st1" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}' >
 					<input type="password" class="input-text font-size-36 mg-default2 input-st1" tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "비밀번호")}' >
 					<input type="text" class="input-text font-size-36 mg-default2 input-st1" enter-exec='4' tabindex="3" name="USER_NAME" require="true" placeholder='${pb:msg(pageContext.request, "이름")}' >
