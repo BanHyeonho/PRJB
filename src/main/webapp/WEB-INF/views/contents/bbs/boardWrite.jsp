@@ -8,6 +8,16 @@
 <meta charset="UTF-8">
 <title>${pb:msg(pageContext.request, "게시글쓰기")}</title>
 <meta name="google" content="notranslate">
+<style type="text/css">
+#editor{
+	height: 93%;
+}
+@media screen and (max-width: 1280px) {
+	#editor{
+		height: 90%;
+	}
+}
+</style>
 </head>
 <body>
 	<div id='content' class="pd-pl-default">
@@ -19,7 +29,7 @@
 		
 		<div id='boardEditorContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-8'>
 			<div class="div-2-1 mg-rt-default3">
-				<label class="form">${pb:msg(pageContext.request, "카테고리코드")}</label>
+				<label class="form">${pb:msg(pageContext.request, "카테고리")}</label>
 				<input type="hidden" id='CATEGORY_CODE' value='MOVIE'>
 				<input type="text" class="form form-text mg-tp-default" id='CATEGORY_NAME' tabindex="1" value='영화'>
 			</div>
@@ -27,7 +37,7 @@
 				<label class="form">${pb:msg(pageContext.request, "제목")}</label>
 				<input type="text" class="form form-text mg-tp-default" id='TITLE' tabindex="2">
 			</div>
-			<iframe id='editor' src="/editor" class="mg-tp-default" style="height: 93%;" ></iframe>
+			<iframe id='editor' src="/editor" class="mg-tp-default"></iframe>
 		</div>
 		<!-- 첨부파일영역 -->
 		<div id='attachedFileContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-1-1 panel-2-1'>
