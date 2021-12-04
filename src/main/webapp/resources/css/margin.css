@@ -45,6 +45,9 @@
 .mg-rt-default3{
 	margin-right: 1%;
 }
+.no-mg{
+	margin: 0px !important;
+}
 .no-mg-tp{
 	margin-top: 0px !important;
 }
@@ -56,4 +59,20 @@
 }
 .no-mg-rt{
 	margin-right: 0px !important;
+}
+/* 패널용마진 */
+.mg-pl-default{
+	margin: 0.7%;
+}
+.mg-pl-tp-default{
+	margin-top: 0.7%;
+}
+.mg-pl-bt-default{
+	margin-bottom: 0.7%;
+}
+.mg-pl-lt-default{
+	margin-left: 0.7%;
+}
+.mg-pl-rt-default{
+	margin-right: 0.7%;
 }

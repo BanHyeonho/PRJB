@@ -1,34 +1,17 @@
 @charset "UTF-8";
 /* 사용자정의CSS - 노트북 사이즈 */
 @media screen and (max-width: 1280px) {
-	#header-dummy{
-		height: 7px;
-	}
-	.content-panel {
-		background-color: #FFFFFF !important;
-		padding: 10px;
-		margin: 7px;
-	}
-	.wd-pl-1 {
-		width: 22.7%;
-	}
-	.wd-pl-2 {
-		width: 47.7%;
-	}
-	.wd-pl-3 {
-		width: 72.5%;
-	}
-	.wd-pl-4 {
-		width: 97.4%;
-	}
 	.ht-pl-1 {
-		height : 73vh;
+		height : 75vh;
 	}
 	.ht-pl-2 {
-		height : 34vh;
+		height : 37vh;
 	}
 	/* 조회조건이없을때 */
 	.ht-pl-1-1 {
-		height : 83vh;
+		height : 86vh;
+	}
+	.ht-pl-2-1 {
+		height : 42.5vh;
 	}
 }

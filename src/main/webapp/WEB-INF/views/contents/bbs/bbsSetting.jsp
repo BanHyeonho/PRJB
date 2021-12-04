@@ -10,23 +10,22 @@
 <meta name="google" content="notranslate">
 </head>
 <body>
-	<div id='content'>		
-		<div id='header-dummy'></div>
-		<div id="content-header-1" class="content-panel">
+	<div id='content' class="pd-pl-default">
+		<div id="content-header-1" class="content-panel pd-pl-default no-mg">
 			<span id="content-title"></span>
 			<div class="btn-area" id='BTN_AREA1'>
 			</div>
 		</div>
-		<div id='moduleGridContainer' class='content-panel no-mg-tp wd-pl-1 ht-pl-1-1'>
+		<div id='moduleGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-2'>
 			<div id="moduleGrid" class="grid"></div>
 		</div>
-		<div id='categoryGridContainer' class='content-panel no-mg-tp wd-pl-1 no-mg-lt ht-pl-1-1'>
+		<div id='categoryGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-4-1'>
 			<div id='categoryGrid' class="grid"></div>
 		</div>
-		<div id='authGroupGridContainer' class='content-panel no-mg-tp wd-pl-2 no-mg-lt ht-pl-2-1'>
+		<div id='authGroupGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-2-1 panel-4-1'>
 			<div id='authGroupGrid' class="grid"></div>
 		</div>
-		<div id='bbsAuthGridContainer' class='content-panel no-mg-tp wd-pl-2 no-mg-lt ht-pl-2-1'>
+		<div id='bbsAuthGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-2-1 panel-4-1'>
 			<div id='bbsAuthGrid' class="grid"></div>
 		</div>
 	</div>

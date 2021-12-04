@@ -10,27 +10,26 @@
 <meta name="google" content="notranslate">
 </head>
 <body>
-	<div id='content'>
-		<div id='header-dummy'></div>
-		<div id="content-header-1" class="content-panel">
+	<div id='content' class="pd-pl-default">
+		<div id="content-header-1" class="content-panel pd-pl-default no-mg">
 			<span id="content-title"></span>
 			<div class="btn-area" id='BTN_AREA1'>
 			</div>
 		</div>
 				
-		<div id='menuGridContainer' class='content-panel no-mg-tp wd-pl-1 ht-pl-2-1'>
+		<div id='menuGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-2-1 panel-2'>
 			<div id="menuGrid" class="grid"></div>
 		</div>
-		<div id='masterGridContainer' class='content-panel no-mg-tp wd-pl-2 no-mg-lt ht-pl-2-1'>
+		<div id='masterGridContainer' class='content-panel pd-pl-default mg-pl-default no-mg-lt ht-pl-2-1 panel-6-1'>
 			<div id='masterGrid' class="grid"></div>
 		</div>
-		<div id='contextGridContainer' class='content-panel no-mg-tp wd-pl-1 no-mg-lt ht-pl-2-1'>
+		<div id='contextGridContainer' class='content-panel pd-pl-default mg-pl-default no-mg-lt no-mg-rt ht-pl-2-1 panel-2-1'>
 			<div id='contextGrid' class="grid"></div>
 		</div>
-		<div id='detailGridContainer' class='content-panel wd-pl-3 no-mg-tp ht-pl-2-1'>
+		<div id='detailGridContainer' class='content-panel pd-pl-default mg-pl-rt-default ht-pl-2-1 panel-8'>
 			<div id='detailGrid' class="grid"></div>
 		</div>
-		<div id='comboPopupGridContainer' class='content-panel wd-pl-1 no-mg-tp no-mg-lt ht-pl-2-1'>
+		<div id='comboPopupGridContainer' class='content-panel pd-pl-default ht-pl-2-1 panel-2-1'>
 			<div id='comboPopupGrid' class="grid"></div>
 		</div>
 	</div>

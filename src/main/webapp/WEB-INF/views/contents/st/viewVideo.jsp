@@ -10,9 +10,8 @@
 <meta name="google" content="notranslate">
 </head>
 <body>
-	<div id='content'>
-		<div id='header-dummy'></div>
-		<div id="content-header" class="content-panel">
+	<div id='content' class="pd-pl-default">
+		<div id="content-header" class="content-panel pd-pl-default no-mg">
 			<span id="content-title"></span>
 			<div class="btn-area" id='BTN_AREA1'>
 			</div>
@@ -23,10 +22,10 @@
 				</div>
 			</div>
 		</div>
-		<div id='masterGridContainer' class='content-panel ht-pl-1 wd-pl-1 no-mg-tp'>
+		<div id='masterGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1 panel-2'>
 			<div id="masterGrid" class="grid"></div>
 		</div>
-		<div id='videoContainer' class='content-panel ht-pl-1 wd-pl-3 no-mg-tp no-mg-lt'>
+		<div id='videoContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-1 panel-8-1'>
 			<video style="width:100%; height:100%;" controls >
 <!-- 				<source src="/resources/videos/아이언 맨 1.mp4"> -->
 				<source src="/st/video?fileName=testFile">

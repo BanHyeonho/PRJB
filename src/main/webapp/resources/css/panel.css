@@ -1,0 +1,147 @@
+@charset "UTF-8";
+/* 패널 기본모양 */
+.content-panel {
+	background-color: #FFFFFF !important;
+	box-shadow : 3px 3px 3px rgb(51 51 51 / 20%);
+}
+/* 상단 조회조건없을때 */
+#content-header-1{
+	height: 30px;
+}
+/* 상단 조회조건 1라인 */
+#content-header {
+	height: 100px;
+}
+/* 조회조건이1줄 일때 */
+.ht-pl-1 {
+	height : 82vh;
+	float: left;
+}
+.ht-pl-2 {
+	height : 40vh;
+	float: left;
+}
+
+/* 조회조건이없을때 */
+.ht-pl-1-1 {
+	height : 89.5vh;
+	float: left;
+}
+.ht-pl-2-1 {
+	height : 44vh;
+	float: left;
+}
+.panel-1{
+	display: inline-block;
+    width: 10%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-1-1{
+	display: inline-block;
+    width: 9.3%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-2{
+	display: inline-block;
+    width: 20%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-2-1{
+	display: inline-block;
+    width: 19.3%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-3{
+	display: inline-block;
+    width: 30%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-3-1{
+	display: inline-block;
+    width: 29.3%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-4{
+	display: inline-block;
+    width: 40%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-4-1{
+	display: inline-block;
+    width: 39.3%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-5{
+	display: inline-block;
+    width: 50%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-5-1{
+	display: inline-block;
+    width: 49.3%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-6{
+	display: inline-block;
+    width: 60%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-6-1{
+	display: inline-block;
+    width: 59.3%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-7{
+	display: inline-block;
+    width: 70%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-7-1{
+	display: inline-block;
+    width: 69.3%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-8{
+	display: inline-block;
+    width: 80%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-8-1{
+	display: inline-block;
+    width: 79.3%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-9{
+	display: inline-block;
+    width: 90%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-9-1{
+	display: inline-block;
+    width: 89.3%;
+    float: left;
+    box-sizing: border-box;
+}
+.panel-10{
+	display: inline-block;
+    width: 100%;
+	float: left;
+    box-sizing: border-box;
+}

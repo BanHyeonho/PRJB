@@ -10,9 +10,8 @@
 <meta name="google" content="notranslate">
 </head>
 <body>
-	<div id='content'>
-		<div id='header-dummy'></div>
-		<div id="content-header" class="content-panel">
+	<div id='content' class="pd-pl-default">
+		<div id="content-header" class="content-panel pd-pl-default no-mg">
 			<span id="content-title"></span>
 			<div class="btn-area" id='BTN_AREA1'>
 			</div>
@@ -27,10 +26,10 @@
 				</div>
 			</div>
 		</div>
-		<div id='categoryGridContainer' class='content-panel ht-pl-1 wd-pl-1 no-mg-tp'>
+		<div id='categoryGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1 panel-2-1'>
 			<div id="categoryGrid" class="grid"></div>
 		</div>
-		<div id="boardGridContainer" class='content-panel ht-pl-1 wd-pl-3 no-mg-tp no-mg-lt'>
+		<div id="boardGridContainer" class='content-panel mg-pl-tp-default pd-pl-default ht-pl-1 panel-8'>
 			<div id="boardGrid" class="grid"></div>
 		</div>
 	</div>

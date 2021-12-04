@@ -117,7 +117,7 @@
       // if a custom setter is not defined, we call applyValue of the editor to unserialize
       if (columnDef.editor){
         var editorArgs = {
-          'container':$("body"),  // a dummy container
+          'container':$("head"),  // a dummy container
           'column':columnDef,
           'position':{'top':0, 'left':0},  // a dummy position required by some editors
           'grid':_grid

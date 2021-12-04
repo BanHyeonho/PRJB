@@ -18,3 +18,22 @@
 .pd-default2{
 	padding: 10px !important;
 }
+.pd-default3{
+	padding: 1% !important;
+}
+/* 패널용 패딩 */
+.pd-pl-default{
+	padding: 0.7%;
+}
+.pd-pl-tp-default{
+	padding-top: 0.7%;
+}
+.pd-pl-bt-default{
+	padding-bottom: 0.7%;
+}
+.pd-pl-lt-default{
+	padding-left: 0.7%;
+}
+.pd-pl-rt-default{
+	padding-right: 0.7%;
+}
