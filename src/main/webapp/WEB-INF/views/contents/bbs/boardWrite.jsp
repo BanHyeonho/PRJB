@@ -28,28 +28,30 @@
 		</div>
 		
 		<div id='boardEditorContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-8'>
-			<div class="div-2-1 mg-rt-default3">
-				<label class="form">${pb:msg(pageContext.request, "카테고리")}</label>
-				<input type="hidden" id='CATEGORY_CODE' value='MOVIE'>
-				<input type="text" class="form form-text mg-tp-default" id='CATEGORY_NAME' tabindex="1">
-			</div>
-			<div class="div-2-1 mg-rt-default3">
-				<label class="form">${pb:msg(pageContext.request, "공개여부")}</label>
-				<div class="div-10 mg-tp-default">
-					<div class="div-4">
-						<input type="radio" class="form-radio" name="OPEN_YN" id="OPEN_Y" value='1' tabindex="2" checked>
-						<label for="OPEN_Y" class="form-radio-label">${pb:msg(pageContext.request, "공개")}</label>
-					</div>
-					<div class="div-6">
-						<input type="radio" class="form-radio" name="OPEN_YN" id="OPEN_N" value='0' tabindex="3">
-						<label for="OPEN_N" class="form-radio-label">${pb:msg(pageContext.request, "비공개")}</label>
+			<form id='boardForm'>
+				<div class="div-2-1 mg-rt-default3">
+					<label class="form form-require-label">${pb:msg(pageContext.request, "카테고리")}</label>
+					<input type="hidden" id='CATEGORY_CODE' value='MOVIE'>
+					<input type="text" class="form form-text mg-tp-default" id='CATEGORY_NAME' require='true' tabindex="1">
+				</div>
+				<div class="div-2-1 mg-rt-default3">
+					<label class="form form-require-label">${pb:msg(pageContext.request, "공개여부")}</label>
+					<div class="div-10 mg-tp-default">
+						<div class="div-4">
+							<input type="radio" class="form-radio" name="OPEN_YN" id="OPEN_Y" value='1' tabindex="2" checked>
+							<label for="OPEN_Y" class="form-radio-label">${pb:msg(pageContext.request, "공개")}</label>
+						</div>
+						<div class="div-6">
+							<input type="radio" class="form-radio" name="OPEN_YN" id="OPEN_N" value='0' tabindex="3">
+							<label for="OPEN_N" class="form-radio-label">${pb:msg(pageContext.request, "비공개")}</label>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="div-6">
-				<label class="form">${pb:msg(pageContext.request, "제목")}</label>
-				<input type="text" class="form form-text mg-tp-default" id='TITLE' tabindex="4">
-			</div>
+				<div class="div-6">
+					<label class="form form-require-label">${pb:msg(pageContext.request, "제목")}</label>
+					<input type="text" class="form form-text mg-tp-default" require='true' id='TITLE' tabindex="4">
+				</div>
+			</form>
 			<iframe id='editor' src="/editor" class="mg-tp-default"></iframe>
 		</div>
 		<!-- 첨부파일영역 -->

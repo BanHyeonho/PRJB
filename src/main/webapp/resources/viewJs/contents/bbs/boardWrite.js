@@ -5,8 +5,7 @@ let boardInfo = {
 	moduleCode : menuParam.MODULE_CODE,
 	attachedFiles : [],
 	attachedDelFiles : [],
-	bbsBoardId : '',
-	bbsBoardNo : ''
+	bbsBoardId : ''
 }
 
 $(document).ready(function() {
@@ -167,13 +166,11 @@ var f_search = function(){
 	fData.set('QUERY_ID', 'bbs.S_BBS_BOARD_ONE');
 	fData.set('MODULE_CODE', boardInfo.moduleCode);
 	fData.set('BBS_BOARD_ID', boardInfo.bbsBoardId);
-	fData.set('BOARD_NO', boardInfo.bbsBoardNo);
 	gf_ajax( fData
 			, function(){
 		
 				if(gf_nvl(boardInfo.moduleCode, '') == ''
 				|| gf_nvl(boardInfo.bbsBoardId, '') == ''
-				|| gf_nvl(boardInfo.bbsBoardNo, '') == ''
 				){
 					return false;
 				}
@@ -263,7 +260,15 @@ var f_save = function(){
 	
 	gf_ajax( fData
 			, function(){
-//				return false;
+				var chkResult = gf_chkRequire(['boardForm']);
+		
+				for (var i = 0; i < chkResult.tags.length; i++) {
+					gf_toast(gf_mlg('을(를)_입력하세요', {
+						param : chkResult.tags[i].siblings('label').text()
+					}), 'info');
+				}
+				
+				return chkResult.result;
 			}
 			, function(data){
 				gf_toast(gf_mlg('저장_되었습니다'), 'success');

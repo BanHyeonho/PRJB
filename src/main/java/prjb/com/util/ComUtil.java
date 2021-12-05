@@ -40,7 +40,8 @@ public class ComUtil {
 	 * @return
 	 */
 	public static String getClob(String str) {
-		int maxSize = 4000;
+		//최대글자수
+		int maxSize = 1000;	//최대 4000byte 지만 안전하게 1000글자를 최대로 한다. 글자에따라 byte 사이즈가 다름.
 		StringBuffer result = new StringBuffer();
 		if(str != null &&
 		!str.isEmpty()){

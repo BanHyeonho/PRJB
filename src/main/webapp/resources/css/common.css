@@ -238,6 +238,9 @@ iframe {
 	width : 100%;
 	font-size: 16px;
 }
+.form-require-label{
+	color : #EC7B7E;
+}
 .form-text{
 	padding: 4px;
 	border: 1px solid silver;
