@@ -45,10 +45,10 @@ $(document).ready(function() {
 	$(document).on('dragstart', function() {
 		  return false;
 	});
-	//선택막기
-	$(document).on('selectstart', function() {
-		  return false;
-	});
+	//선택막기(ctrl+a 안되는 문제가 있음)
+//	$(document).on('selectstart', function(e) {
+//		  return false;
+//	});
 	
 	$('body').on('click',function(e){
 		parent.$('.context').css({
