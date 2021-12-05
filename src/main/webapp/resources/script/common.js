@@ -1214,9 +1214,10 @@ function gf_delFormData(p_formData){
 							..
 						}]
  * @param p_callback : 선택시 실행함수
+ * @param p_chgCallback : 값 변경시 실행함수(선택안하고 나갔을경우)
  * @returns
  */
-function gf_autoComplete(p_tagId, p_items, p_callback){
+function gf_autoComplete(p_tagId, p_items, p_callback, p_chgCallback){
 	
 	//카테고리 없음
 	if(p_items.filter(x=>x.category != '').length == 0){
@@ -1265,7 +1266,25 @@ function gf_autoComplete(p_tagId, p_items, p_callback){
 		delay: 0,
 		source: p_items,
 		minLength: 0,
-		select: p_callback
+		select: p_callback,
+		change: function( event, ui ) {
+			
+			if(typeof p_chgCallback == 'function'){
+				p_chgCallback( event, ui );	
+			}
+			else{
+				if(ui.item == null){
+					var ui = {
+							item : {}
+					}
+					p_callback( event, ui );
+				}
+				else{
+					p_callback( event, ui );
+				}	
+			}
+			
+		}
 	});
 	
 }

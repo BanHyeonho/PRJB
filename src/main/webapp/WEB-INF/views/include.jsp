@@ -74,6 +74,15 @@ const btnList = JSON.parse(gf_nvl('${btnList}', '[]'));
 	<%@ include file="./gridData.jsp"%>
 </c:if>
 
+
+<!-- 페이지변수(설정값) -->
+<script type="text/javascript">
+const pageParam = JSON.parse(gf_nvl('${pageParam}', '{}'));
+</script>
+<!-- 메뉴호출시 전송한변수 -->
+<script type="text/javascript">
+const menuParam = JSON.parse(gf_nvl('${menuParam}', '{}'));
+</script>
 <!-- 글로벌변수 -->
 <script src="/viewJs/variable.js?v=${pb:jsNow()}"></script>
 <!-- 공통 document ready -->

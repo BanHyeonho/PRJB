@@ -65,4 +65,34 @@
 		 ORDER BY A.USER_NAME ASC
 	</select>
 	
+	<!-- 게시글작성 카테고리조회 -->	
+	<select id="S_BBS_CATEGORY" resultType="HashMap" parameterType="HashMap" >
+		/* S_BBS_CATEGORY */
+		WITH TEMP AS (
+              SELECT Z.UP_CATEGORY_CODE
+                   , Y.CATEGORY_NAME
+                   , COUNT(0) AS CNT
+                FROM BBS_SETTING Z
+                JOIN BBS_SETTING Y ON Z.UP_CATEGORY_CODE = Y.CATEGORY_CODE
+               WHERE Z.USE_YN = '1'
+                 AND Z.UP_CATEGORY_CODE IS NOT NULL
+                 AND Z.MODULE_CODE = #{MODULE_CODE}
+               GROUP BY Z.UP_CATEGORY_CODE, Y.CATEGORY_NAME
+              HAVING COUNT(0) > 0
+         )
+	    SELECT A.CATEGORY_CODE  
+	         , COMM_UTIL_PKG.lang(A.CATEGORY_NAME, #{LANG_CODE}) AS CATEGORY_NAME
+	         , COMM_UTIL_PKG.lang(B.CATEGORY_NAME, #{LANG_CODE}) AS UP_CATEGORY_NAME
+	      FROM BBS_SETTING A
+	 LEFT JOIN TEMP B ON A.UP_CATEGORY_CODE = B.UP_CATEGORY_CODE
+	     WHERE A.USE_YN = '1'
+	       AND NOT EXISTS (
+	                       SELECT UP_CATEGORY_CODE 
+	                         FROM TEMP
+	                        WHERE UP_CATEGORY_CODE = A.CATEGORY_CODE
+	                       )
+	       AND A.MODULE_CODE = #{MODULE_CODE}
+	     ORDER BY A.SEQ
+	</select>
+	
 </mapper>

@@ -2,7 +2,9 @@ package prjb.com.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +56,7 @@ public class ComService {
 		String cIp = ComUtil.getAddress(request);
 		String langCode = String.valueOf(request.getSession().getAttribute("LANG_CODE"));
 		String menuCode = String.valueOf(request.getParameter("menuCode"));
+		String menuParam = String.valueOf(request.getParameter("menuParam"));
 		
 		param.put("MENU_CODE", menuCode);
 		param.put("CID", cId);
@@ -73,6 +76,32 @@ public class ComService {
 			mv.setViewName("error/401");
 			return mv;
 		}
+		
+		//화면별 파라미터(설정값)
+		String pageParam = map.get("ATTRIBUTE2");
+		JSONObject pagePramResult = new JSONObject();
+		if(pageParam != null) {
+			List<String> pageParamList = Arrays.asList(pageParam.split(","));
+			for (String pageParamtring : pageParamList) {
+				String[] pageParamMap = pageParamtring.split("=");
+				if(pageParamMap.length == 2) {
+					pagePramResult.put(pageParamMap[0], pageParamMap[1]);
+				}
+			}
+		}
+		mv.addObject("pageParam", pagePramResult);
+		
+		
+		menuParam = URLDecoder.decode(menuParam, "UTF-8");
+		if(!"null".equals(menuParam)) {
+			JSONObject menuPramResult = new JSONObject(menuParam);
+			mv.addObject("menuParam", menuPramResult);
+		}
+		else {
+			mv.addObject("menuParam", null);	
+		}
+		
+		
 		
 		//화면별 버튼 조회
 		param = new HashMap();
@@ -284,7 +313,11 @@ public class ComService {
 		String ip = ComUtil.getAddress(request);
 		
 		Map<String, Object> paramMap = ComUtil.getParameterMap(request, "SORT");
-				
+		
+		ObjectMapper mapper = null;
+		JsonNode json = null;
+		ObjectReader reader = null;
+		List<Map> list = null;
 		for ( Map.Entry<String, Object> param : paramMap.entrySet() ) {
 			
 			String key = param.getKey();
@@ -293,10 +326,10 @@ public class ComService {
 			//그리드
 			if ( key.endsWith("Grid")) {
 
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode json = mapper.readTree(String.valueOf(value));
-				ObjectReader reader = mapper.readerFor(new TypeReference<List>() {});
-				List<Map> list = reader.readValue(json);
+				mapper = new ObjectMapper();
+				json = mapper.readTree(String.valueOf(value));
+				reader = mapper.readerFor(new TypeReference<List>() {});
+				list = reader.readValue(json);
 				gridSave(list, request);
 			}
 			//폼
@@ -330,7 +363,17 @@ public class ComService {
 				fileSave(request, fileMap);
 				
 			}
-						
+			//파일 삭제
+			else if(key.endsWith("FileDel")) {
+				
+				mapper = new ObjectMapper();
+				json = mapper.readTree(String.valueOf(value));
+				reader = mapper.readerFor(new TypeReference<List>() {});
+				list = reader.readValue(json);
+				for (Map map : list) {
+					fileDelete(map);
+				}
+			}	
 		}
 		
 		return result;
@@ -670,11 +713,14 @@ public class ComService {
 	 * @throws Exception 
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void fileDelete(HttpServletRequest request, HttpServletResponse response) throws Exception{
+	public void fileDelete(Map p_param) throws Exception{
+		
+		String COMM_FILE_ID = String.valueOf(p_param.get("COMM_FILE_ID"));
+		String RANDOM_KEY = String.valueOf(p_param.get("RANDOM_KEY"));
 		
 		Map param = new HashMap();
-		param.put("COMM_FILE_ID", request.getParameter("COMM_FILE_ID"));
-		param.put("RANDOM_KEY", request.getParameter("RANDOM_KEY"));
+		param.put("COMM_FILE_ID", COMM_FILE_ID);
+		param.put("RANDOM_KEY", RANDOM_KEY);
 
 		Map<String, String> result = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
 		
@@ -688,8 +734,6 @@ public class ComService {
 		Map fileMap = new HashMap();
 		fileMap.put("FILE_PATH", result.get("FILE_PATH"));
 		fileMap.put("SERVER_FILE_NAME", result.get("SERVER_FILE_NAME"));
-		fileMap.put("FILE_NAME", result.get("FILE_NAME"));
-		fileMap.put("BROWSER", ComUtil.getBrowser(request));
 		FileUtil.fileDelete(result.get("FILE_PATH"), result.get("SERVER_FILE_NAME"));
 		
 	}

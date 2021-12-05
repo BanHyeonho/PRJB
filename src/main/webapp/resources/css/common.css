@@ -242,8 +242,13 @@ iframe {
 	padding: 4px;
 	border: 1px solid silver;
 }
-
-
+.form-radio{
+	width: 20px;
+	height: 20px;
+}
+.form-radio-label{
+	vertical-align: text-top;
+}
 /* clearfix */
 .clearfix {
 /* 	익스플로러7 이하의 버전에 영역을 잡기위한 요소 */

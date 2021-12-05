@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,6 +154,17 @@ public class ComController {
 		resultMap.put("result", comService.ajax(request));
 		
 		return resultMap;
+	}
+	
+	/**
+	 * 파일다운로드
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/fileDownload", method = RequestMethod.GET)
+	public void fileDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		comService.fileDown(request, response);
 	}
 	
 	/**

@@ -5,7 +5,7 @@
 <mapper namespace="bbs">
 
 	<!-- 게시글 작성/수정 -->
-	<insert id="I_BBS_BOARD" parameterType="HashMap" >
+	<insert id="I_BBS_BOARD" parameterType="HashMap" statementType="CALLABLE">
 		<selectKey resultType="HashMap" keyProperty="BBS_BOARD_ID" order="BEFORE">
 			<choose>
 				<when test="@org.apache.commons.lang3.StringUtils@isBlank(BBS_BOARD_ID)">
@@ -24,8 +24,9 @@
 			    ON (BBS_BOARD_ID = #{BBS_BOARD_ID})
 			  WHEN MATCHED THEN
 			UPDATE SET CATEGORY_CODE 	= #{CATEGORY_CODE}
+					 , OPEN_YN			= #{OPEN_YN}
 					 , TITLE			= #{TITLE}
-					 , BOARD_CONTENTS	= #{BOARD_CONTENTS}
+					 , BOARD_CONTENTS	= ${@prjb.com.util.ComUtil@getClob(BOARD_CONTENTS)}
 					 , MID = #{MID}
 					 , MDT = SYSDATE
 					 , MIP = #{MIP}
@@ -33,6 +34,7 @@
 			  INSERT(BBS_BOARD_ID
 		          , MODULE_CODE
 		          , CATEGORY_CODE
+		          , OPEN_YN
 		          , BOARD_NO
 		          , TITLE
 		          , BOARD_CONTENTS
@@ -42,11 +44,12 @@
 		       VALUES(#{BBS_BOARD_ID}
 		       	  , #{MODULE_CODE}
 		          , #{CATEGORY_CODE}
+		          , #{OPEN_YN}
 		          , (SELECT NVL(MAX(BOARD_NO), 0)
 		               FROM BBS_BOARD
 		              WHERE MODULE_CODE = #{MODULE_CODE}) +1
 		          , #{TITLE}
-		          , #{BOARD_CONTENTS}
+		          , ${@prjb.com.util.ComUtil@getClob(BOARD_CONTENTS)}
 		          , 0
 		          , #{MID}
 		          , SYSDATE
@@ -74,7 +77,7 @@
 		 ORDER BY A.SEQ ASC
 	</select>
 	
-	<!-- 게시판 카테고리 조회 -->	
+	<!-- 게시판 카테고리 조회 -->
 	<select id="S_BBS_SETTING" resultType="HashMap" parameterType="HashMap" >
 		/* S_BBS_SETTING */
 		SELECT 'id_' || (ROWNUM-1) AS "id" 
@@ -82,7 +85,8 @@
 			 , A.MODULE_CODE    
 			 , A.SEQ
 			 , A.CATEGORY_CODE  
-			 , A.CATEGORY_NAME  
+			 , A.CATEGORY_NAME
+			 , A.UP_CATEGORY_CODE
 			 , A.DESCRIPTION    
 			 , A.USE_YN         
 			 , COMM_UTIL_PKG.comm_code_attr('MODULE', A.MODULE_CODE, 'NAME', #{LANG_CODE}) AS MODULE_NAME
@@ -94,13 +98,19 @@
 	<!-- 게시판 리스트 카테고리 조회 (권한적용)-->	
 	<select id="S_BBS_CATEGORY" resultType="HashMap" parameterType="HashMap" >
 		/* S_BBS_CATEGORY */
-		SELECT 'id_' || (ROWNUM-1) AS "id" 
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , LEVEL-1 AS "indent"
+			 , SUBSTR( SYS_CONNECT_BY_PATH(ROWNUM, '_')
+	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
+	 		 		 , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1	AS "parent" 
 			 , A.CATEGORY_CODE  
 			 , COMM_UTIL_PKG.lang(A.CATEGORY_NAME, #{LANG_CODE}) as CATEGORY_NAME
 		  FROM BBS_SETTING A
 		 WHERE A.USE_YN = '1'
 		   AND A.MODULE_CODE = #{MODULE_CODE}
-		 ORDER BY A.SEQ ASC
+		 START WITH A.UP_CATEGORY_CODE IS null 
+       CONNECT BY PRIOR A.CATEGORY_CODE = A.UP_CATEGORY_CODE
+         ORDER SIBLINGS BY A.SEQ
 	</select>
 	
 	<!-- 게시글 조회(한개)-->	
@@ -109,6 +119,7 @@
 		SELECT A.BBS_BOARD_ID  
 			 , A.MODULE_CODE   
 			 , A.CATEGORY_CODE 
+			 , A.OPEN_YN
 			 , A.BOARD_NO      
 			 , A.TITLE         
 			 , A.BOARD_CONTENTS

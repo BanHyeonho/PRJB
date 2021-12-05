@@ -35,6 +35,49 @@ public class ComUtil {
 
 
 	/**
+	 * Clob 데이터 저장을 위한 문자열 길이 4000자 단위로 clob데이터로 리턴
+	 * @param str
+	 * @return
+	 */
+	public static String getClob(String str) {
+		int maxSize = 4000;
+		StringBuffer result = new StringBuffer();
+		if(str != null &&
+		!str.isEmpty()){
+			
+            if(str.getBytes().length <= maxSize) {
+            	result.append("TO_CLOB('");
+            	result.append(str);
+            	result.append("')");
+            	
+            }else{
+
+            	int strLen = str.length();
+            	int idx = 0;
+            	
+            	do {
+            		
+            		result.append("TO_CLOB('");
+                	result.append(str.substring(idx, Math.min(strLen, idx += maxSize ) ));
+                	
+                	if(idx < strLen) {
+                		result.append("') || ");
+                	}
+                	else {
+                		result.append("')");
+                	}
+            	}while(idx < strLen);
+            	
+            }
+            
+            return result.toString();
+            
+        } else {
+            return null;
+        }
+	}
+	
+	/**
 	 * 난수발생
 	 * @return
 	 */

@@ -34,5 +34,4 @@
 	<resultMap id="ClobMap" type="hashMap" >
 	    <result property="BOARD_CONTENTS" column="BOARD_CONTENTS" jdbcType="CLOB" javaType="java.lang.String"/>
 	</resultMap>
-
 </mapper>

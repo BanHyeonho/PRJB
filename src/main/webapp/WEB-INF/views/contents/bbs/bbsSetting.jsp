@@ -16,16 +16,16 @@
 			<div class="btn-area" id='BTN_AREA1'>
 			</div>
 		</div>
-		<div id='moduleGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-2'>
+		<div id='moduleGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-2-1'>
 			<div id="moduleGrid" class="grid"></div>
 		</div>
-		<div id='categoryGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-4-1'>
+		<div id='categoryGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-5'>
 			<div id='categoryGrid' class="grid"></div>
 		</div>
-		<div id='authGroupGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-2-1 panel-4-1'>
+		<div id='authGroupGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-2-1 panel-3-1'>
 			<div id='authGroupGrid' class="grid"></div>
 		</div>
-		<div id='bbsAuthGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-2-1 panel-4-1'>
+		<div id='bbsAuthGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-2-1 panel-3-1'>
 			<div id='bbsAuthGrid' class="grid"></div>
 		</div>
 	</div>

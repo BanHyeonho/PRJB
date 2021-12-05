@@ -393,7 +393,12 @@ var f_addPageExec = function(p_param){
         
     li.attr('title', label);
         
-    var tabContentHtml = '<iframe src="/page?menuCode=' + p_param.menuCode + '" scrolling="no"></iframe>';
+    var pageSrc = '/page?menuCode=' + p_param.menuCode;
+    if(Object.keys(gf_nvl(p_param.menuParam, {})).length > 0){
+    	pageSrc += '&menuParam=' + encodeURIComponent( JSON.stringify(p_param.menuParam) );
+    }
+    
+    var tabContentHtml = '<iframe src="' + pageSrc + '" scrolling="no"></iframe>';
  
   	tabs.find( ".ui-tabs-nav" ).append( li );
   	tabs.append( "<div id='" + id + "'>" + tabContentHtml + "</div>" );
@@ -408,7 +413,7 @@ var f_selectFrame = function(me){
 	var tabId = $(me).attr('aria-controls');
 	var tabFrame = $('#' + tabId + ' iframe')[0].contentWindow;
 	//메뉴명
-	tabFrame.$('#content-title').text($(me).find('span.menu-span').text());
+	tabFrame.$('#content-title').text($(me).attr('title'));
 	
 	//그리드 리사이즈
 	var v_gridList = tabFrame.gridList;

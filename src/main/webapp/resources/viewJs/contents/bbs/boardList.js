@@ -1,14 +1,11 @@
 /**
  * 게시판
  */
-var moduleCode;
+var moduleCode = pageParam.MODULE_CODE;
 $(document).ready(function() {
 	
 	f_setCategoryGrid();
 	f_setBoardGrid();
-    
-
-    moduleCode = 'ST';
 });
 
 var f_setCategoryGrid = function(){
@@ -53,8 +50,13 @@ var f_setBoardGrid = function(){
 var f_write = function(){
 	
 	var v_param = {
-		menuNm : gf_mlg('영상_게시글_작성'),
-		menuCode : 'HIDDEN001'
+		menuNm : gf_mlg('게시글_작성', {
+			param : '('+ parent.$('li[aria-selected="true"]').attr('title') +')'
+		}),
+		menuCode : 'HIDDEN001',
+		menuParam : {
+			MODULE_CODE : moduleCode
+		}
 	};
 		
 	parent.f_addPageExec(v_param);
