@@ -1298,16 +1298,38 @@ function gf_getEditorValue(p_editor){
 }
 //에디터 값입력
 function gf_setEditorValue(p_editor, p_value){
-	$('#' + p_editor).get(0).contentWindow.watchdog.editor.setData(p_value);
+	
+	var intervalId = setInterval(function(){
+		try{
+			$('#' + p_editor).get(0).contentWindow.watchdog.editor.setData(p_value);
+			clearInterval(intervalId);
+		}catch(e){
+			setTimeout(function(){
+				clearInterval(intervalId);
+			}, 10000);
+		}
+	},10);
+	
+	
 }
 //에디터 모드변경
 function gf_editorEditable(p_editor, p_value){
-	if(p_value){
-		$('#' + p_editor).get(0).contentWindow.watchdog.editor.isReadOnly = false;
-	}
-	else{
-		$('#' + p_editor).get(0).contentWindow.watchdog.editor.isReadOnly = true;
-	}
+	
+	var intervalId = setInterval(function(){
+		try{
+			if(p_value){
+				$('#' + p_editor).get(0).contentWindow.watchdog.editor.isReadOnly = false;
+			}
+			else{
+				$('#' + p_editor).get(0).contentWindow.watchdog.editor.isReadOnly = true;
+			}
+			clearInterval(intervalId);
+		}catch(e){
+			setTimeout(function(){
+				clearInterval(intervalId);
+			}, 10000);
+		}
+	},10);
 }
 /********************************************************************************** */
 /*													 								*/
