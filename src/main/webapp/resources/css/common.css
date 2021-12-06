@@ -6,6 +6,7 @@
 	height: 100%;
 }
 .ajax_mask{
+	display: none;
 	position: absolute;
 	width: 100%;
 	height: 100%;
