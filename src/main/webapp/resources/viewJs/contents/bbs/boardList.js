@@ -32,18 +32,26 @@ var f_setBoardGrid = function(){
 	    
 	    var boardInfo = boardGrid.getDataItem(args.row);
 	    
-	    var v_param = {
-	    		menuNm : gf_mlg('영상_게시글'),
-	    		menuCode : 'HIDDEN002',
-	    		p_param : {
-	    			BBS_BOARD_ID : boardInfo.BBS_BOARD_ID,
-	    			MODULE_CODE : boardInfo.MODULE_CODE,
-	    			BOARD_NO : boardInfo.BOARD_NO
-	    		}
-    	};
-	    		
-    	parent.f_addPageExec(v_param);
-	    	
+	    
+		var v_param = {
+				menuNm : gf_mlg('게시글_보기', {
+					param : '('+ parent.$('li[aria-selected="true"]').attr('title') +')'
+				}),
+				menuCode : 'HIDDEN002',
+				menuParam : {
+					MODULE_CODE : moduleCode,
+					BBS_BOARD_ID : boardInfo.BBS_BOARD_ID
+				}
+			};
+		parent.f_addPageExec(v_param);
+		
+		//조회수up
+		gf_ajax({
+  			QUERY_ID : 'bbs.U_BBS_BOARD_VIEW_UP',
+			BBS_BOARD_ID : boardInfo.BBS_BOARD_ID
+		}, null
+		, function(data){
+		});
 	});
 	
 }

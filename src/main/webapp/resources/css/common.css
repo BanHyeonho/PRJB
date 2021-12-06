@@ -5,7 +5,13 @@
 	background-size: 100% 100%;
 	height: 100%;
 }
-
+.ajax_mask{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	cursor: wait;
+	background: url(../img/loading.gif) no-repeat center center;
+}
 .selected-menu{
 	background-color : #F1F9FF;
 }
@@ -208,13 +214,11 @@ iframe {
 }
 
 .tree-toggle.expand {
-	background: url(../plugin/slickGrid/images/expand.gif) no-repeat center
-		center;
+	background: url(../plugin/slickGrid/images/expand.gif) no-repeat center center;
 }
 
 .tree-toggle.collapse {
-	background: url(../plugin/slickGrid/images/collapse.gif) no-repeat
-		center center;
+	background: url(../plugin/slickGrid/images/collapse.gif) no-repeat center center;
 }
 
 #content{

@@ -3,9 +3,9 @@
  */
 let boardInfo = {
 	moduleCode : menuParam.MODULE_CODE,
+	bbsBoardId : String(gf_nvl(menuParam.BBS_BOARD_ID, '')),
 	attachedFiles : [],
 	attachedDelFiles : [],
-	bbsBoardId : ''
 }
 
 $(document).ready(function() {
@@ -180,6 +180,18 @@ var f_search = function(){
 			, function(data){
 				if(data.result.length > 0){
 					var result = data.result[0];
+					
+					$('#CATEGORY_NAME').val(result.CATEGORY_NAME);
+					$('#CATEGORY_CODE').val(result.CATEGORY_CODE);
+					$('#TITLE').val(result.TITLE);
+					
+					if(gf_nvl(result.OPEN_YN, '0') == '1'){
+						$('#OPEN_Y').prop('checked', true);	
+					}
+					else{
+						$('#OPEN_N').prop('checked', true);
+					}
+					
 					gf_setEditorValue('editor', result.BOARD_CONTENTS);
 				}
 				else{

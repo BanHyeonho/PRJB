@@ -118,12 +118,14 @@
 		/* S_BBS_BOARD_ONE */
 		SELECT A.BBS_BOARD_ID  
 			 , A.MODULE_CODE   
-			 , A.CATEGORY_CODE 
+			 , A.CATEGORY_CODE
+			 , COMM_UTIL_PKG.lang(B.CATEGORY_NAME, #{LANG_CODE}) as CATEGORY_NAME
 			 , A.OPEN_YN
 			 , A.BOARD_NO      
 			 , A.TITLE         
 			 , A.BOARD_CONTENTS
-		  FROM bbs_board A
+		  FROM BBS_BOARD A
+		  LEFT JOIN BBS_SETTING B ON (A.CATEGORY_CODE = B.CATEGORY_CODE AND A.MODULE_CODE = B.MODULE_CODE)
 		 WHERE A.BBS_BOARD_ID = #{BBS_BOARD_ID}
 		   AND A.MODULE_CODE = #{MODULE_CODE}
 	</select>
@@ -155,4 +157,11 @@
 		 ORDER BY A.BOARD_NO DESC
 	</select>
 	
+	<!-- 게시글 조회수 증가 -->
+	<update id="U_BBS_BOARD_VIEW_UP" parameterType="HashMap" >
+		/* U_BBS_BOARD_HIT */
+		UPDATE BBS_BOARD
+		   SET VIEW_CNT = NVL(VIEW_CNT, 0) + 1
+		 WHERE BBS_BOARD_ID = #{BBS_BOARD_ID}
+	</update>
 </mapper>

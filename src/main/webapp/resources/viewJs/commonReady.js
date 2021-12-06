@@ -2,6 +2,19 @@
  * 공통 document ready
  */
 $(document).ready(function() {
+	var ajax_mask = $('<div>').addClass('ajax_mask');
+	$('body').prepend(ajax_mask);
+	$(document).ajaxStart(function() {
+		$('.ajax_mask').show();
+	}).ajaxError(function(a, b, c) {
+		console.error('ajax - error', a, b, c);
+	}).ajaxStop(function() {
+		$(".ajax_mask").hide();
+	}).on('mousedown', '.ajax_mask', function(e) {
+		e.preventDefault();
+		gf_toast(gf_mlg('처리_중_입니다'), 'info');
+	});
+	
 	
 	//버튼생성
 	$.each(btnList, function(idx, item){
