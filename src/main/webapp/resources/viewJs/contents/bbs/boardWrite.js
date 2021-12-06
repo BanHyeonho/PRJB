@@ -254,7 +254,7 @@ var f_save = function(){
 	$.each(boardInfo.attachedFiles, function(idx, item){
 		if(idx == 0){
 			var fileData = {
-					MODULE_CODE : boardInfo.moduleCode,
+					MODULE_CODE : 'BD',
 					GET_PARAM : {
 									GROUP_ID : 'boardForm.BBS_BOARD_ID'
 								}
