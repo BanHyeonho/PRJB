@@ -203,7 +203,7 @@ var f_search = function(){
 	//첨부파일 조회
 	gf_ajax({
 		QUERY_ID : 'com.S_COMM_FILE',
-		MODULE_CODE : boardInfo.moduleCode,
+		MODULE_CODE : 'BD',
 		GROUP_ID : boardInfo.bbsBoardId,
 	}, null
 	 , function(data){
