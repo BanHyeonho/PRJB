@@ -138,8 +138,10 @@
 			 , A.MODULE_CODE   
 			 , A.CATEGORY_CODE 
 			 , A.BOARD_NO      
-			 , A.TITLE
-			 , COMM_UTIL_PKG.user_name(A.CID) AS WRITER
+			 , CASE WHEN A.OPEN_YN = '1'
+ 				    THEN ''
+ 				    ELSE '(' || COMM_UTIL_PKG.lang('비공개', #{LANG_CODE}) || ') ' END || A.TITLE				AS TITLE
+			 , COMM_UTIL_PKG.user_name(A.CID) 			AS WRITER
 			 , A.VIEW_CNT
 		  FROM BBS_BOARD A
 		 WHERE A.MODULE_CODE = #{MODULE_CODE}

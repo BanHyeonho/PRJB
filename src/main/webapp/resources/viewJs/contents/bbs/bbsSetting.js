@@ -89,7 +89,7 @@ var f_save = function(){
 					//카테고리 그리드
 					if(categoryData.length > 0){
 						categoryData.unshift({
-  							 'TALBE_NAME' : 'BBS_SETTING'
+  							 'TABLE_NAME' : 'BBS_SETTING'
   							,'QUERY_ID' : 'com.COMM_QUERY'
   						});
   						fData.set('categoryGrid', JSON.stringify(categoryData));
@@ -98,7 +98,7 @@ var f_save = function(){
 					//권한그룹 그리드
 					if(authGroupData.length > 0){
 						authGroupData.unshift({
-  							 'TALBE_NAME' : 'COMM_AUTH_GROUP_MENU_FUNC'
+  							 'TABLE_NAME' : 'COMM_AUTH_GROUP_MENU_FUNC'
   							,'QUERY_ID' : 'com.COMM_AUTH_GROUP_MENU_FUNC'
   						});
   						fData.set('authGroupGrid', JSON.stringify(authGroupData));
@@ -107,7 +107,7 @@ var f_save = function(){
 					//게시판 권한 그리드
 					if(bbsAuthData.length > 0){
 						bbsAuthData.unshift({
-  							 'TALBE_NAME' : 'COMM_AUTH_GROUP_CONTEXT'
+  							 'TABLE_NAME' : 'COMM_AUTH_GROUP_CONTEXT'
   							,'QUERY_ID' : 'com.COMM_AUTH_GROUP_CONTEXT'
   						});
   						fData.set('bbsAuthGrid', JSON.stringify(bbsAuthData));

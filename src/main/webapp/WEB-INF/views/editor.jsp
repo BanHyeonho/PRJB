@@ -58,7 +58,9 @@ body{
 	                toolbarElement.style.display = 'flex';
 	                setSize(0);
 	            }
-	        } );	        
+	        } );
+	        watchdog.editor.isReadOnly = true;
+	        
 	        window.onresize = function(event){
 	        	setSize(0);
         	} 

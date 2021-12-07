@@ -161,7 +161,7 @@ var f_save = function(){
 					//마스터그리드
 					if(masterData.length > 0){
 						masterData.unshift({
-  							 'TALBE_NAME' : 'COMM_CODE_MASTER'
+  							 'TABLE_NAME' : 'COMM_CODE_MASTER'
   							,'QUERY_ID' : 'com.COMM_QUERY'
   						});
   						fData.set('masterGrid', JSON.stringify(masterData));
@@ -170,7 +170,7 @@ var f_save = function(){
 					//디테일그리드
 					if(detailData.length > 0){
 						detailData.unshift({
-  							 'TALBE_NAME' : 'COMM_CODE_DETAIL'
+  							 'TABLE_NAME' : 'COMM_CODE_DETAIL'
   							,'QUERY_ID' : 'com.COMM_QUERY'
   						});
   						fData.set('detailGrid', JSON.stringify(detailData));

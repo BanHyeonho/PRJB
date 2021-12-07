@@ -119,7 +119,7 @@ var f_save = function(){
 				
 					if(groupData.length > 0){
 						groupData.unshift({
-							 'TALBE_NAME' : 'COMM_AUTH_GROUP'
+							 'TABLE_NAME' : 'COMM_AUTH_GROUP'
 							,'QUERY_ID' : 'com.COMM_QUERY'
 						});
 						fData.set('groupGrid', JSON.stringify(groupData));
@@ -127,7 +127,7 @@ var f_save = function(){
 					
 					if(userData.length > 0){
 						userData.unshift({
-							 'TALBE_NAME' : 'COMM_AUTH_GROUP_USER'
+							 'TABLE_NAME' : 'COMM_AUTH_GROUP_USER'
 							,'QUERY_ID' : 'com.COMM_QUERY'
 						});
 						fData.set('userGrid', JSON.stringify(userData));

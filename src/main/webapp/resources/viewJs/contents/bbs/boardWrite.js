@@ -9,7 +9,7 @@ let boardInfo = {
 }
 
 $(document).ready(function() {
-	
+	gf_editorEditable('editor', true);
 	//카테고리콤보
 	f_setCategory();
 	
@@ -97,8 +97,9 @@ var fileAttachment = function (dragDrop) {
             setTimeout(function () {
 
                 //파일확장자
-                var fileExt = file.name.substring(file.name.lastIndexOf('.'), file.name.length).toLowerCase();
+                var fileExt = file.name.substring(file.name.lastIndexOf('.') +1, file.name.length).toUpperCase();
                 
+                var fileExtensions = parent.index_info.gv_fileExtension.map(x=>x.CODE_VALUE);
                 //폴더 또는 용량이 없는 파일
                 if(file.size == 0
         		|| file.name.lastIndexOf('.') == -1
@@ -114,9 +115,12 @@ var fileAttachment = function (dragDrop) {
                     return false;
                 }
                 //업로드 불가 파일확장자
-//                else if(fileExt == '.exe'){
-//                    return false;
-//                }
+                else if(fileExtensions.indexOf(fileExt.toUpperCase()) == -1){
+                	gf_toast(gf_mlg('다음의_확장자만_업로드_가능합니다',{
+                		param : fileExtensions.join()
+                	}));
+                    return false;
+                }
                 else{
                 	var fileId = new Date().getTime();
                 	var fSize = gf_getFileSize(file.size);    
@@ -144,16 +148,23 @@ var fileAttachment = function (dragDrop) {
 //파일삭제 type: DB / SCRIPT 
 var fileDelete = function (me, id, type) {
 
-    $(me).closest('tr').remove();
-    
+	//DB에 저장된데이터 1건식 삭제
     if(type == 'DB'){
+    	$(me).closest('tr').remove();
     	var deleteFileData = JSON.parse(decodeURIComponent(id));
     	boardInfo.attachedDelFiles.push(deleteFileData);
     }
-    else{
+    //화면에 올리기만한 데이터 1건식 삭제
+    else if(type == 'SCRIPT'){
+    	$(me).closest('tr').remove();
     	boardInfo.attachedFiles = boardInfo.attachedFiles.filter((x, idx, array) => {
             return x.id != id
         });
+    }
+    //글전체 삭제
+    else if(type == 'ALL'){
+    	var deleteFileData = JSON.parse(decodeURIComponent(id));
+    	boardInfo.attachedDelFiles.push(deleteFileData);
     }
     
 
@@ -294,8 +305,39 @@ var f_save = function(){
 
 var f_delete = function(){
 	if(confirm(gf_mlg('삭제_하시겠습니까'))){
-		parent.gf_toast(gf_mlg('삭제_되었습니다'), 'success');
-		parent.$('li[aria-selected="true"]').find('.tabCloseBtn').click();	
+		
+		var fData = new FormData();
+		boardInfo.attachedDelFiles = [];
+		//게시글내용 삭제
+		var boardDara = {
+			QUERY_ID : 'com.D_COMM_QUERY',
+			TABLE_NAME : 'BBS_BOARD',
+			BBS_BOARD_ID : boardInfo.bbsBoardId
+		};
+		fData.append('boardDelForm', JSON.stringify(boardDara));
+		
+		//게시글 첨부파일 삭제
+		var files = $('#attachedFileTable [onclick^=fileDelete]');
+		$.each(files, function(idx, item){
+			var chgEvent = $(item).attr('onclick').replace(/\'DB\'/g, '\'ALL\'').replace(/\'SCRIPT\'/g, '\'ALL\'');
+			$(item).attr('onclick', chgEvent);
+			$(item).click();
+		});
+		fData.append('boardFileDel', JSON.stringify(boardInfo.attachedDelFiles));
+		
+		gf_ajax( fData
+				, function(){
+			
+					gf_delFormData(fData);
+					return true;
+				}
+				, function(data){
+					parent.gf_toast(gf_mlg('삭제_되었습니다'), 'success');
+					parent.$('li[aria-selected="true"]').find('.tabCloseBtn').click();
+				}
+				, null
+				, null
+				, '/save');
 	}
 	
 }

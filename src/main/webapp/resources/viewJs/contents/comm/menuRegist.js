@@ -142,7 +142,7 @@ var f_save = function(){
 				
 					if(masterData.length > 0){
 						masterData.unshift({
-							 'TALBE_NAME' : 'COMM_MENU'
+							 'TABLE_NAME' : 'COMM_MENU'
 							,'QUERY_ID' : 'com.COMM_QUERY'
 						});
 						fData.set('masterGrid', JSON.stringify(masterData));
@@ -150,7 +150,7 @@ var f_save = function(){
 					
 					if(functionData.length > 0){
 						functionData.unshift({
-							 'TALBE_NAME' : 'COMM_MENU_FUNC'
+							 'TABLE_NAME' : 'COMM_MENU_FUNC'
 							,'QUERY_ID' : 'com.COMM_QUERY'
 						});
 						fData.set('functionGrid', JSON.stringify(functionData));

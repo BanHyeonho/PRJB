@@ -56,6 +56,13 @@
 		 WHERE A.COMM_FILE_ID = #{COMM_FILE_ID}
 		   AND A.RANDOM_KEY = #{RANDOM_KEY}
 	</select>
+	<!-- 실제파일 삭제체크-->
+	<select id="S_COMM_FILE_DELETE_CHK" resultType="HashMap" parameterType="HashMap" >
+		SELECT COUNT(A.COMM_FILE_ID)		AS CNT
+		  FROM COMM_FILE A
+		 WHERE A.FILE_PATH = #{FILE_PATH}
+		   AND A.SERVER_FILE_NAME = #{SERVER_FILE_NAME}
+	</select>
 	<!-- 첨부파일 삭제 -->
 	<delete id="D_COMM_FILE" parameterType="HashMap" >
 		DELETE
@@ -986,22 +993,22 @@
 		/* S_COLUMNS */
 		SELECT COLUMN_NAME
 		  FROM COLS 
-		 WHERE TABLE_NAME = #{TALBE_NAME}
+		 WHERE TABLE_NAME = #{TABLE_NAME}
 		 ORDER BY COLUMN_ID ASC
 	</select>
 	
 	<!-- 공통INSERT -->
 	<insert id="I_COMM_QUERY" parameterType="HashMap" >
 		/* I_COMM_QUERY */
-		INSERT INTO ${TALBE_NAME}
+		INSERT INTO ${TABLE_NAME}
 			<foreach collection="TABLE_LAYOUT" item="item" open="(" separator="," close=")" >
 					${item.COLUMN_NAME}
 			</foreach>
 			VALUES
 			<foreach collection="TABLE_LAYOUT" item="item" open="(" separator="," close=")">
 				<choose>
-					<when test="item.COLUMN_NAME == TALBE_NAME+'_ID'">
-					${TALBE_NAME}_S.NEXTVAL
+					<when test="item.COLUMN_NAME == TABLE_NAME+'_ID'">
+					${TABLE_NAME}_S.NEXTVAL
 					</when>
 					<when test="item.COLUMN_NAME == 'CDT' or item.COLUMN_NAME == 'MDT'">
 					SYSDATE
@@ -1016,11 +1023,11 @@
 	<!-- 공통UPDATE -->
 	<update id="U_COMM_QUERY" parameterType="HashMap" >
 		/* U_COMM_QUERY */
-		UPDATE ${TALBE_NAME}
+		UPDATE ${TABLE_NAME}
 		   SET 
 		   <foreach collection="TABLE_LAYOUT" item="item" separator=",">
 				<choose>
-					<when test="item.COLUMN_NAME == TALBE_NAME+'_ID' or item.COLUMN_NAME == 'CDT' or item.COLUMN_NAME == 'CID'or item.COLUMN_NAME == 'CIP'">
+					<when test="item.COLUMN_NAME == TABLE_NAME+'_ID' or item.COLUMN_NAME == 'CDT' or item.COLUMN_NAME == 'CID'or item.COLUMN_NAME == 'CIP'">
 					${item.COLUMN_NAME} = ${item.COLUMN_NAME}
 					</when>
 					<when test="item.COLUMN_NAME == 'MDT'">
@@ -1038,7 +1045,7 @@
 	<delete id="D_COMM_QUERY" parameterType="HashMap" >
 		/* D_COMM_QUERY */
 		DELETE
-		  FROM ${TALBE_NAME}
+		  FROM ${TABLE_NAME}
 		 WHERE ${WHERE_QUERY}
 	</delete>
 	

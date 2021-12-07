@@ -7,7 +7,7 @@ let boardInfo = {
 }
 
 $(document).ready(function() {
-	
+	gf_editorEditable('editor', false);
     f_search();
 });
 

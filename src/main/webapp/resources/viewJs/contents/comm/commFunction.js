@@ -133,7 +133,7 @@ var f_save = function(){
 					//기능그리드
 					if(functionData.length > 0){
 						functionData.unshift({
-  							 'TALBE_NAME' : 'COMM_FUNCTION'
+  							 'TABLE_NAME' : 'COMM_FUNCTION'
   							,'QUERY_ID' : 'com.COMM_QUERY'
   						});
   						fData.set('functionGrid', JSON.stringify(functionData));
@@ -142,7 +142,7 @@ var f_save = function(){
 					//메뉴그리드
 					if(menuData.length > 0){
 						menuData.unshift({
-  							 'TALBE_NAME' : 'COMM_MENU_FUNC'
+  							 'TABLE_NAME' : 'COMM_MENU_FUNC'
   							,'QUERY_ID' : 'com.COMM_MENU_FUNC'
   						});
   						fData.set('menuGrid', JSON.stringify(menuData));

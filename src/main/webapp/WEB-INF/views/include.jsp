@@ -75,7 +75,7 @@ const btnList = JSON.parse(gf_nvl('${btnList}', '[]'));
 </c:if>
 
 
-<!-- 페이지변수(설정값) -->
+<!-- 페이지변수(설정값) 불변 -->
 <script type="text/javascript">
 const pageParam = JSON.parse(gf_nvl('${pageParam}', '{}'));
 </script>

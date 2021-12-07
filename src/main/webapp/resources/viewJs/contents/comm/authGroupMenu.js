@@ -279,7 +279,7 @@ var f_save = function(){
 					//메뉴그리드
 					if(menuData.length > 0){
 						menuData.unshift({
-  							 'TALBE_NAME' : 'COMM_AUTH_GROUP_MENU'
+  							 'TABLE_NAME' : 'COMM_AUTH_GROUP_MENU'
   							,'QUERY_ID' : 'com.COMM_AUTH_GROUP_MENU'
   						});
   						fData.set('menuGrid', JSON.stringify(menuData));
@@ -288,7 +288,7 @@ var f_save = function(){
 					//기능그리드
 					if(functionData.length > 0){
 						functionData.unshift({
-  							 'TALBE_NAME' : 'COMM_AUTH_GROUP_MENU_FUNC'
+  							 'TABLE_NAME' : 'COMM_AUTH_GROUP_MENU_FUNC'
   							,'QUERY_ID' : 'com.COMM_AUTH_GROUP_MENU_FUNC'
   						});
   						fData.set('functionGrid', JSON.stringify(functionData));
@@ -297,7 +297,7 @@ var f_save = function(){
 					//컨텍스트그리드
 					if(gridContextData.length > 0){
 						gridContextData.unshift({
-  							 'TALBE_NAME' : 'COMM_AUTH_GROUP_CONTEXT'
+  							 'TABLE_NAME' : 'COMM_AUTH_GROUP_CONTEXT'
   							,'QUERY_ID' : 'com.COMM_AUTH_GROUP_CONTEXT'
   						});
   						fData.set('gridContextGrid', JSON.stringify(gridContextData));

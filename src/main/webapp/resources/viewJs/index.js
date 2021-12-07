@@ -10,8 +10,14 @@ var selectedTabId = '';
 
 let menuSearchData = [];
 
+//모든화면에서 사용가능 변수
+var index_info = {
+	gv_fileExtension : []	//첨부파일 허용확장자
+}
 $(document).ready(function () {
 
+	f_getBackgroundData();
+	
 	//메뉴셋팅
 	f_getMenu();
     tabs = $("#indexTab").tabs();
@@ -41,6 +47,19 @@ $(document).ready(function () {
     $('#favoriteTabBtn').on('click', f_menuBookmark);
            
 });
+
+//모든화면에서 사용가능한 static 변수데이터 가져오기
+function f_getBackgroundData(){
+	gf_ajax({
+		QUERY_ID : 'combo.S_SYS_CODE',
+		MASTER_CODE : 'FILE_EXTENSION'
+	}, null
+	, function(data){
+		if(data.result.length > 0){
+			index_info.gv_fileExtension = data.result;
+		}
+	});
+}
 
 //메뉴검색
 function f_searchMenu(){

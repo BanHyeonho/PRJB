@@ -398,12 +398,12 @@ public class ComService {
 		String whereQuery = "";
 		if(param.size() > 0) {
 			Map<String, String> m = param.get(0);
-			tableNm = m.get("TALBE_NAME");
+			tableNm = m.get("TABLE_NAME");
 			queryId = m.get("QUERY_ID");
 			
 			if("com.COMM_QUERY".equals(queryId)) {
 				Map colParam = new HashMap();
-				colParam.put("TALBE_NAME", tableNm);
+				colParam.put("TABLE_NAME", tableNm);
 				tableLayout = comDao.selectList("com.S_COLUMNS", colParam);
 			}
 			
@@ -429,7 +429,7 @@ public class ComService {
 						
 						map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
 					}
-					paramMap.put("TALBE_NAME", tableNm);
+					paramMap.put("TABLE_NAME", tableNm);
 					paramMap.put("TABLE_LAYOUT", tableLayout);
 					comDao.insert(gridQueryId, paramMap);
 					break;
@@ -443,7 +443,7 @@ public class ComService {
 					for (Map map : tableLayout) {
 						map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
 					}
-					paramMap.put("TALBE_NAME", tableNm);
+					paramMap.put("TABLE_NAME", tableNm);
 					paramMap.put("TABLE_LAYOUT", tableLayout);
 					paramMap.put("WHERE_QUERY", whereQuery);
 					comDao.update(gridQueryId, paramMap);
@@ -452,7 +452,7 @@ public class ComService {
 				case "deleted":
 					gridQueryId = nameSpace + ".D_" + query;
 					whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
-					paramMap.put("TALBE_NAME", tableNm);
+					paramMap.put("TABLE_NAME", tableNm);
 					paramMap.put("WHERE_QUERY", whereQuery);
 					comDao.delete(gridQueryId, paramMap);
 					break;
@@ -519,7 +519,7 @@ public class ComService {
 		Map resultMap = new HashMap();
 		
 		String queryId = String.valueOf(paramMap.get("QUERY_ID"));
-		String tableNm = String.valueOf(paramMap.get("TALBE_NAME"));
+		String tableNm = String.valueOf(paramMap.get("TABLE_NAME"));
 		
 		String langCode = String.valueOf(paramMap.get("langCode"));
 		String cId = String.valueOf(paramMap.get("cId"));
@@ -530,7 +530,7 @@ public class ComService {
 		//공통쿼리일경우
 		if(queryId.endsWith("COMM_QUERY")) {
 			Map colParam = new HashMap();
-			colParam.put("TALBE_NAME", tableNm);
+			colParam.put("TABLE_NAME", tableNm);
 			tableLayout = comDao.selectList("com.S_COLUMNS", colParam);
 		}
 		
@@ -557,7 +557,7 @@ public class ComService {
 				}	
 			}
 			
-			paramMap.put("TALBE_NAME", tableNm);
+			paramMap.put("TABLE_NAME", tableNm);
 			paramMap.put("TABLE_LAYOUT", tableLayout);
 			comDao.insert(queryId, paramMap);
 				
@@ -577,7 +577,7 @@ public class ComService {
 					map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
 				}
 			}
-			paramMap.put("TALBE_NAME", tableNm);
+			paramMap.put("TABLE_NAME", tableNm);
 			paramMap.put("TABLE_LAYOUT", tableLayout);
 			paramMap.put("WHERE_QUERY", whereQuery);
 			
@@ -591,7 +591,7 @@ public class ComService {
 		else if( queryId.contains(".D_")) {
 			
 			String whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
-			paramMap.put("TALBE_NAME", tableNm);
+			paramMap.put("TABLE_NAME", tableNm);
 			paramMap.put("WHERE_QUERY", whereQuery);
 			comDao.delete(queryId, paramMap);
 			
@@ -731,10 +731,16 @@ public class ComService {
 			comDao.delete("com.D_COMM_FILE", param);	
 		}
 		
-		Map fileMap = new HashMap();
-		fileMap.put("FILE_PATH", result.get("FILE_PATH"));
-		fileMap.put("SERVER_FILE_NAME", result.get("SERVER_FILE_NAME"));
-		FileUtil.fileDelete(result.get("FILE_PATH"), result.get("SERVER_FILE_NAME"));
+		Map<String, String> fileChk = comDao.selectOne("com.S_COMM_FILE_DELETE_CHK", result);
+		int fileUseCnt = Integer.parseInt(String.valueOf(fileChk.get("CNT")));
+
+		//해당파일을 참조하는 데이터가 있는경우 실파일을 삭제하지 않는다.
+		if(fileUseCnt == 0) {
+			Map fileMap = new HashMap();
+			fileMap.put("FILE_PATH", result.get("FILE_PATH"));
+			fileMap.put("SERVER_FILE_NAME", result.get("SERVER_FILE_NAME"));
+			FileUtil.fileDelete(result.get("FILE_PATH"), result.get("SERVER_FILE_NAME"));	
+		}
 		
 	}
 }

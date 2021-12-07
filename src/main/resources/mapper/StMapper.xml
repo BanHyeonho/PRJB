@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="st">
+
+	<!-- 게시판에 업로드된 영상 리스트 -->	
+	<select id="S_BBS_VIDEO_LIST" resultType="HashMap" parameterType="HashMap" >
+		/* S_BBS_VIDEO_LIST */
+      SELECT 'id_' || (ROWNUM-1) AS "id" 
+      	   , LOWER(A.FILE_EXTENSION)	AS FILE_EXTENSION
+           , A.FILE_NAME
+           , B.BBS_BOARD_ID
+           , B.BOARD_NO
+           , C.CATEGORY_NAME
+           , CASE WHEN B.OPEN_YN = '1'
+                  THEN ''
+                  ELSE '(' || COMM_UTIL_PKG.lang('비공개', 'KO') || ') ' END || B.TITLE        AS TITLE
+        FROM COMM_FILE A
+   LEFT JOIN BBS_BOARD B ON (A.GROUP_ID = B.BBS_BOARD_ID AND B.MODULE_CODE = 'ST')
+   LEFT JOIN BBS_SETTING C ON (B.CATEGORY_CODE = C.CATEGORY_CODE)
+       WHERE A.MODULE_CODE = 'BD'
+         AND COMM_UTIL_PKG.comm_code_attr('FILE_EXTENSION', UPPER(A.FILE_EXTENSION), 'ATTRIBUTE1', #{LANG_CODE}) IN ('VIDEO', 'SUB')
+       ORDER BY B.BBS_BOARD_ID DESC, TO_NUMBER(COMM_UTIL_PKG.comm_code_attr('FILE_EXTENSION', UPPER(A.FILE_EXTENSION), 'SEQ', #{LANG_CODE})) ASC
+	</select>
+	
+</mapper>

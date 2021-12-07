@@ -58,7 +58,7 @@ var f_save = function(){
 				}
 				else{
 					saveData.unshift({
-						 'TALBE_NAME' : 'COMM_MLG'
+						 'TABLE_NAME' : 'COMM_MLG'
 						,'QUERY_ID' : 'com.COMM_QUERY'
 					});
 					fData.set('masterGrid', JSON.stringify(saveData));

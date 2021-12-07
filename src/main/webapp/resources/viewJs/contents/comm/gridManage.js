@@ -307,7 +307,7 @@ var f_save = function(){
 					//마스터그리드
 					if(masterData.length > 0){
 						masterData.unshift({
-  							 'TALBE_NAME' : 'COMM_GRID_MASTER'
+  							 'TABLE_NAME' : 'COMM_GRID_MASTER'
   							,'QUERY_ID' : 'com.COMM_QUERY'
   						});
   						fData.set('masterGrid', JSON.stringify(masterData));
@@ -316,7 +316,7 @@ var f_save = function(){
 					//컨텍스트그리드
 					if(contextData.length > 0){
 						contextData.unshift({
-  							 'TALBE_NAME' : 'COMM_GRID_CONTEXT'
+  							 'TABLE_NAME' : 'COMM_GRID_CONTEXT'
   							,'QUERY_ID' : 'com.COMM_GRID_CONTEXT'
   						});
   						fData.set('contextGrid', JSON.stringify(contextData));
@@ -325,7 +325,7 @@ var f_save = function(){
 					//디테일그리드
 					if(detailData.length > 0){
 						detailData.unshift({
-  							 'TALBE_NAME' : 'COMM_GRID_DETAIL'
+  							 'TABLE_NAME' : 'COMM_GRID_DETAIL'
   							,'QUERY_ID' : 'com.COMM_QUERY'
   						});
   						fData.set('detailGrid', JSON.stringify(detailData));
@@ -334,7 +334,7 @@ var f_save = function(){
 					//콤보,팝업 설정그리드
 					if(comboPopupData.length > 0){
 						comboPopupData.unshift({
-  							 'TALBE_NAME' : 'COMM_GRID_COMBO_POPUP'
+  							 'TABLE_NAME' : 'COMM_GRID_COMBO_POPUP'
   							,'QUERY_ID' : 'com.COMM_QUERY'
   						});
   						fData.set('comboPopupGrid', JSON.stringify(comboPopupData));

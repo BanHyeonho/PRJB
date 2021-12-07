@@ -31,4 +31,4 @@ let gv_excelOptions = {
 	  };
 
 //첨부파일 최대용량 20GB
-let gv_fileMaxSize = 21474836480;
+const gv_fileMaxSize = 21474836480;

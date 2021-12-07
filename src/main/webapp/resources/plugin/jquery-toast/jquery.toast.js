@@ -13,11 +13,11 @@
 			// get/fix config
 			cf = toast.config;
 			th = $('<ul></ul>').addClass('toast').appendTo(document.body).hide();
-			typeof cf.width === 'number' || (cf.width = 500);
+			typeof cf.width === 'number';
 			typeof cf.align === 'string' || (cf.align = 'center');
 			typeof cf.closeForStickyOnly === 'boolean' || (cf.closeForStickyOnly = false);
 			th.width(cf.width);
-			(cf.align === 'left' || cf.align === 'right') && th.css('margin','5px').css(cf.align, '0') || th.css({top:'2%',left: '50%', margin: '5px 0 0 -' + (cf.width / 2) + 'px'});
+			(cf.align === 'left' || cf.align === 'right') && th.css('margin','5px').css(cf.align, '0') || th.css({top:'2%',left: '50%', 'min-width': '500px', transform: 'translate(-50%, 0)'});
 		}
 		// create toast
 		var ti = $('<li></li>').hide().html(m).appendTo(th), cb = $('<button>&times;</button>').addClass('close').prependTo(ti), to = null;
@@ -39,6 +39,6 @@
 		// show toast
 		ti.fadeIn('normal');
 	};
-	toast.config = { width: 500, align: 'center', closeForStickyOnly: true };
+	toast.config = { align: 'center', closeForStickyOnly: true };
 	$.extend({ toast: toast });
 })(jQuery);
