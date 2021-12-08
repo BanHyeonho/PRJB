@@ -10,7 +10,7 @@ $(document).ready(function() {
 var f_search = function(){
 	
 	gf_ajax({
-	  			QUERY_ID : 'com.S_COMM_USER',
+	  			QUERY_ID : 'st.S_ST_VIDEO_VIEW',
 	  			p_loginId : $('#searchParam1').val()
 			}, function(){
 				gf_gridClear(masterGrid);

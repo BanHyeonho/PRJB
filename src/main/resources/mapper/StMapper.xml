@@ -21,7 +21,43 @@
    LEFT JOIN BBS_SETTING C ON (B.CATEGORY_CODE = C.CATEGORY_CODE)
        WHERE A.MODULE_CODE = 'BD'
          AND COMM_UTIL_PKG.comm_code_attr('FILE_EXTENSION', UPPER(A.FILE_EXTENSION), 'ATTRIBUTE1', #{LANG_CODE}) IN ('VIDEO', 'SUB')
+         <if test="@prjb.com.util.ComUtil@nvl(TITLE, '') != ''">
+		 	<![CDATA[
+		 	AND INSTR(B.TITLE, #{TITLE}) > 0
+		 	]]> 
+		 </if>
        ORDER BY B.BBS_BOARD_ID DESC, TO_NUMBER(COMM_UTIL_PKG.comm_code_attr('FILE_EXTENSION', UPPER(A.FILE_EXTENSION), 'SEQ', #{LANG_CODE})) ASC
 	</select>
 	
+	<!-- 영상 리스트 -->	
+	<select id="S_ST_VIDEO" resultType="HashMap" parameterType="HashMap" >
+		/* S_ST_VIDEO */
+      SELECT 'id_' || (ROWNUM-1) AS "id" 
+      	   , A.ST_VIDEO_ID
+      	   , A.CATEGORY_NAME		AS CATEGORY_NAME
+      	   , A.UP_CATEGORY_NAME		AS UP_CATEGORY_NAME
+      	   , A.VIDEO_NAME
+      	   , A.OPEN_YN
+      	   , A.DESCRIPTION
+        FROM ST_VIDEO A
+       START WITH A.UP_CATEGORY_NAME IS null 
+     CONNECT BY PRIOR A.CATEGORY_NAME = A.UP_CATEGORY_NAME
+       ORDER SIBLINGS BY A.CATEGORY_NAME
+	</select>
+	<!-- 영상 리스트 조회 -->	
+	<select id="S_ST_VIDEO_VIEW" resultType="HashMap" parameterType="HashMap" >
+		/* S_ST_VIDEO_VIEW */
+	       SELECT 'id_' || (ROWNUM-1) AS "id"
+		       , LEVEL-1 AS "indent"
+		       , SUBSTR( SYS_CONNECT_BY_PATH(ROWNUM, '_')
+		           , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
+		           , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1  AS "parent"
+		       , A.ST_VIDEO_ID
+		       , A.CATEGORY_NAME
+		       , A.VIDEO_NAME
+	      	FROM ST_VIDEO A
+	  START WITH A.UP_CATEGORY_NAME IS null 
+	 CONNECT BY PRIOR A.CATEGORY_NAME = A.UP_CATEGORY_NAME
+	 ORDER SIBLINGS BY A.CATEGORY_NAME
+	</select>
 </mapper>

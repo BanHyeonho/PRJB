@@ -6,7 +6,6 @@
 
 <!-- Jquery -->
 <script src="/script/jquery-3.6.0.min.js?v=${pb:jsNow()}"></script>
-
 <!-- Jquery-UI -->
 <script src="/plugin/jquery-ui-1.13.0/jquery-ui.js?v=${pb:jsNow()}"></script>
 <link  href="/plugin/jquery-ui-1.13.0/jquery-ui.css?v=${pb:jsNow()}" rel="stylesheet" />
@@ -22,6 +21,8 @@
 <script src="/plugin/slickGrid/slick.groupitemmetadataprovider.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/slickGrid/slick.remotemodel.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/slickGrid/lib/select2.js?v=${pb:jsNow()}"></script>
+<script src="/plugin/slickGrid/plugins/slick.checkboxselectcolumn.js?v=${pb:jsNow()}"></script>
+<script src="/plugin/slickGrid/plugins/slick.rowselectionmodel.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/slickGrid/plugins/slick.autotooltips.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/slickGrid/plugins/slick.cellrangedecorator.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/slickGrid/plugins/slick.cellrangeselector.js?v=${pb:jsNow()}"></script>

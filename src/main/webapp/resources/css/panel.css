@@ -21,7 +21,10 @@
 	height : 40vh;
 	float: left;
 }
-
+.ht-pl-3 {
+	height : 40.2vh;
+	float: left;
+}
 /* 조회조건이없을때 */
 .ht-pl-1-1 {
 	height : 89.5vh;

@@ -46,6 +46,9 @@ var gridList = [];
 					<c:if test="${item.get(\"SORT_YN\") == '1'}">
 					,sortable: true
 					</c:if>
+					<c:if test="${item.get(\"ATTRIBUTE2\") == '1'}">
+					,checkBoxYn:'1'
+					</c:if>
 					<c:if test="${item.get(\"EDITOR\") != null}">
 					,editor: ${item.get("EDITOR")}
 					</c:if>

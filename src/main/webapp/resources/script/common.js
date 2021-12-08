@@ -260,8 +260,19 @@ function gf_gridInit(gridDiv, option) {
 		
 	}
 
-	vGrid = new Slick.Grid("#" + gridDiv, new Slick.Data.DataView(), columns, vOption);
-
+	if(columns[0].checkBoxYn == '1'){
+		var checkboxSelector = new Slick.CheckboxSelectColumn({ cssClass: "slick-cell-checkboxsel" });
+		columns.splice(0, 0, checkboxSelector.getColumnDefinition());
+		
+		vGrid = new Slick.Grid("#" + gridDiv, new Slick.Data.DataView(), columns, vOption);
+//    	vGrid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false})); 
+    	vGrid.registerPlugin(checkboxSelector);
+    }
+	else{
+		vGrid = new Slick.Grid("#" + gridDiv, new Slick.Data.DataView(), columns, vOption);
+	}
+	
+	
 	//정렬
     vGrid.onSort.subscribe(function (e, args) {
 		var cols = args.sortCols;
@@ -298,6 +309,9 @@ function gf_gridInit(gridDiv, option) {
 		vGrid.render(); //다시 그리기
     });
 
+    
+    
+    
 	vGrid.setSelectionModel(new Slick.CellSelectionModel());
 	vGrid.registerPlugin(new Slick.Plugins.Resizer({
         container: '#'+ gridDiv + 'Container',

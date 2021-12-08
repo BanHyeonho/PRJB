@@ -17,7 +17,7 @@
 			</div>
 			<div class="search-area mg-tp-default2">
 				<div class="div-2">
-					<label class="form">${pb:msg(pageContext.request, "파일명")}</label>
+					<label class="form">${pb:msg(pageContext.request, "영상명")}</label>
 					<input class="form form-text mg-tp-default" type="text" tabindex="1" enter-exec='99' id="searchParam1">
 				</div>
 			</div>
