@@ -1,5 +1,8 @@
 package prjb.com.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import prjb.com.service.ComService;
 import prjb.com.service.StService;
@@ -37,5 +42,17 @@ public class StController {
 		return stService.getVideo(headers, request);
 	}
 	
-
+	/**
+	 * 파일변환
+	 */
+	@RequestMapping(value = "/convert", method = RequestMethod.POST)
+	public @ResponseBody Map convert(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		Map resultMap = new HashMap();
+		
+		resultMap.put("result", stService.convert(request));
+		
+		return resultMap;
+	}
+	
 }

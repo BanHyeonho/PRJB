@@ -16,6 +16,10 @@ var f_setVideoGrid = function(){
     	'defaultInsert' : {'OPEN_YN' : '1'}
     });    
 
+	videoGrid.onSelectedRowsChanged.subscribe(function (e, args) {
+		f_videoFileSearch();
+    });
+
 }
 var f_setVideoFileGrid = function(){
 	videoFileGrid = gf_gridInit('videoFileGrid');    
@@ -68,6 +72,7 @@ var f_search = function(){
 		}
 	}
 	
+	gf_gridClear(videoFileGrid);
 	f_boardSearch();
 	f_videoSearch();
 }
@@ -99,18 +104,96 @@ var f_videoSearch = function(){
 		
 	});
 }
-
-var f_save = function(){
+var f_videoFileSearch = function(){
 	
-	var videoData = gf_gridSaveData(videoGrid);
-	
+	gf_ajax({
+		QUERY_ID : 'st.S_MAPPING_FILE',
+		ST_VIDEO_ID : gf_gridRowData(videoGrid, videoGrid.getSelectedRows(), 'ST_VIDEO_ID')
+	}, function(){
+		
+		gf_gridClear(videoFileGrid);
+		
+		if(videoGrid.getSelectedRows().length != 1){
+			return false;
+		}
+	}
+	, function(data){
+		
+		gf_gridCallback('videoFileGrid', data);
+		
+	});
+}
+var f_converter = function(){
 	
 	var fData = new FormData();
 	
 	gf_ajax( fData
 			, function(){
 				
-				if(videoData.length == 0){
+				if(gf_gridSaveData(videoGrid).length > 0
+				|| gf_gridSaveData(videoFileGrid).length > 0
+				){
+					gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
+					return false;
+				}
+		
+				// boardFileGrid validation
+				var convertFiles = gf_gridSaveData(boardFileGrid).filter( x=> x.CHK=='1' );
+				var videoCnt = convertFiles.filter(x=>x.FILE_TYPE=='VIDEO').length;
+								
+				if(convertFiles .length == 0){
+					gf_toast(gf_mlg('변환할_파일을_체크하세요'), 'info');
+					return false;
+				}
+				else if(videoCnt > 1){
+					gf_toast(gf_mlg('한_영상에_하나의_영상만_변환_가능합니다'), 'info');
+					return false;
+				}
+
+				// videoGrid validation
+				var target = videoGrid.getSelectedRows();
+				
+				if(target.length == 0){
+					gf_toast(gf_mlg('변환하여_저장할_대상_영상을_선택하세요'), 'info');
+					return false;
+				}
+				else if(target.length != 1){
+					gf_toast(gf_mlg('변환하여_저장할_대상_영상을_하나만_선택하세요'), 'info');
+					return false;
+				}
+				
+				
+				fData.append('CONVERT_FILES', JSON.stringify(convertFiles));
+				fData.append('GROUP_ID', gf_gridRowData(videoGrid, videoGrid.getSelectedRows(), 'ST_VIDEO_ID'));
+				
+			}
+			, function(data){
+				
+				gf_toast(gf_mlg('변환_되었습니다'), 'success');
+				gf_gridClear(boardFileGrid);
+				f_boardSearch();
+				gf_gridClear(videoFileGrid);
+				f_videoFileSearch();
+			}
+			, null
+			, null
+			, '/st/convert');
+	
+	
+}
+
+var f_save = function(){
+	
+	var fData = new FormData();
+	
+	gf_ajax( fData
+			, function(){
+				var videoData = gf_gridSaveData(videoGrid);
+				var videoFileData = gf_gridSaveData(videoFileGrid);
+				
+				if(videoData.length == 0
+				&& videoFileData.length == 0
+				){
 				
 					gf_toast(gf_mlg('저장할_데이터가_없습니다'), 'info');
 					return false;
@@ -125,6 +208,15 @@ var f_save = function(){
   						});
   						fData.set('videoGrid', JSON.stringify(videoData));
 					}
+					//영상그리드
+//					if(videoFileData.length > 0){
+//						videoData.unshift({
+//  							 'TABLE_NAME' : 'ST_VIDEO'
+//  							,'QUERY_ID' : 'com.COMM_QUERY'
+//  						});
+//  						fData.set('videoFileGrid', JSON.stringify(videoFileData));
+//					}
+					
 				}
 			}
 			, function(data){

@@ -626,6 +626,18 @@ function gf_gridClear(grid){
 	grid.updateRowCount(); //로우 카운트 업데이트
 	grid.render();
 }
+
+function gf_gridRowData(grid, rId, columnNm){
+	
+	if(gf_nvl(columnNm, '') == ''){
+		
+		return grid.getData().getItems()[rId];
+	}
+	else{
+		return grid.getData().getItems()[rId][columnNm];
+	}	
+}
+
 /********************************************************************************** */
 /*													 								*/
 /*	그리드 컨텍스트기능									 								*/
