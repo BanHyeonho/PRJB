@@ -95,6 +95,37 @@
 				    FROM COMM_FILE A
 				   WHERE A.COMM_FILE_ID = #{COMM_FILE_ID}        
 	</insert>
+	<!-- 영상 리스트(업로드된 파일) 조회 -->	
+	<select id="S_ST_VIDEO_VIEW_FILE" resultType="HashMap" parameterType="HashMap" >
+		/* S_ST_VIDEO_VIEW_FILE */
+	       SELECT 'id_' || (ROWNUM-1) AS "id"
+		       , LEVEL-1 AS "indent"
+		       , SUBSTR( SYS_CONNECT_BY_PATH(ROWNUM, '_')
+		           , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)
+		           , (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1) - (INSTR(SYS_CONNECT_BY_PATH(ROWNUM, '_'), '_', -1, 2)+1)) ) -1  AS "parent"
+		       , A.ST_VIDEO_ID
+		       , A.CATEGORY_NAME
+		       , A.VIDEO_NAME
+	      	FROM ST_VIDEO A
+         WHERE (
+               (VIDEO_NAME IS NULL
+               AND 1=1
+               )
+               OR
+               (VIDEO_NAME IS NOT NULL
+               AND 
+               EXISTS(
+                        SELECT COMM_FILE_ID
+                          FROM COMM_FILE
+                         WHERE MODULE_CODE = 'ST'
+                           AND UPPER(FILE_EXTENSION) = 'MP4'
+                           AND GROUP_ID = A.ST_VIDEO_ID
+                        ))
+               )
+	  START WITH A.UP_CATEGORY_NAME IS null 
+	 CONNECT BY PRIOR A.CATEGORY_NAME = A.UP_CATEGORY_NAME
+	 ORDER SIBLINGS BY A.CATEGORY_NAME
+	</select>
 	<!-- 파일변환 매핑한 파일 조회 -->
 	<select id="S_MAPPING_FILE" resultType="HashMap" parameterType="HashMap" >
 		SELECT 'id_' || (ROWNUM-1) AS "id"
@@ -103,6 +134,7 @@
 			 , A.FILE_EXTENSION
 			 , A.FILE_SIZE
 			 , B.VIDEO_NAME
+			 , A.RANDOM_KEY
 		  FROM COMM_FILE A
 	 	  JOIN ST_VIDEO B ON (A.GROUP_ID = B.ST_VIDEO_ID)
 		 WHERE A.MODULE_CODE 	= 'ST'

@@ -26,13 +26,12 @@
 			<div id="masterGrid" class="grid"></div>
 		</div>
 		<div id='videoContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-1 panel-8-1'>
-			<video style="width:100%; height:100%;" controls >
-<!-- 				<source src="/resources/videos/아이언 맨 1.mp4"> -->
-				<source src="/st/video?fileName=testFile">
+			<video style="width:100%; height:100%;" controls preload="none">
+				<source id='videoSource'>
 <!-- 				<track label="English" kind="subtitles" srclang="en" src="captions/vtt/sintel-en.vtt" default> -->
-				<track label="한국어" kind="subtitles" srclang="kr" src="/resources/videos/test.vtt" default>
-				<track label="영어" kind="subtitles" srclang="en" src="/resources/videos/test_en.vtt">
-				<track label="기타" kind="subtitles" srclang="etc" src="/resources/videos/test_etc.vtt" >
+<!-- 				<track label="한국어" kind="subtitles" srclang="kr" src="/resources/videos/test.vtt" default> -->
+<!-- 				<track label="영어" kind="subtitles" srclang="en" src="/resources/videos/test_en.vtt"> -->
+<!-- 				<track label="기타" kind="subtitles" srclang="etc" src="/resources/videos/test_etc.vtt" > -->
 			</video>
 		</div>
 	</div>

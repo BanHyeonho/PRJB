@@ -1,6 +1,5 @@
 package prjb.com.service;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +7,8 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +30,6 @@ import prjb.com.util.ComUtil;
 
 @Service("StService")
 public class StService {
-
-	@Value("#{config['file_root']}")
-	public String file_root;
 	
 	@Autowired
 	ComDao comDao;
@@ -42,7 +38,47 @@ public class StService {
 	 * 비디오 스트리밍
 	 */
 	public ResponseEntity<ResourceRegion> getVideo(HttpHeaders headers, HttpServletRequest request) throws Exception {
-		UrlResource video = new UrlResource("file:" + "C:\\develop\\files\\prjb\\testFile");
+		
+		String fileInfo = request.getParameter("fileInfo");
+		Map fileMap = new JSONObject(fileInfo.toString()).toMap();
+		
+		String commFileId = String.valueOf(fileMap.get("COMM_FILE_ID"));
+		String randomKey = String.valueOf(fileMap.get("RANDOM_KEY"));
+		
+		String contextFileId = String.valueOf(request.getServletContext().getAttribute("COMM_FILE_ID"));
+		String contextRandomKey = String.valueOf(request.getServletContext().getAttribute("RANDOM_KEY"));
+		
+		String fileData = null;
+		
+		if(commFileId.equals(contextFileId)
+		&& randomKey.equals(contextRandomKey)
+		) {
+			fileData = String.valueOf(request.getServletContext().getAttribute("FILE_DATA"));
+		}
+		else {
+			Map param = new HashMap();
+			param.put("COMM_FILE_ID", commFileId);
+			param.put("RANDOM_KEY", randomKey);
+			Map result = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+			
+			if(result == null) {
+				request.getServletContext().setAttribute("COMM_FILE_ID", null);
+				request.getServletContext().setAttribute("RANDOM_KEY", null);
+				request.getServletContext().setAttribute("FILE_DATA", null);
+			}
+			else {
+				request.getServletContext().setAttribute("COMM_FILE_ID", commFileId);
+				request.getServletContext().setAttribute("RANDOM_KEY", randomKey);
+				
+				String filePath = String.valueOf(result.get("FILE_PATH"));
+				String fileNm = String.valueOf(result.get("SERVER_FILE_NAME"));				
+				fileData = filePath + fileNm;
+				request.getServletContext().setAttribute("FILE_DATA", fileData);
+			}
+		}
+				
+//		UrlResource video = new UrlResource("file:" + "C:\\develop\\files\\prjb\\testFile");
+		UrlResource video = new UrlResource("file:" + fileData);
 		ResourceRegion resourceRegion;
 		final long chunkSize = 1000000L; 
 		long contentLength = video.contentLength(); 
@@ -55,8 +91,8 @@ public class StService {
 			long end = httpRange.getRangeEnd(contentLength); 
 			long rangeLength = Long.min(chunkSize, end - start + 1); 
 			resourceRegion = new ResourceRegion(video, start, rangeLength); 
-		} 
-		else { 
+		}
+		else {
 			long rangeLength = Long.min(chunkSize, contentLength); 
 			resourceRegion = new ResourceRegion(video, 0, rangeLength); 
 		}
