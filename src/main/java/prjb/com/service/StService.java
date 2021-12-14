@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRange;
@@ -78,7 +79,8 @@ public class StService {
 		}
 				
 //		UrlResource video = new UrlResource("file:" + "C:\\develop\\files\\prjb\\testFile");
-		UrlResource video = new UrlResource("file:" + fileData);
+//		UrlResource video = new UrlResource("file:" + fileData);	//UrlResource 는 파일명에 '%' 가 들어가는경우 오류
+		Resource video = new FileSystemResource(fileData);
 		ResourceRegion resourceRegion;
 		final long chunkSize = 1000000L; 
 		long contentLength = video.contentLength(); 
