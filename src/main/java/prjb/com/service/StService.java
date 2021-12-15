@@ -3,8 +3,10 @@ package prjb.com.service;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -203,19 +205,12 @@ public class StService {
 		
 		String fileData = String.valueOf(fileInfo.get("FILE_PATH")) + String.valueOf(fileInfo.get("SERVER_FILE_NAME"));
 		
-//		String fileData = "C:\\Users\\Administrator\\Desktop\\자막\\";
-//		fileData += "YGvmlXnwFvyW%2FSCvnBBMQPBc2rMhAlh%2Bb5M1xvg5wu5AF61NDS1WgAvX3eYQLADan%2Fdfr%2FSD7%2F%2Bs0kzUGPHpLg%3D%3D";
-		
 		File file = new File(fileData);
 	    
 		String encoding = ComUtil.getEncodingType(file);
-//	    String content = FileUtils.readFileToString(file, encoding);
 		
-        //입력 스트림 생성
-        FileReader filereader = new FileReader(file);
         //입력 버퍼 생성
-        BufferedReader bufReader = new BufferedReader(filereader);
-        
+        BufferedReader bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
         
         StringBuilder content = new StringBuilder("WEBVTT").append("\n").append("\n");
         String line = "";
