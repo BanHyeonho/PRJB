@@ -1,5 +1,6 @@
 package prjb.com.service;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +8,10 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -34,6 +38,8 @@ public class StService {
 	
 	@Autowired
 	ComDao comDao;
+	
+	private static final Logger logger = LoggerFactory.getLogger(StService.class);
 	
 	/**
 	 * 비디오 스트리밍
@@ -80,6 +86,8 @@ public class StService {
 				
 //		UrlResource video = new UrlResource("file:" + "C:\\develop\\files\\prjb\\testFile");
 //		UrlResource video = new UrlResource("file:" + fileData);	//UrlResource 는 파일명에 '%' 가 들어가는경우 오류
+//		fileData = "C:\\develop\\files\\prjb\\YFkaZeBp20bb%2Fug5vAlxcE7DgMAe4ur3uNDEwva1L%2BwcSndp1ULuzceiDjsW2Bcy";
+		
 		Resource video = new FileSystemResource(fileData);
 		ResourceRegion resourceRegion;
 		final long chunkSize = 1000000L; 
@@ -149,5 +157,38 @@ public class StService {
 		return result;
 	}
 	
-	
+	/**
+	 * 자막내용 추출
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	public Map subTitleContent(HttpServletRequest request) throws Exception{
+		Map result = new HashMap();
+		Map<String, String> paramMap = ComUtil.getParameterMap(request);
+		
+		final String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		final String ip = ComUtil.getAddress(request);
+		final String randomKey = paramMap.get("RANDOM_KEY");
+		final String commFileId = paramMap.get("COMM_FILE_ID");
+		
+		Map param = new HashMap();
+		param.put("COMM_FILE_ID", commFileId);
+		param.put("RANDOM_KEY", randomKey);
+		Map fileInfo = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+		
+		String filePath = String.valueOf(fileInfo.get("FILE_PATH"));
+		String fileNm = String.valueOf(fileInfo.get("SERVER_FILE_NAME"));				
+		String fileData = filePath + fileNm;
+		
+//		String fileData = "C:\\Users\\Administrator\\Desktop\\자막\\";
+//		fileData += "YGvmlXnwFvyW%2FSCvnBBMQPBc2rMhAlh%2Bb5M1xvg5wu5AF61NDS1WgAvX3eYQLADan%2Fdfr%2FSD7%2F%2Bs0kzUGPHpLg%3D%3D";
+		File file = new File(fileData);
+	    String content = FileUtils.readFileToString(file, "UTF-8");
+	    
+	    logger.info(content);
+	    result.put("result", content);
+	    
+		return result;
+	}
 }

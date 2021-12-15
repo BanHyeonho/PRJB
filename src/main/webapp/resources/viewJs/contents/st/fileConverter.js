@@ -59,6 +59,27 @@ var f_setBoardFileGrid = function(){
 						
 					}
 				});
+		
+		//자막내용 조회		
+		gf_ajax({
+			RANDOM_KEY : selectedRowData.RANDOM_KEY,
+			COMM_FILE_ID : selectedRowData.COMM_FILE_ID
+				}
+				, function(){
+					gf_setEditorValue('editor2', '');
+					if(gf_nvl(selectedRowData.FILE_TYPE, '') != 'SUB'){
+						return false;	
+					}
+					
+				}
+				, function(data){
+					if(typeof data.result === 'object'){
+						gf_setEditorValue('editor2', data.result.result);
+					}
+				}
+				, null
+				, null
+				, '/st/subTitleContent');
     });
 }
 

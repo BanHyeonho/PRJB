@@ -37,7 +37,9 @@ var f_showVideo = function(){
 			QUERY_ID : 'st.S_MAPPING_FILE',
 			ST_VIDEO_ID : gf_gridRowData(masterGrid, masterGrid.getSelectedRows(), 'ST_VIDEO_ID')
 	}, function(){
-//		gf_gridClear(masterGrid);
+		if(gf_nvl(gf_gridRowData(masterGrid, masterGrid.getSelectedRows(), 'VIDEO_NAME'), '') == ''){
+			return false;
+		}
 	}
 	, function(data){
 		var videoTag = $('#videoSource').parent()[0];
@@ -58,14 +60,15 @@ var f_showVideo = function(){
 			fileInfo = encodeURIComponent(JSON.stringify(fileInfo));
 			
 			$('#videoSource').attr('src', '/st/video?fileInfo=' + fileInfo);
-			
+			videoTag.load();
+			videoTag.play();	
 		}
 		else{
 			$('#videoSource').attr('src', '');
+			videoTag.load();
 		}
 		
-		videoTag.load();
-		videoTag.play();
+		
 		
 	});
 }
