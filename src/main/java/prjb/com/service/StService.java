@@ -1,8 +1,12 @@
 package prjb.com.service;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.OutputStreamWriter;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
-import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourceRegion;
@@ -35,9 +39,13 @@ import com.fasterxml.jackson.databind.ObjectReader;
 
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
+import prjb.com.util.FileUtil;
 
 @Service("StService")
 public class StService {
+	
+	@Value("#{config['file_root']}")
+	private String fileRoot;
 	
 	@Autowired
 	ComDao comDao;
@@ -137,6 +145,8 @@ public class StService {
 		
 		for (Map fileInfo : convertFiles) {
 			String fileExtension = String.valueOf(fileInfo.get("FILE_EXTENSION")).toLowerCase();
+			String fileType = String.valueOf(fileInfo.get("FILE_TYPE")).toUpperCase();
+			
 			
 			//web에서 바로 실행가능한 파일이므로, 변환하지않고 매핑정보만 추가한다. COMM_FILE 에 데이터만 추가.
 			if("mp4".equals(fileExtension)
@@ -151,13 +161,101 @@ public class StService {
 			}
 			//인코딩작업 필요
 			else {
-				
+				//자막
+				if("SUB".equals(fileType)) {
+					
+					switch (fileExtension) {
+						case "srt":
+							srtConvert(request, fileInfo, groupId);
+							break;
+						case "smi":
+							
+							break;
+					}
+					
+				}
+				//영상
+				else {
+					
+				}
 			}
-			
 		}
 		
 		
 		return result;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public void srtConvert(HttpServletRequest request, Map param, String groupId) throws Exception{
+		
+		final String moduleCode = "ST";
+		final String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		final String ip = ComUtil.getAddress(request);
+		final String commFileId = String.valueOf(param.get("COMM_FILE_ID"));
+		final String randomKey = String.valueOf(param.get("RANDOM_KEY"));
+		
+		Map fileParam = new HashMap();
+		fileParam.put("COMM_FILE_ID", commFileId);
+		fileParam.put("RANDOM_KEY", randomKey);
+		Map fileInfo = comDao.selectOne("com.S_COMM_FILE_DOWN", fileParam);
+		
+		String fileNm = String.valueOf(fileInfo.get("FILE_NAME"));
+		
+		String fileData = String.valueOf(fileInfo.get("FILE_PATH")) + String.valueOf(fileInfo.get("SERVER_FILE_NAME"));
+		
+//		String fileData = "C:\\Users\\Administrator\\Desktop\\자막\\";
+//		fileData += "YGvmlXnwFvyW%2FSCvnBBMQPBc2rMhAlh%2Bb5M1xvg5wu5AF61NDS1WgAvX3eYQLADan%2Fdfr%2FSD7%2F%2Bs0kzUGPHpLg%3D%3D";
+		
+		File file = new File(fileData);
+	    
+		String encoding = ComUtil.getEncodingType(file);
+//	    String content = FileUtils.readFileToString(file, encoding);
+		
+        //입력 스트림 생성
+        FileReader filereader = new FileReader(file);
+        //입력 버퍼 생성
+        BufferedReader bufReader = new BufferedReader(filereader);
+        
+        
+        StringBuilder content = new StringBuilder("WEBVTT").append("\n").append("\n");
+        String line = "";
+        while((line = bufReader.readLine()) != null){
+            System.out.println(line);
+            if(line.contains("-->")) {
+            	line = line.replaceAll(",", ".");
+            }
+            line = line.replaceAll("<i>", "");
+            line = line.replaceAll("</i>", "");
+            content.append(line).append("\n");
+        }
+        //.readLine()은 끝에 개행문자를 읽지 않는다.            
+        bufReader.close();
+        
+        //파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
+  		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
+  		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
+  		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+  		String day = String.format("%02d", cal.get(Calendar.DATE));
+  		String filePath = fileRoot + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
+  		
+        Map<String, String> fileResult = FileUtil.fileMake(filePath, fileNm, "vtt", content.toString());
+		
+        if("success".equals(fileResult.get("state"))) {
+			
+			Map<String, String> fileMapping = new HashMap();
+			fileMapping.put("MODULE_CODE", moduleCode);
+			fileMapping.put("GROUP_ID", groupId);
+			fileMapping.put("CID", cId);
+			fileMapping.put("CIP", ip);
+			fileMapping.put("FILE_PATH", filePath);
+			fileMapping.put("FILE_SIZE", String.valueOf(fileResult.get("fileSize")));
+			fileMapping.put("FILE_EXTENSION", fileResult.get("fileExtension"));
+			fileMapping.put("FILE_NAME_ENCRYPT", fileResult.get("fileName"));
+			fileMapping.put("SERVER_FILE_NAME", fileResult.get("serverFileName"));
+			fileMapping.put("RANDOM_KEY", ComUtil.getRandomKey());
+			
+			comDao.insert("com.I_COMM_FILE", fileMapping);
+		}
 	}
 	
 	/**
@@ -195,7 +293,5 @@ public class StService {
 	    
 		return result;
 	}
-	
-
 	
 }

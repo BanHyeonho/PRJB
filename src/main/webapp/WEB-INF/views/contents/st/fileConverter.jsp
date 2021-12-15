@@ -31,8 +31,10 @@
 		<div id='videoGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-3 panel-3-1'>
 			<div id="videoGrid" class="grid"></div>
 		</div>
-		<div id='subTitleContainer' class='content-panel mg-pl-tp-default mg-pl-rt-default pd-pl-default ht-pl-3 panel-4-1'>
-			<iframe id='editor2' src="/editor" class="mg-tp-default"></iframe>
+		<div id='subtitleContainer' class='content-panel mg-pl-tp-default mg-pl-rt-default pd-pl-default ht-pl-3 panel-4-1'>
+<!-- 			<iframe id='editor2' src="/editor" class="mg-tp-default"></iframe> -->
+<!-- 			<div id='editor2'></div> -->
+			<textarea style="resize: none; width:100%; height:100%;" disabled id='subtitleContent'></textarea>
 		</div>
 		<div id='videoFileGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-3 panel-3-1'>
 			<div id="videoFileGrid" class="grid"></div>

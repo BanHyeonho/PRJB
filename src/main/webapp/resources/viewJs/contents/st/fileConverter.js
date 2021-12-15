@@ -66,15 +66,16 @@ var f_setBoardFileGrid = function(){
 			COMM_FILE_ID : selectedRowData.COMM_FILE_ID
 				}
 				, function(){
-					gf_setEditorValue('editor2', '');
-					if(gf_nvl(selectedRowData.FILE_TYPE, '') != 'SUB'){
+					
+//					$('#subtitleContent').val('');
+//					if(gf_nvl(selectedRowData.FILE_TYPE, '') != 'SUB'){
 						return false;	
-					}
+//					}
 					
 				}
 				, function(data){
 					if(typeof data.result === 'object'){
-						gf_setEditorValue('editor2', data.result.result);
+						$('#subtitleContent').val(data.result.result);
 					}
 				}
 				, null

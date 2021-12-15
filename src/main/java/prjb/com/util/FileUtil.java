@@ -1,9 +1,12 @@
 package prjb.com.util;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +22,63 @@ public class FileUtil {
 
 	private final static CryptoUtil CryptoUtil = InitBean.CryptoClass;
 	
+	/**
+	 * 파일생성
+	 * @param filePath
+	 * @param fileName
+	 * @param fileExtension
+	 * @param content
+	 * @return
+	 */
+	public static Map fileMake(String filePath, String fileName, String fileExtension, String content) {
+		
+		Map result = new HashMap();
+
+		String serverFileName = System.currentTimeMillis() + "_" + fileName;
+		
+		long fileSize = 0;
+		
+		try {
+			//암호화
+			fileName = CryptoUtil.encrypt(fileName);
+			serverFileName = URLEncoder.encode(CryptoUtil.encrypt(serverFileName), "UTF-8") ;
+			
+			File path = new File(filePath);
+	
+			if (!path.exists()) {
+				path.mkdirs();
+			}
+	
+			File file = new File(filePath + serverFileName);
+			
+			// BufferedWriter 와 FileWriter를 조합하여 사용 (속도 향상)
+			BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+
+			// 파일안에 문자열 쓰기
+			fw.write(content.toString());
+			fw.flush();
+
+			// 객체 닫기
+			fw.close();
+			
+			fileSize = file.length();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result.put("state", "fail");
+		}
+		
+		
+		result.put("fileSize", fileSize);
+		result.put("fileExtension", fileExtension);
+		result.put("fileName", fileName);
+		result.put("serverFileName", serverFileName);
+		
+		result.put("state", "success");
+		return result;
+		
+	}
 	/**
 	 * 파일업로드
 	 * @param request
