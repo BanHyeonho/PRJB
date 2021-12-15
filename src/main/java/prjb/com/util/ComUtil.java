@@ -1,6 +1,8 @@
 package prjb.com.util;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,11 +31,44 @@ import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.mozilla.universalchardet.UniversalDetector;
 import org.springframework.jdbc.support.JdbcUtils;
 
 public class ComUtil {
 
 
+	/**
+	 * 파일인코딩 정보 리턴
+	 * @param file
+	 * @return EUC-KR , UTF-8
+	 */
+	public static String getEncodingType(File file){
+		String result = null;
+		try {
+			byte[] buf = new byte[4096]; 
+			FileInputStream fis = new FileInputStream(file); 
+			UniversalDetector detector = new UniversalDetector(null); 
+			int nread;
+			while ((nread = fis.read(buf)) > 0 && !detector.isDone()) { 
+				detector.handleData(buf, 0, nread); 
+			} 
+			detector.dataEnd(); 
+			String encoding = detector.getDetectedCharset(); 
+			if (encoding != null) {
+				result = encoding.toUpperCase();
+			} 
+			else {
+	//			System.out.println("No encoding detected.");
+				result = null;
+			} 
+			detector.reset();
+			}
+		catch(Exception e) {
+			e.getStackTrace();
+		}
+		return result;
+	}
+	
 	/**
 	 * Clob 데이터 저장을 위한 문자열 길이 4000자 단위로 clob데이터로 리턴
 	 * @param str

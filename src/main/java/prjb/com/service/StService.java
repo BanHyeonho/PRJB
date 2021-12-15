@@ -1,6 +1,8 @@
 package prjb.com.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
+import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,11 +187,15 @@ public class StService {
 //		String fileData = "C:\\Users\\Administrator\\Desktop\\자막\\";
 //		fileData += "YGvmlXnwFvyW%2FSCvnBBMQPBc2rMhAlh%2Bb5M1xvg5wu5AF61NDS1WgAvX3eYQLADan%2Fdfr%2FSD7%2F%2Bs0kzUGPHpLg%3D%3D";
 		File file = new File(fileData);
-	    String content = FileUtils.readFileToString(file, "UTF-8");
 	    
-	    logger.info(content);
+		String encoding = ComUtil.getEncodingType(file);
+	    String content = FileUtils.readFileToString(file, encoding);
+	    
 	    result.put("result", content);
 	    
 		return result;
 	}
+	
+
+	
 }
