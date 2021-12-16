@@ -44,7 +44,7 @@ var f_showVideo = function(){
 	, function(data){
 		var videoTag = $('#videoSource').parent()[0];
 		videoTag.pause();
-		$('#videoSource track').remove();
+		$('#videoSource').siblings('track').remove();
 		
 		if(data.result.length > 0){
 			
