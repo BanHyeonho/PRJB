@@ -43,6 +43,15 @@ public class StController {
 	}
 	
 	/**
+	 * 비디오 스트리밍
+	 */
+	@GetMapping(value = "/subtitle")
+	public @ResponseBody Object subtitle(HttpServletRequest request) throws Exception { 
+
+		return stService.subtitle(request);
+	}
+	
+	/**
 	 * 파일변환
 	 */
 	@RequestMapping(value = "/convert", method = RequestMethod.POST)

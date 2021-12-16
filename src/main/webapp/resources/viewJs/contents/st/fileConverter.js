@@ -203,7 +203,7 @@ var f_converter = function(){
 				gf_gridClear(boardFileGrid);
 				gf_gridClear(videoFileGrid);
 				f_boardSearch();
-				
+				videoGrid.onSelectedRowsChanged.notify();
 			}
 			, null
 			, null

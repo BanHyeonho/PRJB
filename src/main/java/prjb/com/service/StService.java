@@ -1,13 +1,9 @@
 package prjb.com.service;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +95,7 @@ public class StService {
 				
 //		UrlResource video = new UrlResource("file:" + "C:\\develop\\files\\prjb\\testFile");
 //		UrlResource video = new UrlResource("file:" + fileData);	//UrlResource 는 파일명에 '%' 가 들어가는경우 오류
-//		fileData = "C:\\develop\\files\\prjb\\YFkaZeBp20bb%2Fug5vAlxcE7DgMAe4ur3uNDEwva1L%2BwcSndp1ULuzceiDjsW2Bcy";
+//		fileData = "C:\\develop\\files\\prjb\\8h6CNn1HRrxjLxwKlQyao0VHUMmjTwj2833sy%2B5dBr4jv8jNCTMHQvEwZM%2B39a%2FQwH3R9GUUt6oHGYgZicp4GQ%3D%3D";
 		
 		Resource video = new FileSystemResource(fileData);
 		ResourceRegion resourceRegion;
@@ -122,6 +118,37 @@ public class StService {
 		return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).contentType(MediaTypeFactory.getMediaType(video).orElse(MediaType.APPLICATION_OCTET_STREAM)).body(resourceRegion);
 	}
 	
+	/**
+	 * 자막파일
+	 */
+	public Resource subtitle(HttpServletRequest request) throws Exception {
+		
+		String subTitleInfo = request.getParameter("subTitleInfo");
+		Map subTitleMap = new JSONObject(subTitleInfo.toString()).toMap();
+		
+		String commFileId = String.valueOf(subTitleMap.get("COMM_FILE_ID"));
+		String randomKey = String.valueOf(subTitleMap.get("RANDOM_KEY"));
+		
+		String contextFileId = String.valueOf(request.getServletContext().getAttribute("COMM_FILE_ID"));
+		String contextRandomKey = String.valueOf(request.getServletContext().getAttribute("RANDOM_KEY"));
+		
+		String fileData = null;
+		
+		Map param = new HashMap();
+		param.put("COMM_FILE_ID", commFileId);
+		param.put("RANDOM_KEY", randomKey);
+		Map result = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+		
+		String filePath = String.valueOf(result.get("FILE_PATH"));
+		String fileNm = String.valueOf(result.get("SERVER_FILE_NAME"));				
+		fileData = filePath + fileNm;
+				
+//		fileData = "C:\\develop\\files\\prjb\\eeVnA4fWJgZdxXMFDQF2vTKpzP7UUqBNkax1GXaoDMrblEaC9jlaW6tjm2Ryn19NwU37EePKVjyMmDYzaLP72w%3D%3D";
+		
+		Resource video = new FileSystemResource(fileData);
+		
+		return video;
+	}
 	
 	/**
 	 * 파일변환
