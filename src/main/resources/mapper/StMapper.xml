@@ -19,6 +19,7 @@
            , CASE WHEN B.OPEN_YN = '1'
                   THEN ''
                   ELSE '(' || COMM_UTIL_PKG.lang('비공개', 'KO') || ') ' END || B.TITLE        AS TITLE
+           , A.ATTRIBUTE1
         FROM COMM_FILE A
    LEFT JOIN BBS_BOARD B ON (A.GROUP_ID = B.BBS_BOARD_ID AND B.MODULE_CODE = 'ST')
    LEFT JOIN BBS_SETTING C ON (B.CATEGORY_CODE = C.CATEGORY_CODE)
@@ -130,15 +131,29 @@
 	<select id="S_MAPPING_FILE" resultType="HashMap" parameterType="HashMap" >
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.COMM_FILE_ID
+			 , A.MODULE_CODE
+			 , A.GROUP_ID
 			 , A.FILE_NAME
 			 , A.FILE_EXTENSION
 			 , A.FILE_SIZE
 			 , B.VIDEO_NAME
 			 , A.RANDOM_KEY
+			 , A.ATTRIBUTE1
 		  FROM COMM_FILE A
 	 	  JOIN ST_VIDEO B ON (A.GROUP_ID = B.ST_VIDEO_ID)
 		 WHERE A.MODULE_CODE 	= 'ST'
 		   AND A.GROUP_ID 		= #{ST_VIDEO_ID}
 		 ORDER BY A.COMM_FILE_ID ASC
 	</select>
+	<!-- 파일변환 매핑한 파일 수정 -->
+	<update id="U_MAPPING_FILE" parameterType="HashMap">
+		UPDATE COMM_FILE
+		   SET DESCRIPTION = #{DESCRIPTION}
+		   	 , ATTRIBUTE1 = #{ATTRIBUTE1}
+		   	 , MID = #{MID}
+		   	 , MIP = #{MIP}
+		   	 , MDT = SYSDATE
+		 WHERE COMM_FILE_ID = #{COMM_FILE_ID}
+		   AND RANDOM_KEY = #{RANDOM_KEY}
+	</update>
 </mapper>

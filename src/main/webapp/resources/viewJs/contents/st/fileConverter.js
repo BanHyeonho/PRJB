@@ -3,7 +3,6 @@
  */
 $(document).ready(function() {
 	gf_editorEditable('editor', false);
-	gf_editorEditable('editor2', false);
 	
 	f_setBoardFileGrid();
 	
@@ -17,7 +16,33 @@ var f_setVideoGrid = function(){
     });    
 
 	videoGrid.onSelectedRowsChanged.subscribe(function (e, args) {
-		f_videoFileSearch();
+		
+		if(gridEventIgnore){
+			gridEventIgnore = false;
+			return false;
+		}
+		else if(gf_gridSaveData(videoFileGrid).length > 0
+		){
+			if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
+				gridEventIgnore = true;
+				videoGrid.setSelectedRows(args.previousSelectedRows);
+				return false;
+			}
+		}
+		else if(videoGrid.getSelectedRows().length != 1){
+			return false;
+		}
+		
+		gf_ajax({
+			QUERY_ID : 'st.S_MAPPING_FILE',
+			ST_VIDEO_ID : gf_gridRowData(videoGrid, videoGrid.getSelectedRows(), 'ST_VIDEO_ID')
+		}, function(){
+			gf_gridClear(videoFileGrid);
+		}
+		, function(data){
+			gf_gridCallback('videoFileGrid', data);
+		});
+		
     });
 
 }
@@ -86,7 +111,8 @@ var f_setBoardFileGrid = function(){
 
 var f_search = function(){
 	
-	if((gf_gridSaveData(videoGrid).length > 0)
+	if(gf_gridSaveData(videoGrid).length > 0
+	|| gf_gridSaveData(videoFileGrid).length > 0
 	){
 	
 		if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
@@ -126,25 +152,7 @@ var f_videoSearch = function(){
 		
 	});
 }
-var f_videoFileSearch = function(){
-	
-	gf_ajax({
-		QUERY_ID : 'st.S_MAPPING_FILE',
-		ST_VIDEO_ID : gf_gridRowData(videoGrid, videoGrid.getSelectedRows(), 'ST_VIDEO_ID')
-	}, function(){
-		
-		gf_gridClear(videoFileGrid);
-		
-		if(videoGrid.getSelectedRows().length != 1){
-			return false;
-		}
-	}
-	, function(data){
-		
-		gf_gridCallback('videoFileGrid', data);
-		
-	});
-}
+
 var f_converter = function(){
 	
 	var fData = new FormData();
@@ -193,9 +201,9 @@ var f_converter = function(){
 				
 				gf_toast(gf_mlg('변환_되었습니다'), 'success');
 				gf_gridClear(boardFileGrid);
-				f_boardSearch();
 				gf_gridClear(videoFileGrid);
-				f_videoFileSearch();
+				f_boardSearch();
+				
 			}
 			, null
 			, null
@@ -230,14 +238,25 @@ var f_save = function(){
   						});
   						fData.set('videoGrid', JSON.stringify(videoData));
 					}
-					//영상그리드
-//					if(videoFileData.length > 0){
-//						videoData.unshift({
-//  							 'TABLE_NAME' : 'ST_VIDEO'
-//  							,'QUERY_ID' : 'com.COMM_QUERY'
-//  						});
-//  						fData.set('videoFileGrid', JSON.stringify(videoFileData));
-//					}
+					
+					//영상파일
+					if(videoFileData.length > 0){
+						
+						var updateFileData = videoFileData.filter(x=> x.gState=='updated');
+						if(updateFileData.length > 0){
+							updateFileData.unshift({
+	  							 'TABLE_NAME' : 'COMM_FILE'
+	  							,'QUERY_ID' : 'st.MAPPING_FILE'
+	  						});
+							fData.set('videoFileGrid', JSON.stringify(updateFileData));	
+						}
+						
+						var deleteFileData = videoFileData.filter(x=> x.gState=='deleted');
+						if(deleteFileData.length > 0){
+							fData.append('STFileDel', JSON.stringify(deleteFileData));	
+						}
+						
+					}
 					
 				}
 			}
@@ -245,6 +264,7 @@ var f_save = function(){
 				
 				gf_toast(gf_mlg('저장_되었습니다'), 'success');
 				gf_gridClear(videoGrid);
+				gf_gridClear(videoFileGrid);
 				f_videoSearch();
 				
 			}
