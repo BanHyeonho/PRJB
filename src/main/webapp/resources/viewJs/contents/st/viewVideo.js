@@ -42,9 +42,9 @@ var f_showVideo = function(){
 		}
 	}
 	, function(data){
-		var videoTag = $('#videoSource').parent()[0];
+		var videoTag = $('source[name=videoSource]').parent()[0];
 		videoTag.pause();
-		$('#videoSource').siblings('track').remove();
+		$('source[name=videoSource]').siblings('track').remove();
 		
 		if(data.result.length > 0){
 			
@@ -60,7 +60,7 @@ var f_showVideo = function(){
 			
 			fileInfo = encodeURIComponent(JSON.stringify(fileInfo));
 			
-			$('#videoSource').attr('src', '/st/video?fileInfo=' + fileInfo);
+			$('source[name=videoSource]').attr('src', '/st/video?fileInfo=' + fileInfo);
 			
 			$.each(subTitles, function(idx, item){
 				
@@ -85,14 +85,14 @@ var f_showVideo = function(){
 					track.attr('default', true);
 				}
 				
-				$('#videoSource').after(track);
+				$('source[name=videoSource]:eq(1)').after(track);
 			});
 			
 			videoTag.load();
 			videoTag.play();
 		}
 		else{
-			$('#videoSource').attr('src', '');
+			$('source[name=videoSource]').attr('src', '');
 			videoTag.load();
 		}
 		
