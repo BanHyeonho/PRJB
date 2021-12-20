@@ -7,7 +7,7 @@ import net.bramp.ffmpeg.builder.FFmpegBuilder;
 
 public class FFmpegUtil {
 
-	final static String ffmepgPath = "/usr/bic/ffmpeg";
+	final static String ffmepgPath = "/usr/bin/ffmpeg";
 	final static String ffprobePath = "/usr/bin/ffprobe";
 	
 	public static boolean convert(String input, String output, String outputType) throws Exception{
