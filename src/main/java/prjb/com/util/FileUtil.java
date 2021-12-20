@@ -44,7 +44,12 @@ public class FileUtil {
 			fileName = CryptoUtil.encrypt(fileName);
 			serverFileName = URLEncoder.encode(CryptoUtil.encrypt(serverFileName), "UTF-8") ;
 			
-
+			File path = new File(outputPath);
+			
+			if (!path.exists()) {
+				path.mkdirs();
+			}
+			
 			boolean convert = FFmpegUtil.convert(input, outputPath + serverFileName, fileExtension);
 			
 			if(convert) {
