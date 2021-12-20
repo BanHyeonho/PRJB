@@ -37,12 +37,12 @@ public class FileUtil {
 
 		fileName =  fileName.substring(0, fileName.lastIndexOf(".")) + "." + fileExtension;
 		
-		String serverFileName = System.currentTimeMillis() + "_" + fileName;
+		String serverFileName = System.currentTimeMillis() + "_" + fileName.replaceAll(" ", "");
 		
 		long fileSize = 0;
 		
 		try {
-
+			serverFileName = URLEncoder.encode(serverFileName, "UTF-8") ;
 			
 			File path = new File(outputPath);
 			
@@ -56,7 +56,7 @@ public class FileUtil {
 			
 			//암호화
 			fileName = CryptoUtil.encrypt(fileName);
-			serverFileName = URLEncoder.encode(CryptoUtil.encrypt(serverFileName), "UTF-8") ;
+			serverFileName = CryptoUtil.encrypt(serverFileName);
 			
 			//mv 파일명1 파일명2 --파일명 변경
 			commend = "mv " + outputPath + serverFileName + "." + fileExtension + " " 

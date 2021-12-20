@@ -63,20 +63,17 @@ public class LinuxUtil {
             // shell 실행이 정상 종료되었을 경우
             if (process.exitValue() == 0) {
             	result = true;
-                logger.info("성공", successOutput.toString());
-                
+                logger.info("성공 : " + successOutput.toString());
             } 
             // shell 실행이 비정상 종료되었을 경우
             else if(StringUtils.isNotBlank(errorOutput.toString())) {
-
             	result = false;
-                logger.info("오류", errorOutput.toString());
+                logger.info("오류 : " + errorOutput.toString());
             }
             // shell 실행이 비정상 종료되었을 경우
             else {
             	result = false;
-                logger.info("비정상 종료", successOutput.toString());
-                
+                logger.info("비정상 종료 : " + successOutput.toString());
             }
  
         } catch (IOException e) {

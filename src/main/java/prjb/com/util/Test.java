@@ -1,11 +1,15 @@
 package prjb.com.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class Test {
 
-	public static void main(String[] args) {
-		String test = "test.avi";
+	public static void main(String[] args) throws UnsupportedEncodingException {
+		String test = "1640018230326_Spider-Man 1, 2002.BDRip.mp4";
 		
 		System.out.println(test);
+		System.out.println(URLEncoder.encode(test, "UTF-8"));
 		System.out.println(test.indexOf(".")+1);
 		System.out.println(test.lastIndexOf(".")+1);
 		System.out.println(test.substring(0, test.lastIndexOf(".")));

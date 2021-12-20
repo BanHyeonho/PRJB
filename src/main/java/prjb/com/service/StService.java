@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +38,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
-import prjb.com.util.CryptoUtil;
-import prjb.com.util.FFmpegUtil;
 import prjb.com.util.FileUtil;
 
 @Service("StService")
