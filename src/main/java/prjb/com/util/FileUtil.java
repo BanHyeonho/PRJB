@@ -22,6 +22,53 @@ public class FileUtil {
 
 	private final static CryptoUtil CryptoUtil = InitBean.CryptoClass;
 	
+	
+	/**
+	 * 파일 인코딩 생성
+	 * @param input
+	 * @param outputPath
+	 * @param fileName
+	 * @param fileExtension
+	 * @return
+	 */
+	public static Map fileConvert(String input, String outputPath, String fileName, String fileExtension) {
+		
+		Map result = new HashMap();
+
+		String serverFileName = System.currentTimeMillis() + "_" + fileName;
+		
+		long fileSize = 0;
+		
+		try {
+			//암호화
+			fileName = CryptoUtil.encrypt(fileName);
+			serverFileName = URLEncoder.encode(CryptoUtil.encrypt(serverFileName), "UTF-8") ;
+			
+
+			boolean convert = FFmpegUtil.convert(input, outputPath + serverFileName, fileExtension);
+			
+			if(convert) {
+				File file = new File(outputPath + serverFileName);
+				fileSize = file.length();
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result.put("state", "fail");
+		}
+		
+		
+		result.put("fileSize", fileSize);
+		result.put("fileExtension", fileExtension);
+		result.put("fileName", fileName);
+		result.put("serverFileName", serverFileName);
+		
+		result.put("state", "success");
+		return result;
+		
+	}
+	
 	/**
 	 * 파일생성
 	 * @param filePath

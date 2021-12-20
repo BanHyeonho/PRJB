@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +40,8 @@ import com.fasterxml.jackson.databind.ObjectReader;
 
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
+import prjb.com.util.CryptoUtil;
+import prjb.com.util.FFmpegUtil;
 import prjb.com.util.FileUtil;
 
 @Service("StService")
@@ -99,7 +104,7 @@ public class StService {
 		
 		Resource video = new FileSystemResource(fileData);
 		ResourceRegion resourceRegion;
-		final long chunkSize = 1000000L; 
+		final long chunkSize = 1000000L;
 		long contentLength = video.contentLength(); 
 		Optional<HttpRange> optional = headers.getRange().stream().findFirst(); 
 		HttpRange httpRange;
@@ -198,14 +203,14 @@ public class StService {
 							srtConvert(request, fileInfo, groupId);
 							break;
 						case "smi":
-							
+							smiConvert(request, fileInfo, groupId);
 							break;
 					}
 					
 				}
 				//영상
 				else {
-					
+					mediaConvert(request, fileInfo, groupId);
 				}
 			}
 		}
@@ -214,6 +219,66 @@ public class StService {
 		return result;
 	}
 	
+	/**
+	 * 영상 -> mp4파일
+	 * @param request
+	 * @param param
+	 * @param groupId
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void mediaConvert(HttpServletRequest request, Map param, String groupId) throws Exception{
+		
+		final String fileExtension = "mp4";
+		final String moduleCode = "ST";
+		final String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		final String ip = ComUtil.getAddress(request);
+		final String commFileId = String.valueOf(param.get("COMM_FILE_ID"));
+		final String randomKey = String.valueOf(param.get("RANDOM_KEY"));
+		
+		Map fileParam = new HashMap();
+		fileParam.put("COMM_FILE_ID", commFileId);
+		fileParam.put("RANDOM_KEY", randomKey);
+		Map fileInfo = comDao.selectOne("com.S_COMM_FILE_DOWN", fileParam);
+		
+		String fileNm = String.valueOf(fileInfo.get("FILE_NAME"));
+		
+		String fileData = String.valueOf(fileInfo.get("FILE_PATH")) + String.valueOf(fileInfo.get("SERVER_FILE_NAME"));
+		        
+        //파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
+  		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
+  		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
+  		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+  		String day = String.format("%02d", cal.get(Calendar.DATE));
+  		String filePath = fileRoot + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
+  		
+        Map<String, String> fileResult = FileUtil.fileConvert(fileData, filePath, fileNm, fileExtension);
+        
+        if("success".equals(fileResult.get("state"))) {
+			
+			Map<String, String> fileMapping = new HashMap();
+			fileMapping.put("MODULE_CODE", moduleCode);
+			fileMapping.put("GROUP_ID", groupId);
+			fileMapping.put("CID", cId);
+			fileMapping.put("CIP", ip);
+			fileMapping.put("FILE_PATH", filePath);
+			fileMapping.put("FILE_SIZE", String.valueOf(fileResult.get("fileSize")));
+			fileMapping.put("FILE_EXTENSION", fileResult.get("fileExtension"));
+			fileMapping.put("FILE_NAME_ENCRYPT", fileResult.get("fileName"));
+			fileMapping.put("SERVER_FILE_NAME", fileResult.get("serverFileName"));
+			fileMapping.put("RANDOM_KEY", ComUtil.getRandomKey());
+			
+			comDao.insert("com.I_COMM_FILE", fileMapping);
+		}
+	}
+	
+	/**
+	 * srt자막 -> vtt자막
+	 * @param request
+	 * @param param
+	 * @param groupId
+	 * @throws Exception
+	 */
 	@Transactional(rollbackFor = Exception.class)
 	public void srtConvert(HttpServletRequest request, Map param, String groupId) throws Exception{
 		
@@ -242,7 +307,6 @@ public class StService {
         StringBuilder content = new StringBuilder("WEBVTT").append("\n").append("\n");
         String line = "";
         while((line = bufReader.readLine()) != null){
-            System.out.println(line);
             if(line.contains("-->")) {
             	line = line.replaceAll(",", ".");
             }
@@ -278,6 +342,140 @@ public class StService {
 			
 			comDao.insert("com.I_COMM_FILE", fileMapping);
 		}
+	}
+	
+	/**
+	 * smi자막 -> vtt자막
+	 * @param request
+	 * @param param
+	 * @param groupId
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void smiConvert(HttpServletRequest request, Map param, String groupId) throws Exception{
+		
+		final String moduleCode = "ST";
+		final String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		final String ip = ComUtil.getAddress(request);
+		final String commFileId = String.valueOf(param.get("COMM_FILE_ID"));
+		final String randomKey = String.valueOf(param.get("RANDOM_KEY"));
+		
+		Map fileParam = new HashMap();
+		fileParam.put("COMM_FILE_ID", commFileId);
+		fileParam.put("RANDOM_KEY", randomKey);
+		Map fileInfo = comDao.selectOne("com.S_COMM_FILE_DOWN", fileParam);
+		
+		String fileNm = String.valueOf(fileInfo.get("FILE_NAME"));
+		
+		String fileData = String.valueOf(fileInfo.get("FILE_PATH")) + String.valueOf(fileInfo.get("SERVER_FILE_NAME"));
+		
+//		String fileData = "C:\\develop\\files\\prjb\\아이언 맨 1.smi";
+		
+		File file = new File(fileData);
+	    
+		String encoding = ComUtil.getEncodingType(file);
+		
+        //입력 버퍼 생성
+        BufferedReader bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
+        
+        StringBuilder content = new StringBuilder("WEBVTT").append("\n").append("\n");
+        String line = "";
+        List<String> subtitleList = new ArrayList();
+        boolean headYn = true;
+        boolean startYn = true;
+        int titleIdx = 0;
+        while((line = bufReader.readLine()) != null){
+        	
+        	//헤더
+        	if(headYn) {
+        		if(line.trim().indexOf(".") == 0) {
+        			subtitleList.add(line.trim().substring(0, line.indexOf("{")));
+            	}
+        		else if(line.toUpperCase().contains("<BODY>")) {
+        			headYn = false;
+        		}
+        	}
+        	//바디
+        	else {
+        		//한,영 자막 같이있는경우
+        		if(subtitleList.size() > 1) {
+        			
+        			if(line.contains(subtitleList.get(titleIdx))) {
+        				
+        				if(startYn) {
+        					
+        				}
+        				System.out.println(line);
+        				String text = line;
+        				
+        				text.replaceAll("<br>", "\n");
+        				text = removeTag(text);
+        				
+            			content.append(text).append("\n");
+        				
+        			}
+        			else {
+        				titleIdx++;
+//        				if(line.contains(subtitleList.get(titleIdx))) {
+//            				
+//            			}
+        			}
+        			
+        		}
+        		//자막 1개만 있는경우
+        		else {
+        			
+//        			content.append(line).append("\n");
+        		}	
+        	}
+        }
+        System.out.println(content.toString());
+        //.readLine()은 끝에 개행문자를 읽지 않는다.            
+        bufReader.close();
+        
+        //파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
+//  		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
+//  		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
+//  		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+//  		String day = String.format("%02d", cal.get(Calendar.DATE));
+//  		String filePath = fileRoot + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
+//  		
+//        Map<String, String> fileResult = FileUtil.fileMake(filePath, fileNm, "vtt", content.toString());
+//		
+//        if("success".equals(fileResult.get("state"))) {
+//			
+//			Map<String, String> fileMapping = new HashMap();
+//			fileMapping.put("MODULE_CODE", moduleCode);
+//			fileMapping.put("GROUP_ID", groupId);
+//			fileMapping.put("CID", cId);
+//			fileMapping.put("CIP", ip);
+//			fileMapping.put("FILE_PATH", filePath);
+//			fileMapping.put("FILE_SIZE", String.valueOf(fileResult.get("fileSize")));
+//			fileMapping.put("FILE_EXTENSION", fileResult.get("fileExtension"));
+//			fileMapping.put("FILE_NAME_ENCRYPT", fileResult.get("fileName"));
+//			fileMapping.put("SERVER_FILE_NAME", fileResult.get("serverFileName"));
+//			fileMapping.put("RANDOM_KEY", ComUtil.getRandomKey());
+//			
+//			comDao.insert("com.I_COMM_FILE", fileMapping);
+//		}
+	}
+	public String removeTag(String str) {
+		StringBuilder result = new StringBuilder();
+		String[] strSp = str.split("");
+		boolean appendYn = true;
+		for (int i = 0; i < strSp.length; i++) {
+			String s = strSp[i];
+			if("<".equals(s)) {
+				appendYn = false;
+			}
+			else if(">".equals(s)){
+				appendYn = true;
+			}
+			else if(appendYn){
+				result.append(s);
+			}
+		}
+		return result.toString();
 	}
 	
 	/**

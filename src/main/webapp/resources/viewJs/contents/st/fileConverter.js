@@ -93,9 +93,9 @@ var f_setBoardFileGrid = function(){
 				, function(){
 					
 					$('#subtitleContent').val('');
-					if(gf_nvl(selectedRowData.FILE_TYPE, '') != 'SUB'){
+//					if(gf_nvl(selectedRowData.FILE_TYPE, '') != 'SUB'){
 						return false;	
-					}
+//					}
 					
 				}
 				, function(data){
