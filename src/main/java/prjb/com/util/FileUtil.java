@@ -63,13 +63,17 @@ public class FileUtil {
 			result.put("state", "fail");
 		}
 		
-		
+		if(fileSize > 0) {
+			result.put("state", "success");	
+		}
+		else {
+			result.put("state", "fail");
+		}
 		result.put("fileSize", fileSize);
 		result.put("fileExtension", fileExtension);
 		result.put("fileName", fileName);
 		result.put("serverFileName", serverFileName);
 		
-		result.put("state", "success");
 		return result;
 		
 	}
