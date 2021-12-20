@@ -35,6 +35,8 @@ public class FileUtil {
 		
 		Map result = new HashMap();
 
+		fileName =  fileName.substring(0, fileName.lastIndexOf(".")) + "." + fileExtension;
+		
 		String serverFileName = System.currentTimeMillis() + "_" + fileName;
 		
 		long fileSize = 0;
@@ -49,7 +51,7 @@ public class FileUtil {
 			}
 			
 			String commend = "ffmpeg -i " + input + " " 
-										  + outputPath + serverFileName + "." +fileExtension;
+										  + outputPath + serverFileName;
 			LinuxUtil.shellCmd(commend);
 			
 			//암호화
@@ -101,6 +103,8 @@ public class FileUtil {
 		
 		Map result = new HashMap();
 
+		fileName =  fileName.substring(0, fileName.lastIndexOf(".")) + "." + fileExtension;
+		
 		String serverFileName = System.currentTimeMillis() + "_" + fileName;
 		
 		long fileSize = 0;
