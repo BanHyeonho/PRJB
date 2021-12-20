@@ -40,9 +40,7 @@ public class FileUtil {
 		long fileSize = 0;
 		
 		try {
-			//암호화
-			fileName = CryptoUtil.encrypt(fileName);
-			serverFileName = URLEncoder.encode(CryptoUtil.encrypt(serverFileName), "UTF-8") ;
+
 			
 			File path = new File(outputPath);
 			
@@ -50,12 +48,25 @@ public class FileUtil {
 				path.mkdirs();
 			}
 			
-			boolean convert = FFmpegUtil.convert(input, outputPath + serverFileName, fileExtension);
+			String commend = "ffmpeg -i " + input + " " 
+										  + outputPath + serverFileName + "." +fileExtension;
+			LinuxUtil.shellCmd(commend);
 			
-			if(convert) {
+			//암호화
+			fileName = CryptoUtil.encrypt(fileName);
+			serverFileName = URLEncoder.encode(CryptoUtil.encrypt(serverFileName), "UTF-8") ;
+			
+			//mv 파일명1 파일명2 --파일명 변경
+			commend = "mv " + outputPath + serverFileName + "." + fileExtension + " " 
+							+ outputPath + serverFileName;
+			LinuxUtil.shellCmd(commend);
+			
+//			boolean convert = FFmpegUtil.convert(input, outputPath + serverFileName, fileExtension);
+			
+//			if(convert) {
 				File file = new File(outputPath + serverFileName);
 				fileSize = file.length();
-			}
+//			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
