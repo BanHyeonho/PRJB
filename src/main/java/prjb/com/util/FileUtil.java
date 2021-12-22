@@ -37,13 +37,11 @@ public class FileUtil {
 
 		fileName =  fileName.substring(0, fileName.lastIndexOf(".")) + "." + fileExtension;
 		
-		String serverFileName = System.currentTimeMillis() + "_" + fileName.replaceAll(" ", "");
+		String serverFileName = "";
 		
 		long fileSize = 0;
 		
 		try {
-			serverFileName = URLEncoder.encode(serverFileName, "UTF-8") ;
-			
 			File path = new File(outputPath);
 			
 			if (!path.exists()) {
@@ -52,7 +50,14 @@ public class FileUtil {
 						
 			//암호화
 			fileName = CryptoUtil.encrypt(fileName);
-			serverFileName = CryptoUtil.encrypt(serverFileName);
+			
+			//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
+			do {
+				serverFileName = System.currentTimeMillis() + "_" + fileName.replaceAll(" ", "");
+				serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
+				serverFileName = CryptoUtil.encrypt(serverFileName);
+				
+			}while(serverFileName.contains("/") || serverFileName.contains("\\"));
 						
 			boolean convert = FFmpegUtil.convert(input, outputPath + serverFileName, fileExtension);
 			
@@ -96,15 +101,22 @@ public class FileUtil {
 
 		fileName =  fileName.substring(0, fileName.lastIndexOf(".")) + "." + fileExtension;
 		
-		String serverFileName = System.currentTimeMillis() + "_" + fileName;
+		String serverFileName = "";
 		
 		long fileSize = 0;
 		
 		try {
 			//암호화
 			fileName = CryptoUtil.encrypt(fileName);
-			serverFileName = URLEncoder.encode(CryptoUtil.encrypt(serverFileName), "UTF-8") ;
 			
+			//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
+			do {
+				serverFileName = System.currentTimeMillis() + "_" + fileName.replaceAll(" ", "");
+				serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
+				serverFileName = CryptoUtil.encrypt(serverFileName);
+				
+			}while(serverFileName.contains("/") || serverFileName.contains("\\"));
+						
 			File path = new File(filePath);
 	
 			if (!path.exists()) {
@@ -156,12 +168,20 @@ public class FileUtil {
 
 		String fileName = attachedFile.getOriginalFilename();
 		String fileExtension = fileName.substring(fileName.lastIndexOf(".") +1);
-		String serverFileName = System.currentTimeMillis() + "_" + fileName;
+		String serverFileName = "";
 		
 		try {
 			//암호화
 			fileName = CryptoUtil.encrypt(fileName);
-			serverFileName = URLEncoder.encode(CryptoUtil.encrypt(serverFileName), "UTF-8") ;
+			
+			//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
+			do {
+				serverFileName = System.currentTimeMillis() + "_" + fileName;
+				serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
+				serverFileName = CryptoUtil.encrypt(serverFileName);
+				
+			}while(serverFileName.contains("/") || serverFileName.contains("\\"));
+			
 			
 			File path = new File(filePath);
 	
