@@ -59,16 +59,16 @@ public class FileUtil {
 			serverFileName = CryptoUtil.encrypt(serverFileName);
 			
 			//mv 파일명1 파일명2 --파일명 변경
-			commend = "mv " + outputPath + serverFileName + "." + fileExtension + " " 
-							+ outputPath + serverFileName;
-			LinuxUtil.shellCmd(commend);
+//			commend = "mv " + outputPath + serverFileName + "." + fileExtension + " " 
+//							+ outputPath + serverFileName;
+//			LinuxUtil.shellCmd(commend);
 			
-//			boolean convert = FFmpegUtil.convert(input, outputPath + serverFileName, fileExtension);
+			boolean convert = FFmpegUtil.convert(input, outputPath + serverFileName, fileExtension);
 			
-//			if(convert) {
+			if(convert) {
 				File file = new File(outputPath + serverFileName);
 				fileSize = file.length();
-//			}
+			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
