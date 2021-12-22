@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import prjb.com.service.ComService;
+import prjb.com.service.ScheduleService;
 import prjb.com.service.StService;
 
 @RequestMapping("/st")
@@ -30,6 +31,9 @@ public class StController {
 	
 	@Autowired
 	StService stService;
+	
+	@Autowired
+	ScheduleService scheduleService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StController.class);
 		
@@ -60,6 +64,19 @@ public class StController {
 		Map resultMap = new HashMap();
 		
 		resultMap.put("result", stService.convert(request));
+		
+		return resultMap;
+	}
+	
+	/**
+	 * 스케쥴러 파일변환 강제시작
+	 */
+	@RequestMapping(value = "/scheduleConvert", method = RequestMethod.POST)
+	public @ResponseBody Map scheduleConvert(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		Map resultMap = new HashMap();
+		
+		scheduleService.fileConvert();
 		
 		return resultMap;
 	}

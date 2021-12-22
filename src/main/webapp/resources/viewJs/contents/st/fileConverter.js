@@ -272,3 +272,33 @@ var f_save = function(){
 			, null
 			, '/save');
 }
+
+var f_converter = function(){
+	
+	var fData = new FormData();
+	
+	gf_ajax( fData
+			, function(){
+				
+				if(gf_gridSaveData(videoGrid).length > 0
+				|| gf_gridSaveData(videoFileGrid).length > 0
+				){
+					gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
+					return false;
+				}
+		
+			}
+			, function(data){
+				gf_toast(gf_mlg('요청하였습니다'), 'success');
+			}
+			, function(data){
+				gf_toast(gf_mlg('요청하였습니다'), 'success');
+			}
+			, null
+			, null
+			, '/st/scheduleConvert'
+			, true
+			, 'post'
+			, true
+			, 1);
+}

@@ -4,6 +4,22 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
+	<!-- 에러로그 저장 -->
+	<insert id="I_ERROR_LOG_HISTORY" parameterType="HashMap" >
+		INSERT INTO COMM_ERROR_LOG(ERROR_LOCATION     
+							 	 , ERROR_MSG     
+							<include refid="config.cidColumn"></include>               
+							)
+					  VALUES( #{ERROR_LOCATION}
+							, ${@prjb.com.util.ComUtil@getClob(ERROR_MSG)}
+							, #{CID}
+				          	, SYSDATE
+					        , #{CIP}
+					        , #{CID}
+					        , SYSDATE    
+					        , #{CIP}        
+							)
+	</insert>
 	<!-- 첨부파일 저장 -->
 	<insert id="I_COMM_FILE" parameterType="HashMap" >
 		INSERT INTO COMM_FILE( COMM_FILE_ID    
@@ -54,10 +70,32 @@
 			 , A.FILE_EXTENSION
 			 , A.SERVER_FILE_NAME
 			 , A.ATTRIBUTE1
+			 , A.SCHEDULE_CODE
 		  FROM COMM_FILE A
 		 WHERE A.COMM_FILE_ID = #{COMM_FILE_ID}
 		   AND A.RANDOM_KEY = #{RANDOM_KEY}
 	</select>
+	<!-- 첨부파일 스케쥴상태로 조회 -->
+	<select id="S_COMM_FILE_SCHEDULE" resultType="HashMap" parameterType="HashMap" >
+		SELECT A.FILE_PATH
+			 , A.FILE_NAME
+			 , A.FILE_EXTENSION
+			 , A.SERVER_FILE_NAME
+			 , A.ATTRIBUTE1
+			 , A.COMM_FILE_ID
+			 , A.RANDOM_KEY
+		  FROM COMM_FILE A
+		 WHERE A.SCHEDULE_CODE = #{SCHEDULE_CODE}
+	</select>
+	<!-- 첨부파일 스케쥴상태 변경 -->
+	<update id="U_COMM_FILE_SCHEDULE" parameterType="HashMap" >
+		UPDATE COMM_FILE
+		   SET SCHEDULE_CODE = #{SCHEDULE_CODE}
+		   	 , MDT = SYSDATE
+		   	 , MID = #{CID}
+		   	 , MIP = #{CIP}
+		 WHERE COMM_FILE_ID = #{COMM_FILE_ID} 
+	</update>
 	<!-- 실제파일 삭제체크-->
 	<select id="S_COMM_FILE_DELETE_CHK" resultType="HashMap" parameterType="HashMap" >
 		SELECT COUNT(A.COMM_FILE_ID)		AS CNT

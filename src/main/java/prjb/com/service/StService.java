@@ -225,8 +225,6 @@ public class StService {
 	@Transactional(rollbackFor = Exception.class)
 	public void mediaConvert(HttpServletRequest request, Map param, String groupId) throws Exception{
 		
-		final String fileExtension = "mp4";
-		final String moduleCode = "ST";
 		final String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
 		final String ip = ComUtil.getAddress(request);
 		final String commFileId = String.valueOf(param.get("COMM_FILE_ID"));
@@ -236,7 +234,28 @@ public class StService {
 		fileParam.put("COMM_FILE_ID", commFileId);
 		fileParam.put("RANDOM_KEY", randomKey);
 		Map fileInfo = comDao.selectOne("com.S_COMM_FILE_DOWN", fileParam);
+				
+		fileInfo.put("cId", cId);
+		fileInfo.put("ip", ip);
+		fileInfo.put("moduleCode", "ST");
+		mediaConvert(fileInfo, groupId);
 		
+	}
+	
+	/**
+	 * 영상 -> mp4파일 변환실행부
+	 * @param request
+	 * @param param
+	 * @param groupId
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void mediaConvert(Map fileInfo, String groupId) throws Exception{
+		
+		final String fileExtension = "mp4";
+		final String moduleCode = String.valueOf(fileInfo.get("moduleCode"));
+		final String cId = String.valueOf(fileInfo.get("cId"));
+		final String ip = String.valueOf(fileInfo.get("ip"));
 		String fileNm = String.valueOf(fileInfo.get("FILE_NAME"));
 		
 		String fileData = String.valueOf(fileInfo.get("FILE_PATH")) + String.valueOf(fileInfo.get("SERVER_FILE_NAME"));

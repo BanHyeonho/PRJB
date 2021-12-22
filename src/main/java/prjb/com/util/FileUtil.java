@@ -49,20 +49,11 @@ public class FileUtil {
 			if (!path.exists()) {
 				path.mkdirs();
 			}
-			
-//			String commend = "ffmpeg -i " + input + " " 
-//										  + outputPath + serverFileName;
-//			LinuxUtil.shellCmd(commend);
-			
+						
 			//암호화
 			fileName = CryptoUtil.encrypt(fileName);
 			serverFileName = CryptoUtil.encrypt(serverFileName);
-			
-			//mv 파일명1 파일명2 --파일명 변경
-//			commend = "mv " + outputPath + serverFileName + "." + fileExtension + " " 
-//							+ outputPath + serverFileName;
-//			LinuxUtil.shellCmd(commend);
-			
+						
 			boolean convert = FFmpegUtil.convert(input, outputPath + serverFileName, fileExtension);
 			
 			if(convert) {
