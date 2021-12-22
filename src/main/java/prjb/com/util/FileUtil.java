@@ -50,9 +50,9 @@ public class FileUtil {
 				path.mkdirs();
 			}
 			
-			String commend = "ffmpeg -i " + input + " " 
-										  + outputPath + serverFileName;
-			LinuxUtil.shellCmd(commend);
+//			String commend = "ffmpeg -i " + input + " " 
+//										  + outputPath + serverFileName;
+//			LinuxUtil.shellCmd(commend);
 			
 			//암호화
 			fileName = CryptoUtil.encrypt(fileName);
