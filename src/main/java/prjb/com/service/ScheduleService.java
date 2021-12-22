@@ -38,6 +38,7 @@ public class ScheduleService {
 		List<Map> convertList = comDao.selectList("com.S_COMM_FILE_SCHEDULE", listParam);
 		
 		convertList.parallelStream().forEach(convertFile->{
+//		convertList.forEach(convertFile->{
 			
 			String COMM_FILE_ID = String.valueOf(convertFile.get("COMM_FILE_ID"));
 			String RANDOM_KEY = String.valueOf(convertFile.get("RANDOM_KEY"));
@@ -45,7 +46,7 @@ public class ScheduleService {
 			param.put("CID", "0");
 			param.put("CIP", "SERVER");
 			param.put("COMM_FILE_ID", COMM_FILE_ID);
-			param.put("COMM_FILE_ID", RANDOM_KEY);
+			param.put("RANDOM_KEY", RANDOM_KEY);
 			
 			logger.info("ScheduleService.fileConvert().parallelStream COMM_FILE_ID : " + COMM_FILE_ID);
 			
@@ -60,9 +61,16 @@ public class ScheduleService {
 					convertFile.put("moduleCode", "BD");
 					convertFile.put("cId", "0");
 					convertFile.put("ip", "SERVER");
-					stService.mediaConvert(convertFile, groupId);
-					//상태 변경(진행중->완료)
-					param.put("SCHEDULE_CODE", "COMPLETE");
+					Map convertResult = stService.mediaConvertExec(convertFile, groupId);
+
+					if("success".equals(String.valueOf(convertResult.get("state")))) {
+						//상태 변경(진행중->완료)
+						param.put("SCHEDULE_CODE", "COMPLETE");						
+					}
+					else {
+						//상태 변경(진행중->실패)				
+						param.put("SCHEDULE_CODE", "FAIL");
+					}
 					comDao.update("com.U_COMM_FILE_SCHEDULE", param);
 				}
 				

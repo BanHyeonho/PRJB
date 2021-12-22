@@ -109,7 +109,7 @@ public class ComUtil {
             return result.toString();
             
         } else {
-            return null;
+            return "null";
         }
 	}
 	

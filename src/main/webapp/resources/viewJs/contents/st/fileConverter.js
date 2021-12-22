@@ -288,7 +288,7 @@ var f_save = function(){
 			, '/save');
 }
 
-var f_converter = function(){
+var f_scheduleExec = function(){
 	
 	var fData = new FormData();
 	
@@ -310,7 +310,6 @@ var f_converter = function(){
 			, function(data){
 				gf_toast(gf_mlg('요청하였습니다'), 'success');
 			}
-			, null
 			, null
 			, '/st/scheduleConvert'
 			, true

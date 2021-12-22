@@ -238,7 +238,7 @@ public class StService {
 		fileInfo.put("cId", cId);
 		fileInfo.put("ip", ip);
 		fileInfo.put("moduleCode", "ST");
-		mediaConvert(fileInfo, groupId);
+		mediaConvertExec(fileInfo, groupId);
 		
 	}
 	
@@ -250,8 +250,9 @@ public class StService {
 	 * @throws Exception
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void mediaConvert(Map fileInfo, String groupId) throws Exception{
-		
+	public Map mediaConvertExec(Map fileInfo, String groupId) throws Exception{
+		Map result = new HashMap();
+		result.put("state", "fail");
 		final String fileExtension = "mp4";
 		final String moduleCode = String.valueOf(fileInfo.get("moduleCode"));
 		final String cId = String.valueOf(fileInfo.get("cId"));
@@ -284,7 +285,11 @@ public class StService {
 			fileMapping.put("RANDOM_KEY", ComUtil.getRandomKey());
 			
 			comDao.insert("com.I_COMM_FILE", fileMapping);
+			result.put("state", "success");
 		}
+        
+        
+        return result;
 	}
 	
 	/**

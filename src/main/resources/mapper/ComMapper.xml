@@ -6,8 +6,8 @@
 	
 	<!-- 에러로그 저장 -->
 	<insert id="I_ERROR_LOG_HISTORY" parameterType="HashMap" >
-		INSERT INTO COMM_ERROR_LOG(ERROR_LOCATION     
-							 	 , ERROR_MSG     
+		INSERT INTO COMM_ERROR_LOG(ERROR_LOCATION
+							 	 , ERROR_MSG
 							<include refid="config.cidColumn"></include>               
 							)
 					  VALUES( #{ERROR_LOCATION}
