@@ -20,6 +20,7 @@
                   THEN ''
                   ELSE '(' || COMM_UTIL_PKG.lang('비공개', 'KO') || ') ' END || B.TITLE        AS TITLE
            , A.ATTRIBUTE1
+           , A.SCHEDULE_CODE
         FROM COMM_FILE A
    LEFT JOIN BBS_BOARD B ON (A.GROUP_ID = B.BBS_BOARD_ID AND B.MODULE_CODE = 'ST')
    LEFT JOIN BBS_SETTING C ON (B.CATEGORY_CODE = C.CATEGORY_CODE)

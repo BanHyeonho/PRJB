@@ -280,7 +280,7 @@ var f_save = function(){
 				gf_gridClear(boardFileGrid);
 				gf_gridClear(videoGrid);
 				gf_gridClear(videoFileGrid);
-				f_videoSearch();
+				f_search();
 				
 			}
 			, null

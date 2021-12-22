@@ -394,7 +394,8 @@ public class ComService {
 		
 		String tableNm = "";
 		String queryId = "";
-		List<Map> tableLayout = new ArrayList();
+		List<Map> tableLayout = null;
+		List<Map> columns = null;
 		String whereQuery = "";
 		if(param.size() > 0) {
 			Map<String, String> m = param.get(0);
@@ -422,15 +423,22 @@ public class ComService {
 					paramMap.put("CID", cId);
 					paramMap.put("MID", cId);
 					paramMap.put("CIP", ip);
-					paramMap.put("MIP", ip);					
-					
+					paramMap.put("MIP", ip);
 					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
-					for (Map map : tableLayout) {
-						
-						map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
+					
+					if(tableLayout != null) {
+						columns = new ArrayList();
+						for (Map map : tableLayout) {
+							if( paramMap.get(map.get("COLUMN_NAME")) != null ) {
+								Map m = new HashMap();
+								m.put("COLUMN_NAME", map.get("COLUMN_NAME"));
+								m.put("COLUMN_VALUE", paramMap.get(map.get("COLUMN_NAME")));
+								columns.add(m);
+							}
+						}
 					}
-					paramMap.put("TABLE_NAME", tableNm);
-					paramMap.put("TABLE_LAYOUT", tableLayout);
+					paramMap.put("TABLE_NAME", tableNm);					
+					paramMap.put("TABLE_LAYOUT", columns);
 					comDao.insert(gridQueryId, paramMap);
 					break;
 					
@@ -440,11 +448,20 @@ public class ComService {
 					paramMap.put("MID", cId);
 					paramMap.put("MIP", ip);
 					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
-					for (Map map : tableLayout) {
-						map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
+					
+					if(tableLayout != null) {
+						columns = new ArrayList();
+						for (Map map : tableLayout) {
+							if( paramMap.get(map.get("COLUMN_NAME")) != null ) {
+								Map m = new HashMap();
+								m.put("COLUMN_NAME", map.get("COLUMN_NAME"));
+								m.put("COLUMN_VALUE", paramMap.get(map.get("COLUMN_NAME")));								
+								columns.add(m);
+							}
+						}
 					}
 					paramMap.put("TABLE_NAME", tableNm);
-					paramMap.put("TABLE_LAYOUT", tableLayout);
+					paramMap.put("TABLE_LAYOUT", columns);
 					paramMap.put("WHERE_QUERY", whereQuery);
 					comDao.update(gridQueryId, paramMap);
 					break;
@@ -526,6 +543,7 @@ public class ComService {
 		String ip = String.valueOf(paramMap.get("ip"));
 		
 		List<Map> tableLayout = null;
+		List<Map> columns = null;
 		
 		//공통쿼리일경우
 		if(queryId.endsWith("COMM_QUERY")) {
@@ -552,8 +570,14 @@ public class ComService {
 			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(langCode));
 			if(tableLayout != null) {
+				columns = new ArrayList();
 				for (Map map : tableLayout) {
-					map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
+					if( paramMap.get(map.get("COLUMN_NAME")) != null ) {
+						Map m = new HashMap();
+						m.put("COLUMN_NAME", map.get("COLUMN_NAME"));
+						m.put("COLUMN_VALUE", paramMap.get(map.get("COLUMN_NAME")));
+						columns.add(m);
+					}
 				}	
 			}
 			
@@ -573,8 +597,14 @@ public class ComService {
 			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(langCode));
 			if(tableLayout != null) {
+				columns = new ArrayList();
 				for (Map map : tableLayout) {
-					map.put("COLUMN_VALUE", "".equals(paramMap.get(map.get("COLUMN_NAME"))) ? null : paramMap.get(map.get("COLUMN_NAME")) );
+					if( paramMap.get(map.get("COLUMN_NAME")) != null ) {
+						Map m = new HashMap();
+						m.put("COLUMN_NAME", map.get("COLUMN_NAME"));
+						m.put("COLUMN_VALUE", paramMap.get(map.get("COLUMN_NAME")));
+						columns.add(m);
+					}
 				}
 			}
 			paramMap.put("TABLE_NAME", tableNm);
