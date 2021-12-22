@@ -111,7 +111,8 @@ var f_setBoardFileGrid = function(){
 
 var f_search = function(){
 	
-	if(gf_gridSaveData(videoGrid).length > 0
+	if(gf_gridSaveData(boardFileGrid).length > 0
+	|| gf_gridSaveData(videoGrid).length > 0
 	|| gf_gridSaveData(videoFileGrid).length > 0
 	){
 	
@@ -160,7 +161,8 @@ var f_converter = function(){
 	gf_ajax( fData
 			, function(){
 				
-				if(gf_gridSaveData(videoGrid).length > 0
+				if(gf_gridSaveData(boardFileGrid).length > 0
+				|| gf_gridSaveData(videoGrid).length > 0
 				|| gf_gridSaveData(videoFileGrid).length > 0
 				){
 					gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
@@ -218,10 +220,13 @@ var f_save = function(){
 	
 	gf_ajax( fData
 			, function(){
+		
+				var boardFileData = gf_gridSaveData(boardFileGrid);
 				var videoData = gf_gridSaveData(videoGrid);
 				var videoFileData = gf_gridSaveData(videoFileGrid);
 				
-				if(videoData.length == 0
+				if(boardFileData.length == 0
+				&& videoData.length == 0
 				&& videoFileData.length == 0
 				){
 				
@@ -229,6 +234,15 @@ var f_save = function(){
 					return false;
 				}
 				else{
+					
+					//게시판 첨부파일
+					if(boardFileData.length > 0){
+						boardFileData.unshift({
+  							 'TABLE_NAME' : 'COMM_FILE'
+  							,'QUERY_ID' : 'com.COMM_QUERY'
+  						});
+  						fData.set('boardFileGrid', JSON.stringify(boardFileData));
+					}
 					
 					//영상그리드
 					if(videoData.length > 0){
@@ -263,6 +277,7 @@ var f_save = function(){
 			, function(data){
 				
 				gf_toast(gf_mlg('저장_되었습니다'), 'success');
+				gf_gridClear(boardFileGrid);
 				gf_gridClear(videoGrid);
 				gf_gridClear(videoFileGrid);
 				f_videoSearch();
@@ -279,8 +294,9 @@ var f_converter = function(){
 	
 	gf_ajax( fData
 			, function(){
-				
-				if(gf_gridSaveData(videoGrid).length > 0
+		
+				if(gf_gridSaveData(boardFileGrid).length > 0
+				|| gf_gridSaveData(videoGrid).length > 0
 				|| gf_gridSaveData(videoFileGrid).length > 0
 				){
 					gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
