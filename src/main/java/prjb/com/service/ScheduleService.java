@@ -38,7 +38,6 @@ public class ScheduleService {
 		List<Map> convertList = comDao.selectList("com.S_COMM_FILE_SCHEDULE", listParam);
 		
 		convertList.parallelStream().forEach(convertFile->{
-//		convertList.forEach(convertFile->{
 			
 			String COMM_FILE_ID = String.valueOf(convertFile.get("COMM_FILE_ID"));
 			String RANDOM_KEY = String.valueOf(convertFile.get("RANDOM_KEY"));
