@@ -42,14 +42,6 @@ public class FileUtil {
 		long fileSize = 0;
 		
 		try {
-			File path = new File(outputPath);
-			
-			if (!path.exists()) {
-				path.mkdirs();
-			}
-						
-			//암호화
-			fileName = CryptoUtil.encrypt(fileName);
 			
 			//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
 			do {
@@ -58,7 +50,16 @@ public class FileUtil {
 				serverFileName = CryptoUtil.encrypt(serverFileName);
 				
 			}while(serverFileName.contains("/") || serverFileName.contains("\\"));
-						
+			
+			//암호화
+			fileName = CryptoUtil.encrypt(fileName);
+			
+			File path = new File(outputPath);
+			
+			if (!path.exists()) {
+				path.mkdirs();
+			}
+			
 			boolean convert = FFmpegUtil.convert(input, outputPath + serverFileName, fileExtension);
 			
 			if(convert) {
@@ -106,8 +107,7 @@ public class FileUtil {
 		long fileSize = 0;
 		
 		try {
-			//암호화
-			fileName = CryptoUtil.encrypt(fileName);
+			
 			
 			//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
 			do {
@@ -116,7 +116,10 @@ public class FileUtil {
 				serverFileName = CryptoUtil.encrypt(serverFileName);
 				
 			}while(serverFileName.contains("/") || serverFileName.contains("\\"));
-						
+	
+			//암호화
+			fileName = CryptoUtil.encrypt(fileName);
+			
 			File path = new File(filePath);
 	
 			if (!path.exists()) {
@@ -171,8 +174,6 @@ public class FileUtil {
 		String serverFileName = "";
 		
 		try {
-			//암호화
-			fileName = CryptoUtil.encrypt(fileName);
 			
 			//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
 			do {
@@ -182,6 +183,8 @@ public class FileUtil {
 				
 			}while(serverFileName.contains("/") || serverFileName.contains("\\"));
 			
+			//암호화
+			fileName = CryptoUtil.encrypt(fileName);
 			
 			File path = new File(filePath);
 	
