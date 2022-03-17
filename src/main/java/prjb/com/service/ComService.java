@@ -14,9 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +31,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
+import prjb.com.controller.ComController;
 import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
@@ -41,7 +45,12 @@ public class ComService {
 	
 	@Autowired
 	ComDao comDao;
-		
+	
+	@Autowired
+	AsyncService async;
+	
+	private static final Logger logger = LoggerFactory.getLogger(ComService.class);
+	
 	/**
 	 * 메뉴코드로 화면 리턴
 	 * @param request
@@ -772,5 +781,24 @@ public class ComService {
 			FileUtil.fileDelete(result.get("FILE_PATH"), result.get("SERVER_FILE_NAME"));	
 		}
 		
+	}
+	
+	/**
+	 * 테스트
+	 */
+	public void test(HttpServletRequest request, HttpServletResponse response) {
+		for(int i=0; i<10000; i++) {
+			exec(i);
+		}
+	}
+	public void exec(int i) {
+		async.run(()-> exec1(i));
+	}
+	public void exec1(int i) {
+		for(int j=0; j<1000; j++) {
+			System.out.print("-");
+		}
+		System.out.println("");
+		logger.info("실행테스트 ::: " + String.valueOf(i));
 	}
 }

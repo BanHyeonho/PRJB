@@ -186,4 +186,23 @@ public class ComController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		return new HashMap();
 	}
+	
+	
+	
+	
+	
+	/**
+	 * 테스트
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/test", method = RequestMethod.POST)
+	public Object test(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		comService.test(request, response);
+
+		return null;
+	}
 }
