@@ -808,13 +808,13 @@ public class ComService {
 		logger.info("테스트확인 END::" + result.size());
 		logger.info("테스트확인 END:: List");
 		for (Map r : result) {
-			System.out.println(r.get("ID") + " ::: " + r.get("VALUE"));
+			logger.info(r.get("ID") + " ::: " + r.get("VALUE"));
 		}
 		
 		logger.info("테스트확인 END:: Map");
 		for( String key : result2.keySet() ){
 
-	        System.out.println( String.format("키 : %s, 값 : %s", key, result2.get(key)) );
+			logger.info( String.format("키 : %s, 값 : %s", key, result2.get(key)) );
 
 	    }
 	}
@@ -829,7 +829,7 @@ public class ComService {
 		
 	}
 	public int exec1(int i, Map result2) {
-		for(long j=1; j<=1000000000; j++) {
+		for(long j=1; j<=100000000; j++) {
 //			System.out.print("-");
 //			try {
 //				wait(5000);
@@ -837,7 +837,7 @@ public class ComService {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-			if(j==1000000000) {
+			if(j==100000000) {
 				System.out.print("-");
 			}
 		}
