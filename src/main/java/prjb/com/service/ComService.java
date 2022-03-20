@@ -1,7 +1,6 @@
 package prjb.com.service;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +8,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +30,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
-import prjb.com.controller.ComController;
 import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
@@ -787,18 +785,66 @@ public class ComService {
 	 * 테스트
 	 */
 	public void test(HttpServletRequest request, HttpServletResponse response) {
-		for(int i=0; i<10000; i++) {
-			exec(i);
+		
+		List<Map> result = new ArrayList();
+		Map<String, Integer> result2 = new HashMap();
+		logger.info("테스트확인 START::" +  + result.size());
+		List<Future> threadList = new ArrayList();
+		
+		for(int i=0; i<100; i++) {
+			threadList.add(exec(i, result, result2));
 		}
-	}
-	public void exec(int i) {
-		async.run(()-> exec1(i));
-	}
-	public void exec1(int i) {
-		for(int j=0; j<1000; j++) {
-			System.out.print("-");
+		
+		logger.info("테스트확인 비동기끝::");
+		
+		for (Future future : threadList) {
+			try {
+				future.get();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		System.out.println("");
+		logger.info("테스트확인 END::" + result.size());
+		logger.info("테스트확인 END:: List");
+		for (Map r : result) {
+			System.out.println(r.get("ID") + " ::: " + r.get("VALUE"));
+		}
+		
+		logger.info("테스트확인 END:: Map");
+		for( String key : result2.keySet() ){
+
+	        System.out.println( String.format("키 : %s, 값 : %s", key, result2.get(key)) );
+
+	    }
+	}
+	
+	public Future exec(int i, List result, Map result2) {
+		return async.run(()-> {
+			Map m = new HashMap();
+			m.put("ID", exec1(i, result2));
+			m.put("VALUE", ComUtil.getRandomKey());
+			result.add(m);
+		});
+		
+	}
+	public int exec1(int i, Map result2) {
+		for(long j=1; j<=1000000000; j++) {
+//			System.out.print("-");
+//			try {
+//				wait(5000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			if(j==1000000000) {
+				System.out.print("-");
+			}
+		}
+//		System.out.println("");
 		logger.info("실행테스트 ::: " + String.valueOf(i));
+		result2.put("ID : " + i, i +1);
+		return i;
 	}
+	
 }

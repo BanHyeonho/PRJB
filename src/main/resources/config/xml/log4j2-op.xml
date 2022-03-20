@@ -2,7 +2,7 @@
 <Configuration>
 	<Properties>
 		<Property name="layoutPattern">
-			%d{yyyy-MM-dd HH:mm:ss,SSS} %p [%c.%M():%L] - %m%n
+			%d{yyyy-MM-dd HH:mm:ss,SSS} %p [%t:%c.%M():%L] - %m%n
 		</Property>
     </Properties>
     
@@ -15,7 +15,7 @@
       		<PatternLayout pattern="${layoutPattern}" />
 	  		<Policies>
 			   <!-- size 단위: Byte(default), KB, MB, or GB -->
-			   <SizeBasedTriggeringPolicy size="50MB" />
+			   <SizeBasedTriggeringPolicy size="10MB" />
 			   <!-- 시간 단위 -->
 			   <TimeBasedTriggeringPolicy />
 	  		</Policies>

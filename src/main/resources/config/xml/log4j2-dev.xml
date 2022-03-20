@@ -2,7 +2,7 @@
 <Configuration>
 	<Properties>
 		<Property name="layoutPattern">
-			%d{yyyy-MM-dd HH:mm:ss,SSS} %p [%c.%M():%L] - %m%n
+			%d{yyyy-MM-dd HH:mm:ss,SSS} %p [%t:%c.%M():%L] - %m%n
 		</Property>
     </Properties>
     
