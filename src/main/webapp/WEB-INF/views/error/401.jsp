@@ -8,6 +8,6 @@
 <meta name="google" content="notranslate">
 </head>
 <body>
-권한이 없습니다. 관리자에게 문의하세요.
+<h1>권한이 없습니다. 관리자에게 문의하세요.</h1>
 </body>
 </html>

@@ -8,6 +8,6 @@
 <meta name="google" content="notranslate">
 </head>
 <body>
-관리자에게 문의하세요.
+<h1>관리자에게 문의하세요.</h1>
 </body>
 </html>
