@@ -89,18 +89,18 @@ public class StService {
 				request.getServletContext().setAttribute("RANDOM_KEY", randomKey);
 				
 				String filePath = String.valueOf(result.get("FILE_PATH"));
-				String fileNm = String.valueOf(result.get("SERVER_FILE_NAME"));				
+				String fileNm = String.valueOf(result.get("SERVER_FILE_NAME")).replaceAll("%", "%25");	//UrlResource 는 파일명에 '%' 가 들어가는경우 오류
 				fileData = filePath + fileNm;
 				request.getServletContext().setAttribute("FILE_DATA", fileData);
 			}
 		}
-//		fileData = "file:" + "C:\\develop\\files\\prjb\\Home.Alone.2.Lost.in.New.York.1992.1080p.BluRay.x264.YIFY.mp4";
+//		fileData = "file:" + "C:\\develop\\files\\prjb\\" + "xy4qMzyV4GHTwnH9SXxS+GXYa82ot+xxH+c+rM98Itycrp+L%1+eZPZDMNHBA8x7yxB0SEFoNySo8KDmbjKOZwLD33SXtWMNiKtsXYC7RgyhDddCPFQHGAmtazOOLpmAY".replace("%", "%25");
 //		UrlResource video = new UrlResource(fileData);
 		UrlResource video = new UrlResource("file:" + fileData);	//UrlResource 는 파일명에 '%' 가 들어가는경우 오류
 //		fileData = "C:\\develop\\files\\prjb\\8h6CNn1HRrxjLxwKlQyao0VHUMmjTwj2833sy%2B5dBr4jv8jNCTMHQvEwZM%2B39a%2FQwH3R9GUUt6oHGYgZicp4GQ%3D%3D";
 		
 //		fileData = "C:\\develop\\files\\prjb\\xy4qMzyV4GHTwnH9SXxS+GXYa82ot+xxH+c+rM98Itycrp+L1+eZPZDMNHBA8x7yxB0SEFoNySo8KDmbjKOZwLD33SXtWMNiKtsXYC7RgyhDddCPFQHGAmtazOOLpmAY";
-//		Resource video = new FileSystemResource(fileData);
+//		Resource video = new FileSystemResource(fileData);	//속도이슈 때문에 사용하지않음.
 		ResourceRegion resourceRegion;
 		final long chunkSize = 1000000L;
 		long contentLength = video.contentLength(); 
