@@ -10,9 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinuxUtil {
+public class OsUtil {
 	
-	private static final Logger logger = LoggerFactory.getLogger(LinuxUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(OsUtil.class);
 	
 	public static boolean shellCmd(String command){
 		boolean result = false;

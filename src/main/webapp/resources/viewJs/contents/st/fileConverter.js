@@ -161,8 +161,7 @@ var f_converter = function(){
 	gf_ajax( fData
 			, function(){
 				
-				if(gf_gridSaveData(boardFileGrid).length > 0
-				|| gf_gridSaveData(videoGrid).length > 0
+				if(gf_gridSaveData(videoGrid).length > 0
 				|| gf_gridSaveData(videoFileGrid).length > 0
 				){
 					gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
