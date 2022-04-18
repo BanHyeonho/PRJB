@@ -19,11 +19,11 @@ public class ComInterceptor extends HandlerInterceptorAdapter {
 		String requestURI = request.getRequestURI();
 		String loginSessionYn = String.valueOf(request.getSession().getAttribute("LOGIN_SESSION_YN"));
 		
-		//80포트가 아닌 다른포트로 접근시 80포트로 이동시켜 로드밸런싱 한다.
-		if(!"localhost".equals(request.getServerName()) && request.getLocalPort() != 80) {
-			response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":80" + requestURI);
-			return true;
-		}
+//		//80포트가 아닌 다른포트로 접근시 80포트로 이동시켜 로드밸런싱 한다.
+//		if(!"localhost".equals(request.getServerName()) && request.getLocalPort() != 80) {
+//			response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":80" + requestURI);
+//			return true;
+//		}
 		
 //		//로그인 상태가 아니면서 특정 url 접근시 허용하지 않는다.
 		//비로그인 상태
