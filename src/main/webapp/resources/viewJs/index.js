@@ -256,7 +256,8 @@ function f_getMenu(){
 							label : menuNm, 
 							category : gf_mlg(bigMenu.MLG_CODE),
 							value : menuNm,
-							menuCode : menuCode
+							menuCode : menuCode,
+							menuUrl : menuUrl
 						});
 					}
 					
@@ -410,6 +411,19 @@ var f_addPageExec = function(p_param){
     var showLabel = label.length > 8 ? label.substr(0,8) + '...' : label;
     var li = $( tabTemplate.replace( /@href@/g, "#" + id ).replace( /@label@/g, showLabel ).replace( /@menuCode@/g, p_param.menuCode ) );
         
+    //개발
+    if(location.hostname.indexOf('localhost') > -1){
+    	var v_menu_url = menuSearchData.filter(x=>x.menuCode == p_param.menuCode)[0].menuUrl.split('_');
+    	$.each(v_menu_url, function(idx, item){
+    		if(idx == 0){
+    			label += ' : contents/' + item;		
+    		}
+    		else{
+    			label += '/' + item;
+    		}
+    	});
+    }
+    
     li.attr('title', label);
         
     var pageSrc = '/page?menuCode=' + p_param.menuCode;

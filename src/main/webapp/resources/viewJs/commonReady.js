@@ -40,7 +40,7 @@ $(document).ready(function() {
 	$('input').attr('autocomplete', 'off');
 	
 	//엔터입력시 실행
-	$('[enter-exec]').on('keydown',function(e){
+	$('[enter-exec]').on('keydown', function(e){
 		//엔터
 		if(e.which == 13){
 			e.preventDefault();
@@ -56,7 +56,7 @@ $(document).ready(function() {
 	});
 	//드래그 막기
 	$(document).on('dragstart', function() {
-		  return false;
+		return false;
 	});
 	//선택막기(ctrl+a 안되는 문제가 있음)
 //	$(document).on('selectstart', function(e) {
@@ -73,8 +73,6 @@ $(document).ready(function() {
 		parent.selectedTabId = '';
 	});
 	
-	//툴팁 클래스적용
-	//$( document ).tooltip( { tooltipClass: "common-tooltip" } );
 	
 	//메뉴명
 	$('#content-title').text(parent.$('li[aria-selected="true"]').attr('title'));
