@@ -8,6 +8,35 @@
 <meta charset="UTF-8">
 <title>${pb:msg(pageContext.request, "파일관리")}</title>
 <meta name="google" content="notranslate">
+
+<link href="/plugin/fancytree/skin-win8/ui.fancytree.css" rel="stylesheet">
+<script src="/plugin/fancytree/modules/jquery.fancytree.js"></script>
+<script src="/plugin/fancytree/modules/jquery.fancytree.dnd.js"></script>
+<script src="/plugin/fancytree/modules/jquery.fancytree.edit.js"></script>
+
+<style type="text/css">
+#draggableSample, #droppableSample {
+		height:100px;
+		padding:0.5em;
+		width:150px;
+		border:1px solid #AAAAAA;
+	}
+	#draggableSample {
+		background-color: silver;
+		color:#222222;
+	}
+	#droppableSample {
+		background-color: maroon;
+		color: white;
+	}
+	#droppableSample.drophover {
+		border: 1px solid green;
+	}
+	#tree > ul{
+	    height: 98%;
+    	overflow: auto;
+	}
+</style>
 </head>
 <body onselectstart="return false;">
 	<div id='content' class="pd-pl-default">
@@ -22,7 +51,8 @@
 				</div>
 			</div>
 		</div>
-		<div id='treeContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1 panel-2'>
+<!-- 		<div id='treeContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1 panel-2'> -->
+<div id='tree' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1 panel-2'>
 
 		</div>
 		<div id='fileViewContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-1 panel-8-1'>
