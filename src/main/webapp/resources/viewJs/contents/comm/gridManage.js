@@ -22,6 +22,7 @@ $(document).ready(function() {
 	contextGrid = gf_gridInit('contextGrid');
 	
 	detailGrid = gf_gridInit('detailGrid',{
+		forceFitColumns: false,
     	'defaultInsert' : {'USE_YN' : '1'
     					,'REQUIRE_YN' : '0'
 						,'FIXED_YN' : '0'
@@ -33,6 +34,7 @@ $(document).ready(function() {
     });
 	
 	comboPopupGrid = gf_gridInit('comboPopupGrid',{
+		forceFitColumns: false,
     	'defaultInsert' : {'USE_YN' : '1'
     					 ,'COMM_GRID_DETAIL_ID' : gridPk}
     });

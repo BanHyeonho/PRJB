@@ -8,9 +8,11 @@ var gridPk = function(){
 	
 $(document).ready(function() {
 	masterGrid = gf_gridInit('masterGrid', {
+		forceFitColumns: false,
     	'defaultInsert' : {'USE_YN' : '1'}
     });
 	detailGrid = gf_gridInit('detailGrid', {
+		forceFitColumns: false,
     	'defaultInsert' : {'USE_YN' : '1'
     					,'COMM_CODE_MASTER_ID' : gridPk
     					,'MASTER_CODE' : gridPk

@@ -6,7 +6,7 @@
 function gf_nvl(val, val2) {
 
 	let result = val;
-	if (val == undefined || val == null || val == '') {
+	if (val === undefined || val === null || val === '') {
 		result = val2;
 	}
 
@@ -353,14 +353,20 @@ function gf_gridInit(gridDiv, option) {
 					}
 				}
 				
-				var item = {
+				var items = {
 								 'gState': 'inserted'
 								,id: 'id_' + new Function('return ' + gridDiv + 'Idx++')()
 								
 							};
-				$.extend(item, defaultInsert);
+				
+				vGrid.getColumns().forEach(function(item){ 
+					items[item.id] = "";
+				});
+				$.extend(items, defaultInsert);
+				
+//				$.extend(item, defaultInsert);
 											
-				vGrid.getData().addItem(item);
+				vGrid.getData().addItem(items);
 			}
 		}
 	}));
@@ -1389,6 +1395,11 @@ function f_set_dragSelect(p_target){
 	var $focus = $("#drag-area");
 
 	$(document).on("mousedown", function(e) {
+
+		if($(e.target).closest('.no-drag-area').length > 0){
+			return;
+		}
+		
 		move = false;
 		mode = true;
 				

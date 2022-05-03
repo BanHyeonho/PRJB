@@ -36,7 +36,6 @@ var gridList = [];
 					,align:'${item.get("TEXT_ALIGN")}'
 					,name: '${item.get("FIELD_NAME")}'
 					,field: '${item.get("FIELD")}'
-					,width: Number('${item.get("WIDTH")}')
 					<c:if test="${item.get(\"FOOTER\") != null}">
 					,footer: '${item.get("FOOTER")}'
 					</c:if>
@@ -61,6 +60,16 @@ var gridList = [];
 					<c:if test="${item.get(\"PASTE_YN\") == '1'}">
 					,pasteYn: '1'
 					</c:if>
+					<c:choose>
+						<c:when test="${item.get(\"HIDE_YN\") == '1'}">
+						,cssClass: "grid_cell_hidden"
+						,headerCssClass: "grid_cell_hidden"
+						,width: Number('0')
+						</c:when>
+						<c:otherwise>
+						,width: Number('${item.get("WIDTH")}')
+						</c:otherwise>
+					</c:choose>
 					<c:if test="${item.get(\"ATTRIBUTE1\") != null}">
 					,excelFileNm: '${item.get("ATTRIBUTE1")}'
 					</c:if>
@@ -88,7 +97,6 @@ var gridList = [];
 							,align:'${item.get("TEXT_ALIGN")}'
 							,name: '${item.get("FIELD_NAME")}'
 							,field: '${item.get("FIELD")}'
-							,width: Number('${item.get("WIDTH")}')
 							<c:if test="${item.get(\"FOOTER\") != null}">
 							,footer: '${item.get("FOOTER")}'
 							</c:if>
@@ -104,6 +112,16 @@ var gridList = [];
 							<c:if test="${item.get(\"PASTE_YN\") == '1'}">
 							,pasteYn: '1'
 							</c:if>
+							<c:choose>
+								<c:when test="${item.get(\"HIDE_YN\") == '1'}">
+								,cssClass: "grid_cell_hidden"
+								,headerCssClass: "grid_cell_hidden"
+								,width: Number('0')
+								</c:when>
+								<c:otherwise>
+								,width: Number('${item.get("WIDTH")}')
+								</c:otherwise>
+							</c:choose>
 							<c:if test="${item.get(\"ATTRIBUTE1\") != null}">
 							,excelFileNm: '${item.get("ATTRIBUTE1")}'
 							</c:if>

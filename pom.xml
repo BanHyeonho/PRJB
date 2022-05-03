@@ -96,7 +96,13 @@
 		    <version>2.0.5</version>
 		</dependency>
 		
-
+		<!-- https://mvnrepository.com/artifact/com.github.rkpunjal.sqlsafe/sql-injection-safe -->
+		<dependency>
+			<groupId>com.github.rkpunjal.sqlsafe</groupId>
+			<artifactId>sql-injection-safe</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		
 		<!-- Jackson-mapper-asl -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>

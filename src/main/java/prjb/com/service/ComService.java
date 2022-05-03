@@ -431,6 +431,8 @@ public class ComService {
 					paramMap.put("MID", cId);
 					paramMap.put("CIP", ip);
 					paramMap.put("MIP", ip);
+					paramMap.put("CDT", "SYSDATE");
+					paramMap.put("MDT", "SYSDATE");
 					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 					
 					if(tableLayout != null) {
@@ -454,6 +456,7 @@ public class ComService {
 					whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
 					paramMap.put("MID", cId);
 					paramMap.put("MIP", ip);
+					paramMap.put("MDT", "SYSDATE");
 					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
 					
 					if(tableLayout != null) {
@@ -545,12 +548,15 @@ public class ComService {
 		String queryId = String.valueOf(paramMap.get("QUERY_ID"));
 		String tableNm = String.valueOf(paramMap.get("TABLE_NAME"));
 		
+		String commUserId = String.valueOf(paramMap.get("cId"));
 		String langCode = String.valueOf(paramMap.get("langCode"));
 		String cId = String.valueOf(paramMap.get("cId"));
 		String ip = String.valueOf(paramMap.get("ip"));
 		
 		List<Map> tableLayout = null;
 		List<Map> columns = null;
+		
+		paramMap.put("COMM_USER_ID", commUserId);
 		
 		//공통쿼리일경우
 		if(queryId.endsWith("COMM_QUERY")) {
@@ -579,7 +585,10 @@ public class ComService {
 			if(tableLayout != null) {
 				columns = new ArrayList();
 				for (Map map : tableLayout) {
-					if( paramMap.get(map.get("COLUMN_NAME")) != null ) {
+					if( (tableNm + "_ID").equals(map.get("COLUMN_NAME"))
+					|| "CDT".equals(map.get("COLUMN_NAME")) || "MDT".equals(map.get("COLUMN_NAME"))
+					|| paramMap.get(map.get("COLUMN_NAME")) != null
+					) {
 						Map m = new HashMap();
 						m.put("COLUMN_NAME", map.get("COLUMN_NAME"));
 						m.put("COLUMN_VALUE", paramMap.get(map.get("COLUMN_NAME")));
@@ -589,7 +598,7 @@ public class ComService {
 			}
 			
 			paramMap.put("TABLE_NAME", tableNm);
-			paramMap.put("TABLE_LAYOUT", tableLayout);
+			paramMap.put("TABLE_LAYOUT", columns);
 			comDao.insert(queryId, paramMap);
 				
 			resultMap.put("state", "success");
@@ -606,7 +615,9 @@ public class ComService {
 			if(tableLayout != null) {
 				columns = new ArrayList();
 				for (Map map : tableLayout) {
-					if( paramMap.get(map.get("COLUMN_NAME")) != null ) {
+					if( "MDT".equals(map.get("COLUMN_NAME")) 
+					 || paramMap.get(map.get("COLUMN_NAME")) != null
+					) {
 						Map m = new HashMap();
 						m.put("COLUMN_NAME", map.get("COLUMN_NAME"));
 						m.put("COLUMN_VALUE", paramMap.get(map.get("COLUMN_NAME")));
@@ -615,7 +626,7 @@ public class ComService {
 				}
 			}
 			paramMap.put("TABLE_NAME", tableNm);
-			paramMap.put("TABLE_LAYOUT", tableLayout);
+			paramMap.put("TABLE_LAYOUT", columns);
 			paramMap.put("WHERE_QUERY", whereQuery);
 			
 			comDao.update(queryId, paramMap);

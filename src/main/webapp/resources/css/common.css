@@ -136,7 +136,9 @@ iframe {
 .grid {
 	border: 1px solid silver;
 }
-
+.grid_cell_hidden{
+	display:none !important;
+}
 .gridContext {
 	width: 200px;
 }

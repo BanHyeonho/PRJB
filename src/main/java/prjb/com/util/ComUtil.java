@@ -34,9 +34,25 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.springframework.jdbc.support.JdbcUtils;
 
+import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
+
 public class ComUtil {
 
 
+	/**
+	 * SQL Injection 방지
+	 * @param str
+	 * @return
+	 */
+	public static String sqlInjectionSafe(String str){
+		if(SqlSafeUtil.isSqlInjectionSafe(str)){
+			return str;
+		}
+		else{
+			return "{SQLInjectionSafe}";
+		}
+	}
+	
 	/**
 	 * 파일인코딩 정보 리턴
 	 * @param file

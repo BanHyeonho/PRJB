@@ -3,7 +3,7 @@
  */
 $(document).ready(function() {
 	
-    masterGrid = gf_gridInit('masterGrid');
+    masterGrid = gf_gridInit('masterGrid', {forceFitColumns: false});
     detailGrid = gf_gridInit('detailGrid');
 	
     masterGrid.onSelectedRowsChanged.subscribe(function (e, args) {

@@ -529,13 +529,13 @@
 		BEGIN
 		
 			FOR CS IN (
-						select A.${MLG_COLUMN} AS MLG_CODE
-						  from ${TABLE_NAME} A
+						select A.${@prjb.com.util.ComUtil@sqlInjectionSafe(MLG_COLUMN)} AS MLG_CODE
+						  from ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)} A
 						 WHERE NOT EXISTS (
 						                    SELECT COMM_MLG_ID
 						                      FROM COMM_MLG Z
-						                     WHERE Z.MLG_CODE = A.${MLG_COLUMN}
-						                       AND Z.${COMPARE_COLUMN} = '1'
+						                     WHERE Z.MLG_CODE = A.${@prjb.com.util.ComUtil@sqlInjectionSafe(MLG_COLUMN)}
+						                       AND Z.${@prjb.com.util.ComUtil@sqlInjectionSafe(COMPARE_COLUMN)} = '1'
 						                  )
 						)
 			LOOP
@@ -544,7 +544,7 @@
 					 USING DUAL B
 					    ON (A.MLG_CODE = CS.MLG_CODE)
 					  WHEN MATCHED THEN
-					  UPDATE SET ${COMPARE_COLUMN} = '1'
+					  UPDATE SET ${@prjb.com.util.ComUtil@sqlInjectionSafe(COMPARE_COLUMN)} = '1'
 					  		   , MID = #{MID}
 					  		   , MDT = SYSDATE
 					  		   , MIP = #{MIP}
@@ -552,7 +552,7 @@
 					  INSERT(COMM_MLG_ID   
 							,MLG_CODE      
 							,MLG_KO     
-							,${COMPARE_COLUMN}     
+							,${@prjb.com.util.ComUtil@sqlInjectionSafe(COMPARE_COLUMN)}     
 							<include refid="config.cidColumn"></include>
 							)
 					  VALUES(COMM_MLG_S.NEXTVAL   
@@ -697,6 +697,7 @@
 			 , A.COMM_GRID_DETAIL_ID
 			 , B.EDITOR
 			 , B.PASTE_YN
+			 , A.HIDE_YN
 		  FROM COMM_GRID_DETAIL A
 	 LEFT JOIN (
 	 			 SELECT Y.DETAIL_CODE
@@ -741,6 +742,7 @@
 			 , A.FOOTER
 			 , A.DESCRIPTION
 			 , A.QUERY_ID
+			 , A.HIDE_YN
 		  FROM COMM_GRID_DETAIL A
 		 WHERE A.COMM_GRID_MASTER_ID = #{COMM_GRID_MASTER_ID}
 		 ORDER BY A.SEQ
@@ -1042,15 +1044,15 @@
 	<!-- 공통INSERT -->
 	<insert id="I_COMM_QUERY" parameterType="HashMap" >
 		/* I_COMM_QUERY */
-		INSERT INTO ${TABLE_NAME}
+		INSERT INTO ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}
 			<foreach collection="TABLE_LAYOUT" item="item" open="(" separator="," close=")" >
-					${item.COLUMN_NAME}
+					${@prjb.com.util.ComUtil@sqlInjectionSafe(item.COLUMN_NAME)}
 			</foreach>
 			VALUES
 			<foreach collection="TABLE_LAYOUT" item="item" open="(" separator="," close=")">
 				<choose>
 					<when test="item.COLUMN_NAME == TABLE_NAME+'_ID'">
-					${TABLE_NAME}_S.NEXTVAL
+					${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}_S.NEXTVAL
 					</when>
 					<when test="item.COLUMN_NAME == 'CDT' or item.COLUMN_NAME == 'MDT'">
 					SYSDATE
@@ -1065,30 +1067,30 @@
 	<!-- 공통UPDATE -->
 	<update id="U_COMM_QUERY" parameterType="HashMap" >
 		/* U_COMM_QUERY */
-		UPDATE ${TABLE_NAME}
+		UPDATE ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}
 		   SET 
 		   <foreach collection="TABLE_LAYOUT" item="item" separator=",">
 				<choose>
 					<when test="item.COLUMN_NAME == TABLE_NAME+'_ID' or item.COLUMN_NAME == 'CDT' or item.COLUMN_NAME == 'CID'or item.COLUMN_NAME == 'CIP'">
-					${item.COLUMN_NAME} = ${item.COLUMN_NAME}
+					<!-- ${item.COLUMN_NAME} = ${item.COLUMN_NAME} 위의 컬럼들은 수정하지않는다. -->
 					</when>
 					<when test="item.COLUMN_NAME == 'MDT'">
-					${item.COLUMN_NAME} = SYSDATE
+					${@prjb.com.util.ComUtil@sqlInjectionSafe(item.COLUMN_NAME)} = SYSDATE
 					</when>
 					<otherwise>
-					${item.COLUMN_NAME} = #{item.COLUMN_VALUE}
+					${@prjb.com.util.ComUtil@sqlInjectionSafe(item.COLUMN_NAME)} = #{item.COLUMN_VALUE}
 					</otherwise>
 				</choose>	
 			</foreach>
-		 WHERE ${WHERE_QUERY}
+		 WHERE ${@prjb.com.util.ComUtil@sqlInjectionSafe(WHERE_QUERY)}
 	</update>
 	
 	<!-- 공통DELETE -->
 	<delete id="D_COMM_QUERY" parameterType="HashMap" >
 		/* D_COMM_QUERY */
 		DELETE
-		  FROM ${TABLE_NAME}
-		 WHERE ${WHERE_QUERY}
+		  FROM ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}
+		 WHERE ${@prjb.com.util.ComUtil@sqlInjectionSafe(WHERE_QUERY)}
 	</delete>
 	
 	<!-- 각사용자별 암호화salt조회 -->

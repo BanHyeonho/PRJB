@@ -3,7 +3,7 @@
  */
 $(document).ready(function() {
 	
-    masterGrid = gf_gridInit('masterGrid');    
+    masterGrid = gf_gridInit('masterGrid', {forceFitColumns: false});    
     
     f_search();
 });

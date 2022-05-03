@@ -547,7 +547,7 @@
 				this.key = "" + this.tree.options.defaultKey(this);
 				_assert(this.key, "defaultKey() must return a unique key");
 			} else {
-				this.key = "_" + FT._nextNodeKey++;
+				this.key = new Date().getTime() + "_" + FT._nextNodeKey++;
 			}
 		} else {
 			this.key = "" + this.key; // Convert to string (#217)
