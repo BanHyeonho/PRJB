@@ -121,7 +121,8 @@ span.fancytree-drag-helper-img,
   display: inline-block;
   vertical-align: top;
   background-repeat: no-repeat;
-  background-image: url("../skin-win8/icons.gif");
+/*   background-image: url("../skin-win8/icons.gif"); */
+  background-image: url("../skin-win8/icons.png");
   background-position: 0px 0px;
 }
 span.fancytree-icon,
@@ -168,7 +169,8 @@ span.fancytree-expander {
 }
 .fancytree-connectors .fancytree-exp-n span.fancytree-expander,
 .fancytree-connectors .fancytree-exp-nl span.fancytree-expander {
-  background-image: url("../skin-win8/icons.gif");
+/*   background-image: url("../skin-win8/icons.gif"); */
+  background-image: url("../skin-win8/icons.png");
   margin-top: 0;
 }
 .fancytree-connectors .fancytree-exp-n span.fancytree-expander,
@@ -351,6 +353,13 @@ span.fancytree-icon {
 .fancytree-ico-ef span.fancytree-icon:hover {
   background-position: -80px -16px;
 }
+
+/* hide-folder */
+.fancytree-ico-hf span.fancytree-icon,
+.fancytree-ico-hf span.fancytree-icon:hover {
+  background-position: -48px -112px;
+}
+
 .fancytree-loading span.fancytree-expander,
 .fancytree-loading span.fancytree-expander:hover,
 .fancytree-statusnode-loading span.fancytree-icon,

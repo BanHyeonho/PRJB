@@ -5274,11 +5274,17 @@
 							(isLastSib ? "l" : "")
 					);
 				}
+//				cnList.push(
+//						cn.combinedIconPrefix +
+//						(node.expanded ? "e" : "c") +
+//						(node.folder ? "f" : "")
+//				);
 				cnList.push(
 					cn.combinedIconPrefix +
-						(node.expanded ? "e" : "c") +
+						(gf_nvl(node.data, {}).showYn == '0' ? "h" : (node.expanded ? "e" : "c") ) +
 						(node.folder ? "f" : "")
 				);
+				
 				// node.span.className = cnList.join(" ");
 				statusElem.className = cnList.join(" ");
 

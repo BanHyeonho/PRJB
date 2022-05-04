@@ -34,9 +34,12 @@ $(document).ready(function() {
 				  .attr('ondragstart', 'dragStart(event)')
 				  .attr('ondragend', 'dragEnd(event)');
 	
-	//폴더추가
+	//트리 컨텍스트메뉴
 	$('#newFolderBtn').on('click', f_newFolder);
 	$('#folderDeleteBtn').on('click', f_folderDelete);
+	$('#showFolderBtn').on('click', {param1 : 'Y'}, f_showFolder);
+	$('#hideFolderBtn').on('click', {param1 : 'N'}, f_showFolder);
+	$('#showFolderViewBtn').on('click', f_showFolderView);
 	
 	
 });
@@ -70,25 +73,26 @@ function drop(event) {
 	
 var f_search = function(){
 	
-//	folderTree.reload({'url' : '/plugin/fancytree/ajax-tree-fs.json'})
-//	gf_ajax({
-//	  			QUERY_ID : 'st.S_ST_VIDEO_VIEW_FILE',
-////	  			p_loginId : $('#searchParam1').val()
-//			}, function(){
-//				gf_gridClear(masterGrid);
-//			}
-//			, function(data){
-//				
-//				gf_gridCallback('masterGrid', data);
-//				
-//			});
+	f_treeReload();
+	
 }
-var f_searchTree = function(){
+var f_searchTree = function(p_type){
 	var result = [];
 	
-	gf_ajax({
-			QUERY_ID : 'my.S_FILE_MANAGE_TREE',
-	}, function(){
+	var searchParam = {
+		QUERY_ID : 'my.S_FILE_MANAGE_TREE',
+	};
+	
+	if(gf_nvl(p_type, '') == 'ALL'){
+		searchParam['SHOW_YN'] = 'ALL'
+	}
+	
+	if( typeof folderTree == 'object' ){
+		folderTree.clear();
+	}
+	
+	gf_ajax(searchParam
+	, function(){
 		return true;
 	}
 	, function(data){
@@ -96,13 +100,15 @@ var f_searchTree = function(){
 		$.each(data.result, function(idx, item){
 		
 			var myFileManageId = item.MY_FILE_MANAGE_ID;
+			var showYn = item.SHOW_YN;
 			var parentKeyId = gf_nvl(item.PARENT_KEY_ID, '');
 			var keyId = item.KEY_ID;
 			var title = item.TITLE;
 			var folder = (item.TYPE_CODE == 'FOLDER' ? true : false);
 			
 			var resultItem = {
-					myFileManageId : myFileManageId,
+//					myFileManageId : myFileManageId,
+					showYn : showYn,
 					expanded : true,
 					folder : folder,
 					title : title,
@@ -166,10 +172,8 @@ var f_tree = function(containerId){
 		},
 		activate: function(event, data) {
 			
-//			console.log("activate " + data.node);
-			
-			var text = data.node.title;
-			var parent = data.node.parent;
+			var text = gf_nvl(data.node, {}).title;
+			var parent = gf_nvl(data.node, {}).parent;
 			
 			a:while(parent != null){
 				
@@ -183,7 +187,7 @@ var f_tree = function(containerId){
 				parent = parent.parent;
 			}
 			
-			$('#current-path').val(text);
+			$('#current-path').val(gf_nvl(text, '/'));
 		},		
 		edit: { // title 수정
 	      triggerStart: ["f2", "dblclick", "mac+enter"], // 수정전환 키 조합
@@ -195,56 +199,9 @@ var f_tree = function(containerId){
 	      }
 	    },
 	    modifyChild : function(event, data){
-
-	    	var queryId = '';
-	    	var title = data.childNode.title;
-    		var key_id = data.childNode.key;
-    		var parent_id = data.node.key;
-    		parent_id = (parent_id == 'root_1' ? null : parent_id);
-    		
-	    	//삭제
-	    	if(data.operation == 'remove'){
-	    		queryId = 'com.D_COMM_QUERY';
-	    	}
-	    	//추가
-	    	else if(data.operation == 'add'){
-	    		queryId = 'com.I_COMM_QUERY';
-	    	}
-	    	//이동, 이름변경(변경)
-	    	else if(data.operation == 'move'
-	    		 || data.operation == 'rename'
-    		){
-	    		queryId = 'my.U_FILE_MANAGE_TREE';
-	    	}
+//	    	console.log('data.operation', data.operation);
 	    	
-	    	console.log('title', title);
-    		console.log('key_id', key_id);
-    		console.log('parent_id', parent_id);
-    		
-    		var fData = new FormData();
-    		fData.set('QUERY_ID', queryId);
-    		fData.set('TABLE_NAME', 'MY_FILE_MANAGE');
-    		
-    		if(gf_nvl(data.childNode.data.myFileManageId, '') != ''){
-    			fData.set('MY_FILE_MANAGE_ID', data.childNode.data.myFileManageId);	
-    		}
-    		
-    		fData.set('SEQ', data.node.getChildren().indexOf(data.childNode) +1);
-    		fData.set('KEY_ID', key_id);
-    		fData.set('TITLE', title);
-    		fData.set('TYPE_CODE', 'FOLDER');
-    		if(parent_id != null){
-    			fData.set('PARENT_KEY_ID', parent_id);	
-    		}
-    		fData.set('SHOW_YN', '1');
-    		
-    		gf_ajax(fData
-	    	, function(){
-	    		return (queryId == '' ? false : true);
-	    	}
-			, function(data){
-				
-			}, null, null, null, false);
+	    	f_modifyChildAction(data.operation, data.childNode);
 	    	
 	    },
 		dnd: {
@@ -325,7 +282,97 @@ var f_newFolder = function(e){
 }
 var f_folderDelete = function(e){
 	if(folderTree.getActiveNode() != null){
+		f_modifyChildAction('remove', folderTree.getActiveNode());
 		folderTree.getActiveNode().remove();
 	}
 	$('.context').hide();
+	folderTree._triggerTreeEvent('activate');
+}
+
+var f_modifyChildAction = function(p_operation, p_node){
+	if(p_node == null){
+		return;
+	}
+	
+	var queryId = '';
+	var title = p_node.title;
+	var key_id = p_node.key;
+	var parent_id = p_node.parent.key;
+	parent_id = (parent_id == 'root_1' ? null : parent_id);
+	
+	var nodeData = gf_nvl(p_node.data, {});
+	//삭제
+	if(p_operation == 'remove'){
+		queryId = 'my.D_FILE_MANAGE_TREE';
+	}
+	//추가
+	else if(p_operation == 'add'){
+		queryId = 'my.U_FILE_MANAGE_TREE';
+	}
+	//이동, 이름변경(변경)
+	else if(p_operation == 'move'
+		 || p_operation == 'rename'
+	){
+		queryId = 'my.U_FILE_MANAGE_TREE';
+	}
+	
+	var fData = new FormData();
+	fData.set('QUERY_ID', queryId);
+	fData.set('TABLE_NAME', 'MY_FILE_MANAGE');
+	
+	fData.set('SEQ', p_node.parent.getChildren().indexOf(p_node) +1);
+	fData.set('KEY_ID', key_id);
+	fData.set('TITLE', title);
+	fData.set('TYPE_CODE', 'FOLDER');
+	if(parent_id != null){
+		fData.set('PARENT_KEY_ID', parent_id);	
+	}
+	fData.set('SHOW_YN', gf_nvl( nodeData.showYn, '1'));
+	
+	gf_ajax(fData
+	, function(){
+		return (queryId == '' ? false : true);
+	}
+	, function(data){
+		
+	}, null, null, null, false);
+}
+
+var f_showFolder = function(e){
+	if(folderTree.getActiveNode() != null){
+		
+		folderTree.getActiveNode().data.showYn = (e.data.param1 == 'N' ? '0' : '1');
+		
+		f_modifyChildAction('rename', folderTree.getActiveNode());
+	}
+	$('.context').hide();
+//	folderTree._triggerTreeEvent('activate');	//노드없이 활성화트리거
+	folderTree._triggerNodeEvent('activate', folderTree.getActiveNode());	//해당노드를 활성화트리거
+}
+
+var f_showFolderView = function(){
+	
+	f_treeReload('ALL');
+	$('.context').hide();
+		
+}
+
+var f_treeReload = function(p_type){
+	
+	var clearYn = false;
+	folderTree.reload(function(){
+		var data = f_searchTree(p_type);
+		
+		if(data.length == 0){
+			clearYn = true;
+		}
+		
+		return data;
+	}).then(function(){
+		if(clearYn){
+			folderTree.clear();
+			clearYn = false;
+		}
+		folderTree._triggerTreeEvent('activate');
+	});
 }

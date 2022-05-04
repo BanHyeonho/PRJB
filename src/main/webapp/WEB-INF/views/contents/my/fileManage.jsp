@@ -64,6 +64,9 @@
 		    	<div id='showFolderBtn'><span>${pb:msg(pageContext.request, "숨김해제")}</span></div>
 		  	</li>
 		  	<li>
+		    	<div id='showFolderViewBtn'><span>${pb:msg(pageContext.request, "숨김항목보기")}</span></div>
+		  	</li>
+		  	<li>
 		    	<div id='folderDeleteBtn'><span>${pb:msg(pageContext.request, "삭제")}</span></div>
 		  	</li>
 		</ul>
@@ -71,6 +74,9 @@
 	
 	<div id="fileViewContext" class="context" style="display: none;">
 		<ul id="fileViewContextUl">
+		  	<li>
+		    	<div id='fileDownBtn'><span>${pb:msg(pageContext.request, "다운로드")}</span></div>
+		  	</li>
 		  	<li>
 		    	<div id='fileDeleteBtn'><span>${pb:msg(pageContext.request, "삭제")}</span></div>
 		  	</li>

@@ -8,20 +8,32 @@
 	<select id="S_FILE_MANAGE_TREE" resultType="HashMap" parameterType="HashMap" >
 		/* S_FILE_MANAGE_TREE */
 	    SELECT A.MY_FILE_MANAGE_ID
-			 , A.SEQ              
-			 , A.KEY_ID           
-			 , A.TITLE            
-			 , A.TYPE_CODE        
-			 , A.COMM_FILE_ID     
-			 , A.PARENT_KEY_ID    
-			 , A.SHOW_YN          
+			 , A.SEQ
+			 , A.KEY_ID
+			 , A.TITLE
+			 , A.TYPE_CODE
+			 , A.COMM_FILE_ID
+			 , A.PARENT_KEY_ID
+			 , A.SHOW_YN
 			 , A.DESCRIPTION
 	      FROM MY_FILE_MANAGE A
 	     WHERE A.COMM_USER_ID = #{CID}
+	     <if test="@org.apache.commons.lang3.StringUtils@isBlank(SHOW_YN)">
+		 	AND A.SHOW_YN = '1'
+		 </if>
 	     START WITH A.PARENT_KEY_ID IS null 
 	   CONNECT BY PRIOR A.KEY_ID = A.PARENT_KEY_ID
 		 ORDER SIBLINGS BY A.SEQ
 	</select>
+	
+	<!-- 파일관리 폴더 트리 삭제 -->
+	<delete id="D_FILE_MANAGE_TREE" parameterType="HashMap" >
+		/* D_FILE_MANAGE_TREE */
+		DELETE
+		  FROM MY_FILE_MANAGE
+		 WHERE COMM_USER_ID = #{COMM_USER_ID}
+		   AND KEY_ID = #{KEY_ID}
+	</delete>
 	<!-- 파일관리 폴더 트리 수정 -->
 	<update id="U_FILE_MANAGE_TREE" parameterType="HashMap" >
 		/* U_FILE_MANAGE_TREE */
@@ -33,9 +45,35 @@
 			  UPDATE SET A.TITLE = #{TITLE}
 			  		   , A.SEQ = #{SEQ}
 			  		   , A.PARENT_KEY_ID = #{PARENT_KEY_ID}
+			  		   , A.SHOW_YN = #{SHOW_YN}
 			  		   , A.MID = #{MID}
 			  		   , A.MDT = SYSDATE
 			  		   , A.MIP = #{MIP}
-			 
+			  WHEN NOT MATCHED THEN
+			  INSERT(MY_FILE_MANAGE_ID
+		          , COMM_USER_ID
+		          , SEQ
+		          , KEY_ID
+		          , TITLE
+		          , TYPE_CODE
+		          , PARENT_KEY_ID
+		          , SHOW_YN
+		          <include refid="config.cidColumn"></include>
+		          )
+		       VALUES(MY_FILE_MANAGE_S.NEXTVAL
+		          , #{COMM_USER_ID}
+		          , #{SEQ}
+		          , #{KEY_ID}
+		          , #{TITLE}
+		          , #{TYPE_CODE}
+		          , #{PARENT_KEY_ID}
+		          , #{SHOW_YN}
+		          , #{MID}
+		          , SYSDATE
+		          , #{MIP}
+		          , #{MID}
+		          , SYSDATE    
+		          , #{MIP})
 	</update>
+	
 </mapper>
