@@ -1396,7 +1396,14 @@ function f_set_dragSelect(p_target){
 
 	$(document).on("mousedown", function(e) {
 
-		if($(e.target).closest('.no-drag-area').length > 0){
+		if( !($(e.target).closest('.context').length > 0)
+		){
+			$('.context').hide();
+		}
+		
+		if($(e.target).closest('.no-drag-area').length > 0
+		|| $(e.target).prop('tagName').toLowerCase() == 'button'
+		){
 			return;
 		}
 		
