@@ -348,6 +348,8 @@ var f_showFolder = function(e){
 	$('.context').hide();
 //	folderTree._triggerTreeEvent('activate');	//노드없이 활성화트리거
 	folderTree._triggerNodeEvent('activate', folderTree.getActiveNode());	//해당노드를 활성화트리거
+	
+	$('#current-path').focus();	//즉각적인 아이콘변경을 위함
 }
 
 var f_showFolderView = function(){
