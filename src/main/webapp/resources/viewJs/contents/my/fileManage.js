@@ -30,7 +30,8 @@ $(document).ready(function() {
 	
 	$('#fileViewContextUl').menu();
 	
-	$('.file_img').attr('src', '../img/file_img01.png')
+//	$('.file_img').attr('src', '../img/file_default.png')
+	$('.file_img').attr('src', '../img/file_ppt.png')
 				  .attr('ondragstart', 'dragStart(event)')
 				  .attr('ondragend', 'dragEnd(event)');
 	
