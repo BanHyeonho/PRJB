@@ -282,14 +282,23 @@ iframe {
 
 /* 파일 드래그 */
 .file_img{
+	display: inline-block;
+	vertical-align: top;
 	width: 100px;
+	min-height: 120px;
 	margin: 10px 15px;
 	padding: 5px;
 	box-sizing: border-box;
 	transition: all 0.1s linear;
 }
+.file_img img{
+	width: 100%;
+}
 .file_img_over{
 	transform: scale(1.1);
+}
+.file_img p{
+	word-break : break-word;
 }
 
 #drag-area {

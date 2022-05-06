@@ -30,6 +30,23 @@
 .mg-default{
 	margin: 10px;
 }
+
+.mg-tp-sm{
+	margin-top: 5px;
+}
+.mg-lt-sm{
+	margin-left: 5px;
+}
+.mg-rt-sm{
+	margin-right: 5px;
+}
+.mg-bt-sm{
+	margin-bottom: 5px;
+}
+.mg-sm{
+	margin: 5px;
+}
+
 .mg-default3{
 	margin: 1%;
 }

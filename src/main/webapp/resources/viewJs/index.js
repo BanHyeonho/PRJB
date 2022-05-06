@@ -12,7 +12,8 @@ let menuSearchData = [];
 
 //모든화면에서 사용가능 변수
 var index_info = {
-	gv_fileExtension : []	//첨부파일 허용확장자
+	gv_fileExtension : [],				//첨부파일 허용확장자
+	gv_file_extension_division : [],	//첨부파일 확장자구분
 }
 $(document).ready(function () {
 
@@ -50,6 +51,8 @@ $(document).ready(function () {
 
 //모든화면에서 사용가능한 static 변수데이터 가져오기
 function f_getBackgroundData(){
+	
+	//파일확장자
 	gf_ajax({
 		QUERY_ID : 'combo.S_SYS_CODE',
 		MASTER_CODE : 'FILE_EXTENSION'
@@ -58,7 +61,32 @@ function f_getBackgroundData(){
 		if(data.result.length > 0){
 			index_info.gv_fileExtension = data.result;
 		}
+		
+		//파일확장자 구분
+		gf_ajax({
+			QUERY_ID : 'combo.S_SYS_CODE',
+			MASTER_CODE : 'FILE_EXTENSION_DIVISION'
+		}, null
+		, function(data){
+			if(data.result.length > 0){
+				index_info.gv_file_extension_division = data.result;
+				
+				//확장자구분에 따른 파일 아이콘 셋팅
+				$.each(index_info.gv_fileExtension, function(idx, item){
+					var i=0;
+					a:while(i<index_info.gv_file_extension_division.length){
+						if(index_info.gv_file_extension_division[i].CODE_VALUE == item.ATTRIBUTE1 ){
+							item['ICON'] = index_info.gv_file_extension_division[i].ATTRIBUTE1;
+							break a;
+						}
+						++i;
+					}
+					
+				});
+			}
+		});
 	});
+	
 }
 
 //메뉴검색

@@ -5,14 +5,18 @@ var f_dragData = [];
 
 var folderTree; 
 
+let fileManageInfo = {
+	moduleCode : 'MY',
+	attachedFiles : [],
+	attachedDelFiles : [],
+}
+
 $(document).ready(function() {
-	
 	
 	folderTree = f_tree('treeContainer');
 	
-	
 	//파일 드래그 영역 표시
-	f_set_dragSelect('#fileViewContainer img');
+	f_set_dragSelect('#fileViewContainer .file_img');
 	
 	$('#treeContainer').attr('ondrop', 'drop(event)')
 					   .attr('ondragover', 'allowDrop(event)')
@@ -31,9 +35,13 @@ $(document).ready(function() {
 	$('#fileViewContextUl').menu();
 	
 //	$('.file_img').attr('src', '../img/file_default.png')
-	$('.file_img').attr('src', '../img/file_ppt.png')
-				  .attr('ondragstart', 'dragStart(event)')
-				  .attr('ondragend', 'dragEnd(event)');
+//				  .attr('ondragstart', 'dragStart(event)')
+//				  .attr('ondragend', 'dragEnd(event)');
+	
+	
+	//파일 드래그 셋팅
+	f_setFileDrag();
+	
 	
 	//트리 컨텍스트메뉴
 	$('#newFolderBtn').on('click', f_newFolder);
@@ -42,8 +50,116 @@ $(document).ready(function() {
 	$('#hideFolderBtn').on('click', {param1 : 'N'}, f_showFolder);
 	$('#showFolderViewBtn').on('click', f_showFolderView);
 	
-	
 });
+
+var f_setFileDrag = function(){
+	//첨부파일
+//	$('#attachedFileBtn').on('click', function(){
+//		$('#attachedFile').click();
+//	});
+	$("#attachedFile").change(function () {
+        fileAttachment();
+    })
+    //드래그 앤 드랍
+    $("#attachedFileArea").on("dragenter", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+    }).on("dragover", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $(this).css({"background-color": "#FFD8D8"});
+
+    }).on("dragleave", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $(this).css({"background-color": ""});
+
+    }).on("drop", function (e) {
+    	
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $(this).css({"background-color": ""});
+
+        e.dataTransfer = e.originalEvent.dataTransfer;
+        var files = e.target.files || e.dataTransfer.files;
+        fileAttachment(files);
+
+    });
+	
+	var fileAttachment = function (dragDrop) {
+
+	    var file_names = dragDrop ? dragDrop : $("#attachedFile").prop("files");
+
+	    for (var i = 0; i < file_names.length; i++) {
+
+	        (function (file) {
+
+	            setTimeout(function () {
+
+	                //파일확장자
+	                var fileExt = file.name.substring(file.name.lastIndexOf('.') +1, file.name.length).toUpperCase();
+	                
+	                var fileExtensions = parent.index_info.gv_fileExtension.map(x=>x.CODE_VALUE);
+	                //폴더 또는 용량이 없는 파일
+	                if(file.size == 0
+	        		|| file.name.lastIndexOf('.') == -1
+	        		){
+	                  gf_toast(gf_mlg('폴더_또는_용량이_없는_파일은_업로드_할_수_없습니다'));
+	                    return false;   
+	                }
+	                //최대용량 초과
+	                else if( Number(file.size) >  Number(gv_fileMaxSize)){
+	                	gf_toast(gf_mlg('업로드_최대용량을_초과하였습니다',{
+	                		param : gf_getFileSize(gv_fileMaxSize)
+	                	}));
+	                    return false;
+	                }
+	                //업로드 불가 파일확장자
+	                else if(fileExtensions.indexOf(fileExt.toUpperCase()) == -1){
+	                	gf_toast(gf_mlg('다음의_확장자만_업로드_가능합니다',{
+	                		param : fileExtensions.join()
+	                	}));
+	                    return false;
+	                }
+	                else{
+	                	var fileId = new Date().getTime();
+	                	var fSize = gf_getFileSize(file.size);    
+
+	                    file.id = fileId;
+debugger;
+						var div = $('<div></div>').addClass('file_img')
+										  			.attr('ondragstart', 'dragStart(event)')
+										  			.attr('ondragend', 'dragEnd(event)')
+										  			;
+						
+						var fileImg = $('<img>').attr('src', '../img/' + parent.index_info.gv_fileExtension.find(x=> x.CODE_VALUE == fileExt.toUpperCase()).ICON );
+						var fileNm = $('<p></p>').addClass('mg-tp-sm').addClass('text-center').text(file.name);
+						div.append(fileImg).append(fileNm);
+						
+						$('#attachedFileArea').append(div);
+//	                    var tr = $('<tr>');
+//	                    var fileNm = $('<td class="pd-bt-default pd-rt-default">')
+//	                    var fileSize = $('<td class="pd-rt-default">').text('(' + fSize + ')');
+//	                    var fileDel = $('<td>').html( $('<i class="fi fi-rr-Cross-small" style="cursor:pointer;" onclick="fileDelete(this,' + file.id + ', \'SCRIPT\');" ></i>') );
+//	                    tr.append(fileNm).append(fileSize).append(fileDel);
+//	                    
+//	                    $('#attachedFileTable tbody').append(tr);
+
+	                    fileManageInfo.attachedFiles.push(file);
+	                }
+
+	            }, 1);
+
+	        }(file_names[i]));
+
+	    }
+
+	}
+}
 
 function dragStart(event) {
 
@@ -93,9 +209,7 @@ var f_searchTree = function(p_type){
 	}
 	
 	gf_ajax(searchParam
-	, function(){
-		return true;
-	}
+	, null
 	, function(data){
 		
 		$.each(data.result, function(idx, item){
@@ -108,7 +222,6 @@ var f_searchTree = function(p_type){
 			var folder = (item.TYPE_CODE == 'FOLDER' ? true : false);
 			
 			var resultItem = {
-//					myFileManageId : myFileManageId,
 					showYn : showYn,
 					expanded : true,
 					folder : folder,
