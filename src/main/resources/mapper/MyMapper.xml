@@ -4,6 +4,34 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="my">
 
+	<!-- 파일관리 파일 조회 -->
+	<select id="S_FILE_MANAGE" resultType="HashMap" parameterType="HashMap" >
+		/* S_FILE_MANAGE */
+	    SELECT A.MY_FILE_MANAGE_ID
+			 , A.SEQ
+			 , A.KEY_ID
+			 , A.TITLE
+			 , A.TYPE_CODE
+			 , A.PARENT_KEY_ID
+			 , A.SHOW_YN
+			 , A.DESCRIPTION
+			 , A.COMM_FILE_ID AS FILE_ID
+			 , B.RANDOM_KEY
+	      FROM MY_FILE_MANAGE A
+     LEFT JOIN COMM_FILE B ON A.COMM_FILE_ID = B.COMM_FILE_ID
+	     WHERE A.COMM_USER_ID = #{CID}
+	       AND A.SHOW_YN = '1'
+	     <choose>
+	     	<when test="@org.apache.commons.lang3.StringUtils@isBlank(PARENT_KEY_ID)">
+	     		AND A.PARENT_KEY_ID IS NULL
+	     	</when>
+	     	<otherwise>
+	     		AND A.PARENT_KEY_ID = #{PARENT_KEY_ID}
+	     	</otherwise>
+	     </choose>
+		 ORDER BY A.SEQ
+	</select>
+	
 	<!-- 파일관리 폴더 트리 조회 -->
 	<select id="S_FILE_MANAGE_TREE" resultType="HashMap" parameterType="HashMap" >
 		/* S_FILE_MANAGE_TREE */
@@ -18,6 +46,7 @@
 			 , A.DESCRIPTION
 	      FROM MY_FILE_MANAGE A
 	     WHERE A.COMM_USER_ID = #{CID}
+	       AND A.TYPE_CODE = 'FOLDER'
 	     <if test="@org.apache.commons.lang3.StringUtils@isBlank(SHOW_YN)">
 		 	AND A.SHOW_YN = '1'
 		 </if>

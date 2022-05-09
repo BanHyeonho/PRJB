@@ -33,16 +33,10 @@ $(document).ready(function() {
 						});
 	
 	$('#fileViewContextUl').menu();
-	
-//	$('.file_img').attr('src', '../img/file_default.png')
-//				  .attr('ondragstart', 'dragStart(event)')
-//				  .attr('ondragend', 'dragEnd(event)');
-	
-	
+		
 	//파일 드래그 셋팅
 	f_setFileDrag();
-	
-	
+		
 	//트리 컨텍스트메뉴
 	$('#newFolderBtn').on('click', f_newFolder);
 	$('#folderDeleteBtn').on('click', f_folderDelete);
@@ -50,117 +44,33 @@ $(document).ready(function() {
 	$('#hideFolderBtn').on('click', {param1 : 'N'}, f_showFolder);
 	$('#showFolderViewBtn').on('click', f_showFolderView);
 	
+	//파일영역 컨텍스트메뉴
+	$('#fileNewFolderBtn').on('click', f_newFolder);
+	$('#fileDeleteBtn').on('click', f_fileDelete);
+	
+	f_search();
 });
 
-var f_setFileDrag = function(){
-	//첨부파일
-//	$('#attachedFileBtn').on('click', function(){
-//		$('#attachedFile').click();
-//	});
-	$("#attachedFile").change(function () {
-        fileAttachment();
-    })
-    //드래그 앤 드랍
-    $("#attachedFileArea").on("dragenter", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-    }).on("dragover", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        $(this).css({"background-color": "#FFD8D8"});
-
-    }).on("dragleave", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        $(this).css({"background-color": ""});
-
-    }).on("drop", function (e) {
-    	
-        e.preventDefault();
-        e.stopPropagation();
-        
-        $(this).css({"background-color": ""});
-
-        e.dataTransfer = e.originalEvent.dataTransfer;
-        var files = e.target.files || e.dataTransfer.files;
-        fileAttachment(files);
-
-    });
+/*****************************************************************************************************************************************************************
+ * 
+ * 버튼 기능
+ * 
+ *****************************************************************************************************************************************************************/
+var f_search = function(){
+	f_fileClear();
+	f_treeReload();
 	
-	var fileAttachment = function (dragDrop) {
-
-	    var file_names = dragDrop ? dragDrop : $("#attachedFile").prop("files");
-
-	    for (var i = 0; i < file_names.length; i++) {
-
-	        (function (file) {
-
-	            setTimeout(function () {
-
-	                //파일확장자
-	                var fileExt = file.name.substring(file.name.lastIndexOf('.') +1, file.name.length).toUpperCase();
-	                
-	                var fileExtensions = parent.index_info.gv_fileExtension.map(x=>x.CODE_VALUE);
-	                //폴더 또는 용량이 없는 파일
-	                if(file.size == 0
-	        		|| file.name.lastIndexOf('.') == -1
-	        		){
-	                  gf_toast(gf_mlg('폴더_또는_용량이_없는_파일은_업로드_할_수_없습니다'));
-	                    return false;   
-	                }
-	                //최대용량 초과
-	                else if( Number(file.size) >  Number(gv_fileMaxSize)){
-	                	gf_toast(gf_mlg('업로드_최대용량을_초과하였습니다',{
-	                		param : gf_getFileSize(gv_fileMaxSize)
-	                	}));
-	                    return false;
-	                }
-	                //업로드 불가 파일확장자
-	                else if(fileExtensions.indexOf(fileExt.toUpperCase()) == -1){
-	                	gf_toast(gf_mlg('다음의_확장자만_업로드_가능합니다',{
-	                		param : fileExtensions.join()
-	                	}));
-	                    return false;
-	                }
-	                else{
-	                	var fileId = new Date().getTime();
-	                	var fSize = gf_getFileSize(file.size);    
-
-	                    file.id = fileId;
-debugger;
-						var div = $('<div></div>').addClass('file_img')
-										  			.attr('ondragstart', 'dragStart(event)')
-										  			.attr('ondragend', 'dragEnd(event)')
-										  			;
-						
-						var fileImg = $('<img>').attr('src', '../img/' + parent.index_info.gv_fileExtension.find(x=> x.CODE_VALUE == fileExt.toUpperCase()).ICON );
-						var fileNm = $('<p></p>').addClass('mg-tp-sm').addClass('text-center').text(file.name);
-						div.append(fileImg).append(fileNm);
-						
-						$('#attachedFileArea').append(div);
-//	                    var tr = $('<tr>');
-//	                    var fileNm = $('<td class="pd-bt-default pd-rt-default">')
-//	                    var fileSize = $('<td class="pd-rt-default">').text('(' + fSize + ')');
-//	                    var fileDel = $('<td>').html( $('<i class="fi fi-rr-Cross-small" style="cursor:pointer;" onclick="fileDelete(this,' + file.id + ', \'SCRIPT\');" ></i>') );
-//	                    tr.append(fileNm).append(fileSize).append(fileDel);
-//	                    
-//	                    $('#attachedFileTable tbody').append(tr);
-
-	                    fileManageInfo.attachedFiles.push(file);
-	                }
-
-	            }, 1);
-
-	        }(file_names[i]));
-
-	    }
-
-	}
 }
 
+var f_save = function(){
+	alert('저장')
+}
+
+/*****************************************************************************************************************************************************************
+ * 
+ * 트리영역 기능
+ * 
+ *****************************************************************************************************************************************************************/
 function dragStart(event) {
 
   $.each($('.drag-highlight'), function(idx, item){
@@ -187,12 +97,7 @@ function drop(event) {
   console.log('drop', data);
 
 }
-	
-var f_search = function(){
-	
-	f_treeReload();
-	
-}
+
 var f_searchTree = function(p_type){
 	var result = [];
 	
@@ -276,8 +181,8 @@ var f_tree = function(containerId){
 	$("#" + containerId).fancytree({
 		extensions: ["dnd", "edit"],
 		source: function(){
-			var data = f_searchTree();
-			
+//				var data = f_searchTree();
+			var data = [];
 			if(data.length == 0){
 				clearYn = true;
 			}
@@ -302,18 +207,20 @@ var f_tree = function(containerId){
 			}
 			
 			$('#current-path').val(gf_nvl(text, '/'));
+			
+			f_searchFile();
 		},		
 		edit: { // title 수정
 	      triggerStart: ["f2", "dblclick", "mac+enter"], // 수정전환 키 조합
 	      close: function(event, data) {
 	    	  //수정완료
-//	    	  if( data.save && data.node.title == data.orgTitle ){
-//	    		  
-//	    	  }
+//		    	  if( data.save && data.node.title == data.orgTitle ){
+//		    		  
+//		    	  }
 	      }
 	    },
 	    modifyChild : function(event, data){
-//	    	console.log('data.operation', data.operation);
+//		    	console.log('data.operation', data.operation);
 	    	
 	    	f_modifyChildAction(data.operation, data.childNode);
 	    	
@@ -385,6 +292,7 @@ var f_show_fileViewContext = function(e){
 	});
 }
 
+//새폴더
 var f_newFolder = function(e){
 	var currNode = folderTree.getActiveNode();
 	if( currNode == null){
@@ -394,6 +302,8 @@ var f_newFolder = function(e){
 	folderTree.activateKey(result.key);
 	$('.context').hide();
 }
+
+//폴더삭제
 var f_folderDelete = function(e){
 	if(folderTree.getActiveNode() != null){
 		f_modifyChildAction('remove', folderTree.getActiveNode());
@@ -403,6 +313,7 @@ var f_folderDelete = function(e){
 	folderTree._triggerTreeEvent('activate');
 }
 
+//트리 수정action
 var f_modifyChildAction = function(p_operation, p_node){
 	if(p_node == null){
 		return;
@@ -452,6 +363,7 @@ var f_modifyChildAction = function(p_operation, p_node){
 	}, null, null, null, false);
 }
 
+//폴더 숨기기/보이기
 var f_showFolder = function(e){
 	if(folderTree.getActiveNode() != null){
 		
@@ -460,12 +372,13 @@ var f_showFolder = function(e){
 		f_modifyChildAction('rename', folderTree.getActiveNode());
 	}
 	$('.context').hide();
-//	folderTree._triggerTreeEvent('activate');	//노드없이 활성화트리거
+//		folderTree._triggerTreeEvent('activate');	//노드없이 활성화트리거
 	folderTree._triggerNodeEvent('activate', folderTree.getActiveNode());	//해당노드를 활성화트리거
 	
 	$('#current-path').focus();	//즉각적인 아이콘변경을 위함
 }
 
+//숨김파일 모두보기
 var f_showFolderView = function(){
 	
 	f_treeReload('ALL');
@@ -473,6 +386,7 @@ var f_showFolderView = function(){
 		
 }
 
+//트리 조회
 var f_treeReload = function(p_type){
 	
 	var clearYn = false;
@@ -491,4 +405,422 @@ var f_treeReload = function(p_type){
 		}
 		folderTree._triggerTreeEvent('activate');
 	});
+}
+	
+
+/*****************************************************************************************************************************************************************
+ * 
+ * 파일영역 기능
+ * 
+ *****************************************************************************************************************************************************************/
+//파일 드래그 영역 표시
+function f_set_dragSelect(p_target){
+	var target = p_target; //셀렉트로 묶을 객체
+	
+	var mode = false;	//드래그 중인지 체크
+	var move = false;	//클릭만 했는지, 드래그했는지 체크
+		
+	var startX = 0;
+	var startY = 0;
+	var left, top, width, height;
+	
+	$('body').append($('<div id="drag-area"></div>'));
+		
+	$(p_target).on('mouseover', function(e){
+		if( $(e.target).hasClass('drag-highlight') 
+		&& $('.file_img_over').length == 0
+		&& !mode
+		){
+			
+			$(e.target).addClass('file_img_over');	
+		}
+	}).on('mouseout', function(e){
+		
+		if(move){
+			$('.file_img_over').removeClass('file_img_over');	
+		}
+	});
+	
+	var $focus = $("#drag-area");
+
+	$(document).on("mousedown", function(e) {
+
+		if( !($(e.target).closest('.context').length > 0)
+		){
+			$('.context').hide();
+		}
+		
+		if($(e.target).closest('.no-drag-area').length > 0
+		|| $(e.target).prop('tagName').toLowerCase() == 'button'
+		|| e.which == 3	//우클릭
+		){
+			return;
+		}
+		
+		move = false;
+		mode = true;
+				
+		startX = e.clientX;
+		startY = e.clientY;
+		width = height = 0;
+		
+		$focus.css("left", startX);
+		$focus.css('top', startY);
+		$focus.css("width", width);
+		$focus.css("height", height);
+		
+		$focus.show();
+		
+	}).on('mouseup', function(e) {
+		if($(e.target).closest('.no-drag-area').length > 0
+		|| $(e.target).prop('tagName').toLowerCase() == 'button'
+		|| e.which == 3	//우클릭
+		){
+			return;
+		}
+		
+		mode = false;
+		 $focus.hide();
+		 $focus.css("width", 0);
+		 $focus.css('height', 0);
+		 
+		 //클릭만 한경우
+		 if(!move){
+			width = 1;
+			left = e.clientX;
+			height = 1;
+			top = e.clientY;
+			
+		 }
+		 
+		//범위 내 객체를 선택한다.
+		$('.drag-highlight').removeClass('drag-highlight');
+		$('.file_img_over').removeClass('file_img_over');
+		rangeSelect(target, left, top, left + width, top + height, function(include) {
+			if(include){
+				$(this).addClass('drag-highlight');
+			}
+		});
+		
+		//클릭만 한경우
+		 if(!move){
+			 setTimeout(function(){
+				 $('.drag-highlight').trigger('mouseover');	 
+			 },0);
+		 }
+		 
+	}).on('mousemove', function(e) {
+		//선택한 아이콘 이동
+		if( $('.file_img_over').length > 0 ){
+			$focus.hide();
+			return;
+		}
+		
+		if(!mode) {
+			return;
+		}
+		move = true;
+		
+		var x = e.clientX;
+		var y = e.clientY;
+		//마우스 이동에 따라 선택 영역을 리사이징 한다
+		width = Math.max(x - startX, startX - x);
+		left = Math.min(startX, x);
+		height = Math.max(y - startY, startY - y);
+		top = Math.min(startY, y);
+
+		$focus.css('left', left);
+		$focus.css("width", width);
+		$focus.css('height', height);
+		$focus.css('top', top);
+		
+	});
+	
+	function rangeSelect(selector, x1, y1, x2, y2, cb) {
+		
+		if(x1 == 0
+		&& y1 == 0
+		&& x2 == 0
+		&& y2 == 0
+		){
+			return false;
+		}
+		
+		$(selector).each(function() {
+
+			setTimeout(function(p_this){
+				var $this = $(p_this);
+				var offset = $this.offset();
+				var x = offset.left;
+				var y = offset.top;
+				var w = $this.width();
+				var h = $this.height();
+				
+				//드래그영역과 아이콘이 겹치는치 체크
+				var r1 = {
+					x : x,
+					y : y,
+					w : w,
+					h : h,
+				};
+				var r2 ={
+					x : x1,
+					y : y1,
+					w : x2 - x1,
+					h : y2 - y1,	
+				};
+				cb.call(p_this, chkIntersection(r1, r2));
+			}, 0, this);
+			
+		});
+	}
+	
+	function chkIntersection(r1, r2){
+
+		if(r1.x > r2.x+r2.w){
+			return false;
+		}
+		else if(r1.x+r1.w < r2.x){
+	    	return false;
+	    }
+		else if(r1.y > r2.y+r2.h){
+	    	return false;
+	    }
+		else if(r1.y+r1.h < r2.y){
+	    	return false;
+	    }
+		else{
+		    var rect = {};
+		    rect.x = Math.max(r1.x, r2.x);
+		    rect.y = Math.max(r1.y, r2.y);
+		    rect.w = Math.min(r1.x+r1.w, r2.x+r2.w)-rect.x;
+		    rect.h = Math.min(r1.y+r1.h, r2.y+r2.h)-rect.y;
+//		    console.log(rect);
+		    
+		    if(isNaN(rect.x)
+    		|| isNaN(rect.y)
+    		|| isNaN(rect.w)
+    		|| isNaN(rect.h)
+    		){
+		    	return false;
+		    }
+		    
+			return true;	
+		}
+	}
+}
+
+//첨부파일드래그
+var f_setFileDrag = function(){
+	//첨부파일
+//	$('#attachedFileBtn').on('click', function(){
+//		$('#attachedFile').click();
+//	});
+	$("#attachedFile").change(function () {
+        fileAttachment();
+    })
+    //드래그 앤 드랍
+    $("#attachedFileArea").on("dragenter", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+    }).on("dragover", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $(this).css({"background-color": "#FFD8D8"});
+
+    }).on("dragleave", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $(this).css({"background-color": ""});
+
+    }).on("drop", function (e) {
+    	
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $(this).css({"background-color": ""});
+
+        e.dataTransfer = e.originalEvent.dataTransfer;
+        var files = e.target.files || e.dataTransfer.files;
+        fileAttachment(files);
+
+    });
+	
+	var fileAttachment = function (dragDrop) {
+
+	    var file_names = dragDrop ? dragDrop : $("#attachedFile").prop("files");
+
+	    for (var i = 0; i < file_names.length; i++) {
+
+	        (function (file) {
+
+	            setTimeout(function () {
+
+	                //파일확장자
+	                var fileExt = file.name.substring(file.name.lastIndexOf('.') +1, file.name.length).toUpperCase();
+	                
+	                var fileExtensions = parent.index_info.gv_fileExtension.map(x=>x.CODE_VALUE);
+	                //폴더 또는 용량이 없는 파일
+	                if(file.size == 0
+	        		|| file.name.lastIndexOf('.') == -1
+	        		){
+	                  gf_toast(gf_mlg('폴더_또는_용량이_없는_파일은_업로드_할_수_없습니다'));
+	                    return false;   
+	                }
+	                //최대용량 초과
+	                else if( Number(file.size) >  Number(gv_fileMaxSize)){
+	                	gf_toast(gf_mlg('업로드_최대용량을_초과하였습니다',{
+	                		param : gf_getFileSize(gv_fileMaxSize)
+	                	}));
+	                    return false;
+	                }
+	                //업로드 불가 파일확장자
+                	else if(fileExtensions.indexOf(fileExt.toUpperCase()) == -1 
+            			 && file.type == ''
+            		){
+	                	gf_toast(gf_mlg('다음의_확장자만_업로드_가능합니다',{
+	                		param : fileExtensions.join()
+	                	}));
+	                    return false;
+	                }
+	                else{
+	                	var fileId = new Date().getTime();
+	                	var fSize = gf_getFileSize(file.size);    
+
+						var v_item = {
+								TYPE_CODE : 'FILE',
+								FILE_ID : fileId,
+								FILE_EXTENSION : fileExt,
+								TITLE : file.name
+						};
+						
+						f_makeFile(v_item);
+						
+	                    fileManageInfo.attachedFiles.push(file);
+	                }
+
+	            }, 0);
+
+	        }(file_names[i]));
+
+	    }
+
+	}
+}
+
+
+//파일 조회
+var f_searchFile = function(){
+	var searchParam = {
+			QUERY_ID : 'my.S_FILE_MANAGE',	
+	};
+	
+	if(gf_nvl(folderTree.getActiveNode(), '') != ''){
+		searchParam['PARENT_KEY_ID'] = folderTree.getActiveNode().key
+	}
+	
+	gf_ajax(searchParam
+	, function(data){
+		f_fileClear();
+		
+		return true;
+	}
+	, function(data){
+		
+		if(data.result.length > 0){
+			$.each(data.result, function(idx, item){
+				f_makeFile(item);
+			});
+		}
+				
+	}, null, null, null, false);
+	
+}
+//파일영역 클리어
+var f_fileClear = function(){
+	$('#attachedFileArea div').remove();
+	
+	fileManageInfo.attachedFiles = [];
+	fileManageInfo.attachedDelFiles = [];
+	
+}
+//파일모양 생성
+var f_makeFile = function(p_file){
+	
+	var div = $('<div></div>').addClass('file_img')
+		.attr('ondragstart', 'dragStart(event)')
+		.attr('ondragend', 'dragEnd(event)')
+		.attr('MY_FILE_MANAGE_ID', p_file.MY_FILE_MANAGE_ID)
+		.attr('FILE_ID', p_file.FILE_ID)
+		.attr('RANDOM_KEY', p_file.RANDOM_KEY)
+		;
+
+	var fileIcon = 'file_folder.png';
+	
+	if(gf_nvl(p_file.TYPE_CODE, '') == 'FILE'){
+		fileIcon = parent.index_info.gv_fileExtension.find(x=> x.CODE_VALUE == p_file.FILE_EXTENSION.toUpperCase());
+		
+		if(gf_nvl(fileIcon, '') == ''){
+			fileIcon = 'file_default.png';
+		}
+		else{
+			fileIcon = fileIcon.ICON;
+		}
+	}
+	
+	var fileImg = $('<img>').attr('src', '../img/' + fileIcon );
+	var fileNm = $('<p></p>').addClass('mg-tp-sm').addClass('text-center').text(p_file.TITLE);
+	div.append(fileImg).append(fileNm);
+	
+	$('#attachedFileArea').append(div);
+}
+
+//파일삭제 type: DB / SCRIPT 
+var f_fileDelete = function (e) {
+
+	var deleteTarget = $('#attachedFileArea .drag-highlight');
+	if(deleteTarget.length > 0){
+		
+		var confirmText = gf_mlg('개의_파일을_삭제하시겠습니까',{
+    		param : deleteTarget.length
+    	});
+		
+		if( confirm(confirmText) ){
+		
+			$.each(deleteTarget, function(idx, item){
+				setTimeout(function(){
+					var fileId = $(item).attr('FILE_ID');
+					var randomKey = $(item).attr('RANDOM_KEY');
+					var myFileManageId = $(item).attr('MY_FILE_MANAGE_ID');
+					
+					//화면에 올리기만한 데이터 1건식 삭제
+					if(gf_nvl(myFileManageId, '') == ''){
+						fileManageInfo.attachedFiles = fileManageInfo.attachedFiles.filter((x, idx, array) => {
+				            return x.id != fileId
+				        });
+					}
+					//DB데이터 삭제
+					else{
+						
+						fileManageInfo.attachedDelFiles.push({
+							MY_FILE_MANAGE_ID : myFileManageId,
+							COMM_FILE_ID : fileId,
+			            	RANDOM_KEY : randomKey
+			            });
+						
+					}
+					
+					$(item).remove();
+				}, 0);			
+				
+			});
+			
+			
+		}
+	}
+	
+	$('.context').hide();
 }

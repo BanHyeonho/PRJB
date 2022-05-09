@@ -138,7 +138,7 @@ var fileAttachment = function (dragDrop) {
                     boardInfo.attachedFiles.push(file);
                 }
 
-            }, 1);
+            }, 0);
 
         }(file_names[i]));
 

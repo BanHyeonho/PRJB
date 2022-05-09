@@ -107,8 +107,14 @@
 		</ul>
 	</div>
 	
-	<div id="fileViewContext" class="context" style="display: none;">
+	<div id="fileViewContext" class="context no-drag-area" style="display: none;">
 		<ul id="fileViewContextUl">
+		  	<li>
+		    	<div id='preViewBtn'><span>${pb:msg(pageContext.request, "미리보기")}</span></div>
+		  	</li>
+		  	<li>
+		    	<div id='fileNewFolderBtn'><span>${pb:msg(pageContext.request, "새폴더")}</span></div>
+		  	</li>
 		  	<li>
 		    	<div id='fileDownBtn'><span>${pb:msg(pageContext.request, "다운로드")}</span></div>
 		  	</li>

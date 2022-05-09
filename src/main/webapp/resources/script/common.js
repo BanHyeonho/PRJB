@@ -66,11 +66,11 @@ function gf_mlg(p_mlg_code, p_param){
 	return v_text;
 }
 
-/********************************************************************************** */
-/*													 								*/
-/*	AJAX 											 								*/
-/*													 								*/
-/********************************************************************************** */
+/*****************************************************************************************************************************************************************
+ * 
+ * AJAX
+ * 
+ *****************************************************************************************************************************************************************/
 function gf_ajax(p_param, p_before, p_success, p_error, p_complete, p_url, p_async, p_method, p_global, p_timeout, p_dataType) {
 
 	const v_url = gf_nvl(p_url, '/ajax');
@@ -151,11 +151,11 @@ function gf_ajax(p_param, p_before, p_success, p_error, p_complete, p_url, p_asy
 	$.ajax(setting);
 }
 
-/********************************************************************************** */
-/*													 								*/
-/*	그리드										 									*/
-/*													 								*/
-/********************************************************************************** */
+/*****************************************************************************************************************************************************************
+ * 
+ * 그리드
+ * 
+ *****************************************************************************************************************************************************************/
 //그리드 생성함수
 function gf_gridInit(gridDiv, option) {
 
@@ -644,11 +644,11 @@ function gf_gridRowData(grid, rId, columnNm){
 	}	
 }
 
-/********************************************************************************** */
-/*													 								*/
-/*	그리드 컨텍스트기능									 								*/
-/*													 								*/
-/********************************************************************************** */
+/*****************************************************************************************************************************************************************
+ * 
+ * 그리드 컨텍스트기능
+ * 
+ *****************************************************************************************************************************************************************/
 //그리드엑셀내보내기
 function gf_gridExport(gridDiv) {
 	gf_gridRefresh(gridDiv);
@@ -919,11 +919,12 @@ var gf_gridResize = function(p_gridList){
 		}
 	}
 }
-/********************************************************************************** */
-/*													 								*/
-/*	그리드에디터 										 								*/
-/*													 								*/
-/********************************************************************************** */
+
+/*****************************************************************************************************************************************************************
+ * 
+ * 그리드에디터
+ * 
+ *****************************************************************************************************************************************************************/
 function FormulaEditor(args) {
 	var _self = this;
 	var _editor = new Slick.Editors.Text(args);
@@ -1364,199 +1365,12 @@ function gf_editorEditable(p_editor, p_value){
 	},10);
 }
 
-//파일 드래그 영역 표시
-function f_set_dragSelect(p_target){
-	var target = p_target; //셀렉트로 묶을 객체
-	
-	var mode = false;	//드래그 중인지 체크
-	var move = false;	//클릭만 했는지, 드래그했는지 체크
-		
-	var startX = 0;
-	var startY = 0;
-	var left, top, width, height;
-	
-	$('body').append($('<div id="drag-area"></div>'));
-		
-	$(p_target).on('mouseover', function(e){
-		if( $(e.target).hasClass('drag-highlight') 
-		&& $('.file_img_over').length == 0
-		&& !mode
-		){
-			
-			$(e.target).addClass('file_img_over');	
-		}
-	}).on('mouseout', function(e){
-		
-		if(move){
-			$('.file_img_over').removeClass('file_img_over');	
-		}
-	});
-	
-	var $focus = $("#drag-area");
-
-	$(document).on("mousedown", function(e) {
-
-		if( !($(e.target).closest('.context').length > 0)
-		){
-			$('.context').hide();
-		}
-		
-		if($(e.target).closest('.no-drag-area').length > 0
-		|| $(e.target).prop('tagName').toLowerCase() == 'button'
-		){
-			return;
-		}
-		
-		move = false;
-		mode = true;
-				
-		startX = e.clientX;
-		startY = e.clientY;
-		width = height = 0;
-		
-		$focus.css("left", startX);
-		$focus.css('top', startY);
-		$focus.css("width", width);
-		$focus.css("height", height);
-		
-		$focus.show();
-		
-	}).on('mouseup', function(e) {
-		mode = false;
-		 $focus.hide();
-		 $focus.css("width", 0);
-		 $focus.css('height', 0);
-		 
-		 //클릭만 한경우
-		 if(!move){
-			width = 1;
-			left = e.clientX;
-			height = 1;
-			top = e.clientY;
-			
-		 }
-		 
-		//범위 내 객체를 선택한다.
-		$('.drag-highlight').removeClass('drag-highlight');
-		$('.file_img_over').removeClass('file_img_over');
-		rangeSelect(target, left, top, left + width, top + height, function(include) {
-			if(include){
-				$(this).addClass('drag-highlight');
-			}
-		});
-		
-		//클릭만 한경우
-		 if(!move){
-			 setTimeout(function(){
-				 $('.drag-highlight').trigger('mouseover');	 
-			 },0);
-		 }
-		 
-	}).on('mousemove', function(e) {
-		//선택한 아이콘 이동
-		if( $('.file_img_over').length > 0 ){
-			$focus.hide();
-			return;
-		}
-		
-		if(!mode) {
-			return;
-		}
-		move = true;
-		
-		var x = e.clientX;
-		var y = e.clientY;
-		//마우스 이동에 따라 선택 영역을 리사이징 한다
-		width = Math.max(x - startX, startX - x);
-		left = Math.min(startX, x);
-		height = Math.max(y - startY, startY - y);
-		top = Math.min(startY, y);
-
-		$focus.css('left', left);
-		$focus.css("width", width);
-		$focus.css('height', height);
-		$focus.css('top', top);
-		
-	});
-	
-	function rangeSelect(selector, x1, y1, x2, y2, cb) {
-		
-		if(x1 == 0
-		&& y1 == 0
-		&& x2 == 0
-		&& y2 == 0
-		){
-			return false;
-		}
-		
-		$(selector).each(function() {
-
-			setTimeout(function(p_this){
-				var $this = $(p_this);
-				var offset = $this.offset();
-				var x = offset.left;
-				var y = offset.top;
-				var w = $this.width();
-				var h = $this.height();
-				
-				//드래그영역과 아이콘이 겹치는치 체크
-				var r1 = {
-					x : x,
-					y : y,
-					w : w,
-					h : h,
-				};
-				var r2 ={
-					x : x1,
-					y : y1,
-					w : x2 - x1,
-					h : y2 - y1,	
-				};
-				cb.call(p_this, chkIntersection(r1, r2));
-			}, 0, this);
-			
-		});
-	}
-	
-	function chkIntersection(r1, r2){
-
-		if(r1.x > r2.x+r2.w){
-			return false;
-		}
-		else if(r1.x+r1.w < r2.x){
-	    	return false;
-	    }
-		else if(r1.y > r2.y+r2.h){
-	    	return false;
-	    }
-		else if(r1.y+r1.h < r2.y){
-	    	return false;
-	    }
-		else{
-		    var rect = {};
-		    rect.x = Math.max(r1.x, r2.x);
-		    rect.y = Math.max(r1.y, r2.y);
-		    rect.w = Math.min(r1.x+r1.w, r2.x+r2.w)-rect.x;
-		    rect.h = Math.min(r1.y+r1.h, r2.y+r2.h)-rect.y;
-//		    console.log(rect);
-		    
-		    if(isNaN(rect.x)
-    		|| isNaN(rect.y)
-    		|| isNaN(rect.w)
-    		|| isNaN(rect.h)
-    		){
-		    	return false;
-		    }
-		    
-			return true;	
-		}
-	}
-}
-/********************************************************************************** */
-/*													 								*/
-/*	토스트 											 								*/
-/*	type : success, danger, info, 기본				 								*/
-/********************************************************************************** */
+/*****************************************************************************************************************************************************************
+ * 
+ * 토스트
+ * type : success, danger, info, 기본
+ * 
+ *****************************************************************************************************************************************************************/
 function gf_toast(text, p_type) {
 	var option = {};
 
