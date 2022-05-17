@@ -2,7 +2,7 @@
  * 공통 document ready
  */
 $(document).ready(function() {
-	var ajax_mask = $('<div>').addClass('ajax_mask');
+	var ajax_mask = $('<div>').addClass('ajax_mask').addClass('no-drag-area');
 	$('body').prepend(ajax_mask);
 	$(document).ajaxStart(function() {
 		$('.ajax_mask').show();
