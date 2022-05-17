@@ -921,7 +921,7 @@ var f_fileDown = function(){
                     
                     iFrameCnt++;
                                         
-				}, 0);
+				}, 100);
 				
 			});
 			            
