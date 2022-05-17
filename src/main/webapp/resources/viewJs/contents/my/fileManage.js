@@ -900,39 +900,41 @@ var f_fileDown = function(){
 	var target = $('#attachedFileArea .drag-highlight');
 	if(target.length > 0){
 		
-		var confirmText = gf_mlg('개의_파일을_다운로드_하시겠습니까',{
-    		param : target.length
-    	});
-		
-		if( confirm(confirmText) ){
-		
-			var iFrameCnt = 0;
+		//파일1개 다운로드
+		if(target.length == 1){
+						
+			var fileId = target.attr('FILE_ID');
+			var randomKey = target.attr('RANDOM_KEY');
+			location.href = '/fileDownload?COMM_FILE_ID=' + fileId + '&RANDOM_KEY=' + randomKey;
+					
+		}
+		//압축 다운로드
+		else{
+			var fileName = prompt(gf_mlg('압축_파일_명을_입력하세요'));
+			if(gf_nvl(fileName, '') != ''){
 			
-			$.each(target, function(idx, item){
-				setTimeout(function(){
+				var link = '/zipFileDownload?zipFileName=' + encodeURIComponent(fileName);
+				
+				var fileData =[];
+				$.each(target, function(idx, item){
 					var fileId = $(item).attr('FILE_ID');
 					var randomKey = $(item).attr('RANDOM_KEY');
-					
-                    var url = '/fileDownload?COMM_FILE_ID=' + fileId + '&RANDOM_KEY=' + randomKey;
-                                            
-                    fnCreateIframe(iFrameCnt); // 보이지 않는 iframe 생성, name는 숫자로
-                    
-                    $("iframe[name=" + iFrameCnt + "]").attr("src", url);
-                    
-                    iFrameCnt++;
-                                        
-				}, 100);
+					fileData.push({
+						COMM_FILE_ID : fileId,
+						RANDOM_KEY : randomKey
+					});
+				});
 				
-			});
-			            
-            var fnCreateIframe = function (name){
-                var frm = $('<iframe name="' + name + '" style="display: none;"></iframe>');
-                frm.appendTo("body");
-                setTimeout(function(){
-                	frm.remove();
-                },1000);
-            }
+				link += '&fileData=' + encodeURIComponent(JSON.stringify(fileData));
+				
+				location.href = link;
+				
+			}
 		}
+		
+	}
+	else{
+		
 	}
 	$('.context').hide();
 }

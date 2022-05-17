@@ -107,16 +107,16 @@ public class StService {
 		Optional<HttpRange> optional = headers.getRange().stream().findFirst(); 
 		HttpRange httpRange;
 		
-		if (optional.isPresent()){			
-			httpRange = optional.get(); 
-			long start = httpRange.getRangeStart(contentLength); 
-			long end = httpRange.getRangeEnd(contentLength); 
-			long rangeLength = Long.min(chunkSize, end - start + 1); 
-			resourceRegion = new ResourceRegion(video, start, rangeLength); 
+		if (optional.isPresent()){
+			httpRange = optional.get();
+			long start = httpRange.getRangeStart(contentLength);
+			long end = httpRange.getRangeEnd(contentLength);
+			long rangeLength = Long.min(chunkSize, end - start + 1);
+			resourceRegion = new ResourceRegion(video, start, rangeLength);
 		}
 		else {
-			long rangeLength = Long.min(chunkSize, contentLength); 
-			resourceRegion = new ResourceRegion(video, 0, rangeLength); 
+			long rangeLength = Long.min(chunkSize, contentLength);
+			resourceRegion = new ResourceRegion(video, 0, rangeLength);
 		}
 		return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).contentType(MediaTypeFactory.getMediaType(video).orElse(MediaType.APPLICATION_OCTET_STREAM)).body(resourceRegion);
 	}

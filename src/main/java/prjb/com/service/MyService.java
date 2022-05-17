@@ -64,18 +64,12 @@ public class MyService {
 		final String ip = ComUtil.getAddress(request);
 		
 		final String filePath = FileUtil.filePath(fileRoot, moduleCode);
-				
-		ObjectMapper mapper = null;
-		JsonNode json = null;
-		ObjectReader reader = null;
 		
 		String fileInfo = request.getParameter("fileInfo");
 		
 		List<Future> futures = new ArrayList<>();
-		mapper = new ObjectMapper();
-		json = mapper.readTree(String.valueOf(fileInfo));
-		reader = mapper.readerFor(new TypeReference<List>() {});
-		List<Map> fileInfoList = reader.readValue(json);
+		
+		List<Map> fileInfoList = ComUtil.StringToList(String.valueOf(fileInfo));
 		
 		/**
 		 *  1. 파일테이블 데이터삭제
@@ -86,11 +80,10 @@ public class MyService {
 		
 		//1. 파일테이블 데이터삭제
 		String attachedFileDel = request.getParameter("attachedFileDel");
-		mapper = new ObjectMapper();
-		json = mapper.readTree(String.valueOf(attachedFileDel));
-		reader = mapper.readerFor(new TypeReference<List>() {});
-		if( !json.isNull() ) {
-			List<Map> deleteList = reader.readValue(json);
+		
+		List<Map> deleteList = ComUtil.StringToList(String.valueOf(String.valueOf(attachedFileDel)));
+		if( deleteList != null ) {
+			
 			for (Map map : deleteList) {
 				comService.fileDelete(map);
 				

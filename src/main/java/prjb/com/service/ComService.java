@@ -1,5 +1,6 @@
 package prjb.com.service;
 
+import java.io.File;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,14 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-
 import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
+import prjb.com.util.CustomFile;
 import prjb.com.util.FileUtil;
 
 @Service("ComService")
@@ -315,9 +312,6 @@ public class ComService {
 		
 		Map<String, Object> paramMap = ComUtil.getParameterMap(request, "SORT");
 		
-		ObjectMapper mapper = null;
-		JsonNode json = null;
-		ObjectReader reader = null;
 		List<Map> list = null;
 		for ( Map.Entry<String, Object> param : paramMap.entrySet() ) {
 			
@@ -326,11 +320,7 @@ public class ComService {
 			
 			//그리드
 			if ( key.endsWith("Grid")) {
-
-				mapper = new ObjectMapper();
-				json = mapper.readTree(String.valueOf(value));
-				reader = mapper.readerFor(new TypeReference<List>() {});
-				list = reader.readValue(json);
+				list = ComUtil.StringToList(String.valueOf(value));
 				gridSave(list, request);
 			}
 			//폼
@@ -367,10 +357,7 @@ public class ComService {
 			//파일 삭제
 			else if(key.endsWith("FileDel")) {
 				
-				mapper = new ObjectMapper();
-				json = mapper.readTree(String.valueOf(value));
-				reader = mapper.readerFor(new TypeReference<List>() {});
-				list = reader.readValue(json);
+				list = ComUtil.StringToList(String.valueOf(value));
 				for (Map map : list) {
 					fileDelete(map);
 				}
@@ -722,7 +709,6 @@ public class ComService {
 	 * @return
 	 * @throws Exception 
 	 */
-	@Transactional(rollbackFor = Exception.class)
 	public void fileDown(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		Map param = new HashMap();
@@ -755,6 +741,39 @@ public class ComService {
 		}
 		
 	}
+	
+	/**
+	 * 파일 압축 다운로드
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	public void zipFileDownload(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		final String encodingType = "UTF-8";
+		List<File> Files = new ArrayList();
+		String zipName = URLDecoder.decode(request.getParameter("zipFileName"), encodingType);
+		String fileData = URLDecoder.decode(request.getParameter("fileData"), encodingType);
+		
+		List<Map> fileDataList = ComUtil.StringToList(String.valueOf(fileData));
+		
+		Map param = new HashMap();
+		param.put("FILE_LIST", fileDataList);
+		List<Map> result = comDao.selectList("com.S_COMM_FILE_ZIP_DOWN", param);
+		
+		for (Map<String, String> fileMap : result) {
+			String path = fileMap.get("FILE_PATH");
+			String fileName = fileMap.get("FILE_NAME");
+			String fileExtension = fileMap.get("FILE_EXTENSION");
+			String serverFileName = fileMap.get("SERVER_FILE_NAME");
+			
+			CustomFile f = new CustomFile(path + serverFileName);
+			f.setFileDownName(fileName);
+			Files.add(f);	
+		}
+				
+		FileUtil.zipFileDownload(request, response, zipName, Files);
+	}
+	
 	/**
 	 * 파일 삭제
 	 * @param request

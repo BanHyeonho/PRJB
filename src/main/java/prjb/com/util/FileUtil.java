@@ -5,18 +5,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import net.lingala.zip4j.io.outputstream.ZipOutputStream;
+import net.lingala.zip4j.model.ZipParameters;
 import prjb.com.init.InitBean;
 
 public class FileUtil {
@@ -239,12 +244,14 @@ public class FileUtil {
 	 */
 	public static boolean fileDownload(Map<String, String> fileMap, HttpServletResponse response) throws Exception{
 
+		final String contentType = "application/octet-stream; charset=utf-8";
+		
 		boolean result = false;
 		String serverFileName = String.valueOf(fileMap.get("SERVER_FILE_NAME"));
 		File file = new File(String.valueOf(fileMap.get("FILE_PATH")) + serverFileName);
 
 		if (file.exists() && file.isFile()) {
-			response.setContentType("application/octet-stream; charset=utf-8");
+			response.setContentType(contentType);
 			response.setContentLength((int) file.length());
 			
 			String browser = fileMap.get("BROWSER");
@@ -278,6 +285,47 @@ public class FileUtil {
 		
 		return result;
 	}
+	
+	/**
+	 * 파일 압축하여 다운로드
+	 * @param request
+	 * @param response
+	 * @param files
+	 */
+	public static void zipFileDownload(HttpServletRequest request, HttpServletResponse response, String zipFileName, List<File> files) throws Exception{
+		final String contentType = "application/zip; charset=utf-8";
+		final byte[] buff = new byte[4096];
+		int readLen = 0;
+		
+		ZipParameters parameters = new ZipParameters();
+		response.setContentType(contentType);
+		
+		String disposition = ComUtil.getDisposition(zipFileName + ".zip", ComUtil.getBrowser(request));
+		response.setHeader("Content-Disposition", disposition);
+	
+		try( ZipOutputStream zos = new ZipOutputStream(response.getOutputStream()) ){
+			
+			for (File file : files) {
+				String fileDownName = ((CustomFile)file).getFileDownName();
+				
+				parameters.setFileNameInZip(fileDownName == null ? file.getName() : fileDownName);
+				zos.putNextEntry(parameters);
+				try( InputStream is = new FileInputStream(file) ){
+					while ( (readLen = is.read(buff)) != -1 ) {
+						zos.write(buff, 0, readLen);
+					}
+				}
+				zos.closeEntry();
+			}
+			
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+	}
+	
 	/**
 	 * 파일 삭제
 	 * @param path

@@ -1,6 +1,11 @@
 package prjb.com.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +24,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import net.lingala.zip4j.io.outputstream.ZipOutputStream;
+import net.lingala.zip4j.model.ZipParameters;
 import prjb.com.service.ComService;
 import prjb.com.util.ComUtil;
+import prjb.com.util.FileUtil;
 
 
 @Controller("ComController")
@@ -165,6 +176,19 @@ public class ComController {
 	@RequestMapping(value = "/fileDownload", method = RequestMethod.GET)
 	public void fileDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		comService.fileDown(request, response);
+	}
+	
+	/**
+	 * 파일 압축 다운로드
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/zipFileDownload", method = RequestMethod.GET)
+	public void zipFileDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		comService.zipFileDownload(request, response);
+				
 	}
 	
 	/**

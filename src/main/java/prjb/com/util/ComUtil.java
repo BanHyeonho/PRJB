@@ -34,6 +34,10 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.springframework.jdbc.support.JdbcUtils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
 
 public class ComUtil {
@@ -337,6 +341,23 @@ public class ComUtil {
         return body;
     }
 
+	/**
+	 * 
+	 * @return
+	 */
+	public static List StringToList(String JSONStr) {
+		List<Map> list = null;
+		
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode json = mapper.readTree(String.valueOf(JSONStr));
+			ObjectReader reader = mapper.readerFor(new TypeReference<List>() {});
+			list = reader.readValue(json);
+		} catch (Exception e) {}
+		
+		return list;
+	}
+	
 	/**
 	 * 암호화키(salt) 생성 
 	 */
