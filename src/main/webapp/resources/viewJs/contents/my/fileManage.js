@@ -46,6 +46,8 @@ $(document).ready(function() {
 	//파일영역 컨텍스트메뉴
 	$('#fileNewFolderBtn').on('click', f_newFolder);
 	$('#fileDeleteBtn').on('click', f_fileDelete);
+	$('#fileDownBtn').on('click', f_fileDown);
+	
 	
 	f_search();
 });
@@ -889,5 +891,48 @@ var f_fileDelete = function (e) {
 		}
 	}
 	
+	$('.context').hide();
+}
+
+//파일다운로드
+var f_fileDown = function(){
+	
+	var target = $('#attachedFileArea .drag-highlight');
+	if(target.length > 0){
+		
+		var confirmText = gf_mlg('개의_파일을_다운로드_하시겠습니까',{
+    		param : target.length
+    	});
+		
+		if( confirm(confirmText) ){
+		
+			var iFrameCnt = 0;
+			
+			$.each(target, function(idx, item){
+				setTimeout(function(){
+					var fileId = $(item).attr('FILE_ID');
+					var randomKey = $(item).attr('RANDOM_KEY');
+					
+                    var url = '/fileDownload?COMM_FILE_ID=' + fileId + '&RANDOM_KEY=' + randomKey;
+                                            
+                    fnCreateIframe(iFrameCnt); // 보이지 않는 iframe 생성, name는 숫자로
+                    
+                    $("iframe[name=" + iFrameCnt + "]").attr("src", url);
+                    
+                    iFrameCnt++;
+                                        
+				}, 0);
+				
+			});
+			            
+            var fnCreateIframe = function (name){
+                var frm = $('<iframe name="' + name + '" style="display: none;"></iframe>');
+                frm.appendTo("body");
+                setTimeout(function(){
+                	frm.remove();
+                },1000);
+            }
+		}
+	}
 	$('.context').hide();
 }
