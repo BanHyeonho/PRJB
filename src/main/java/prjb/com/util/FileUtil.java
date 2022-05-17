@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URLEncoder;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,25 @@ public class FileUtil {
 
 	private final static CryptoUtil CryptoUtil = InitBean.CryptoClass;
 	
+	/**
+	 * 파일저장경로
+	 * @return
+	 */
+	public static String filePath(String fileRoot, String moduleCode) {
+		//파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
+		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
+		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
+		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+		String day = String.format("%02d", cal.get(Calendar.DATE));
+		
+		if(!fileRoot.contains(File.separator)) {
+			fileRoot += File.separator;
+		}
+		
+		String filePath = fileRoot + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
+		
+		return filePath;
+	}
 	
 	/**
 	 * 파일 인코딩 생성
@@ -195,18 +215,18 @@ public class FileUtil {
 			File file = new File(filePath + serverFileName);
 			attachedFile.transferTo(file);
 			
+			result.put("fileSize", fileSize);
+			result.put("fileExtension", fileExtension);
+			result.put("fileName", fileName);
+			result.put("serverFileName", serverFileName);
+			
+			result.put("state", "success");
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			result.put("state", "fail");
 		}
-				
-		result.put("fileSize", fileSize);
-		result.put("fileExtension", fileExtension);
-		result.put("fileName", fileName);
-		result.put("serverFileName", serverFileName);
-		
-		result.put("state", "success");
 		return result;
 	}
 	

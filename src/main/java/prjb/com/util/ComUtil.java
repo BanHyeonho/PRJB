@@ -40,6 +40,16 @@ public class ComUtil {
 
 
 	/**
+	 * null 인경우 0 리턴
+	 * @param obj
+	 * @return
+	 */
+	public static String valueOfZero(Object obj) {
+		String result = String.valueOf(obj);
+		return result == "null" ? "0" : result;
+	}
+	
+	/**
 	 * SQL Injection 방지
 	 * @param str
 	 * @return

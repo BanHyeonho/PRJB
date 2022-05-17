@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -264,12 +263,7 @@ public class StService {
 		
 		String fileData = String.valueOf(fileInfo.get("FILE_PATH")) + String.valueOf(fileInfo.get("SERVER_FILE_NAME"));
 		        
-        //파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
-  		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
-  		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
-  		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
-  		String day = String.format("%02d", cal.get(Calendar.DATE));
-  		String filePath = fileRoot + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
+  		String filePath = FileUtil.filePath(fileRoot, moduleCode);
   		
         Map<String, String> fileResult = FileUtil.fileConvert(fileData, filePath, fileNm, fileExtension);
         
@@ -340,12 +334,7 @@ public class StService {
         //.readLine()은 끝에 개행문자를 읽지 않는다.            
         bufReader.close();
         
-        //파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
-  		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
-  		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
-  		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
-  		String day = String.format("%02d", cal.get(Calendar.DATE));
-  		String filePath = fileRoot + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
+  		String filePath = FileUtil.filePath(fileRoot, moduleCode);
   		
         Map<String, String> fileResult = FileUtil.fileMake(filePath, fileNm, "vtt", content.toString());
 		
@@ -456,12 +445,7 @@ public class StService {
         //.readLine()은 끝에 개행문자를 읽지 않는다.            
         bufReader.close();
         
-        //파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
-//  		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
-//  		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
-//  		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
-//  		String day = String.format("%02d", cal.get(Calendar.DATE));
-//  		String filePath = fileRoot + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
+//  	String filePath = FileUtil.filePath(fileRoot, moduleCode);
 //  		
 //        Map<String, String> fileResult = FileUtil.fileMake(filePath, fileNm, "vtt", content.toString());
 //		

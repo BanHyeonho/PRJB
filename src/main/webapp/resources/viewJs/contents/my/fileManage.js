@@ -6,7 +6,6 @@ var f_dragData = [];
 var folderTree; 
 
 let fileManageInfo = {
-	moduleCode : 'MY',
 	attachedFiles : [],
 	attachedDelFiles : [],
 }
@@ -63,7 +62,60 @@ var f_search = function(){
 }
 
 var f_save = function(){
-	alert('저장')
+	var fData = new FormData();
+
+	var fileInfo = [];
+	//첨부파일
+	$.each(fileManageInfo.attachedFiles, function(idx, item){
+		
+		fileInfo.push({
+			KEY_ID : item.KEY_ID,
+			PARENT_KEY_ID : folderTree.getActiveNode() == null ? null : folderTree.getActiveNode().key
+		});
+		
+		fData.append(item.KEY_ID + '_File', item);
+	});
+	
+	fData.append('fileInfo', JSON.stringify(fileInfo));
+	
+	//첨부파일삭제
+	if(fileManageInfo.attachedDelFiles.length > 0){
+		fData.append('attachedFileDel', JSON.stringify(fileManageInfo.attachedDelFiles));	
+	}
+		
+	gf_ajax( fData
+			, function(){
+				var result = false;
+				var saveDataLen = fileManageInfo.attachedDelFiles.length + fileManageInfo.attachedFiles.length;
+				
+				if(saveDataLen > 0){
+					result = true;
+				}
+				else{
+					gf_toast(gf_mlg('저장할_데이터가_없습니다'), 'info');	
+				}
+				
+				return result;
+			}
+			, function(data){
+				console.log(data);
+				
+				var result = data.result;
+				
+				if(result.state == 'success'){
+					gf_toast(gf_mlg('저장_되었습니다'), 'success');	
+				}
+				else{
+					gf_toast(gf_mlg('개의_항목에_오류가_발생하였습니다',{
+						param : result.failCnt
+					}), 'info');
+				}
+				f_search();	
+				
+			}
+			, null
+			, null
+			, '/my/fileManageSave');
 }
 
 /*****************************************************************************************************************************************************************
@@ -127,6 +179,7 @@ var f_searchTree = function(p_type){
 			var folder = (item.TYPE_CODE == 'FOLDER' ? true : false);
 			
 			var resultItem = {
+					myFileManageId : myFileManageId,
 					showYn : showYn,
 					expanded : true,
 					folder : folder,
@@ -677,6 +730,14 @@ var f_setFileDrag = function(){
 	                	}));
 	                    return false;
 	                }
+	                //파일명 한도 초과
+	                else if(file.name.length > gv_fileNameMaxlength){
+	                	gf_toast(gf_mlg('최대_파일_명_길이를_초과하였습니다',{
+	                		param1 : gv_fileNameMaxlength,
+	                		param2 : file.name.length
+	                	}));
+	                	return false;
+	                }
 	                //업로드 불가 파일확장자
                 	else if(fileExtensions.indexOf(fileExt.toUpperCase()) == -1 
             			 && file.type == ''
@@ -687,7 +748,8 @@ var f_setFileDrag = function(){
 	                    return false;
 	                }
 	                else{
-	                	var fileId = new Date().getTime();
+	                	var fileId = new Date().getTime() + '_' + $('.file_img').length;
+	                	
 	                	var fSize = gf_getFileSize(file.size);    
 
 						var v_item = {
@@ -698,6 +760,8 @@ var f_setFileDrag = function(){
 						};
 						
 						f_makeFile(v_item);
+						
+						file['KEY_ID'] = fileId;
 						
 	                    fileManageInfo.attachedFiles.push(file);
 	                }
@@ -754,6 +818,7 @@ var f_makeFile = function(p_file){
 		.attr('ondragstart', 'dragStart(event)')
 		.attr('ondragend', 'dragEnd(event)')
 		.attr('MY_FILE_MANAGE_ID', p_file.MY_FILE_MANAGE_ID)
+		.attr('KEY_ID', p_file.KEY_ID)
 		.attr('FILE_ID', p_file.FILE_ID)
 		.attr('RANDOM_KEY', p_file.RANDOM_KEY)
 		;
@@ -795,11 +860,12 @@ var f_fileDelete = function (e) {
 					var fileId = $(item).attr('FILE_ID');
 					var randomKey = $(item).attr('RANDOM_KEY');
 					var myFileManageId = $(item).attr('MY_FILE_MANAGE_ID');
+					var keyId = $(item).attr('KEY_ID');
 					
 					//화면에 올리기만한 데이터 1건식 삭제
 					if(gf_nvl(myFileManageId, '') == ''){
 						fileManageInfo.attachedFiles = fileManageInfo.attachedFiles.filter((x, idx, array) => {
-				            return x.id != fileId
+				            return x.KEY_ID != fileId
 				        });
 					}
 					//DB데이터 삭제
@@ -808,6 +874,7 @@ var f_fileDelete = function (e) {
 						fileManageInfo.attachedDelFiles.push({
 							MY_FILE_MANAGE_ID : myFileManageId,
 							COMM_FILE_ID : fileId,
+							KEY_ID : keyId,
 			            	RANDOM_KEY : randomKey
 			            });
 						

@@ -266,6 +266,7 @@ var f_save = function(){
 		if(idx == 0){
 			var fileData = {
 					MODULE_CODE : 'BD',
+					MENU_URL : 'boardWrite',
 					GET_PARAM : {
 									GROUP_ID : 'boardForm.BBS_BOARD_ID'
 								}

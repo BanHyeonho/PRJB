@@ -1,14 +1,11 @@
 package prjb.com.service;
 
-import java.io.File;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,10 +40,7 @@ public class ComService {
 	
 	@Autowired
 	ComDao comDao;
-	
-	@Autowired
-	AsyncService async;
-	
+		
 	private static final Logger logger = LoggerFactory.getLogger(ComService.class);
 	
 	/**
@@ -676,19 +670,15 @@ public class ComService {
 	public void fileSave(HttpServletRequest request,  Map fileMap) throws Exception{
 		
 		String moduleCode = String.valueOf(fileMap.get("MODULE_CODE"));
+		String menuUrl = String.valueOf(fileMap.get("MENU_URL"));
 		String groupId = String.valueOf(fileMap.get("GROUP_ID"));
 		String langCode = String.valueOf(fileMap.get("langCode"));
 		String ip = String.valueOf(fileMap.get("ip"));
 		String cId = String.valueOf(fileMap.get("cId"));
 		String files = String.valueOf(fileMap.get("files"));
 
-		//파일경로 윈도우 : root/모듈/소스명/년/월 예) C:/develop/files/prjb/ST/2021/05/31/암호화(20210525112412_test) --확장자는 따로저장
-		Calendar cal = Calendar.getInstance(); // Calendar 객체 얻어오기 ( 시스템의 현재날짜와 시간정보 )
-		String year = String.valueOf(cal.get(Calendar.YEAR)); // Calendar 인스턴스에 있는 저장된 필드 값을 가져옴
-		String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
-		String day = String.format("%02d", cal.get(Calendar.DATE));
-		String filePath = fileRoot + moduleCode + File.separator + year +  File.separator + month +  File.separator + day +  File.separator;
-				
+		String filePath = FileUtil.filePath(fileRoot, moduleCode);
+			
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		List<MultipartFile> fileList = multipartRequest.getFiles(files);
 
@@ -698,22 +688,33 @@ public class ComService {
 			Map<String, String> uploadResult = FileUtil.fileUpload(filePath, attachedFile);
 			if("success".equals(uploadResult.get("state"))) {
 				
-				Map<String, String> fileParam = new HashMap();
-				fileParam.put("MODULE_CODE", moduleCode);
-				fileParam.put("GROUP_ID", groupId);
-				fileParam.put("CID", cId);
-				fileParam.put("CIP", ip);
-				fileParam.put("FILE_PATH", filePath);
-				fileParam.put("FILE_SIZE", String.valueOf(uploadResult.get("fileSize")));
-				fileParam.put("FILE_EXTENSION", uploadResult.get("fileExtension"));
-				fileParam.put("FILE_NAME_ENCRYPT", uploadResult.get("fileName"));
-				fileParam.put("SERVER_FILE_NAME", uploadResult.get("serverFileName"));
-				fileParam.put("RANDOM_KEY", ComUtil.getRandomKey());
-				
-				comDao.insert("com.I_COMM_FILE", fileParam);
+				fileTableInsert(moduleCode, menuUrl, groupId, cId, ip, filePath
+								, String.valueOf(uploadResult.get("fileSize"))
+								, uploadResult.get("fileExtension")
+								, uploadResult.get("fileName")
+								, uploadResult.get("serverFileName")
+								);
 			}
 		}
 		
+	}
+	public void fileTableInsert(String moduleCode, String menuUrl, String groupId, String cId, String ip, String filePath
+								, String fileSize, String fileExtension, String fileName, String serverFileName) throws Exception {
+		
+		Map<String, String> fileParam = new HashMap();
+		fileParam.put("MODULE_CODE", moduleCode);
+		fileParam.put("MENU_URL", menuUrl);
+		fileParam.put("GROUP_ID", groupId);
+		fileParam.put("CID", cId);
+		fileParam.put("CIP", ip);
+		fileParam.put("FILE_PATH", filePath);
+		fileParam.put("FILE_SIZE", fileSize);
+		fileParam.put("FILE_EXTENSION", fileExtension);
+		fileParam.put("FILE_NAME_ENCRYPT", fileName);
+		fileParam.put("SERVER_FILE_NAME", serverFileName);
+		fileParam.put("RANDOM_KEY", ComUtil.getRandomKey());
+		
+		comDao.insert("com.I_COMM_FILE", fileParam);
 	}
 	/**
 	 * 파일 다운로드
@@ -763,8 +764,8 @@ public class ComService {
 	@Transactional(rollbackFor = Exception.class)
 	public void fileDelete(Map p_param) throws Exception{
 		
-		String COMM_FILE_ID = String.valueOf(p_param.get("COMM_FILE_ID"));
-		String RANDOM_KEY = String.valueOf(p_param.get("RANDOM_KEY"));
+		String COMM_FILE_ID = (String) p_param.get("COMM_FILE_ID");
+		String RANDOM_KEY = (String) p_param.get("RANDOM_KEY");
 		
 		Map param = new HashMap();
 		param.put("COMM_FILE_ID", COMM_FILE_ID);
@@ -790,72 +791,6 @@ public class ComService {
 			FileUtil.fileDelete(result.get("FILE_PATH"), result.get("SERVER_FILE_NAME"));	
 		}
 		
-	}
-	
-	/**
-	 * 테스트
-	 */
-	public void test(HttpServletRequest request, HttpServletResponse response) {
-		
-		List<Map> result = new ArrayList();
-		Map<String, Integer> result2 = new HashMap();
-		logger.info("테스트확인 START::" +  + result.size());
-		List<Future> threadList = new ArrayList();
-		
-		for(int i=0; i<100; i++) {
-			threadList.add(exec(i, result, result2));
-		}
-		
-		logger.info("테스트확인 비동기끝::");
-		
-		for (Future future : threadList) {
-			try {
-				future.get();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		logger.info("테스트확인 END::" + result.size());
-		logger.info("테스트확인 END:: List");
-		for (Map r : result) {
-			logger.info(r.get("ID") + " ::: " + r.get("VALUE"));
-		}
-		
-		logger.info("테스트확인 END:: Map");
-		for( String key : result2.keySet() ){
-
-			logger.info( String.format("키 : %s, 값 : %s", key, result2.get(key)) );
-
-	    }
-	}
-	
-	public Future exec(int i, List result, Map result2) {
-		return async.run(()-> {
-			Map m = new HashMap();
-			m.put("ID", exec1(i, result2));
-			m.put("VALUE", ComUtil.getRandomKey());
-			result.add(m);
-		});
-		
-	}
-	public int exec1(int i, Map result2) {
-		for(long j=1; j<=100000000; j++) {
-//			System.out.print("-");
-//			try {
-//				wait(5000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			if(j==100000000) {
-				System.out.print("-");
-			}
-		}
-//		System.out.println("");
-		logger.info("실행테스트 ::: " + String.valueOf(i));
-		result2.put("ID : " + i, i +1);
-		return i;
 	}
 	
 }

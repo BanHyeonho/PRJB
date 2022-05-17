@@ -24,6 +24,7 @@
 	<insert id="I_COMM_FILE" parameterType="HashMap" >
 		INSERT INTO COMM_FILE( COMM_FILE_ID    
 							 , MODULE_CODE     
+							 , MENU_URL
 							 , GROUP_ID        
 							 , FILE_PATH       
 							 , RANDOM_KEY      
@@ -35,6 +36,7 @@
 							)
 					  VALUES( COMM_FILE_S.NEXTVAL
 							, #{MODULE_CODE}
+							, #{MENU_URL}
 							, #{GROUP_ID}
 							, #{FILE_PATH}
 							, #{RANDOM_KEY}
