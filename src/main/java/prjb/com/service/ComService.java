@@ -713,6 +713,8 @@ public class ComService {
 	 */
 	public Map fileDownLog(HttpServletRequest request) throws Exception{
 		
+		final int keyLenth = 7;
+		
 		Map param = new HashMap();
 		
 		param.put("COMM_USER_ID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
@@ -722,10 +724,10 @@ public class ComService {
 		
 		String DOWNLOAD_KEY;
 		if( new Random().nextInt(2) == 1) {
-			DOWNLOAD_KEY = System.currentTimeMillis() + ComUtil.getRandomKey(13);
+			DOWNLOAD_KEY = System.currentTimeMillis() + ComUtil.getRandomKey(keyLenth);
 		}
 		else {
-			DOWNLOAD_KEY = ComUtil.getRandomKey(13) + System.currentTimeMillis();
+			DOWNLOAD_KEY = ComUtil.getRandomKey(keyLenth) + System.currentTimeMillis();
 		}
 		
 		param.put("DOWNLOAD_KEY", DOWNLOAD_KEY);
