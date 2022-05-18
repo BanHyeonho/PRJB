@@ -25,10 +25,10 @@
 	<!-- 첨부파일 로그 저장 -->
 	<insert id="I_COMM_FILE_DOWN_LOG" parameterType="HashMap">
 		/* I_COMM_FILE_DOWN_LOG */
-		<selectKey resultType="HashMap" keyProperty="DOWNLOAD_KEY" order="BEFORE">
-			SELECT FILE_DOWNLOAD_S.NEXTVAL AS DOWNLOAD_KEY
-			  FROM DUAL
-		</selectKey>
+<!-- 		<selectKey resultType="HashMap" keyProperty="DOWNLOAD_KEY" order="BEFORE"> -->
+<!-- 			SELECT FILE_DOWNLOAD_S.NEXTVAL AS DOWNLOAD_KEY -->
+<!-- 			  FROM DUAL -->
+<!-- 		</selectKey> -->
 		INSERT INTO COMM_FILE_DOWN_LOG( COMM_USER_ID
 									  , DOWNLOAD_KEY
 									  , MODULE_CODE

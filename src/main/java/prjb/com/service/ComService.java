@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -718,7 +719,17 @@ public class ComService {
 		param.put("MODULE_CODE", request.getParameter("MODULE_CODE"));
 		param.put("MENU_URL", request.getParameter("MENU_URL"));
 		param.put("CIP", ComUtil.getAddress(request));
-
+		
+		String DOWNLOAD_KEY;
+		if( new Random().nextInt(2) == 1) {
+			DOWNLOAD_KEY = System.currentTimeMillis() + ComUtil.getRandomKey(13);
+		}
+		else {
+			DOWNLOAD_KEY = ComUtil.getRandomKey(13) + System.currentTimeMillis();
+		}
+		
+		param.put("DOWNLOAD_KEY", DOWNLOAD_KEY);
+		
 		List<Map> fileDataList = ComUtil.StringToList( String.valueOf( request.getParameter("fileData") ) );
 
 		if(fileDataList != null && fileDataList.size() > 0) {

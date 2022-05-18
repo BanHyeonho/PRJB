@@ -148,11 +148,14 @@ public class ComUtil {
 	 * @return
 	 */
 	public static String getRandomKey() {
+		return getRandomKey(20);
+	}
+	public static String getRandomKey(int len) {
 		
 		StringBuffer temp = new StringBuffer();
 		Random rnd = new Random();
 		
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < len; i++) {
 		    int rIndex = rnd.nextInt(3);
 		    switch (rIndex) {
 		    case 0:
