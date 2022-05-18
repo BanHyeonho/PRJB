@@ -163,6 +163,7 @@ var f_searchTree = function(p_type){
 	
 	var searchParam = {
 		QUERY_ID : 'my.S_FILE_MANAGE_TREE',
+		FILE_NAME : $('#searchParam1').val()
 	};
 	
 	if(gf_nvl(p_type, '') == 'ALL'){
@@ -176,8 +177,9 @@ var f_searchTree = function(p_type){
 	gf_ajax(searchParam
 	, null
 	, function(data){
-		
-		$.each(data.result, function(idx, item){
+		var resultList = data.result.filter(x=> x.TYPE_CODE == 'FOLDER');
+
+		$.each(resultList, function(idx, item){
 		
 			var myFileManageId = item.MY_FILE_MANAGE_ID;
 			var showYn = item.SHOW_YN;
@@ -513,6 +515,7 @@ function f_set_dragSelect(p_target){
 		
 		if($(e.target).closest('.no-drag-area').length > 0
 		|| $(e.target).prop('tagName').toLowerCase() == 'button'
+		|| $(e.target).prop('tagName').toLowerCase() == 'input'
 		|| e.which == 3	//우클릭
 		){
 			return;
