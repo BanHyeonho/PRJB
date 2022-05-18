@@ -471,7 +471,7 @@
 		/* S_LAST_MENU_OPEN_LIST */
 		SELECT A.MENU_CODE
 			 , A.MENU_URL
-			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
+			 , COMM_UTIL_PKG.LANG(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
 			 , TO_CHAR(A.OPEN_DATE, 'YYYY-MM-DD HH:MI:SS')	AS OPEN_DATE
 		  FROM (
 				SELECT B.MENU_CODE	AS MENU_CODE
@@ -489,6 +489,16 @@
 			       		instr(B.UP_MENU_CODE, 'HIDDEN') = 0
 			       		)
 			       ]]>
+                   AND EXISTS (
+			             SELECT Y.COMM_MENU_ID
+			               FROM COMM_AUTH_GROUP Z
+			               JOIN COMM_AUTH_GROUP_MENU Y ON (Z.COMM_AUTH_GROUP_ID = Y.COMM_AUTH_GROUP_ID)
+			               JOIN COMM_AUTH_GROUP_USER X ON (Z.COMM_AUTH_GROUP_ID = X.COMM_AUTH_GROUP_ID)
+			              WHERE X.COMM_USER_ID = #{CID}
+			                AND Y.USE_YN = '1'
+			                AND X.COMM_USER_ID = A.COMM_USER_ID
+			                AND Y.COMM_MENU_ID = B.COMM_MENU_ID
+			             )
 				 GROUP BY B.MENU_CODE, B.MENU_URL, B.MLG_CODE
 				 ORDER BY MAX(A.MDT) DESC
 				 ) A
@@ -508,6 +518,16 @@
 		  FROM COMM_USER_BOOKMARK A
 		  JOIN COMM_MENU B ON A.MENU_CODE = B.MENU_CODE
 		 WHERE A.COMM_USER_ID = #{CID}
+		   AND EXISTS (
+		             SELECT Y.COMM_MENU_ID
+		               FROM COMM_AUTH_GROUP Z
+		               JOIN COMM_AUTH_GROUP_MENU Y ON (Z.COMM_AUTH_GROUP_ID = Y.COMM_AUTH_GROUP_ID)
+		               JOIN COMM_AUTH_GROUP_USER X ON (Z.COMM_AUTH_GROUP_ID = X.COMM_AUTH_GROUP_ID)
+		              WHERE X.COMM_USER_ID = #{CID}
+		                AND Y.USE_YN = '1'
+		                AND X.COMM_USER_ID = A.COMM_USER_ID
+		                AND Y.COMM_MENU_ID = B.COMM_MENU_ID
+		             )
 		 ORDER BY A.CDT DESC
 	</select>
 	<!-- 즐겨찾기 추가/삭제 -->
