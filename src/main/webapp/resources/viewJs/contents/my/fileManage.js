@@ -1,6 +1,12 @@
 /**
  * 파일관리
  */
+
+const pageInfo = {
+		moduleCode : 'MY',
+		menuUrl : 'fileManage'
+}
+
 var f_dragData = [];
 
 var folderTree; 
@@ -905,16 +911,15 @@ var f_fileDown = function(){
 						
 			var fileId = target.attr('FILE_ID');
 			var randomKey = target.attr('RANDOM_KEY');
-			location.href = '/fileDownload?COMM_FILE_ID=' + fileId + '&RANDOM_KEY=' + randomKey;
-					
+			location.href = '/fileDownload?MODULE_CODE=' + pageInfo.moduleCode
+										+ '&MENU_URL=' + pageInfo.menuUrl
+										+ '&COMM_FILE_ID=' + fileId + '&RANDOM_KEY=' + randomKey;
 		}
 		//압축 다운로드
 		else{
 			var fileName = prompt(gf_mlg('압축_파일_명을_입력하세요'));
 			if(gf_nvl(fileName, '') != ''){
 			
-				var link = '/zipFileDownload?zipFileName=' + encodeURIComponent(fileName);
-				
 				var fileData =[];
 				$.each(target, function(idx, item){
 					var fileId = $(item).attr('FILE_ID');
@@ -925,10 +930,22 @@ var f_fileDown = function(){
 					});
 				});
 				
-				link += '&fileData=' + encodeURIComponent(JSON.stringify(fileData));
-				
-				location.href = link;
-				
+				gf_ajax({
+							MODULE_CODE : pageInfo.moduleCode,
+							MENU_URL : pageInfo.menuUrl,
+							fileData : JSON.stringify(fileData)
+						}
+						, null
+						, function(data){
+							
+							var link = '/zipFileDownload?zipFileName=' + encodeURIComponent(fileName);
+							link += '&DOWNLOAD_KEY=' + encodeURIComponent(data.result);
+							location.href = link;
+						}
+						, null
+						, null
+						, '/createDownloadKey');
+								
 			}
 		}
 		

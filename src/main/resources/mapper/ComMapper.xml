@@ -9,7 +9,7 @@
 		/* I_ERROR_LOG_HISTORY */
 		INSERT INTO COMM_ERROR_LOG(ERROR_LOCATION
 							 	 , ERROR_MSG
-							<include refid="config.cidColumn"></include>               
+							<include refid="config.cidColumn"></include>
 							)
 					  VALUES( #{ERROR_LOCATION}
 							, ${@prjb.com.util.ComUtil@getClob(ERROR_MSG)}
@@ -21,6 +21,48 @@
 					        , #{CIP}        
 							)
 	</insert>
+		
+	<!-- 첨부파일 로그 저장 -->
+	<insert id="I_COMM_FILE_DOWN_LOG" parameterType="HashMap">
+		/* I_COMM_FILE_DOWN_LOG */
+		<selectKey resultType="HashMap" keyProperty="DOWNLOAD_KEY" order="BEFORE">
+			SELECT FILE_DOWNLOAD_S.NEXTVAL AS DOWNLOAD_KEY
+			  FROM DUAL
+		</selectKey>
+		INSERT INTO COMM_FILE_DOWN_LOG( COMM_USER_ID
+									  , DOWNLOAD_KEY
+									  , MODULE_CODE
+									  , MENU_URL
+									  , COMM_FILE_ID
+							<include refid="config.cidColumn"></include>               
+							)
+					  SELECT #{COMM_USER_ID}
+						   , #{DOWNLOAD_KEY}
+						   , #{MODULE_CODE}
+						   , #{MENU_URL}
+						   , A.COMM_FILE_ID
+						   , #{COMM_USER_ID}
+				           , SYSDATE
+					       , #{CIP}
+					       , #{COMM_USER_ID}
+					       , SYSDATE    
+					       , #{CIP}        
+						FROM COMM_FILE A
+						WHERE A.COMM_FILE_ID = A.COMM_FILE_ID
+					   <choose>
+					   		<when test="FILE_LIST == null or FILE_LIST.size() == 0">
+						   	 AND A.COMM_FILE_ID = #{COMM_FILE_ID}
+				  			 AND A.RANDOM_KEY = #{RANDOM_KEY}	
+					   		</when>
+					   		<otherwise>
+					   	 	 AND
+								<foreach collection="FILE_LIST" item="item" open="(" separator="OR" close=")">
+									(A.COMM_FILE_ID = #{item.COMM_FILE_ID} AND A.RANDOM_KEY = #{item.RANDOM_KEY})
+								</foreach>
+					   		</otherwise>
+					   </choose>
+	</insert>
+	
 	<!-- 첨부파일 저장 -->
 	<insert id="I_COMM_FILE" parameterType="HashMap" >
 		/* I_COMM_FILE */
@@ -78,23 +120,13 @@
 			 , A.ATTRIBUTE1
 			 , A.SCHEDULE_CODE
 		  FROM COMM_FILE A
-		 WHERE A.COMM_FILE_ID = #{COMM_FILE_ID}
-		   AND A.RANDOM_KEY = #{RANDOM_KEY}
-	</select>
-	
-	<!-- 첨부파일 압축 다운로드 -->
-	<select id="S_COMM_FILE_ZIP_DOWN" resultType="HashMap" parameterType="HashMap" >
-		/* S_COMM_FILE_ZIP_DOWN */
-		SELECT A.FILE_PATH
-			 , A.FILE_NAME
-			 , A.FILE_EXTENSION
-			 , A.SERVER_FILE_NAME
-		  FROM COMM_FILE A
-		 WHERE A.COMM_FILE_ID = A.COMM_FILE_ID
-		   AND  
-		<foreach collection="FILE_LIST" item="item" open="(" separator="OR" close=")">
-			(A.COMM_FILE_ID = #{item.COMM_FILE_ID} AND A.RANDOM_KEY = #{item.RANDOM_KEY})
-		</foreach>
+		 WHERE EXISTS (
+		 			SELECT Z.COMM_FILE_ID
+		 			  FROM COMM_FILE_DOWN_LOG Z
+		 			 WHERE Z.COMM_USER_ID = #{COMM_USER_ID}
+		 			   AND Z.DOWNLOAD_KEY = #{DOWNLOAD_KEY}
+		 			   AND Z.COMM_FILE_ID = A.COMM_FILE_ID
+		 			)
 	</select>
 	
 	<!-- 첨부파일 스케쥴상태로 조회 -->
@@ -128,6 +160,17 @@
 		 WHERE A.FILE_PATH = #{FILE_PATH}
 		   AND A.SERVER_FILE_NAME = #{SERVER_FILE_NAME}
 	</select>
+	
+	<!-- 삭제할 파일 정보 -->
+	<select id="S_COMM_FILE_DELETE_INFO" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_FILE_DELETE_INFO */
+		SELECT A.FILE_PATH
+			 , A.SERVER_FILE_NAME
+		  FROM COMM_FILE A
+		 WHERE A.COMM_FILE_ID = #{COMM_FILE_ID}
+		   AND A.RANDOM_KEY = #{RANDOM_KEY}
+	</select>
+	
 	<!-- 첨부파일 삭제 -->
 	<delete id="D_COMM_FILE" parameterType="HashMap" >
 		/* D_COMM_FILE */

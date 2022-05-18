@@ -703,6 +703,37 @@ public class ComService {
 		
 		comDao.insert("com.I_COMM_FILE", fileParam);
 	}
+	
+	/**
+	 * 파일다운로드 로그 저장
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	public Map fileDownLog(HttpServletRequest request) throws Exception{
+		
+		Map param = new HashMap();
+		
+		param.put("COMM_USER_ID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
+		param.put("MODULE_CODE", request.getParameter("MODULE_CODE"));
+		param.put("MENU_URL", request.getParameter("MENU_URL"));
+		param.put("CIP", ComUtil.getAddress(request));
+
+		List<Map> fileDataList = ComUtil.StringToList( String.valueOf( request.getParameter("fileData") ) );
+
+		if(fileDataList != null && fileDataList.size() > 0) {
+			param.put("FILE_LIST", fileDataList);
+		}
+		else {
+			param.put("COMM_FILE_ID", request.getParameter("COMM_FILE_ID"));
+			param.put("RANDOM_KEY", request.getParameter("RANDOM_KEY"));
+		}
+		
+		//파일다운로드 로그 저장
+		comDao.insert("com.I_COMM_FILE_DOWN_LOG", param);
+		
+		return param;
+	}
 	/**
 	 * 파일 다운로드
 	 * @param request
@@ -711,10 +742,8 @@ public class ComService {
 	 */
 	public void fileDown(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
-		Map param = new HashMap();
-		param.put("COMM_FILE_ID", request.getParameter("COMM_FILE_ID"));
-		param.put("RANDOM_KEY", request.getParameter("RANDOM_KEY"));
-
+		Map param = fileDownLog(request);
+		
 		Map result = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
 
 		//db에 파일정보가 없을경우
@@ -752,13 +781,15 @@ public class ComService {
 		final String encodingType = "UTF-8";
 		List<File> Files = new ArrayList();
 		String zipName = URLDecoder.decode(request.getParameter("zipFileName"), encodingType);
-		String fileData = URLDecoder.decode(request.getParameter("fileData"), encodingType);
+		String downloadKey = URLDecoder.decode(request.getParameter("DOWNLOAD_KEY"), encodingType);
 		
-		List<Map> fileDataList = ComUtil.StringToList(String.valueOf(fileData));
-		
+		String commUserId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+				
 		Map param = new HashMap();
-		param.put("FILE_LIST", fileDataList);
-		List<Map> result = comDao.selectList("com.S_COMM_FILE_ZIP_DOWN", param);
+		param.put("COMM_USER_ID", commUserId);
+		param.put("DOWNLOAD_KEY", downloadKey);
+		
+		List<Map> result = comDao.selectList("com.S_COMM_FILE_DOWN", param);
 		
 		for (Map<String, String> fileMap : result) {
 			String path = fileMap.get("FILE_PATH");
@@ -783,14 +814,14 @@ public class ComService {
 	@Transactional(rollbackFor = Exception.class)
 	public void fileDelete(Map p_param) throws Exception{
 		
-		String COMM_FILE_ID = (String) p_param.get("COMM_FILE_ID");
-		String RANDOM_KEY = (String) p_param.get("RANDOM_KEY");
+		String COMM_FILE_ID = String.valueOf(p_param.get("COMM_FILE_ID"));
+		String RANDOM_KEY = String.valueOf(p_param.get("RANDOM_KEY"));
 		
 		Map param = new HashMap();
 		param.put("COMM_FILE_ID", COMM_FILE_ID);
 		param.put("RANDOM_KEY", RANDOM_KEY);
 
-		Map<String, String> result = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+		Map<String, String> result = comDao.selectOne("com.S_COMM_FILE_DELETE_INFO", param);
 		
 		if (result == null || result.size() == 0 ) {
 			return;

@@ -175,7 +175,25 @@ public class ComController {
 	 */
 	@RequestMapping(value = "/fileDownload", method = RequestMethod.GET)
 	public void fileDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		comService.fileDown(request, response);
+	}
+	
+	/**
+	 * 파일다운로드 로그 / 다운로드 키 생성
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/createDownloadKey", method = RequestMethod.POST)
+	public @ResponseBody Map createDownloadKey(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		
+		Map<String, Object> resultMap = new HashMap();
+				
+		resultMap.put("result", comService.fileDownLog(request).get("DOWNLOAD_KEY"));
+		
+		return resultMap;
 	}
 	
 	/**
@@ -186,7 +204,7 @@ public class ComController {
 	 */
 	@RequestMapping(value = "/zipFileDownload", method = RequestMethod.GET)
 	public void zipFileDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		comService.zipFileDownload(request, response);
 				
 	}
