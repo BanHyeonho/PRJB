@@ -722,13 +722,7 @@ public class ComService {
 		param.put("MENU_URL", request.getParameter("MENU_URL"));
 		param.put("CIP", ComUtil.getAddress(request));
 		
-		String DOWNLOAD_KEY;
-		if( new Random().nextInt(2) == 1) {
-			DOWNLOAD_KEY = System.currentTimeMillis() + ComUtil.getRandomKey(keyLenth);
-		}
-		else {
-			DOWNLOAD_KEY = ComUtil.getRandomKey(keyLenth) + System.currentTimeMillis();
-		}
+		String DOWNLOAD_KEY = ComUtil.getRandomKey(keyLenth) + System.currentTimeMillis();
 		
 		param.put("DOWNLOAD_KEY", DOWNLOAD_KEY);
 		
