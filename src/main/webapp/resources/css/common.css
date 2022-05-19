@@ -1,5 +1,8 @@
 @charset "UTF-8";
 /* 사용자정의CSS */
+button{
+	cursor: pointer;
+}
 .background{
 	background-color : #F5F5F5;
 	background-size: 100% 100%;

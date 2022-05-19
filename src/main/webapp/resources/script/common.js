@@ -66,6 +66,25 @@ function gf_mlg(p_mlg_code, p_param){
 	return v_text;
 }
 
+//태그에 값 입력
+function gf_setFormData(data){
+	
+	$.each(Object.keys(data), function(idx, item){
+		var target = $('#' + item);
+		
+		var tagName = target.prop('tagName').toLowerCase();
+			
+		switch (tagName) {
+		case 'input':
+			target.val(data[item]);
+			break;
+		case 'span':
+			target.text(data[item]);
+			break;
+		}
+		
+	});
+}
 /*****************************************************************************************************************************************************************
  * 
  * AJAX

@@ -49,6 +49,21 @@
 		 ORDER BY A.SEQ
 	</select>
 	
+	<!-- 파일관리 폴더 트리 -파일명 조회시 항목조회 -->
+	<select id="S_FILE_MANAGE_TREE_ITEM" resultType="HashMap" parameterType="HashMap" >
+		/* S_FILE_MANAGE_TREE_ITEM */
+		SELECT  A.KEY_STR AS KEY_STR
+          FROM (
+            SELECT SYS_CONNECT_BY_PATH(A.TITLE, '/') AS TITLE_STR
+                 , SYS_CONNECT_BY_PATH(A.KEY_ID, '/') AS KEY_STR
+              FROM MY_FILE_MANAGE A
+             LEFT JOIN COMM_FILE B ON (B.MODULE_CODE = 'MY' AND B.MENU_URL = 'fileManage' AND B.GROUP_ID = A.MY_FILE_MANAGE_ID)
+                 WHERE A.COMM_USER_ID = #{CID}
+            START WITH A.PARENT_KEY_ID IS null 
+               CONNECT BY PRIOR A.KEY_ID = A.PARENT_KEY_ID
+             ) A
+          WHERE UPPER(A.TITLE_STR) LIKE '%' || UPPER(#{FILE_NAME}) || '%'
+	</select>
 	<!-- 파일관리 폴더 트리 조회 -->
 	<select id="S_FILE_MANAGE_TREE" resultType="HashMap" parameterType="HashMap" >
 		/* S_FILE_MANAGE_TREE */
@@ -67,22 +82,10 @@
 	     <if test="@org.apache.commons.lang3.StringUtils@isBlank(SHOW_YN)">
 		 	AND A.SHOW_YN = '1'
 		 </if>
-		 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(FILE_NAME)">
+		 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(FILE_LIST)">
 		 	AND EXISTS (
-		 	         SELECT DISTINCT Z.COLUMN_VALUE
-					   FROM COMM_UTIL_PKG.split((
-											  SELECT LISTAGG(A.KEY_STR, '')
-											    FROM (
-														SELECT SYS_CONNECT_BY_PATH(A.TITLE, '/') AS TITLE_STR
-														     , SYS_CONNECT_BY_PATH(A.KEY_ID, '/') AS KEY_STR
-														  FROM MY_FILE_MANAGE A
-												     LEFT JOIN COMM_FILE B ON (B.MODULE_CODE = 'MY' AND B.MENU_URL = 'fileManage' AND B.GROUP_ID = A.MY_FILE_MANAGE_ID)
-												         WHERE A.COMM_USER_ID = #{CID}
-												    START WITH A.PARENT_KEY_ID IS null 
-												       CONNECT BY PRIOR A.KEY_ID = A.PARENT_KEY_ID
-												     ) A
-											    WHERE UPPER(TITLE_STR) LIKE '%' || UPPER(#{FILE_NAME}) || '%'
-											  ), '/') Z
+		 	         SELECT Z.COLUMN_VALUE
+					   FROM COMM_UTIL_PKG.split(#{FILE_LIST}, '/') Z
 					  WHERE Z.COLUMN_VALUE IS NOT NULL
 					    AND Z.COLUMN_VALUE = A.KEY_ID
 		 				)
@@ -175,4 +178,48 @@
 				          , #{CIP})
 	</insert>
 	
+	<!-- 나의정보 조회 -->
+	<select id="S_MY_PRIVACY" resultType="HashMap" parameterType="HashMap" >
+		/* S_MY_PRIVACY */
+	    SELECT A.LOGIN_ID
+	    	 , A.USER_NAME
+	    	 , A.EMAIL
+	    	 , B.NICKNAME
+	    	 , B.PROFILE_PICTURE
+	    	 , TO_CHAR(A.CDT, 'YYYY-MM-DD HH:MI:SS')					AS REGIST_DATE
+	    	 , NVL(TO_CHAR(B.MDT, 'YYYY-MM-DD HH:MI:SS'), '-')		AS MODIFY_DATE
+	      FROM COMM_USER A
+     LEFT JOIN MY_PRIVACY B ON A.COMM_USER_ID = B.COMM_USER_ID
+         WHERE A.COMM_USER_ID = #{COMM_USER_ID}
+	</select>
+	
+	<!-- 나의정보 수정 -->
+	<update id="U_MY_PRIVACY" parameterType="HashMap">
+		/* U_MY_PRIVACY */
+  		MERGE INTO MY_PRIVACY A
+  			 USING DUAL
+  			    ON (A.COMM_USER_ID = #{COMM_USER_ID})
+  			  WHEN MATCHED THEN
+  			UPDATE SET PROFILE_PICTURE	= #{PROFILE_PICTURE}
+  					 , NICKNAME			= #{NICKNAME}
+  					 , MID				= #{MID}
+  					 , MDT				= SYSDATE
+  					 , MIP				= #{MIP}
+  			  WHEN NOT MATCHED THEN
+  			INSERT ( MY_PRIVACY_ID  
+				   , COMM_USER_ID   
+				   , PROFILE_PICTURE
+				   , NICKNAME       
+  					<include refid="config.cidColumn"></include>)
+  			VALUES ( MY_PRIVACY_S.NEXTVAL
+				   , #{COMM_USER_ID}
+				   , #{PROFILE_PICTURE}
+				   , #{NICKNAME}
+  				   , #{CID}
+		           , SYSDATE
+		           , #{CIP}
+		           , #{MID}
+		           , SYSDATE    
+		           , #{MIP})
+	</update>
 </mapper>

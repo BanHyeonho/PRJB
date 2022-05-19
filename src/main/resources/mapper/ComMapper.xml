@@ -1310,4 +1310,45 @@
 		   	 , MIP = #{MIP}
 		 WHERE COMM_USER_ID = #{COMM_USER_ID}
 	</update>
+	
+	<!-- 2차비밀번호 삭제 -->
+	<update id="U_REMOVE_PWD2" parameterType="HashMap" statementType="CALLABLE">
+		/* U_REMOVE_PWD2 */
+		DECLARE
+		  BEGIN
+		  		UPDATE COMM_USER
+		  		   SET PWD2 = NULL
+		  		   	 , MID = #{MID}
+				   	 , MDT = SYSDATE
+				   	 , MIP = #{MIP}
+				 WHERE COMM_USER_ID = #{COMM_USER_ID};
+				 
+				 UPDATE COMM_USER_SALT
+		  		   SET SALT2 = NULL
+		  		   	 , MID = #{MID}
+				   	 , MDT = SYSDATE
+				   	 , MIP = #{MIP}
+				 WHERE COMM_USER_ID = #{COMM_USER_ID};
+				 
+				 MERGE INTO MY_PRIVACY A
+	  			 USING DUAL
+	  			    ON (A.COMM_USER_ID = #{COMM_USER_ID})
+	  			  WHEN MATCHED THEN
+	  			UPDATE SET MID				= #{MID}
+	  					 , MDT				= SYSDATE
+	  					 , MIP				= #{MIP}
+	  			  WHEN NOT MATCHED THEN
+	  			INSERT ( MY_PRIVACY_ID  
+					   , COMM_USER_ID   
+	  					<include refid="config.cidColumn"></include>)
+	  			VALUES ( MY_PRIVACY_S.NEXTVAL
+					   , #{COMM_USER_ID}
+	  				   , #{MID}
+			           , SYSDATE
+			           , #{MIP}
+			           , #{MID}
+			           , SYSDATE    
+			           , #{MIP});
+		    END;
+	</update>
 </mapper>

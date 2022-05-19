@@ -1,19 +1,19 @@
 @charset "UTF-8";
 /* padding */
 .pd-tp-default{
-	padding-top: 15px;
+	padding-top: 15px !important;
 }
 .pd-lt-default{
-	padding-left: 15px;
+	padding-left: 15px !important;
 }
 .pd-rt-default{
-	padding-right: 15px;
+	padding-right: 15px !important;
 }
 .pd-bt-default{
-	padding-bottom: 15px;
+	padding-bottom: 15px !important;
 }
 .pd-default{
-	padding: 15px;
+	padding: 15px !important;
 }
 .pd-default2{
 	padding: 10px !important;
@@ -23,17 +23,17 @@
 }
 /* 패널용 패딩 */
 .pd-pl-default{
-	padding: 0.7%;
+	padding: 0.7% !important;
 }
 .pd-pl-tp-default{
-	padding-top: 0.7%;
+	padding-top: 0.7% !important;
 }
 .pd-pl-bt-default{
-	padding-bottom: 0.7%;
+	padding-bottom: 0.7% !important;
 }
 .pd-pl-lt-default{
-	padding-left: 0.7%;
+	padding-left: 0.7% !important;
 }
 .pd-pl-rt-default{
-	padding-right: 0.7%;
+	padding-right: 0.7% !important;
 }

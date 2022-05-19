@@ -4,94 +4,113 @@
 	display : inline-block;
 	width : 9%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-1{
 	display : inline-block;
 	width : 10%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-2-1{
 	display : inline-block;
 	width : 19%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-2{
 	display : inline-block;
 	width : 20%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-3-1{
 	display : inline-block;
 	width : 29%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-3{
 	display : inline-block;
 	width : 30%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-4-1{
 	display : inline-block;
 	width : 39%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-4{
 	display : inline-block;
 	width : 40%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-5-1{
 	display : inline-block;
 	width : 49%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-5{
 	display : inline-block;
 	width : 50%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-6-1{
 	display : inline-block;
 	width : 59%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-6{
 	display : inline-block;
 	width : 60%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-7-1{
 	display : inline-block;
 	width : 69%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-7{
 	display : inline-block;
 	width : 70%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-8-1{
 	display : inline-block;
 	width : 79%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-8{
 	display : inline-block;
 	width : 80%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-9-1{
 	display : inline-block;
 	width : 89%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-9{
 	display : inline-block;
 	width : 90%;
 	float: left;
+	box-sizing: border-box;
 }
 .div-10{
 	display : inline-block;
 	width : 100%;
 	float: left;
+	box-sizing: border-box;
 }

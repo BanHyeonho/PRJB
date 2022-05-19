@@ -41,48 +41,6 @@
 		</div>
 		<div id='fileViewContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-1 panel-8-1'>
 			<div style="overflow-y: auto; height:100%;" id='attachedFileArea'>
-<!-- 				<div class="file_img"> -->
-<!-- 					<img id='test1' style="width: 100%;" src='../img/file_default.png'> -->
-<!-- 					<p class='mg-tp-sm text-center'>기본이미지</p> -->
-<!-- 				</div> -->
-<!-- 				<div class="file_img"> -->
-<!-- 					<img id='test1' style="width: 100%;" src='../img/file_excel.png'> -->
-<!-- 					<p class='mg-tp-sm text-center'>엑셀.xlsx</p> -->
-<!-- 				</div> -->
-<!-- 				<div class="file_img"> -->
-<!-- 					<img id='test1' style="width: 100%;" src='../img/file_folder.png'> -->
-<!-- 					<p class='mg-tp-sm text-center'>새폴더</p> -->
-<!-- 				</div> -->
-<!-- 				<div class="file_img"> -->
-<!-- 					<img id='test1' style="width: 100%;" src='../img/file_img.png'> -->
-<!-- 					<p class='mg-tp-sm text-center'>이미지.png</p> -->
-<!-- 				</div> -->
-<!-- 				<div class="file_img"> -->
-<!-- 					<img id='test1' style="width: 100%;" src='../img/file_pdf.png'> -->
-<!-- 					<p class='mg-tp-sm text-center'>피디에프.pdf</p> -->
-<!-- 				</div> -->
-<!-- 				<div class="file_img"> -->
-<!-- 					<img id='test1' style="width: 100%;" src='../img/file_word.png'> -->
-<!-- 					<p class='mg-tp-sm text-center'>워드.doc</p> -->
-<!-- 				</div> -->
-<!-- 				<div class="file_img"> -->
-<!-- 					<img id='test1' style="width: 100%;" src='../img/file_ppt.png'> -->
-<!-- 					<p class='mg-tp-sm text-center'>피피티.ppt</p> -->
-<!-- 				</div> -->
-<!-- 				<div class="file_img"> -->
-<!-- 					<img id='test1' style="width: 100%;" src='../img/file_video.png'> -->
-<!-- 					<p class='mg-tp-sm text-center'>영상.mp4</p> -->
-<!-- 				</div> -->
-				
-<!-- 				<img class="file_img" id='test1'> -->
-<!-- 				<img class="file_img" id='test2'> -->
-<!-- 				<img class="file_img" id='test3'> -->
-<!-- 				<img class="file_img" id='test4'> -->
-<!-- 				<img class="file_img" id='test5'> -->
-<!-- 				<img class="file_img" id='test6'> -->
-<!-- 				<img class="file_img" id='test7'> -->
-<!-- 				<img class="file_img" id='test8'> -->
-<!-- 				<img class="file_img" id='test9'> -->
 			</div>
 		</div>
 	</div>

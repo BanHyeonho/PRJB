@@ -162,8 +162,7 @@ var f_searchTree = function(p_type){
 	var result = [];
 	
 	var searchParam = {
-		QUERY_ID : 'my.S_FILE_MANAGE_TREE',
-		FILE_NAME : $('#searchParam1').val()
+		QUERY_ID : 'my.S_FILE_MANAGE_TREE'
 	};
 	
 	if(gf_nvl(p_type, '') == 'ALL'){
@@ -174,13 +173,66 @@ var f_searchTree = function(p_type){
 		folderTree.clear();
 	}
 	
-	gf_ajax(searchParam
-	, null
-	, function(data){
-		var resultList = data.result.filter(x=> x.TYPE_CODE == 'FOLDER');
-
-		$.each(resultList, function(idx, item){
+	if($('#searchParam1').val() == ''){
 		
+		gf_ajax(searchParam
+				, null
+				, function(data){
+					var resultList = data.result.filter(x=> x.TYPE_CODE == 'FOLDER');
+
+					successFunction(resultList);
+					
+				}, null, null, null, false);
+	}
+	else{
+		gf_ajax({
+					QUERY_ID : 'my.S_FILE_MANAGE_TREE_ITEM',
+					FILE_NAME : $('#searchParam1').val()
+				}
+				, null
+				, function(data){
+					
+					var itemFilter = new Set();
+					
+					$.each(data.result, function(idx, item){
+						var list = item.KEY_STR.split('/');
+						list.shift();
+						
+						$.each(list, function(idx2, item2){
+							itemFilter.add(item2);
+						});
+					});
+					
+					var itemList = '';
+					if(itemFilter.size > 0){
+						itemFilter.forEach(function(idx, item){
+							itemList += '/' +item;
+						});	
+					}
+					else{
+						itemList = '-1';
+					}
+					
+					searchParam['FILE_LIST'] = itemList;
+					
+					gf_ajax(searchParam
+							, null
+							, function(data2){
+								var resultList = data2.result.filter(x=> x.TYPE_CODE == 'FOLDER');
+		
+								successFunction(resultList);
+								
+							}, null, null, null, false);
+			
+			
+				}, null, null, null, false);
+		
+	}
+	
+	
+	function successFunction(data){
+		$.each(data, function(idx, item){
+			
 			var myFileManageId = item.MY_FILE_MANAGE_ID;
 			var showYn = item.SHOW_YN;
 			var parentKeyId = gf_nvl(item.PARENT_KEY_ID, '');
@@ -231,9 +283,8 @@ var f_searchTree = function(p_type){
 				}
 			}
 		}
-		
-		
-	}, null, null, null, false);
+	}
+	
 	
 	return result;
 }
