@@ -226,4 +226,32 @@
 		           , SYSDATE    
 		           , #{MIP})
 	</update>
+	
+	<!-- 프로필 사진 삭제 -->
+	<update id="U_REMOVE_PROFILE" parameterType="HashMap">
+		/* U_REMOVE_PROFILE */
+  		MERGE INTO MY_PRIVACY A
+  			 USING DUAL
+  			    ON (A.COMM_USER_ID = #{COMM_USER_ID})
+  			  WHEN MATCHED THEN
+  			UPDATE SET PROFILE_PICTURE	= NULL
+  					 , MID				= #{MID}
+  					 , MDT				= SYSDATE
+  					 , MIP				= #{MIP}
+  			  WHEN NOT MATCHED THEN
+  			INSERT ( MY_PRIVACY_ID  
+				   , COMM_USER_ID   
+				   , PROFILE_PICTURE       
+  					<include refid="config.cidColumn"></include>)
+  			VALUES ( MY_PRIVACY_S.NEXTVAL
+				   , #{COMM_USER_ID}
+				   , #{PROFILE_PICTURE}
+  				   , #{CID}
+		           , SYSDATE
+		           , #{CIP}
+		           , #{MID}
+		           , SYSDATE    
+		           , #{MIP})
+	</update>
+	
 </mapper>

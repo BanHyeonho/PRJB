@@ -11,6 +11,7 @@ $(document).ready(function() {
 	$('#profileBtn').on('click', function(){
 		$('#PROFILE_PICTURE').trigger('click');
 	});
+	$('#profileDelBtn').on('click', f_removeProfile);
 	
 	$('#PROFILE_PICTURE').on('change', function(e){
 		
@@ -29,7 +30,6 @@ $(document).ready(function() {
 		}
 				
 	});
-	
 	
 	
 	$('.menu-div:eq(0)').trigger('click');
@@ -61,6 +61,20 @@ var f_removePwd2 = function(){
 			gf_toast(gf_mlg('2차_비밀번호가_삭제_되었습니다'), 'success');
 			
 			f_searchPrivacy('removePwd2');
+		});
+		
+	}
+}
+var f_removeProfile = function(){
+	if(confirm(gf_mlg('프로필_사진을_삭제_하시겠습니까'))){
+		
+		gf_ajax({
+			QUERY_ID : 'my.U_REMOVE_PROFILE'
+		}
+		, null
+		, function(data){
+			gf_toast(gf_mlg('삭제_되었습니다'), 'success');
+			f_searchPrivacy('removeProfile');
 		});
 		
 	}
@@ -105,7 +119,12 @@ var f_searchPrivacy = function(type){
 				else if(type == 'removePwd2'){
 					$('#MODIFY_DATE').text(data.result[0]['MODIFY_DATE']);
 					$('#PWD2_STATE').hide();
-				}				
+				}
+				else if(type == 'removeProfile'){
+					$('#MODIFY_DATE').text(data.result[0]['MODIFY_DATE']);
+					$('#PROFILE_PICTURE').val('');
+					$('#PROFILE_PICTURE_PREVIEW').attr('src', defaultProfileImg);
+				}
 			});
 }
 
@@ -179,6 +198,7 @@ var f_savePrivacy = function(){
 					fData.set('PROFILE_PICTURE', $('#PROFILE_PICTURE').get(0).files[0] );
 				}
 				
+				gf_delFormData(fData);
 				return rs.result;
 			}
 			, function(data){

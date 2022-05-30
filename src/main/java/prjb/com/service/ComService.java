@@ -391,9 +391,9 @@ public class ComService {
 		}
 		
 		//3.개인정보 변경
-		String userName = String.valueOf(paramMap.get("USER_NAME"));
-		String email = String.valueOf(paramMap.get("EMAIL"));
-		String nickName = String.valueOf(paramMap.get("NICKNAME"));
+		String userName = (String)paramMap.get("USER_NAME");
+		String email = (String)paramMap.get("EMAIL");
+		String nickName = (String)paramMap.get("NICKNAME");
 		
 		if(paramMap.get("PROFILE_PICTURE") != null) {
 			paramMap.put("PROFILE_PICTURE", ((MultipartFile)paramMap.get("PROFILE_PICTURE")).getBytes() );	

@@ -45,6 +45,7 @@
 									<input type="file" style="display: none;" id='PROFILE_PICTURE' accept="image/*" >
 									<img src="" style="max-width: 100%; max-height:100%;" id='PROFILE_PICTURE_PREVIEW'>
 									<i class="fi fi-rr-camera" style="position: absolute; left: 0; bottom: 0; font-size: 35px; border: 1px solid #ddd; cursor: pointer;" id='profileBtn' ></i>
+									<i class="fi fi-rr-Cross-small" style="position: absolute; right: 0; top: 0; font-size: 20px; cursor: pointer;" id='profileDelBtn'></i>
 								</div>
 							</td>
 							<td style="width: 20%; vertical-align: top;">
