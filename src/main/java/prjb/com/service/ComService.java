@@ -11,6 +11,7 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
 import prjb.com.util.CustomFile;
+import prjb.com.util.ErrorLogException;
 import prjb.com.util.FileUtil;
 
 @Service("ComService")
@@ -51,9 +53,10 @@ public class ComService {
 	public ModelAndView page(HttpServletRequest request, ModelAndView mv) throws Exception {
 		
 		Map<String, String> param = new HashMap();
-		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		HttpSession session = request.getSession();
+		String cId = String.valueOf(session.getAttribute("COMM_USER_ID"));
 		String cIp = ComUtil.getAddress(request);
-		String langCode = String.valueOf(request.getSession().getAttribute("LANG_CODE"));
+		String langCode = String.valueOf(session.getAttribute("LANG_CODE"));
 		String menuCode = String.valueOf(request.getParameter("menuCode"));
 		String menuParam = String.valueOf(request.getParameter("menuParam"));
 		
@@ -99,9 +102,7 @@ public class ComService {
 		else {
 			mv.addObject("menuParam", null);	
 		}
-		
-		
-		
+						
 		//화면별 버튼 조회
 		param = new HashMap();
 		param.put("CID", cId);
@@ -208,6 +209,28 @@ public class ComService {
 	}
 
 	/**
+	 * 비밀번호 체크
+	 * @param p_privateKey
+	 * @param p_param
+	 * @return
+	 * @throws Exception 
+	 */
+	public Map passwordChk(String p_privateKey, Map<String, String> p_param) throws Exception {
+		Map<String, String> result = null;
+		
+		String pwd = ComUtil.decrypt(p_privateKey, p_param.get("PWD"));
+		
+		Map<String,String> salt = comDao.selectOne("com.S_SALT", p_param);
+		
+		String shaPwd = ComUtil.getSHA512( pwd , salt == null ? "" : salt.get("SALT") );
+		
+		p_param.put("PWD", shaPwd);
+		p_param.put("USE_YN", "1");
+		result = comDao.selectOne("com.S_LOGIN", p_param);
+		
+		return result;
+	}
+	/**
 	 * 로그인처리
 	 * @param request
 	 * @param param : 회원가입후 가입한정보로 바로 로그인처리
@@ -220,32 +243,24 @@ public class ComService {
 		Map<String, String> paramMap = (param == null ? ComUtil.getParameterMap(request) : param);
 		
 		String result;
+		HttpSession session = request.getSession();
 		
-		String pwd = ComUtil.decrypt(request.getSession().getAttribute("privateKey").toString(), paramMap.get("PWD"));
-		
-		Map<String,String> salt = comDao.selectOne("com.S_SALT", paramMap);
-		
-		String shaPwd = ComUtil.getSHA512( pwd , salt == null ? "" : salt.get("SALT") );
-		
-		paramMap.put("PWD", shaPwd);
-		paramMap.put("USE_YN", "1");
-		
-		Map<String,String> loginResult = comDao.selectOne("com.S_LOGIN", paramMap);
+		Map<String,String> loginResult = passwordChk(session.getAttribute("privateKey").toString(), paramMap);
 				
 		if(loginResult == null) {
 			result = "chkIdPwd";
 		}
 		else {
-			request.getSession().setAttribute("LOGIN_SESSION_YN", "1");
-			request.getSession().setAttribute("COMM_USER_ID", loginResult.get("COMM_USER_ID"));
-			request.getSession().setAttribute("LOGIN_ID", loginResult.get("LOGIN_ID"));
-			request.getSession().setAttribute("USER_NAME", loginResult.get("USER_NAME"));
-			request.getSession().setAttribute("JOIN_DT", loginResult.get("CDT"));
+			session.setAttribute("LOGIN_SESSION_YN", "1");
+			session.setAttribute("COMM_USER_ID", loginResult.get("COMM_USER_ID"));
+			session.setAttribute("LOGIN_ID", loginResult.get("LOGIN_ID"));
+			session.setAttribute("USER_NAME", loginResult.get("USER_NAME"));
+			session.setAttribute("JOIN_DT", loginResult.get("CDT"));
 			
 			if( ComUtil.langKoChk(request) ) {
-				request.getSession().setAttribute("LANG_CODE", "KO");	
+				session.setAttribute("LANG_CODE", "KO");	
 			}else {
-				request.getSession().setAttribute("LANG_CODE", "EN");
+				session.setAttribute("LANG_CODE", "EN");
 			}
 			
 			result = "success";
@@ -298,6 +313,103 @@ public class ComService {
 	}
 
 	/**
+	 * 개인정보 변경
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public Map chgPrivacy(HttpServletRequest request) throws Exception{
+		
+		Map paramMap = ComUtil.getParameterMap(request);
+		
+		Map result = new HashMap();
+		
+		HttpSession session = request.getSession();
+		String ip = ComUtil.getAddress(request);
+		String id = String.valueOf(session.getAttribute("COMM_USER_ID"));
+		
+		paramMap.put("COMM_USER_ID", id);
+		paramMap.put("MID", id);
+		paramMap.put("MIP", ip);
+		
+		String privateKey = session.getAttribute("privateKey").toString();
+		
+		String oldPwd = String.valueOf(paramMap.get("OLD_PWD"));
+		String newPwd = String.valueOf(paramMap.get("NEW_PWD"));
+		String pwd2 = String.valueOf(paramMap.get("PWD2"));
+		
+		//1.비밀번호 변경
+		if(!"null".equals(String.valueOf(oldPwd))
+		&& !"null".equals(String.valueOf(newPwd))
+		) {
+			
+			//현재패스워드 유효성 검사
+			Map oldPwdParam = new HashMap();
+			oldPwdParam.put("PWD", oldPwd);
+			oldPwdParam.put("LOGIN_ID", session.getAttribute("LOGIN_ID"));
+			Map oldResult = passwordChk(privateKey, oldPwdParam);
+			
+			//현재패스워드 불일치
+			if(oldResult == null) {
+				result.put("state", "password_wrong");
+				return result;
+			}
+			
+			//현재패스워드 변경
+			newPwd = ComUtil.decrypt(privateKey, newPwd);
+
+			String salt = ComUtil.getSalt();
+			String encrytPwd = ComUtil.getSHA512( newPwd , salt);
+			
+			paramMap.put("SALT", salt);
+			paramMap.put("PWD", encrytPwd);
+			
+			paramMap.put("TYPE", "PWD1");
+			
+			comDao.update("com.U_PASSWORD", paramMap);
+				
+		}
+		
+		//2. 2차 비밀번호 변경
+		if(!"null".equals(String.valueOf(pwd2))
+		) {
+
+			//2차 비밀번호 변경
+			pwd2 = ComUtil.decrypt(privateKey, pwd2);
+
+			String salt = ComUtil.getSalt();
+			String encrytPwd = ComUtil.getSHA512( pwd2 , salt);
+			
+			paramMap.put("SALT2", salt);
+			paramMap.put("PWD2", encrytPwd);
+			
+			paramMap.put("TYPE", "PWD2");
+			
+			comDao.update("com.U_PASSWORD", paramMap);
+				
+		}
+		
+		//3.개인정보 변경
+		String userName = String.valueOf(paramMap.get("USER_NAME"));
+		String email = String.valueOf(paramMap.get("EMAIL"));
+		String nickName = String.valueOf(paramMap.get("NICKNAME"));
+		
+		if(paramMap.get("PROFILE_PICTURE") != null) {
+			paramMap.put("PROFILE_PICTURE", ((MultipartFile)paramMap.get("PROFILE_PICTURE")).getBytes() );	
+		}
+		
+		paramMap.put("USER_NAME", userName);
+		paramMap.put("EMAIL", email);
+		paramMap.put("NICKNAME", nickName);
+		
+		comDao.update("com.U_PRIVACY", paramMap);
+				
+		result.put("state", "success");
+		return result;
+	}
+	
+	/**
 	 * 저장(그리드, 폼, 파일)
 	 * @param request
 	 * @return
@@ -307,8 +419,11 @@ public class ComService {
 	public Map save(HttpServletRequest request) throws Exception {
 
 		Map result = new HashMap();
-		String langCode = String.valueOf(request.getSession().getAttribute("LANG_CODE"));
-		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		
+		HttpSession session = request.getSession();
+		
+		String langCode = String.valueOf(session.getAttribute("LANG_CODE"));
+		String cId = String.valueOf(session.getAttribute("COMM_USER_ID"));
 		String ip = ComUtil.getAddress(request);
 		
 		Map<String, Object> paramMap = ComUtil.getParameterMap(request, "SORT");
@@ -377,7 +492,8 @@ public class ComService {
 	@Transactional(rollbackFor = Exception.class)
 	public String gridSave(List<Map> param, HttpServletRequest request) throws Exception{
 		
-		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		HttpSession session = request.getSession();
+		String cId = String.valueOf(session.getAttribute("COMM_USER_ID"));
 		
 		String ip = ComUtil.getAddress(request);
 		
@@ -415,7 +531,7 @@ public class ComService {
 					paramMap.put("MIP", ip);
 					paramMap.put("CDT", "SYSDATE");
 					paramMap.put("MDT", "SYSDATE");
-					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+					paramMap.put("LANG_CODE", String.valueOf(session.getAttribute("LANG_CODE")));
 					
 					if(tableLayout != null) {
 						columns = new ArrayList();
@@ -439,7 +555,7 @@ public class ComService {
 					paramMap.put("MID", cId);
 					paramMap.put("MIP", ip);
 					paramMap.put("MDT", "SYSDATE");
-					paramMap.put("LANG_CODE", String.valueOf(request.getSession().getAttribute("LANG_CODE")));
+					paramMap.put("LANG_CODE", String.valueOf(session.getAttribute("LANG_CODE")));
 					
 					if(tableLayout != null) {
 						columns = new ArrayList();
@@ -481,9 +597,9 @@ public class ComService {
 	@Transactional(rollbackFor = Exception.class)
 	public Object ajax(HttpServletRequest request) throws Exception{
 		Object result = null;
-		
-		String langCode = String.valueOf(request.getSession().getAttribute("LANG_CODE"));
-		String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
+		HttpSession session = request.getSession();
+		String langCode = String.valueOf(session.getAttribute("LANG_CODE"));
+		String cId = String.valueOf(session.getAttribute("COMM_USER_ID"));
 		String ip = ComUtil.getAddress(request);
 		Map<String, Object> paramMap = ComUtil.getParameterMap(request, "SORT");
 		

@@ -179,15 +179,19 @@
 	</insert>
 	
 	<!-- 나의정보 조회 -->
-	<select id="S_MY_PRIVACY" resultType="HashMap" parameterType="HashMap" >
+	<select id="S_MY_PRIVACY" resultType="HashMap" parameterType="HashMap" resultMap="config.BlobMap">
 		/* S_MY_PRIVACY */
 	    SELECT A.LOGIN_ID
 	    	 , A.USER_NAME
 	    	 , A.EMAIL
 	    	 , B.NICKNAME
 	    	 , B.PROFILE_PICTURE
-	    	 , TO_CHAR(A.CDT, 'YYYY-MM-DD HH:MI:SS')					AS REGIST_DATE
+	    	 , TO_CHAR(A.CDT, 'YYYY-MM-DD HH:MI:SS')				AS REGIST_DATE
 	    	 , NVL(TO_CHAR(B.MDT, 'YYYY-MM-DD HH:MI:SS'), '-')		AS MODIFY_DATE
+	    	 , CASE WHEN A.PWD2 IS NULL
+	    	 		THEN '0'
+	    	 		ELSE '1'
+	    	 		 END											AS PWD2_YN	    	 
 	      FROM COMM_USER A
      LEFT JOIN MY_PRIVACY B ON A.COMM_USER_ID = B.COMM_USER_ID
          WHERE A.COMM_USER_ID = #{COMM_USER_ID}

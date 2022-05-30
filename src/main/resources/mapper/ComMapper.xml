@@ -974,6 +974,7 @@
 			 , A.COMM_MENU_ID
 			 , NVL(B.USE_YN, '0') AS USE_YN
 			 , A.ATTRIBUTE2
+			 , A.ATTRIBUTE3
 		  FROM COMM_MENU A
 	 LEFT JOIN (
 				 SELECT C.COMM_MENU_ID
@@ -1056,6 +1057,14 @@
 			 , SEQ
 			 , ATTRIBUTE1
 			 , ATTRIBUTE2
+			 , ATTRIBUTE3
+			 , ATTRIBUTE4
+			 , ATTRIBUTE5
+			 , ATTRIBUTE6
+			 , ATTRIBUTE7
+			 , ATTRIBUTE8
+			 , ATTRIBUTE9
+			 , ATTRIBUTE10
 		  FROM COMM_MENU
 		 START WITH UP_MENU_CODE IS null 
 		CONNECT BY PRIOR MENU_CODE = UP_MENU_CODE
@@ -1185,7 +1194,8 @@
 	<!-- 각사용자별 암호화salt조회 -->
 	<select id="S_SALT" resultType="HashMap" parameterType="HashMap" >
 		/* S_SALT */
-		SELECT A.SALT
+		SELECT A.SALT		AS SALT
+			 , A.SALT2		AS SALT2
 		  FROM COMM_USER_SALT A
 		  JOIN COMM_USER B
 		    ON A.COMM_USER_ID = B.COMM_USER_ID
@@ -1311,6 +1321,43 @@
 		 WHERE COMM_USER_ID = #{COMM_USER_ID}
 	</update>
 	
+	<!-- 비밀번호 변경 -->
+	<update id="U_PASSWORD" parameterType="HashMap" statementType="CALLABLE">
+		/* U_PASSWORD */
+		DECLARE
+		  BEGIN
+		  		UPDATE COMM_USER
+		  		   SET MID = #{MID}
+				   	 , MDT = SYSDATE
+				   	 , MIP = #{MIP}
+				   	 <choose>
+				   	 	<when test='TYPE == "PWD1"'>
+				   	 	, PWD = #{PWD}
+				   	 	</when>
+				   	 	<when test='TYPE == "PWD2"'>
+				   	 	, PWD2 = #{PWD2}
+				   	 	</when>
+				   	 </choose>
+		  		 WHERE COMM_USER_ID = #{COMM_USER_ID}
+		  		 	 ;
+		  		 	 
+		  		UPDATE COMM_USER_SALT
+		  		   SET MID = #{MID}
+				   	 , MDT = SYSDATE
+				   	 , MIP = #{MIP}
+				   	 <choose>
+				   	 	<when test='TYPE == "PWD1"'>
+				   	 	, SALT = #{SALT}
+				   	 	</when>
+				   	 	<when test='TYPE == "PWD2"'>
+				   	 	, SALT2 = #{SALT2}
+				   	 	</when>
+				   	 </choose>
+		  		 WHERE COMM_USER_ID = #{COMM_USER_ID}
+		  		 	 ;
+		  		 	 
+		    END;
+	</update>
 	<!-- 2차비밀번호 삭제 -->
 	<update id="U_REMOVE_PWD2" parameterType="HashMap" statementType="CALLABLE">
 		/* U_REMOVE_PWD2 */
@@ -1351,4 +1398,48 @@
 			           , #{MIP});
 		    END;
 	</update>
+	
+	<!-- 개인정보수정 -->
+	<update id="U_PRIVACY" parameterType="HashMap" statementType="CALLABLE">
+		/* U_PRIVACY */
+		DECLARE
+		  BEGIN
+		  		UPDATE COMM_USER
+		  		   SET USER_NAME = #{USER_NAME}
+		  		   	 , EMAIL = #{EMAIL}
+		  		   	 , MID = #{MID}
+				   	 , MDT = SYSDATE
+				   	 , MIP = #{MIP}
+				 WHERE COMM_USER_ID = #{COMM_USER_ID};
+				 				 
+				 MERGE INTO MY_PRIVACY A
+	  			 USING DUAL
+	  			    ON (A.COMM_USER_ID = #{COMM_USER_ID})
+	  			  WHEN MATCHED THEN
+	  			UPDATE SET NICKNAME			= #{NICKNAME}
+	  					 , MID				= #{MID}
+	  					 , MDT				= SYSDATE
+	  					 , MIP				= #{MIP}
+	  					 <if test="PROFILE_PICTURE != null">
+	  					 , PROFILE_PICTURE	= #{PROFILE_PICTURE,jdbcType=BLOB}
+	  					 </if>
+	  			  WHEN NOT MATCHED THEN
+	  			INSERT ( MY_PRIVACY_ID
+					   , COMM_USER_ID
+					   , PROFILE_PICTURE
+					   , NICKNAME
+	  					<include refid="config.cidColumn"></include>)
+	  			VALUES ( MY_PRIVACY_S.NEXTVAL
+					   , #{COMM_USER_ID}
+					   , #{PROFILE_PICTURE,jdbcType=BLOB}
+					   , #{NICKNAME}
+	  				   , #{MID}
+			           , SYSDATE
+			           , #{MIP}
+			           , #{MID}
+			           , SYSDATE    
+			           , #{MIP});
+		    END;
+	</update>
+	
 </mapper>

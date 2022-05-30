@@ -119,6 +119,16 @@ public class ComController {
 	}
 	
 	/**
+	 * 개인정보 수정
+	 */
+	@RequestMapping(value = "/chgPrivacy", method = RequestMethod.POST)
+	public @ResponseBody Object chgPrivacy(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		Map<String, String> resultMap = comService.chgPrivacy(request);
+		return resultMap;
+	}
+	
+	/**
 	 * 슬릭그리드 예제화면호출
 	 */
 	@RequestMapping(value = "/slickGridExam", method = RequestMethod.GET)
@@ -136,7 +146,7 @@ public class ComController {
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public ModelAndView page(HttpServletRequest request, ModelAndView mv) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		
+
 		return comService.page(request, mv);
 	}
 	

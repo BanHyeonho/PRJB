@@ -22,6 +22,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -287,11 +289,27 @@ public class ComUtil {
 	 * @return
 	 */
 	public static Map getParameterMap(HttpServletRequest request, String mapType) {
-		// 파라미터 이름
-		Enumeration paramNames = request.getParameterNames();
-
+		
 		// 저장할 맵
 		Map paramMap = ("SORT".equals(mapType) ? new LinkedHashMap() : new HashMap());
+		
+		MultipartHttpServletRequest multiRequest = null;
+		
+		try {
+			multiRequest = (MultipartHttpServletRequest) request;
+			//파일
+			Iterator<String> fileNames = multiRequest.getFileNames();
+			while (fileNames.hasNext()) {
+
+				String fileName = fileNames.next();
+				paramMap.put(fileName, multiRequest.getFile(fileName));
+			}
+			
+		}catch(Exception e) {}
+		
+		// 파라미터 이름
+		Enumeration paramNames = request.getParameterNames();
+		
 		// 맵에 저장
 		while(paramNames.hasMoreElements()) {
 			String name	 = paramNames.nextElement().toString();

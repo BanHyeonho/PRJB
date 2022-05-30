@@ -46,6 +46,9 @@
 	    <result property="BOARD_CONTENTS" column="BOARD_CONTENTS" jdbcType="CLOB" javaType="java.lang.String"/>
 	</resultMap>
 	
-	
+	<!-- blob -->
+	<resultMap id="BlobMap" type="hashMap" >
+	    <result property="PROFILE_PICTURE" column="PROFILE_PICTURE" jdbcType="BLOB" javaType="_byte[]"/>
+	</resultMap>
 	
 </mapper>

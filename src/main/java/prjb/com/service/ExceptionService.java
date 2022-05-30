@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
-import prjb.com.util.ErrorLogException;
 
 @RestControllerAdvice("prjb.com.controller")
 public class ExceptionService {
@@ -28,15 +27,19 @@ public class ExceptionService {
 	public Object custom(HttpServletRequest request, HttpServletResponse response, Exception e){
 		e.printStackTrace();
 		
-		Throwable cause = e.getCause();
-        if(e.getCause() instanceof ErrorLogException){
-        	Map logParam = new HashMap();
-    		logParam.put("ERROR_LOCATION", e.getCause().getMessage());
-    		logParam.put("ERROR_MSG", e.getMessage());
-    		logParam.put("CID", request.getSession().getAttribute("COMM_USER_ID"));
-    		logParam.put("CIP", ComUtil.getAddress(request));
-        	insertErrorLog(logParam);
-        }
+		String ip = ComUtil.getAddress(request);
+		
+		//개발환경에서는 에러로그를 저장하지 않는다.
+		if( !"0:0:0:0:0:0:0:1".equals(ip) ) {
+			//에러로그 생성
+	    	Map logParam = new HashMap();
+			logParam.put("ERROR_LOCATION", e.getStackTrace()[0].toString());
+			logParam.put("ERROR_MSG", e.getMessage());
+			logParam.put("CID", request.getSession().getAttribute("COMM_USER_ID"));
+			logParam.put("CIP", ip);
+	    	insertErrorLog(logParam);
+		}
+		
 		
 		Map<String, Map<String,String>> msgMap = ComUtil.langKoChk(request) ? InitBean.msgMLGKO : InitBean.msgMLGEN;
 		Map<String, String> returnMap = new HashMap();

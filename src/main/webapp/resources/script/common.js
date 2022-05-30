@@ -72,11 +72,21 @@ function gf_setFormData(data){
 	$.each(Object.keys(data), function(idx, item){
 		var target = $('#' + item);
 		
+		if(target.length == 0){
+			return;
+		}
+		
 		var tagName = target.prop('tagName').toLowerCase();
-			
+		
 		switch (tagName) {
 		case 'input':
-			target.val(data[item]);
+			if( target.attr('type') == 'file'){
+				$('#' + item + '_PREVIEW').attr('src', 'data:image/*;base64,' + data[item]);
+			}
+			else{
+				target.val(data[item]);	
+			}
+			
 			break;
 		case 'span':
 			target.text(data[item]);
