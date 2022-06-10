@@ -1265,6 +1265,25 @@ function gf_delFormData(p_formData){
 	});
 }
 
+//모달생성
+function gf_modal(p_modalId, p_option){
+	
+	var v_height = gf_nvl(p_option.height, '') == '' ? 500 : p_option.height;
+	var v_width = gf_nvl(p_option.width, '') == '' ? 500 : p_option.width;
+	var v_buttons = gf_nvl(p_option.buttons, '') == '' ? {} : p_option.buttons;
+	var v_resizable = gf_nvl(p_option.resizable, '') == '' ? false : p_option.resizable;
+	
+	$('#' + p_modalId ).dialog({
+		modal: true,  
+		autoOpen: false,
+		resizable: v_resizable,
+		height: v_height,
+		width: v_width,
+		buttons: v_buttons
+	});
+	
+}
+
 //자동완성태그
 /**
  * 

@@ -20,6 +20,35 @@
 	     </choose>
 	</select>
 	
+	<!-- 파일관리 파일 미리보기 목록 조회 -->
+	<select id="S_FILE_MANAGE_PREVIEW_LIST" resultType="HashMap" parameterType="HashMap" >
+		/* S_FILE_MANAGE_PREVIEW_LIST */
+	    SELECT A.MY_FILE_MANAGE_ID
+			 , A.SEQ
+			 , A.KEY_ID
+			 , A.TITLE
+			 , A.TYPE_CODE
+			 , A.PARENT_KEY_ID
+			 , A.SHOW_YN
+			 , A.DESCRIPTION
+			 , B.COMM_FILE_ID 		AS FILE_ID
+			 , B.RANDOM_KEY
+			 , B.FILE_EXTENSION
+	      FROM MY_FILE_MANAGE A
+     LEFT JOIN COMM_FILE B ON (B.MODULE_CODE = 'MY' AND B.MENU_URL = 'fileManage' AND B.GROUP_ID = A.MY_FILE_MANAGE_ID)
+	     WHERE A.COMM_USER_ID = #{CID}
+	       AND COMM_UTIL_PKG.COMM_CODE_ATTR('FILE_EXTENSION', UPPER(B.FILE_EXTENSION), 'ATTRIBUTE2', 'KO') = '1'
+	     <choose>
+	     	<when test="@org.apache.commons.lang3.StringUtils@isBlank(PARENT_KEY_ID)">
+	     		AND A.PARENT_KEY_ID IS NULL
+	     	</when>
+	     	<otherwise>
+	     		AND A.PARENT_KEY_ID = #{PARENT_KEY_ID}
+	     	</otherwise>
+	     </choose>
+		 ORDER BY A.SEQ
+	</select>
+	
 	<!-- 파일관리 파일 조회 -->
 	<select id="S_FILE_MANAGE" resultType="HashMap" parameterType="HashMap" >
 		/* S_FILE_MANAGE */

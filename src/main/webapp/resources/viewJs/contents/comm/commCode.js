@@ -5,7 +5,8 @@ var gridPk = function(){
 	this.COMM_CODE_MASTER_ID;
 	this.MASTER_CODE;
 };
-	
+
+var detailGridDefaultColumns = []; 
 $(document).ready(function() {
 	masterGrid = gf_gridInit('masterGrid', {
 		forceFitColumns: false,
@@ -19,6 +20,8 @@ $(document).ready(function() {
     					}
     });
 	
+	detailGridDefaultColumns = $.extend(true, [], detailGrid.getColumns());
+		
 	masterGrid.onSelectedRowsChanged.subscribe(function (e, args) {
 		
 		if(gridEventIgnore){
@@ -119,6 +122,7 @@ var f_detailSearch = function(pk, preRow){
 
 	if(gf_nvl(pk, '') == ''){
 		gf_gridClear(detailGrid);
+		
 		return false;
 	}
 	
@@ -128,19 +132,28 @@ var f_detailSearch = function(pk, preRow){
 	
 	gf_ajax( fData
 			, function(){
-				
+				detailGrid.setColumns(detailGridDefaultColumns);
 				gf_gridClear(detailGrid);
 				
 			}
 			, function(data){
+
+				//컬럼명 변경
+				var masterCol = masterGrid.getData().getItem(masterGrid.getSelectedRows());
+				var attrCol = Object.keys( masterCol ).filter( x=> x.indexOf('ATTRIBUTE') > -1);
+				var detailCol = $.extend(true, [], detailGrid.getColumns());
 				
+				$.each(attrCol, function(idx, item){
+					detailCol.find(x=> x.field == item).name = masterCol[item];
+				});
+				detailGrid.setColumns(detailCol);
+				//데이터조회
 				gf_gridCallback('detailGrid', data);
 								
 			});
 	
 }
-  	
-  	
+
 var f_save = function(){
 	
 	var masterData = gf_gridSaveData(masterGrid);

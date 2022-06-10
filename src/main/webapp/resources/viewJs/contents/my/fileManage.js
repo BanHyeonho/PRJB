@@ -41,7 +41,10 @@ $(document).ready(function() {
 		
 	//파일 드래그 셋팅
 	f_setFileDrag();
-		
+
+	//모달셋팅
+	f_set_modal();
+	
 	//트리 컨텍스트메뉴
 	$('#newFolderBtn').on('click', f_newFolder);
 	$('#folderDeleteBtn').on('click', f_folderDelete);
@@ -53,11 +56,45 @@ $(document).ready(function() {
 	$('#fileNewFolderBtn').on('click', f_newFolder);
 	$('#fileDeleteBtn').on('click', f_fileDelete);
 	$('#fileDownBtn').on('click', f_fileDown);
-	
+	$('#previewBtn').on('click', f_openPreview);
 	
 	f_search();
+	
 });
 
+/*****************************************************************************************************************************************************************
+ * 
+ * 모달
+ * 
+ *****************************************************************************************************************************************************************/
+var f_set_modal = function(){
+	
+	//숨김항목보기 모달
+	var hideItemOption = {
+			resizable : false,
+			height: 230,
+			width: 460,
+			buttons : {}
+	}
+	hideItemOption.buttons[gf_mlg('확인')] = function(){
+    	alert('test');
+    	$(this).dialog('close');
+    };
+    hideItemOption.buttons[gf_mlg('닫기')] = function(){
+    	$(this).dialog('close');
+    };
+	gf_modal('modal_hideItemShow', hideItemOption);
+	
+	//미리보기 모달
+	var previewOption = {
+			resizable : true,
+			height: 700,
+			width: 1250,
+			buttons : {}
+	}
+	gf_modal('modal_preview', previewOption);
+	
+}
 /*****************************************************************************************************************************************************************
  * 
  * 버튼 기능
@@ -495,7 +532,9 @@ var f_showFolder = function(e){
 //숨김파일 모두보기
 var f_showFolderView = function(){
 	
-	f_treeReload('ALL');
+	$( "#modal_hideItemShow" ).dialog('open');
+	
+//	f_treeReload('ALL');
 	$('.context').hide();
 		
 }
@@ -565,6 +604,8 @@ function f_set_dragSelect(p_target){
 		}
 		
 		if($(e.target).closest('.no-drag-area').length > 0
+		|| $(e.target).closest('.ui-widget-header').length > 0
+		|| $(e.target).closest('.ui-widget-content').length > 0		
 		|| $(e.target).prop('tagName').toLowerCase() == 'button'
 		|| $(e.target).prop('tagName').toLowerCase() == 'input'
 		|| e.which == 3	//우클릭
@@ -821,7 +862,7 @@ var f_setFileDrag = function(){
 								TITLE : file.name
 						};
 						
-						f_makeFile(v_item);
+						f_makeFile(v_item, 'attachedFileArea');
 						
 						file['KEY_ID'] = fileId;
 						
@@ -858,7 +899,7 @@ var f_searchFile = function(){
 		
 		if(data.result.length > 0){
 			$.each(data.result, function(idx, item){
-				f_makeFile(item);
+				f_makeFile(item, 'attachedFileArea');
 			});
 		}
 				
@@ -874,7 +915,7 @@ var f_fileClear = function(){
 	
 }
 //파일모양 생성
-var f_makeFile = function(p_file){
+var f_makeFile = function(p_file, p_target){
 	
 	var div = $('<div></div>').addClass('file_img')
 		.attr('ondragstart', 'dragStart(event)')
@@ -902,7 +943,7 @@ var f_makeFile = function(p_file){
 	var fileNm = $('<p></p>').addClass('mg-tp-sm').addClass('text-center').text(p_file.TITLE);
 	div.append(fileImg).append(fileNm);
 	
-	$('#attachedFileArea').append(div);
+	$('#' + p_target).append(div);
 }
 
 //파일삭제 type: DB / SCRIPT 
@@ -1004,8 +1045,109 @@ var f_fileDown = function(){
 		}
 		
 	}
-	else{
-		
-	}
+	
 	$('.context').hide();
+}
+
+//파일 미리보기
+var f_openPreview = function(){
+	
+	var searchParam = {
+			QUERY_ID : 'my.S_FILE_MANAGE_PREVIEW_LIST',	
+	};
+	
+	if(gf_nvl(folderTree.getActiveNode(), '') != ''){
+		searchParam['PARENT_KEY_ID'] = folderTree.getActiveNode().key
+	}
+	
+	gf_ajax(searchParam
+	, function(data){
+		$('#preview_list div').remove();
+		
+		return true;
+	}
+	, function(data){
+		
+		if(data.result.length > 0){
+			$.each(data.result, function(idx, item){
+				f_makeFile(item, 'preview_list');
+			});
+		}
+		
+		$('#preview_list .file_img').on('click', function(e){
+			e.preventDefault();
+	        e.stopPropagation();
+	        
+	        if( !$(e.target).hasClass('drag-highlight') ){
+	        	$('#preview_list .file_img').removeClass('drag-highlight');
+				$(e.currentTarget).addClass('drag-highlight');
+				f_show_fileView(e.currentTarget);
+    		}
+	        
+		});
+		
+		$( "#modal_preview" ).dialog('open');
+		$('.context').hide();
+		
+	}, null, null, null, false);
+	
+	
+}
+
+var f_show_fileView = function(me){
+//	var file_name = $(me).attr('FILE_NAME');
+	var comm_file_id = $(me).attr('file_id');
+	var random_key = $(me).attr('random_key');
+
+//	var file_ext = file_name.substring(file_name.lastIndexOf(".")).toLowerCase();
+
+	//pdf
+//	if(file_ext == '.pdf'){
+//		$('#pdf_viewer').show();
+//		$('#img_viewer').hide();
+//		$.ajax({
+//			type    : "GET",
+//			url     : "/pdfCreateTmp.ajax",
+//			async   : false,
+//			dataType: "json",
+//			data    : {
+//				COMM_FILE_ID :comm_file_id,
+//				RANDOM_KEY : random_key
+//			},
+//			success : function (data) {
+//				var url = '/resources/pdfjs/web/viewer.html?file=/tmp/' + data.newFileName;
+//				$('#pdf_viewer iframe').attr('src', url);
+//			}
+//		});
+//
+//	}
+//	//엑셀, 워드 등(pdf변환후 미리보기해야하는 경우)
+//	else if(preview_file_ext.filter(x=> x.CODE_VALUE == file_ext && x.ATTRIBUTE2 == '1').length > 0){
+//		$('#pdf_viewer').show();
+//		$('#img_viewer').hide();
+//		$.ajax({
+//			type    : "GET",
+//			url     : "/librePreview.ajax",
+//			async   : false,
+//			dataType: "json",
+//			data    : {
+//				COMM_FILE_ID :comm_file_id,
+//				RANDOM_KEY : random_key
+//			},
+//			success : function (data) {
+//				var url = '/resources/pdfjs/web/viewer.html?file=/tmp/' + data.newFileName;
+//				$('#pdf_viewer iframe').attr('src', url);
+//			}
+//		});
+//	}
+//	//이미지
+//	else{
+		$('#pdf_viewer').hide();
+		$('#img_viewer').show();
+
+		var url = '/imgPreview.ajax?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key;
+		$('#img_viewer img').attr('src', url);
+
+//	}
+
 }

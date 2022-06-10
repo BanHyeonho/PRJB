@@ -1,6 +1,7 @@
 package prjb.com.service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -966,4 +968,29 @@ public class ComService {
 		
 	}
 	
+	/**
+	 * 이미지 미리보기
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	public void imgPreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType( "image/gif" );
+		ServletOutputStream bout = response.getOutputStream();
+
+		Map param = fileDownLog(request);
+		
+		Map fileData = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+
+		String imgpath = String.valueOf(fileData.get("FILE_PATH")) + String.valueOf(fileData.get("SERVER_FILE_NAME"));
+		FileInputStream f = new FileInputStream(imgpath);
+		int length;
+		byte[] buffer = new byte[10];
+		while ( ( length = f.read( buffer ) ) != -1 ){
+			bout.write( buffer, 0, length );
+		}
+
+	}
 }

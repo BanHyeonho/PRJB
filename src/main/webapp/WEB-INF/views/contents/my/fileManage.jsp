@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page session="false" %>
 <%@ include file="../../include.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -19,9 +18,30 @@
 	    height: 94%;
     	overflow: auto;
 	}
+	#fileViewContainer .file_img{
+		display: inline-block;
+		vertical-align: top;
+		width: 100px;
+		min-height: 120px;
+		margin: 10px 15px;
+		padding: 5px;
+		box-sizing: border-box;
+		transition: all 0.1s linear;
+	}
+	#preview_list .file_img{
+		display: inline-block;
+		vertical-align: top;
+		width: 85px;
+		min-height: 100px;
+		padding: 5px;
+		box-sizing: border-box;
+		transition: all 0.1s linear;
+	}
 </style>
 </head>
 <body onselectstart="return false;">
+	<input type='hidden' id='publicKey' value='${publicKey}'>
+	
   	<div id='content' class="pd-pl-default">
 		<div id="content-header" class="content-panel pd-pl-default no-mg">
 			<span id="content-title"></span>
@@ -45,6 +65,7 @@
 		</div>
 	</div>
 	
+	<!-- 컨텍스트메뉴 -->
 	<div id="treeContext" class="context" style="display: none;">
 		<ul id="treeContextUl">
 			<li>
@@ -68,7 +89,7 @@
 	<div id="fileViewContext" class="context no-drag-area" style="display: none;">
 		<ul id="fileViewContextUl">
 		  	<li>
-		    	<div id='preViewBtn'><span>${pb:msg(pageContext.request, "미리보기")}</span></div>
+		    	<div id='previewBtn'><span>${pb:msg(pageContext.request, "미리보기")}</span></div>
 		  	</li>
 		  	<li>
 		    	<div id='fileNewFolderBtn'><span>${pb:msg(pageContext.request, "새폴더")}</span></div>
@@ -80,6 +101,32 @@
 		    	<div id='fileDeleteBtn'><span>${pb:msg(pageContext.request, "삭제")}</span></div>
 		  	</li>
 		</ul>
+	</div>
+	
+	<!-- 모달 -->
+	<div id="modal_hideItemShow" title='${pb:msg(pageContext.request, "숨김항목보기")}' class='no-drag-area'>
+		<p class="validateTips form-require-label">* ${pb:msg(pageContext.request, "마이페이지")} > ${pb:msg(pageContext.request, "개인정보수정")} > ${pb:msg(pageContext.request, "2차_비밀번호를_설정하세요")}</p>
+		
+		<div class="div-10  mg-tp-default2">
+			<label class="form">${pb:msg(pageContext.request, "2차_비밀번호")}</label>
+			<input type="password" name="password" id="password" class="form form-text mg-tp-default">
+		</div>
+	</div>
+	
+	<div id="modal_preview" title='${pb:msg(pageContext.request, "미리보기")}' class='no-drag-area'>
+		<div id='preview_list' class='mg-pl-default no-mg-lt pd-pl-default panel-1' style="border: 1px solid silver; float: left; height: 97%; overflow: auto;">
+			
+		</div>
+		<div id='preview_view' class='mg-pl-tp-default pd-pl-default panel-9-1' style="border: 1px solid silver; float: left; height: 97%;">
+			<div id="pdf_viewer" style="display: none; width: 100%;height: 100%;">
+	            <iframe style="width: 100%; height: 100%;">
+	
+	            </iframe>
+	        </div>
+	        <div id="img_viewer" style="display: none; width: 100%;height: 100%;">
+	            <img style="max-height: 100%;">
+	        </div>
+		</div>
 	</div>
 	
 </body>

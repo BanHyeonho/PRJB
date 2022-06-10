@@ -31,6 +31,13 @@
 		    <version>0.6.2</version>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/org.jodconverter/jodconverter-local -->
+		<dependency>
+		    <groupId>org.jodconverter</groupId>
+		    <artifactId>jodconverter-local</artifactId>
+		    <version>4.4.2</version>
+		</dependency>
+						
 		<!-- 파일 인코딩 확인 -->
 		<dependency>
 		    <groupId>com.googlecode.juniversalchardet</groupId>

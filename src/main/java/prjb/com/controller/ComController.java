@@ -239,4 +239,13 @@ public class ComController {
 		return new HashMap();
 	}
 	
+	/**
+	 * 이미지 미리보기
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/imgPreview", method = RequestMethod.GET)
+	public void imgPreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		comService.imgPreview(request, response);
+	}
 }
