@@ -156,7 +156,7 @@ public class MyService {
 						
 						if( key.contains(String.valueOf(info.get("KEY_ID"))) ) {
 							keyId = String.valueOf(info.get("KEY_ID"));
-							parentKeyId = String.valueOf(info.get("PARENT_KEY_ID"));
+							parentKeyId = (String)info.get("PARENT_KEY_ID");
 							fileInfoList.remove(i);
 							break a;
 						}
