@@ -7,6 +7,8 @@ const pageInfo = {
 		menuUrl : 'fileManage'
 }
 
+const gv_fileExtension = parent.index_info.gv_fileExtension;
+
 var f_dragData = [];
 
 var folderTree; 
@@ -1104,53 +1106,32 @@ var f_show_fileView = function(me){
 	var moduleCode = pageInfo.moduleCode;
 	var menuUrl = pageInfo.menuUrl;
 	
+	var url = '';
+	
 	//pdf
 	if(file_ext == 'pdf'){
 		$('#pdf_viewer').show();
 		$('#img_viewer').hide();
-		$.ajax({
-			type    : "GET",
-			url     : "/pdfCreateTmp",
-			async   : false,
-			dataType: "json",
-			data    : {
-				MODULE_CODE : moduleCode,
-				MENU_URL : menuUrl,
-				COMM_FILE_ID :comm_file_id,
-				RANDOM_KEY : random_key
-			},
-			success : function (data) {
-				var url = '/resources/plugin/pdfjs/web/viewer.html?file=/tmp/' + data.newFileName;
-				$('#pdf_viewer iframe').attr('src', url);
-			}
-		});
+		
+		url = '/resources/plugin/pdfjs/web/viewer.html?file=/preview?' + encodeURIComponent('MODULE_CODE=' + moduleCode + '&MENU_URL=' + menuUrl + '&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key);
+		$('#pdf_viewer iframe').attr('src', url);
 
 	}
-//	//엑셀, 워드 등(pdf변환후 미리보기해야하는 경우)
-//	else if(preview_file_ext.filter(x=> x.CODE_VALUE == file_ext && x.ATTRIBUTE2 == '1').length > 0){
-//		$('#pdf_viewer').show();
-//		$('#img_viewer').hide();
-//		$.ajax({
-//			type    : "GET",
-//			url     : "/librePreview.ajax",
-//			async   : false,
-//			dataType: "json",
-//			data    : {
-//				COMM_FILE_ID :comm_file_id,
-//				RANDOM_KEY : random_key
-//			},
-//			success : function (data) {
-//				var url = '/resources/pdfjs/web/viewer.html?file=/tmp/' + data.newFileName;
-//				$('#pdf_viewer iframe').attr('src', url);
-//			}
-//		});
-//	}
+	//엑셀, 워드 등(pdf변환후 미리보기해야하는 경우)
+	else if(gv_fileExtension.filter(x=> x.CODE_VALUE.toLowerCase() == file_ext && x.ATTRIBUTE3 == '1').length > 0){
+		$('#pdf_viewer').show();
+		$('#img_viewer').hide();
+		
+		url = '/resources/plugin/pdfjs/web/viewer.html?file=/librePreview?' + encodeURIComponent('MODULE_CODE=' + moduleCode + '&MENU_URL=' + menuUrl + '&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key);
+		$('#pdf_viewer iframe').attr('src', url);
+		
+	}
 	//이미지
 	else{
 		$('#pdf_viewer').hide();
 		$('#img_viewer').show();
 
-		var url = '/imgPreview.ajax?MODULE_CODE=' + moduleCode + '&MENU_URL=' + menuUrl + '&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key;
+		url = '/preview?' + encodeURI('MODULE_CODE=' + moduleCode + '&MENU_URL=' + menuUrl + '&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key);
 		$('#img_viewer img').attr('src', url);
 
 	}

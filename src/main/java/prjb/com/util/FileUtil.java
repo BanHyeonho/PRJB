@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -17,6 +18,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jodconverter.core.DocumentConverter;
+import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.core.office.OfficeManager;
+import org.jodconverter.local.LocalConverter;
+import org.jodconverter.local.office.LocalOfficeManager;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +57,35 @@ public class FileUtil {
 	}
 	
 	/**
+	 * 파일명 생성
+	 * @param p_fileName
+	 * @return
+	 * @throws Exception
+	 */
+	public static Map fileName(String p_fileName) throws Exception {
+		Map result = new HashMap();
+		
+		String serverFileName = "";
+		String fileName = "";
+		
+		//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
+		do {
+			serverFileName = System.currentTimeMillis() + "_" + p_fileName.replaceAll(" ", "");
+			serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
+			serverFileName = CryptoUtil.encrypt(serverFileName);
+			
+		}while(serverFileName.contains("/") || serverFileName.contains("\\"));
+		
+		//암호화
+		fileName = CryptoUtil.encrypt(p_fileName);
+		
+		result.put("FILE_NAME", fileName);
+		result.put("SERVER_FILE_NAME", serverFileName);
+		
+		return result;
+	}
+	
+	/**
 	 * 파일 인코딩 생성
 	 * @param input
 	 * @param outputPath
@@ -70,16 +105,9 @@ public class FileUtil {
 		
 		try {
 			
-			//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
-			do {
-				serverFileName = System.currentTimeMillis() + "_" + fileName.replaceAll(" ", "");
-				serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
-				serverFileName = CryptoUtil.encrypt(serverFileName);
-				
-			}while(serverFileName.contains("/") || serverFileName.contains("\\"));
-			
-			//암호화
-			fileName = CryptoUtil.encrypt(fileName);
+			Map<String, String> fileNames = fileName(fileName);
+			serverFileName = fileNames.get("SERVER_FILE_NAME");
+			fileName = fileNames.get("FILE_NAME");
 			
 			File path = new File(outputPath);
 			
@@ -135,18 +163,10 @@ public class FileUtil {
 		
 		try {
 			
-			
-			//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
-			do {
-				serverFileName = System.currentTimeMillis() + "_" + fileName.replaceAll(" ", "");
-				serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
-				serverFileName = CryptoUtil.encrypt(serverFileName);
-				
-			}while(serverFileName.contains("/") || serverFileName.contains("\\"));
-	
-			//암호화
-			fileName = CryptoUtil.encrypt(fileName);
-			
+			Map<String, String> fileNames = fileName(fileName);
+			serverFileName = fileNames.get("SERVER_FILE_NAME");
+			fileName = fileNames.get("FILE_NAME");
+						
 			File path = new File(filePath);
 	
 			if (!path.exists()) {
@@ -202,17 +222,10 @@ public class FileUtil {
 		
 		try {
 			
-			//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
-			do {
-				serverFileName = System.currentTimeMillis() + "_" + fileName;
-				serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
-				serverFileName = CryptoUtil.encrypt(serverFileName);
-				
-			}while(serverFileName.contains("/") || serverFileName.contains("\\"));
-			
-			//암호화
-			fileName = CryptoUtil.encrypt(fileName);
-			
+			Map<String, String> fileNames = fileName(fileName);
+			serverFileName = fileNames.get("SERVER_FILE_NAME");
+			fileName = fileNames.get("FILE_NAME");
+						
 			File path = new File(filePath);
 	
 			if (!path.exists()) {
@@ -364,4 +377,35 @@ public class FileUtil {
 		}
 
 	}
+	
+	/**
+	 * pdf변환
+	 * @param libreOffice_path
+	 * @param originFile
+	 * @param resultFile
+	 * @throws Exception
+	 */
+	public static void makePDF(String libreOffice_path, String originFile, String resultFile) throws Exception {
+		
+		OfficeManager officeManager = LocalOfficeManager.builder().officeHome(libreOffice_path).build();
+		DocumentConverter converter = LocalConverter.builder().officeManager(officeManager).build();
+		
+		System.out.println("officeManager start");
+		officeManager.start();
+
+		try {
+			System.out.println("convert start");
+			
+			File excelFile = new File(originFile);
+			File pdfFile = new File(resultFile);
+			converter.convert(excelFile).to(pdfFile).execute();
+			
+			System.out.println("convert end");
+		}
+		finally {
+			officeManager.stop();
+		}
+		
+	}
+	
 }

@@ -229,23 +229,13 @@ public class ComController {
 	}
 	
 	/**
-	 * 이미지 미리보기
+	 * 파일 미리보기
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/imgPreview", method = RequestMethod.GET)
+	@RequestMapping(value = "/preview", method = RequestMethod.GET)
 	public void imgPreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		comService.imgPreview(request, response);
-	}
-	
-	/**
-	 * PDF 미리보기를 위한 임시파일 생성
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/pdfCreateTmp", method = RequestMethod.GET)
-	public Map PDFPreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		return comService.pdfCreateTmp(request, response);
+		comService.preview(request, response);
 	}
 	
 	/**
@@ -253,9 +243,9 @@ public class ComController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/librePreview", method = RequestMethod.GET)
-	public Map librePreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void librePreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		return comService.librePreview(request, response);
+		comService.librePreview(request, response); 
 	}
 	
 }

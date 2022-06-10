@@ -2,6 +2,7 @@ package prjb.com.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +42,10 @@ public class ComService {
 	
 	@Value("#{config['file_root']}")
 	private String fileRoot;
+	
+	@Value("#{config['libreOffice_path']}")
+	private String libreOfficePath;
+	
 	
 	@Autowired
 	ComDao comDao;
@@ -973,77 +978,40 @@ public class ComService {
 		
 	}
 	
+	public void readFile(HttpServletResponse response, String file) throws Exception {
+		response.setCharacterEncoding("UTF-8");
+//		response.setContentType( "image/gif" );
+		
+		ServletOutputStream sOs = response.getOutputStream();
+		FileInputStream f = new FileInputStream(file);
+		int length;
+		byte[] buffer = new byte[10];
+		while ( ( length = f.read( buffer ) ) != -1 ){
+			sOs.write( buffer, 0, length );
+		}
+		sOs.close();
+		f.close();
+	}
+	
 	/**
-	 * 이미지 미리보기
+	 * 파일 미리보기
 	 *
 	 * @param request
 	 * @param response
 	 * @throws Exception
 	 */
-	public void imgPreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType( "image/gif" );
-		ServletOutputStream bout = response.getOutputStream();
-
+	public void preview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
 		Map param = fileDownLog(request);
 		
 		Map fileData = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
 
-		String imgpath = String.valueOf(fileData.get("FILE_PATH")) + String.valueOf(fileData.get("SERVER_FILE_NAME"));
-		FileInputStream f = new FileInputStream(imgpath);
-		int length;
-		byte[] buffer = new byte[10];
-		while ( ( length = f.read( buffer ) ) != -1 ){
-			bout.write( buffer, 0, length );
-		}
-
+		String filePath = String.valueOf(fileData.get("FILE_PATH")) + String.valueOf(fileData.get("SERVER_FILE_NAME"));
+		
+		readFile(response, filePath);
+		
 	}
-	
-	/**
-	 * PDF 미리보기를 위한 임시파일 생성
-	 *
-	 * @param request
-	 * @param response
-	 * @throws Exception
-	 */
-	public Map pdfCreateTmp(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-		String COMM_FILE_ID = request.getParameter("COMM_FILE_ID");
-		String RANDOM_KEY = request.getParameter("RANDOM_KEY");
-
-		Map param = fileDownLog(request);
-
-		Map fileData = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
-
-		String oldFilePath = String.valueOf(fileData.get("FILE_PATH")) + String.valueOf(fileData.get("SERVER_FILE_NAME"));
-		String newFilePath = request.getSession().getServletContext().getContext("/").getRealPath("") + "tmp" + File.separator;
-		String newFileName = System.currentTimeMillis() + "_" + String.valueOf(fileData.get("FILE_NAME"));
-		FileUtil.fileCopy(oldFilePath, newFilePath, newFileName);
-
-		Map result = new HashMap();
-		result.put("newFilePath", newFilePath);
-		result.put("newFileName", newFileName);
-
-		//쓰레드로 60초후에 임시파일 삭제
-		asyncService.run(() ->  {
-			synchronized(this){
-				try{
-					wait(60000);
-					FileUtil.fileDelete(newFilePath, newFileName);
-				}catch(Exception e){
-					e.printStackTrace();
-					try {
-						FileUtil.fileDelete(newFilePath, newFileName);
-					} catch (Exception e2) {
-						e2.printStackTrace();
-					}
-				}
-			}
-		});
-
-		return result;
-	}
-	
+		
 	/**
 	 * LibreOffice 로 pdf 로 변환후 미리보기
 	 *
@@ -1051,7 +1019,7 @@ public class ComService {
 	 * @param response
 	 * @throws Exception
 	 */
-	public Map librePreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void librePreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		String COMM_FILE_ID = request.getParameter("COMM_FILE_ID");
 		String RANDOM_KEY = request.getParameter("RANDOM_KEY");
@@ -1060,55 +1028,22 @@ public class ComService {
 
 		Map fileData = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
 
-		String oldFilePath = String.valueOf(fileData.get("REAL_FILE_PATH")) + String.valueOf(fileData.get("REAL_FILE_NAME"));
+		String originFile = String.valueOf(fileData.get("FILE_PATH")) + String.valueOf(fileData.get("SERVER_FILE_NAME"));
 
-		String newFilePath = request.getSession().getServletContext().getContext("/").getRealPath("") + "tmp" + File.separator;
-//		String tmpName = String.valueOf(fileData.get("FILE_NAME"));
-//		tmpName = tmpName.substring( 0, tmpName.lastIndexOf(".") ) + ".pdf";
+		String newFilePath = fileRoot + "tmp" + File.separator;
 
-//		String newFileName = System.currentTimeMillis() + "_" + StringUtil.getRandomKey() + ".pdf";		//파일명에 특수문자가 들어가는경우가 있어, 임시파일은 난수로 발생한다.
-//
-//		OfficeManager officeManager = LocalOfficeManager.builder().officeHome(libreOffice_path).build();
-//		DocumentConverter converter = LocalConverter.builder().officeManager(officeManager).build();
-//		logger.info("officeManager start");
-//		officeManager.start();
-//
-//		try {
-//
-//			logger.info("convert start");
-//			File excelFile = new File(oldFilePath);
-//			File pdfFile = new File(newFilePath + newFileName);
-//			converter.convert(excelFile).to(pdfFile).execute();
-//
-//			logger.info("convert end");
-//
-//		}
-//		finally {
-//			officeManager.stop();
-//		}
-//
-		Map result = new HashMap();
-//		result.put("newFilePath", newFilePath);
-//		result.put("newFileName", newFileName);
-//
-//		//쓰레드로 60초후에 임시파일 삭제
-//		asyncService.run(() ->  {
-//			synchronized(this){
-//				try{
-//					wait(60000);
-//					fileService.fileDelete(newFilePath, newFileName);
-//				}catch(Exception e){
-//					e.printStackTrace();
-//					try {
-//						fileService.fileDelete(newFilePath, newFileName);
-//					} catch (Exception e2) {
-//						e2.printStackTrace();
-//					}
-//				}
-//			}
-//		});
+		Map<String, String> fileNames = FileUtil.fileName(String.valueOf(fileData.get("FILE_NAME")));
+		String newFileName = fileNames.get("SERVER_FILE_NAME") + ".pdf";
 
-		return result;
+		//pdf파일생성
+		FileUtil.makePDF(libreOfficePath, originFile, newFilePath + newFileName);
+		
+		//생성된 pdf파일 읽기
+		readFile(response, newFilePath + newFileName);
+		
+		//생성했던 pdf파일 삭제
+		FileUtil.fileDelete(newFilePath, newFileName);
+		
 	}
 	
 }
