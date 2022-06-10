@@ -119,14 +119,25 @@
 			
 		</div>
 		<div id='preview_view' class='mg-pl-tp-default pd-pl-default panel-9-1' style="border: 1px solid silver; float: left; height: 97%;">
+			
 			<div id="pdf_viewer" style="display: none; width: 100%;height: 100%;">
 	            <iframe style="width: 100%; height: 100%;">
 	
 	            </iframe>
 	        </div>
+			
 			<div id="img_viewer" style="display: none; width: 100%;height: 100%; position: relative; display: flex; justify-content: center; align-items: center;">
 	            <img style="max-width: 100%; max-height: 100%;">
 	        </div>
+	        
+<!-- 	        <div id="video_viewer" style="display: none; width: 100%;height: 100%;"> -->
+<!-- 	            <video style="width:100%; height:100%;" controls preload="metadata"> -->
+<!-- 					<source name='videoSource' type="video/mp4"> -->
+<!-- <!-- 					<source name='videoSource'> -->
+					
+<!-- 				</video> -->
+<!-- 	        </div> -->
+	        
 		</div>
 	</div>
 	

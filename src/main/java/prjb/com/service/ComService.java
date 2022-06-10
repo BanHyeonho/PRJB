@@ -980,7 +980,7 @@ public class ComService {
 	
 	public void readFile(HttpServletResponse response, String file) throws Exception {
 		response.setCharacterEncoding("UTF-8");
-//		response.setContentType( "image/gif" );
+		response.setContentType( "image/gif" );
 		
 		ServletOutputStream sOs = response.getOutputStream();
 		FileInputStream f = new FileInputStream(file);

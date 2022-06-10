@@ -1066,6 +1066,8 @@ var f_openPreview = function(){
 	gf_ajax(searchParam
 	, function(data){
 		$('#preview_list div').remove();
+		$('#img_viewer img').attr('src', '');
+		$('#pdf_viewer iframe').attr('src', '');
 		
 		return true;
 	}
@@ -1108,10 +1110,18 @@ var f_show_fileView = function(me){
 	
 	var url = '';
 	
+	$('#video_viewer').hide();
+	$('#pdf_viewer').hide();
+	$('#img_viewer').hide();
+	
+//	var videoTag = $('source[name=videoSource]').parent()[0];
+//	videoTag.pause();
+//	$('source[name=videoSource]').attr('src', '');
+//	videoTag.load();
+	
 	//pdf
 	if(file_ext == 'pdf'){
 		$('#pdf_viewer').show();
-		$('#img_viewer').hide();
 		
 		url = '/resources/plugin/pdfjs/web/viewer.html?file=/preview?' + encodeURIComponent('MODULE_CODE=' + moduleCode + '&MENU_URL=' + menuUrl + '&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key);
 		$('#pdf_viewer iframe').attr('src', url);
@@ -1120,20 +1130,24 @@ var f_show_fileView = function(me){
 	//엑셀, 워드 등(pdf변환후 미리보기해야하는 경우)
 	else if(gv_fileExtension.filter(x=> x.CODE_VALUE.toLowerCase() == file_ext && x.ATTRIBUTE3 == '1').length > 0){
 		$('#pdf_viewer').show();
-		$('#img_viewer').hide();
 		
 		url = '/resources/plugin/pdfjs/web/viewer.html?file=/librePreview?' + encodeURIComponent('MODULE_CODE=' + moduleCode + '&MENU_URL=' + menuUrl + '&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key);
 		$('#pdf_viewer iframe').attr('src', url);
 		
 	}
+	if(file_ext == 'mp4'){
+		$('#video_viewer').show();
+		
+		
+//		$('#video_viewer iframe').attr('src', url);
+	}
 	//이미지
 	else{
-		$('#pdf_viewer').hide();
 		$('#img_viewer').show();
 
 		url = '/preview?' + encodeURI('MODULE_CODE=' + moduleCode + '&MENU_URL=' + menuUrl + '&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key);
 		$('#img_viewer img').attr('src', url);
 
 	}
-
+	
 }
