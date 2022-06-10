@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.io.Files;
+
 import net.lingala.zip4j.io.outputstream.ZipOutputStream;
 import net.lingala.zip4j.model.ZipParameters;
 import prjb.com.init.InitBean;
@@ -336,5 +338,30 @@ public class FileUtil {
 		if( file.exists() ){
 			file.delete();
 		}
+	}
+	
+	/**
+	 * 파일 복사
+	 * @return
+	 */
+	public static void fileCopy(String oldFile, String newFilePath, String newFileName){
+
+		File orgFile = new File(oldFile);
+
+		File dir = new File(newFilePath);
+		/***** 해당 디렉토리의 존재여부를 확인 *****/
+		if (!dir.exists()) {
+			// 없다면 생성
+			dir.mkdirs();
+		}
+		File tmpFile = new File(newFilePath + newFileName);
+
+		try {
+			Files.copy(orgFile, tmpFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

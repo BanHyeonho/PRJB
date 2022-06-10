@@ -924,6 +924,7 @@ var f_makeFile = function(p_file, p_target){
 		.attr('KEY_ID', p_file.KEY_ID)
 		.attr('FILE_ID', p_file.FILE_ID)
 		.attr('RANDOM_KEY', p_file.RANDOM_KEY)
+		.attr('FILE_EXTENSION', p_file.FILE_EXTENSION)
 		;
 
 	var fileIcon = 'file_folder.png';
@@ -1095,32 +1096,36 @@ var f_openPreview = function(){
 }
 
 var f_show_fileView = function(me){
-//	var file_name = $(me).attr('FILE_NAME');
+
 	var comm_file_id = $(me).attr('file_id');
 	var random_key = $(me).attr('random_key');
-
-//	var file_ext = file_name.substring(file_name.lastIndexOf(".")).toLowerCase();
-
+	var file_ext = $(me).attr('file_extension').toLowerCase();
+	
+	var moduleCode = pageInfo.moduleCode;
+	var menuUrl = pageInfo.menuUrl;
+	
 	//pdf
-//	if(file_ext == '.pdf'){
-//		$('#pdf_viewer').show();
-//		$('#img_viewer').hide();
-//		$.ajax({
-//			type    : "GET",
-//			url     : "/pdfCreateTmp.ajax",
-//			async   : false,
-//			dataType: "json",
-//			data    : {
-//				COMM_FILE_ID :comm_file_id,
-//				RANDOM_KEY : random_key
-//			},
-//			success : function (data) {
-//				var url = '/resources/pdfjs/web/viewer.html?file=/tmp/' + data.newFileName;
-//				$('#pdf_viewer iframe').attr('src', url);
-//			}
-//		});
-//
-//	}
+	if(file_ext == 'pdf'){
+		$('#pdf_viewer').show();
+		$('#img_viewer').hide();
+		$.ajax({
+			type    : "GET",
+			url     : "/pdfCreateTmp",
+			async   : false,
+			dataType: "json",
+			data    : {
+				MODULE_CODE : moduleCode,
+				MENU_URL : menuUrl,
+				COMM_FILE_ID :comm_file_id,
+				RANDOM_KEY : random_key
+			},
+			success : function (data) {
+				var url = '/resources/plugin/pdfjs/web/viewer.html?file=/tmp/' + data.newFileName;
+				$('#pdf_viewer iframe').attr('src', url);
+			}
+		});
+
+	}
 //	//엑셀, 워드 등(pdf변환후 미리보기해야하는 경우)
 //	else if(preview_file_ext.filter(x=> x.CODE_VALUE == file_ext && x.ATTRIBUTE2 == '1').length > 0){
 //		$('#pdf_viewer').show();
@@ -1140,14 +1145,14 @@ var f_show_fileView = function(me){
 //			}
 //		});
 //	}
-//	//이미지
-//	else{
+	//이미지
+	else{
 		$('#pdf_viewer').hide();
 		$('#img_viewer').show();
 
-		var url = '/imgPreview.ajax?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key;
+		var url = '/imgPreview.ajax?MODULE_CODE=' + moduleCode + '&MENU_URL=' + menuUrl + '&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key;
 		$('#img_viewer img').attr('src', url);
 
-//	}
+	}
 
 }

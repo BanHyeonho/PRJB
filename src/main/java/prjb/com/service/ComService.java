@@ -8,13 +8,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jodconverter.core.DocumentConverter;
+import org.jodconverter.core.office.OfficeManager;
+import org.jodconverter.local.LocalConverter;
+import org.jodconverter.local.office.LocalOfficeManager;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +34,6 @@ import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
 import prjb.com.util.CustomFile;
-import prjb.com.util.ErrorLogException;
 import prjb.com.util.FileUtil;
 
 @Service("ComService")
@@ -42,7 +44,10 @@ public class ComService {
 	
 	@Autowired
 	ComDao comDao;
-		
+	
+	@Autowired
+	AsyncService asyncService;
+	
 	private static final Logger logger = LoggerFactory.getLogger(ComService.class);
 	
 	/**
@@ -993,4 +998,117 @@ public class ComService {
 		}
 
 	}
+	
+	/**
+	 * PDF 미리보기를 위한 임시파일 생성
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	public Map pdfCreateTmp(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		String COMM_FILE_ID = request.getParameter("COMM_FILE_ID");
+		String RANDOM_KEY = request.getParameter("RANDOM_KEY");
+
+		Map param = fileDownLog(request);
+
+		Map fileData = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+
+		String oldFilePath = String.valueOf(fileData.get("FILE_PATH")) + String.valueOf(fileData.get("SERVER_FILE_NAME"));
+		String newFilePath = request.getSession().getServletContext().getContext("/").getRealPath("") + "tmp" + File.separator;
+		String newFileName = System.currentTimeMillis() + "_" + String.valueOf(fileData.get("FILE_NAME"));
+		FileUtil.fileCopy(oldFilePath, newFilePath, newFileName);
+
+		Map result = new HashMap();
+		result.put("newFilePath", newFilePath);
+		result.put("newFileName", newFileName);
+
+		//쓰레드로 60초후에 임시파일 삭제
+		asyncService.run(() ->  {
+			synchronized(this){
+				try{
+					wait(60000);
+					FileUtil.fileDelete(newFilePath, newFileName);
+				}catch(Exception e){
+					e.printStackTrace();
+					try {
+						FileUtil.fileDelete(newFilePath, newFileName);
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+				}
+			}
+		});
+
+		return result;
+	}
+	
+	/**
+	 * LibreOffice 로 pdf 로 변환후 미리보기
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	public Map librePreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		String COMM_FILE_ID = request.getParameter("COMM_FILE_ID");
+		String RANDOM_KEY = request.getParameter("RANDOM_KEY");
+
+		Map param = fileDownLog(request);
+
+		Map fileData = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+
+		String oldFilePath = String.valueOf(fileData.get("REAL_FILE_PATH")) + String.valueOf(fileData.get("REAL_FILE_NAME"));
+
+		String newFilePath = request.getSession().getServletContext().getContext("/").getRealPath("") + "tmp" + File.separator;
+//		String tmpName = String.valueOf(fileData.get("FILE_NAME"));
+//		tmpName = tmpName.substring( 0, tmpName.lastIndexOf(".") ) + ".pdf";
+
+//		String newFileName = System.currentTimeMillis() + "_" + StringUtil.getRandomKey() + ".pdf";		//파일명에 특수문자가 들어가는경우가 있어, 임시파일은 난수로 발생한다.
+//
+//		OfficeManager officeManager = LocalOfficeManager.builder().officeHome(libreOffice_path).build();
+//		DocumentConverter converter = LocalConverter.builder().officeManager(officeManager).build();
+//		logger.info("officeManager start");
+//		officeManager.start();
+//
+//		try {
+//
+//			logger.info("convert start");
+//			File excelFile = new File(oldFilePath);
+//			File pdfFile = new File(newFilePath + newFileName);
+//			converter.convert(excelFile).to(pdfFile).execute();
+//
+//			logger.info("convert end");
+//
+//		}
+//		finally {
+//			officeManager.stop();
+//		}
+//
+		Map result = new HashMap();
+//		result.put("newFilePath", newFilePath);
+//		result.put("newFileName", newFileName);
+//
+//		//쓰레드로 60초후에 임시파일 삭제
+//		asyncService.run(() ->  {
+//			synchronized(this){
+//				try{
+//					wait(60000);
+//					fileService.fileDelete(newFilePath, newFileName);
+//				}catch(Exception e){
+//					e.printStackTrace();
+//					try {
+//						fileService.fileDelete(newFilePath, newFileName);
+//					} catch (Exception e2) {
+//						e2.printStackTrace();
+//					}
+//				}
+//			}
+//		});
+
+		return result;
+	}
+	
 }

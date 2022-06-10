@@ -1,11 +1,6 @@
 package prjb.com.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,11 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.lingala.zip4j.io.outputstream.ZipOutputStream;
-import net.lingala.zip4j.model.ZipParameters;
 import prjb.com.service.ComService;
 import prjb.com.util.ComUtil;
-import prjb.com.util.FileUtil;
 
 
 @Controller("ComController")
@@ -248,4 +237,25 @@ public class ComController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		comService.imgPreview(request, response);
 	}
+	
+	/**
+	 * PDF 미리보기를 위한 임시파일 생성
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/pdfCreateTmp", method = RequestMethod.GET)
+	public Map PDFPreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		return comService.pdfCreateTmp(request, response);
+	}
+	
+	/**
+	 * LibreOffice 로 pdf 로 변환후 미리보기
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/librePreview", method = RequestMethod.GET)
+	public Map librePreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		return comService.librePreview(request, response);
+	}
+	
 }

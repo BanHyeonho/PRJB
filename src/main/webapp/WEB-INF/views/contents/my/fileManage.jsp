@@ -12,7 +12,8 @@
 <script src="/plugin/fancytree/modules/jquery.fancytree.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/fancytree/modules/jquery.fancytree.dnd.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/fancytree/modules/jquery.fancytree.edit.js?v=${pb:jsNow()}"></script>
-  
+
+
 <style type="text/css">
 	#treeContainer > ul{
 	    height: 94%;
@@ -123,8 +124,8 @@
 	
 	            </iframe>
 	        </div>
-	        <div id="img_viewer" style="display: none; width: 100%;height: 100%;">
-	            <img style="max-height: 100%;">
+			<div id="img_viewer" style="display: none; width: 100%;height: 100%; position: relative; display: flex; justify-content: center; align-items: center;">
+	            <img style="max-width: 100%; max-height: 100%;">
 	        </div>
 		</div>
 	</div>
