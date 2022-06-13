@@ -961,7 +961,8 @@ var f_makeFile = function(p_file, p_target, p_fileOrigin){
 					fileImg.attr('src', '/preview?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + p_file.FILE_ID + '&RANDOM_KEY=' + p_file.RANDOM_KEY);	
 				}
 				else{
-					fileImg.attr('src', '/thumbnailPreview?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + p_file.FILE_ID + '&RANDOM_KEY=' + p_file.RANDOM_KEY + '&WIDTH=' + fileImg.css('width').replace('px', '') );	
+					
+					fileImg.attr('src', '/thumbnailPreview?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + p_file.FILE_ID + '&RANDOM_KEY=' + p_file.RANDOM_KEY + '&WIDTH=' + Math.floor(Number(fileImg.css('width').replace('px', ''))) );	
 				}
 				
 				
