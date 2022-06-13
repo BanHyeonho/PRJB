@@ -436,26 +436,21 @@ public class FileUtil {
 		
 		BufferedImage thumbImage;
 
-		//가로기준 자동조절
+		//세로기준 자동조절
 		if(thumbWidth == 0) {
-			thumbImage = Scalr.resize(originalImage,  Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, thumbWidth);
-		}
-		//세로기준 자동조절		
-		else if(thumbHeight == 0) {
 			thumbImage = Scalr.resize(originalImage, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, thumbHeight);
+		}
+		//가로기준 자동조절		
+		else if(thumbHeight == 0) {
+			thumbImage = Scalr.resize(originalImage,  Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, thumbWidth);
 		}
 		else {
 			thumbImage = Scalr.resize(originalImage, thumbWidth, thumbHeight);
 		}
 		
 		File thumbFile = new File(resultFile);
-
-		if(fileExtension == null) {
-			ImageIO.write(thumbImage, "jpg", thumbFile);	
-		}
-		else {
-			ImageIO.write(thumbImage, fileExtension, thumbFile);
-		}
+		
+		ImageIO.write(thumbImage, "gif", thumbFile);
 		
 	}
 	
