@@ -162,6 +162,8 @@ public class MyService {
 						}
 					}
 					
+					System.out.println("size ::: --------------------------------------->" + fileInfoList.size());
+					
 					if(keyId != null) {
 						String cId = String.valueOf(p_param.get("COMM_USER_ID"));
 						String ip = String.valueOf(p_param.get("IP"));
@@ -190,7 +192,9 @@ public class MyService {
 													, uploadResult.get("fileName")
 													, uploadResult.get("serverFileName")
 													);
-						} catch (Exception e) {
+						} 
+						//에러발생
+						catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 							
@@ -202,6 +206,7 @@ public class MyService {
 						p_result.put("failCnt", Integer.parseInt( ComUtil.valueOfZero(p_result.get("failCnt")) ) +1);
 					}
 				}
+				//실제 파일업로드 실패
 				else {
 					p_result.put("failCnt", Integer.parseInt( ComUtil.valueOfZero(p_result.get("failCnt")) ) +1);
 				}

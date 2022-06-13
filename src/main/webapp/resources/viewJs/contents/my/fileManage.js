@@ -864,7 +864,7 @@ var f_setFileDrag = function(){
 								TITLE : file.name
 						};
 						
-						f_makeFile(v_item, 'attachedFileArea');
+						f_makeFile(v_item, 'attachedFileArea', file);
 						
 						file['KEY_ID'] = fileId;
 						
@@ -917,7 +917,7 @@ var f_fileClear = function(){
 	
 }
 //파일모양 생성
-var f_makeFile = function(p_file, p_target){
+var f_makeFile = function(p_file, p_target, p_fileOrigin){
 	
 	var div = $('<div></div>').addClass('file_img')
 		.attr('ondragstart', 'dragStart(event)')
@@ -931,14 +931,16 @@ var f_makeFile = function(p_file, p_target){
 
 	var fileIcon = 'file_folder.png';
 	
+	var fileInfo = {}; 
 	if(gf_nvl(p_file.TYPE_CODE, '') == 'FILE'){
-		fileIcon = parent.index_info.gv_fileExtension.find(x=> x.CODE_VALUE == p_file.FILE_EXTENSION.toUpperCase());
 		
-		if(gf_nvl(fileIcon, '') == ''){
+		fileInfo = parent.index_info.gv_fileExtension.find(x=> x.CODE_VALUE == p_file.FILE_EXTENSION.toUpperCase());
+				
+		if(gf_nvl(fileInfo, '') == ''){
 			fileIcon = 'file_default.png';
 		}
 		else{
-			fileIcon = fileIcon.ICON;
+			fileIcon = fileInfo.ICON;
 		}
 	}
 	
@@ -947,6 +949,33 @@ var f_makeFile = function(p_file, p_target){
 	div.append(fileImg).append(fileNm);
 	
 	$('#' + p_target).append(div);
+	
+	//이미지일 경우 미리보기
+	if( fileInfo.ATTRIBUTE1 == 'IMG' ){
+		
+		if( gf_nvl(p_file.RANDOM_KEY, '') != '' ){
+			setTimeout(function(){
+				fileImg.attr('src', '/preview?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + p_file.FILE_ID + '&RANDOM_KEY=' + p_file.RANDOM_KEY);
+			}, 0);	
+		}
+		else{
+			
+			setTimeout(function(){
+				var reader = new FileReader();
+				
+				reader.onload = function(event) {
+					fileImg.attr('src', event.target.result);
+				};
+				
+				reader.readAsDataURL(p_fileOrigin);
+				
+			}, 0);
+
+		}
+		
+		
+	}
+	
 }
 
 //파일삭제 type: DB / SCRIPT 

@@ -10,23 +10,44 @@
     	<Console name="Console" target="SYSTEM_OUT">
       		<PatternLayout pattern="${layoutPattern}"/>
     	</Console>
+    	
+    	<RollingFile name="RollingFile" fileName="C:\develop\files\logs\prjb\prjb.log" filePattern="C:\develop\files\logs\prjb\backup\prjb.%d{yyyy-MM-dd}-%i.log">
+      		<PatternLayout pattern="${layoutPattern}" />
+	  		<Policies>
+			   <!-- size 단위: Byte(default), KB, MB, or GB -->
+			   <SizeBasedTriggeringPolicy size="10MB" />
+			   <!-- 시간 단위 -->
+			   <TimeBasedTriggeringPolicy />
+	  		</Policies>
+			<DefaultRolloverStrategy max="100" fileIndex="min">
+				<Delete basePath = "./backup" maxDepth = "1">
+			  		<!-- 1일이 경과한 로그파일은 자동 삭제 -->
+			  		<IfLastModified age = "1d"/>
+			  	</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+		
 	</Appenders>
     
 	<Loggers>
 		<!-- APP -->
 		<Logger name="prjb" level="INFO" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
+	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="org.springframework.context" level="FATAL" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
+	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="org.springframework.web" level="FATAL" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
+	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     
 		<!-- SQL -->
     	<Logger name="jdbc.sqltiming" level="DEBUG" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
+	    	<AppenderRef ref="RollingFile"/>
     	</Logger>
     	<Logger name="jdbc.audit" level="FATAL" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>
@@ -35,7 +56,7 @@
 	    	<AppenderRef ref="Console"/>
     	</Logger>
     	<Logger name="jdbc.sqlonly" level="OFF" additivity="FALSE"> 
-    		<AppenderRef ref="Console" /> 
+    		<AppenderRef ref="Console" />
     	</Logger>
     	<Logger name="jdbc.resultset" level="OFF" additivity="FALSE">
 	    	<AppenderRef ref="Console"/>

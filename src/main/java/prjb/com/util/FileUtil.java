@@ -69,12 +69,15 @@ public class FileUtil {
 		String fileName = "";
 		
 		//파일명에 /,\ 가 들어가면 안된다.(폴더경로로 인식하기때문)
-		do {
-			serverFileName = System.currentTimeMillis() + "_" + p_fileName.replaceAll(" ", "");
-			serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
-			serverFileName = CryptoUtil.encrypt(serverFileName);
-			
-		}while(serverFileName.contains("/") || serverFileName.contains("\\"));
+//		do {
+//			serverFileName = System.currentTimeMillis() + "_" + p_fileName.replaceAll(" ", "");
+//			serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
+//			serverFileName = CryptoUtil.encrypt(serverFileName);
+//			
+//		}while(serverFileName.contains("/") || serverFileName.contains("\\"));
+		
+		serverFileName = System.currentTimeMillis() + "_" + ComUtil.getRandomKey(10);
+		serverFileName = URLEncoder.encode(serverFileName, "UTF-8");
 		
 		//암호화
 		fileName = CryptoUtil.encrypt(p_fileName);

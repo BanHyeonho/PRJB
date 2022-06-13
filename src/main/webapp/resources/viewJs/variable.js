@@ -34,4 +34,4 @@ let gv_excelOptions = {
 const gv_fileMaxSize = 21474836480;
 
 //첨부파일명 최대길이
-const gv_fileNameMaxlength = 60;
+const gv_fileNameMaxlength = 200;
