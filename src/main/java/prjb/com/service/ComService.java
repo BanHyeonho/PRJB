@@ -978,9 +978,15 @@ public class ComService {
 		
 	}
 	
+	/**
+	 * 파일 읽기
+	 * @param response
+	 * @param file
+	 * @throws Exception
+	 */
 	public void readFile(HttpServletResponse response, String file) throws Exception {
 		response.setCharacterEncoding("UTF-8");
-		response.setContentType( "image/gif" );
+//		response.setContentType( "image/gif" );
 		
 		ServletOutputStream sOs = response.getOutputStream();
 		FileInputStream f = new FileInputStream(file);
@@ -1013,7 +1019,7 @@ public class ComService {
 	}
 		
 	/**
-	 * LibreOffice 로 pdf 로 변환후 미리보기
+	 * LibreOffice 로 pdf 로 변환 후 미리보기
 	 *
 	 * @param request
 	 * @param response
@@ -1042,6 +1048,42 @@ public class ComService {
 		readFile(response, newFilePath + newFileName);
 		
 		//생성했던 pdf파일 삭제
+		FileUtil.fileDelete(newFilePath, newFileName);
+		
+	}
+	
+	/**
+	 * 썸네일 생성 후 미리보기
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	public void thumbnailPreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		String COMM_FILE_ID = request.getParameter("COMM_FILE_ID");
+		String RANDOM_KEY = request.getParameter("RANDOM_KEY");
+		
+		int WIDTH = Integer.parseInt(ComUtil.valueOfZero(request.getParameter("WIDTH")));
+		int HEIGHT = Integer.parseInt(ComUtil.valueOfZero(request.getParameter("HEIGHT")));
+		
+		Map param = fileDownLog(request);
+
+		Map fileData = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
+
+		String originFile = String.valueOf(fileData.get("FILE_PATH")) + String.valueOf(fileData.get("SERVER_FILE_NAME"));
+
+		String newFilePath = fileRoot + "tmp" + File.separator;
+
+		Map<String, String> fileNames = FileUtil.fileName(String.valueOf(fileData.get("FILE_NAME")));
+		String newFileName = fileNames.get("SERVER_FILE_NAME");
+
+		//썸네일 생성
+		FileUtil.makeThumbnail(originFile, newFilePath + newFileName, WIDTH, HEIGHT);
+		
+		//생성된 파일 읽기
+		readFile(response, newFilePath + newFileName);
+		
+		//생성했던 파일 삭제
 		FileUtil.fileDelete(newFilePath, newFileName);
 		
 	}

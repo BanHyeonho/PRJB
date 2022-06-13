@@ -229,6 +229,16 @@ public class ComController {
 	}
 	
 	/**
+	 * 썸네일 생성 후 미리보기
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/thumbnailPreview", method = RequestMethod.GET)
+	public void thumbnailPreview(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		comService.thumbnailPreview(request, response);
+	}
+	
+	/**
 	 * 파일 미리보기
 	 */
 	@ResponseBody

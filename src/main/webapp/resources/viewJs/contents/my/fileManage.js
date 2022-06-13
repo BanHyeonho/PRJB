@@ -955,7 +955,8 @@ var f_makeFile = function(p_file, p_target, p_fileOrigin){
 		
 		if( gf_nvl(p_file.RANDOM_KEY, '') != '' ){
 			setTimeout(function(){
-				fileImg.attr('src', '/preview?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + p_file.FILE_ID + '&RANDOM_KEY=' + p_file.RANDOM_KEY);
+//				fileImg.attr('src', '/preview?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + p_file.FILE_ID + '&RANDOM_KEY=' + p_file.RANDOM_KEY);
+				fileImg.attr('src', '/thumbnailPreview?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + p_file.FILE_ID + '&RANDOM_KEY=' + p_file.RANDOM_KEY + '&WIDTH=' + fileImg.css('width').replace('px', '') );
 			}, 0);	
 		}
 		else{
