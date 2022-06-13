@@ -435,27 +435,27 @@ public class FileUtil {
 		BufferedImage originalImage = ImageIO.read(new File(originFile));
 		
 		// 원본 이미지의 너비와 높이
-		int ow = originalImage.getWidth();
-		int oh = originalImage.getHeight();
-		
-		// 원본 너비를 기준으로 하여 썸네일의 비율로 높이를 계산
-		int nw = ow; 
-		int nh = (ow * thumbHeight) / thumbWidth;
-		
-		// 계산된 높이가 원본보다 높다면 crop이 안되므로
-		// 원본 높이를 기준으로 썸네일의 비율로 너비를 계산
-		if(nh > oh) {
-			nw = (oh * thumbWidth) / thumbHeight;
-			nh = oh;
-		}
-		
-		// 계산된 크기로 원본이미지를 가운데에서 crop 합니다.
-		BufferedImage cropImg = Scalr.crop(originalImage, (ow-nw)/2, (oh-nh)/2, nw, nh);
-
-		// crop된 이미지로 썸네일을 생성합니다.
-		BufferedImage destImg = Scalr.resize(cropImg, thumbWidth, thumbHeight);
+//		int ow = originalImage.getWidth();
+//		int oh = originalImage.getHeight();
+//		
+//		// 원본 너비를 기준으로 하여 썸네일의 비율로 높이를 계산
+//		int nw = ow; 
+//		int nh = (ow * thumbHeight) / thumbWidth;
+//		
+//		// 계산된 높이가 원본보다 높다면 crop이 안되므로
+//		// 원본 높이를 기준으로 썸네일의 비율로 너비를 계산
+//		if(nh > oh) {
+//			nw = (oh * thumbWidth) / thumbHeight;
+//			nh = oh;
+//		}
+//		
+//		// 계산된 크기로 원본이미지를 가운데에서 crop 합니다.
+//		BufferedImage cropImg = Scalr.crop(originalImage, (ow-nw)/2, (oh-nh)/2, nw, nh);
+//
+//		// crop된 이미지로 썸네일을 생성합니다.
+//		BufferedImage destImg = Scalr.resize(cropImg, thumbWidth, thumbHeight);
 //		BufferedImage destImg = Scalr.resize(originalImage, thumbWidth, thumbHeight);
-//		BufferedImage destImg = Scalr.resize(originalImage, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, thumbWidth);
+		BufferedImage destImg = Scalr.resize(originalImage, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, thumbWidth);
 //		BufferedImage destImg = Scalr.resize(originalImage, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, thumbHeight);
 		
 		// 썸네일을 저장합니다. 이미지 이름 앞에 "THUMB_" 를 붙여 표시했습니다.
