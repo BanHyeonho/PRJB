@@ -1070,6 +1070,8 @@ public class ComService {
 
 		Map fileData = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
 
+		String fileExtension = String.valueOf(fileData.get("FILE_EXTENSION")).toLowerCase();
+		
 		String originFile = String.valueOf(fileData.get("FILE_PATH")) + String.valueOf(fileData.get("SERVER_FILE_NAME"));
 
 		String newFilePath = fileRoot + "tmp" + File.separator;
@@ -1078,7 +1080,7 @@ public class ComService {
 		String newFileName = fileNames.get("SERVER_FILE_NAME");
 
 		//썸네일 생성
-		FileUtil.makeThumbnail(originFile, newFilePath + newFileName, WIDTH, HEIGHT);
+		FileUtil.makeThumbnail(originFile, newFilePath + newFileName, WIDTH, HEIGHT, fileExtension);
 		
 		//생성된 파일 읽기
 		readFile(response, newFilePath + newFileName);
