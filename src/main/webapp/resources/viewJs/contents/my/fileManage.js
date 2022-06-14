@@ -102,7 +102,8 @@ var f_set_modal = function(){
     		$('#PWD2').val('');
     		if(data.state == 'success'){
     			
-    			f_treeReload( makeTree(data.result, []) );
+    			var resultList = data.result.filter(x=> x.TYPE_CODE == 'FOLDER');
+    			f_treeReload( makeTree(resultList, []) );
     			modal.dialog('close');
     		}
     		//아이디, 비밀번호 오류
