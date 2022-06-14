@@ -2,12 +2,15 @@ package prjb.com.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
@@ -43,6 +41,75 @@ public class MyService {
 	AsyncService asyncService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(MyService.class);
+	
+	
+	/**
+	 * 파일관리 - 숨김항목 조회
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	public Map showFolderView(HttpServletRequest request) throws Exception{
+		Map result = new HashMap();
+		result.put("state", "success");
+		
+		Map<String, String> paramMap = ComUtil.getParameterMap(request);
+		HttpSession session = request.getSession();
+		
+		Map pwd2Param = new HashMap();
+		pwd2Param.put("LOGIN_ID", session.getAttribute("LOGIN_ID"));
+		pwd2Param.put("PWD2", paramMap.get("PWD2"));
+		
+		Map<String,String> loginResult = comService.password2Chk(session.getAttribute("privateKey").toString(), pwd2Param);
+		
+		//2차 패스워드 불일치
+		if(loginResult == null || "null".equals(String.valueOf(loginResult.get("COMM_USER_ID")))) {
+			result.put("state", "chkPwd2");
+			return result;
+		}
+		else {
+			
+			String titleStr = paramMap.get("TITLE_STR");
+			Map searchParam = new HashMap();
+			
+			searchParam.put("CID", session.getAttribute("COMM_USER_ID"));
+			searchParam.put("SHOW_YN", "ALL");
+			
+			//전체조회
+			if(titleStr == null) {
+				result.put("result", comDao.selectList("my.S_FILE_MANAGE_TREE", searchParam) );
+			}
+			//파일명 조회
+			else {
+				String fileList = "";
+				searchParam.put("TITLE_STR", titleStr);
+				List<Map> fileItems = comDao.selectList("my.S_FILE_MANAGE_TREE_ITEM", searchParam);
+				
+				Set<String> fileSet = new HashSet();
+				
+				for (Map item : fileItems) {
+					String[] keyStr = String.valueOf(item.get("KEY_STR")).split("/");
+					for(int i = 0; i < keyStr.length; i++) {
+						fileSet.add(keyStr[i]);
+			        }
+				}
+				
+				if(fileSet.size() > 0) {
+					for (String setStr : fileSet) {
+						fileList += "/" + setStr;
+					}
+				}
+				else {
+					fileList = "-1";
+				}
+				
+				searchParam.put("FILE_LIST", fileList);
+				result.put("result", comDao.selectList("my.S_FILE_MANAGE_TREE", searchParam) );
+			}	
+		}
+		
+		return result;
+	}
 	
 	/**
 	 * 파일관리 저장

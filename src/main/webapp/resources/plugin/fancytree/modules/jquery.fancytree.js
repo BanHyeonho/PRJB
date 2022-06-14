@@ -5145,6 +5145,10 @@
 						: "";
 					tabindex = opts.titlesTabbable ? " tabindex='0'" : "";
 
+					//자식노드 수
+					var childCnt = '';
+					childCnt = Number(node.data.childCnt) > 0 ? ' (' + node.data.childCnt + ')' : '';
+
 					nodeTitle =
 						"<span class='fancytree-title'" +
 						tooltip +
@@ -5152,7 +5156,7 @@
 						">" +
 						(opts.escapeTitles
 							? FT.escapeHtml(node.title)
-							: node.title) +
+							: node.title) + childCnt
 						"</span>";
 				}
 				ares.push(nodeTitle);

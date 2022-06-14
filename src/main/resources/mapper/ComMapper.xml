@@ -1216,6 +1216,15 @@
 		   AND A.PWD = #{PWD}
 	</select>
 	
+	<!-- 2차 비밀번호 검증 -->
+	<select id="S_PASSWORD2" resultType="HashMap" parameterType="HashMap" >
+		/* S_PASSWORD2 */
+		SELECT A.COMM_USER_ID
+		  FROM COMM_USER A
+		 WHERE A.LOGIN_ID = #{LOGIN_ID}
+		   AND A.PWD2 = #{PWD2}
+	</select>
+	
 	<!-- 사용자생성(회원가입) -->
 	<insert id="I_COMM_USER" parameterType="HashMap" >
 		/* I_COMM_USER */

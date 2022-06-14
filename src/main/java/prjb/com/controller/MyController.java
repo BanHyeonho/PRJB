@@ -38,4 +38,14 @@ public class MyController {
 		return resultMap;
 	}
 	
+	/**
+	 * 파일관리 - 숨김항목 조회
+	 */
+	@RequestMapping(value = "/showFolderView", method = RequestMethod.POST)
+	public @ResponseBody Object showFolderView(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+				
+		return myService.showFolderView(request);
+	}
+	
 }

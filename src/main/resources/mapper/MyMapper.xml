@@ -88,10 +88,14 @@
               FROM MY_FILE_MANAGE A
              LEFT JOIN COMM_FILE B ON (B.MODULE_CODE = 'MY' AND B.MENU_URL = 'fileManage' AND B.GROUP_ID = A.MY_FILE_MANAGE_ID)
                  WHERE A.COMM_USER_ID = #{CID}
+                 <if test="@org.apache.commons.lang3.StringUtils@isBlank(SHOW_YN)">
+				 	AND A.SHOW_YN = '1'
+				 </if>
             START WITH A.PARENT_KEY_ID IS null 
                CONNECT BY PRIOR A.KEY_ID = A.PARENT_KEY_ID
              ) A
-          WHERE UPPER(A.TITLE_STR) LIKE '%' || UPPER(#{FILE_NAME}) || '%'
+          WHERE UPPER(A.TITLE_STR) LIKE '%' || UPPER( #{TITLE_STR} ) || '%'
+          
 	</select>
 	<!-- 파일관리 폴더 트리 조회 -->
 	<select id="S_FILE_MANAGE_TREE" resultType="HashMap" parameterType="HashMap" >
@@ -105,6 +109,14 @@
 			 , A.PARENT_KEY_ID
 			 , A.SHOW_YN
 			 , A.DESCRIPTION
+			 , (SELECT COUNT(0)
+		          FROM MY_FILE_MANAGE Z
+		         WHERE Z.PARENT_KEY_ID = A.KEY_ID
+		           AND Z.COMM_USER_ID = A.COMM_USER_ID
+		           <if test="@org.apache.commons.lang3.StringUtils@isBlank(SHOW_YN)">
+					 	AND Z.SHOW_YN = '1'
+				   </if>
+		         ) 											AS CHILD_CNT
 	      FROM MY_FILE_MANAGE A
      LEFT JOIN COMM_FILE B ON (B.MODULE_CODE = 'MY' AND B.MENU_URL = 'fileManage' AND B.GROUP_ID = A.MY_FILE_MANAGE_ID)
 	     WHERE A.COMM_USER_ID = #{CID}

@@ -8,6 +8,7 @@
 <title>${pb:msg(pageContext.request, "파일관리")}</title>
 <meta name="google" content="notranslate">
 
+<!-- fancy 트리 -->
 <link href="/plugin/fancytree/skin-win8/ui.fancytree.css?v=${pb:jsNow()}" rel="stylesheet">
 <script src="/plugin/fancytree/modules/jquery.fancytree.js?v=${pb:jsNow()}"></script>
 <script src="/plugin/fancytree/modules/jquery.fancytree.dnd.js?v=${pb:jsNow()}"></script>
@@ -110,7 +111,7 @@
 		
 		<div class="div-10  mg-tp-default2">
 			<label class="form">${pb:msg(pageContext.request, "2차_비밀번호")}</label>
-			<input type="password" name="password" id="password" class="form form-text mg-tp-default">
+			<input type="password" name="PWD2" id="PWD2" class="form form-text mg-tp-default">
 		</div>
 	</div>
 	
@@ -133,7 +134,7 @@
 <!-- 	        <div id="video_viewer" style="display: none; width: 100%;height: 100%;"> -->
 <!-- 	            <video style="width:100%; height:100%;" controls preload="metadata"> -->
 <!-- 					<source name='videoSource' type="video/mp4"> -->
-<!-- <!-- 					<source name='videoSource'> -->
+<!--  					<source name='videoSource'> -->
 					
 <!-- 				</video> -->
 <!-- 	        </div> -->

@@ -243,6 +243,27 @@ public class ComService {
 		return result;
 	}
 	/**
+	 * 2차 비밀번호 체크
+	 * @param p_privateKey
+	 * @param p_param ( LOGIN_ID , PWD2 )
+	 * @return
+	 * @throws Exception 
+	 */
+	public Map password2Chk(String p_privateKey, Map<String, String> p_param) throws Exception {
+		Map<String, String> result = null;
+		
+		String pwd = ComUtil.decrypt(p_privateKey, p_param.get("PWD2"));
+		
+		Map<String,String> salt = comDao.selectOne("com.S_SALT", p_param);
+		
+		String shaPwd2 = ComUtil.getSHA512( pwd , salt.get("SALT2") );
+		
+		p_param.put("PWD2", shaPwd2);
+		result = comDao.selectOne("com.S_PASSWORD2", p_param);
+		
+		return result;
+	}
+	/**
 	 * 로그인처리
 	 * @param request
 	 * @param param : 회원가입후 가입한정보로 바로 로그인처리

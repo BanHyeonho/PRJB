@@ -79,8 +79,40 @@ var f_set_modal = function(){
 			buttons : {}
 	}
 	hideItemOption.buttons[gf_mlg('확인')] = function(){
-    	alert('test');
-    	$(this).dialog('close');
+    	
+		var modal = $(this);
+    	var fData = new FormData();
+    	fData.set('PWD2', gf_securePw( $('#PWD2').val() , $('#publicKey').val() ));
+    	fData.set('TITLE_STR', $('#searchParam1').val() );
+    	
+    	gf_ajax( fData, function(){
+    		
+    		var rs = true;
+    		if( $('#PWD2').val() == '' ){
+    			gf_toast(gf_mlg("을(를)_입력하세요", {
+    				param : $('#PWD2').siblings('label').text()
+    			}), 'info');
+    			rs = false;
+    		}
+    		gf_delFormData(fData);
+    		
+    		return rs;
+    		
+    	}, function(data){
+    		$('#PWD2').val('');
+    		if(data.state == 'success'){
+    			
+    			f_treeReload( makeTree(data.result, []) );
+    			modal.dialog('close');
+    		}
+    		//아이디, 비밀번호 오류
+    		else if( data.state == 'chkPwd2'){
+    			gf_toast(gf_mlg('2차_비밀번호가_일치하지_않습니다'), 'info');
+    			$('#PWD2').focus();
+    		}
+    	}, null, null, '/my/showFolderView');
+    	
+    	
     };
     hideItemOption.buttons[gf_mlg('닫기')] = function(){
     	$(this).dialog('close');
@@ -197,17 +229,14 @@ function drop(event) {
 
 }
 
-var f_searchTree = function(p_type){
+//트리데이터 조회
+var f_searchTree = function(){
 	var result = [];
 	
 	var searchParam = {
 		QUERY_ID : 'my.S_FILE_MANAGE_TREE'
 	};
-	
-	if(gf_nvl(p_type, '') == 'ALL'){
-		searchParam['SHOW_YN'] = 'ALL'
-	}
-	
+		
 	if( typeof folderTree == 'object' ){
 		folderTree.clear();
 	}
@@ -218,15 +247,15 @@ var f_searchTree = function(p_type){
 				, null
 				, function(data){
 					var resultList = data.result.filter(x=> x.TYPE_CODE == 'FOLDER');
-
-					successFunction(resultList);
+					
+					result = makeTree(resultList, result);
 					
 				}, null, null, null, false);
 	}
 	else{
 		gf_ajax({
 					QUERY_ID : 'my.S_FILE_MANAGE_TREE_ITEM',
-					FILE_NAME : $('#searchParam1').val()
+					TITLE_STR : $('#searchParam1').val()
 				}
 				, null
 				, function(data){
@@ -258,8 +287,8 @@ var f_searchTree = function(p_type){
 							, null
 							, function(data2){
 								var resultList = data2.result.filter(x=> x.TYPE_CODE == 'FOLDER');
-		
-								successFunction(resultList);
+								
+								result = makeTree(resultList, result);
 								
 							}, null, null, null, false);
 			
@@ -268,64 +297,66 @@ var f_searchTree = function(p_type){
 		
 	}
 	
-	
-	function successFunction(data){
-		$.each(data, function(idx, item){
+	return result;
+}
+
+function makeTree(data, result){
+	$.each(data, function(idx, item){
+		
+		var myFileManageId = item.MY_FILE_MANAGE_ID;
+		var showYn = item.SHOW_YN;
+		var parentKeyId = gf_nvl(item.PARENT_KEY_ID, '');
+		var keyId = item.KEY_ID;
+		var title = item.TITLE;
+		var childCnt = item.CHILD_CNT;			
+		var folder = (item.TYPE_CODE == 'FOLDER' ? true : false);
+		
+		var resultItem = {
+				myFileManageId : myFileManageId,
+				showYn : showYn,
+				expanded : true,
+				folder : folder,
+				title : title,
+				childCnt : childCnt,
+				key : keyId
+			};
+		
+		if(parentKeyId == ''){
+			result.push(resultItem);
+		}
+		else{
 			
-			var myFileManageId = item.MY_FILE_MANAGE_ID;
-			var showYn = item.SHOW_YN;
-			var parentKeyId = gf_nvl(item.PARENT_KEY_ID, '');
-			var keyId = item.KEY_ID;
-			var title = item.TITLE;
-			var folder = (item.TYPE_CODE == 'FOLDER' ? true : false);
+			var child = gf_nvl(deepFind(result, parentKeyId), {});
 			
-			var resultItem = {
-					myFileManageId : myFileManageId,
-					showYn : showYn,
-					expanded : true,
-					folder : folder,
-					title : title,
-					key : keyId
-				};
-			
-			if(parentKeyId == ''){
-				result.push(resultItem);
+			if(child.hasOwnProperty('children')){
+				child['children'].push(resultItem);
 			}
 			else{
-				
-				var child = gf_nvl(deepFind(result, parentKeyId), {});
-				
-				if(child.hasOwnProperty('children')){
-					child['children'].push(resultItem);
-				}
-				else{
-					child['children'] = [resultItem];
-				}
+				child['children'] = [resultItem];
 			}
+		}
+		
+	});
+	
+	return result;
+	
+	function deepFind(p_list, p_parent_key){
+		var findChild = p_list.find(x=> x.key == p_parent_key);
+		if(typeof findChild == 'object'){
+			return findChild;
+		}
+		
+		for(var i=0 ; i<p_list.length; i++){
 			
-		});
-							
-		function deepFind(p_list, p_parent_key){
-			var findChild = p_list.find(x=> x.key == p_parent_key);
-			if(typeof findChild == 'object'){
-				return findChild;
-			}
-			
-			for(var i=0 ; i<p_list.length; i++){
-				
-				var v_list = p_list[i]['children'];
-				if( typeof v_list == 'object' ){
-					var tmp = deepFind(v_list, p_parent_key);
-					if(typeof tmp == 'object'){
-						return tmp;
-					}
+			var v_list = p_list[i]['children'];
+			if( typeof v_list == 'object' ){
+				var tmp = deepFind(v_list, p_parent_key);
+				if(typeof tmp == 'object'){
+					return tmp;
 				}
 			}
 		}
 	}
-	
-	
-	return result;
 }
 
 var f_tree = function(containerId){
@@ -334,7 +365,6 @@ var f_tree = function(containerId){
 	$("#" + containerId).fancytree({
 		extensions: ["dnd", "edit"],
 		source: function(){
-//				var data = f_searchTree();
 			var data = [];
 			if(data.length == 0){
 				clearYn = true;
@@ -536,17 +566,24 @@ var f_showFolderView = function(){
 	
 	$( "#modal_hideItemShow" ).dialog('open');
 	
-//	f_treeReload('ALL');
 	$('.context').hide();
 		
 }
 
-//트리 조회
-var f_treeReload = function(p_type){
+//데이터로 트리만들기
+var f_treeReload = function(p_data){
 	
 	var clearYn = false;
 	folderTree.reload(function(){
-		var data = f_searchTree(p_type);
+		var data = [];
+		
+		//일반조회
+		if(gf_nvl(p_data, '') == ''){
+			data = f_searchTree();
+		}
+		else{
+			data = p_data;
+		}
 		
 		if(data.length == 0){
 			clearYn = true;
@@ -934,14 +971,9 @@ var f_makeFile = function(p_file, p_target, p_fileOrigin){
 	var fileInfo = {}; 
 	if(gf_nvl(p_file.TYPE_CODE, '') == 'FILE'){
 		
-		fileInfo = parent.index_info.gv_fileExtension.find(x=> x.CODE_VALUE == p_file.FILE_EXTENSION.toUpperCase());
+		fileInfo = gf_nvl(parent.index_info.gv_fileExtension.find(x=> x.CODE_VALUE == p_file.FILE_EXTENSION.toUpperCase()), {});
 				
-		if(gf_nvl(fileInfo, '') == ''){
-			fileIcon = 'file_default.png';
-		}
-		else{
-			fileIcon = fileInfo.ICON;
-		}
+		fileIcon = gf_nvl(fileInfo.ICON, 'file_default.png');
 	}
 	
 	var fileImg = $('<img>').attr('src', '../img/' + fileIcon );
@@ -961,10 +993,8 @@ var f_makeFile = function(p_file, p_target, p_fileOrigin){
 					fileImg.attr('src', '/preview?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + p_file.FILE_ID + '&RANDOM_KEY=' + p_file.RANDOM_KEY);	
 				}
 				else{
-					
 					fileImg.attr('src', '/thumbnailPreview?MODULE_CODE=MY&MENU_URL=fileManage&COMM_FILE_ID=' + p_file.FILE_ID + '&RANDOM_KEY=' + p_file.RANDOM_KEY + '&WIDTH=' + Math.floor(Number(fileImg.css('width').replace('px', ''))) );	
 				}
-				
 				
 			}, 0);	
 		}
