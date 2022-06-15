@@ -167,6 +167,23 @@ public class ComController {
 	}
 	
 	/**
+	 * 테이블데이터 암호화
+	 */
+	@RequestMapping(value = "/encrypt", method = RequestMethod.POST)
+	public @ResponseBody Map encrypt(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		return comService.tableCrypto(request, true);
+	}
+	/**
+	 * 테이블데이터 복호화
+	 */
+	@RequestMapping(value = "/decrypt", method = RequestMethod.POST)
+	public @ResponseBody Map decrypt(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		return comService.tableCrypto(request, false);
+	}
+	
+	/**
 	 * 파일다운로드
 	 * @param request
 	 * @param response

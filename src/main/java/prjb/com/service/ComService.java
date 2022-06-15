@@ -2,23 +2,20 @@ package prjb.com.service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jodconverter.core.DocumentConverter;
-import org.jodconverter.core.office.OfficeManager;
-import org.jodconverter.local.LocalConverter;
-import org.jodconverter.local.office.LocalOfficeManager;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -797,6 +794,102 @@ public class ComService {
 		return result;
 	}
 	
+	/**
+	 * 테이블 데이터 암/복호화
+	 * @param request
+	 * @param type : true-암호화 / false-복호화
+	 * @return
+	 * @throws Exception
+	 */
+//	@Transactional(rollbackFor = Exception.class) 최대열기커서수 오류로 인해 트랜잭션 처리하지않는다.
+	public Map tableCrypto(HttpServletRequest request, boolean type) throws Exception{
+		Map result = new HashMap();
+		String tableNm = request.getParameter("TABLE_NAME");
+		
+		Map colParam = new HashMap();
+		colParam.put("TABLE_NAME", tableNm);
+		List<Map> columnList = comDao.selectList("com.S_CRYPTO_COLUMNS", colParam);
+		
+		List<String> encryptArray = InitBean.encryptArray;
+		
+		List<Map> encryptList = new ArrayList();
+		
+		boolean noTarget = true;
+		for (String item : encryptArray) {
+			
+			Optional<Map> target = columnList.stream().filter( x -> item.equals(x.get("COLUMN_NAME")) ).findAny();
+			
+			if (target.isPresent()) {
+				noTarget = false;
+				encryptList.add(target.get());
+	        }
+		}
+
+		//암호화대상이 없음
+		if(noTarget) {
+			result.put("state", "no_target");
+			return result;
+		}
+				
+		Map dataParam = new HashMap();
+		dataParam.put("TABLE_NAME", tableNm);
+		dataParam.put("columnList", encryptList);
+		List<Map> tableDataList = comDao.selectList("com.S_ALL_TABLE_SELECT", dataParam);
+		
+		Map updateParam = null;
+		List columns = null;
+		//암호화
+		//전체데이터를 다시 업데이트해서 자동으로 암호화 적용
+		if(type) {
+			
+			for (Map dataMap : tableDataList) {
+				
+				updateParam = new HashMap();
+				columns = new ArrayList();
+				
+				for (Map col : encryptList) {
+					Map m = new HashMap();
+					m.put("COLUMN_NAME", col.get("COLUMN_NAME"));
+					m.put("COLUMN_VALUE", dataMap.get(col.get("COLUMN_NAME")));								
+					columns.add(m);
+				}
+				
+				String whereQuery = tableNm + "_ID = " + dataMap.get(tableNm + "_ID");
+				
+				updateParam.put("TABLE_NAME", tableNm);
+				updateParam.put("TABLE_LAYOUT", columns);
+				updateParam.put("WHERE_QUERY", whereQuery);
+				comDao.update("com.U_COMM_QUERY", updateParam);
+			}
+			
+		}
+		//복호화
+		//전체데이터컬럼을 _DECRYPT 로 명칭변경후 다시 업데이트하여 복호화적용.
+		else {
+			for (Map dataMap : tableDataList) {
+				
+				updateParam = new HashMap();
+				columns = new ArrayList();
+				
+				for (Map col : encryptList) {
+					Map m = new HashMap();
+					m.put("COLUMN_NAME", col.get("COLUMN_NAME"));
+					m.put("CRYPTO_VALUE", dataMap.get(col.get("COLUMN_NAME")));								
+					columns.add(m);
+				}
+				
+				String whereQuery = tableNm + "_ID = " + dataMap.get(tableNm + "_ID");
+				
+				updateParam.put("TABLE_NAME", tableNm);
+				updateParam.put("TABLE_LAYOUT", columns);
+				updateParam.put("WHERE", whereQuery);
+				comDao.update("com.U_ALL_TABLE_DECRYPT", updateParam);
+			}
+		}
+		
+		result.put("state", "success");
+		return result;
+	}
 	/**
 	 * 파일 저장
 	 * @param request

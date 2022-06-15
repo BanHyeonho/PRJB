@@ -1130,6 +1130,38 @@
 		 ORDER BY COMM_MLG_ID DESC
 	</select>
 	
+	<!-- 테이블 암/복호화를 위한 테이블컬럼조회 -->
+	<select id="S_CRYPTO_COLUMNS" resultType="HashMap" parameterType="HashMap" >
+		/* S_CRYPTO_COLUMNS */
+		SELECT COLUMN_NAME
+		  FROM COLS
+		 WHERE TABLE_NAME = #{TABLE_NAME}
+		   AND (COLUMN_NAME = #{TABLE_NAME} || '_ID'
+		   		OR 
+		   		DATA_TYPE = 'VARCHAR2'
+		   		)
+		 ORDER BY COLUMN_ID ASC
+	</select>
+	<!-- 테이블전체 암,복호화 용도 -->
+	<select id="S_ALL_TABLE_SELECT" parameterType="hashmap"  resultType="hashmap">
+		/* S_ALL_TABLE_SELECT */
+		SELECT ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}_ID
+		<foreach collection="columnList" item="item" index="index">
+			 , ${@prjb.com.util.ComUtil@sqlInjectionSafe(item.COLUMN_NAME)}
+		</foreach>
+		  FROM ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}
+	</select>
+	<!-- 테이블전체 복호화 -->
+	<update id="U_ALL_TABLE_DECRYPT" parameterType="hashmap">
+		/* U_ALL_TABLE_DECRYPT */
+		UPDATE ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}
+		   SET
+		<foreach collection="TABLE_LAYOUT" item="item" index="index" separator=",">
+			${@prjb.com.util.ComUtil@sqlInjectionSafe(item.COLUMN_NAME)} = #{item.CRYPTO_VALUE}
+		</foreach>
+		 WHERE ${@prjb.com.util.ComUtil@sqlInjectionSafe(WHERE)}
+	</update>
+	
 	<!-- 공통쿼리사용을 위한 테이블컬럼조회 -->
 	<select id="S_COLUMNS" resultType="HashMap" parameterType="HashMap" >
 		/* S_COLUMNS */
