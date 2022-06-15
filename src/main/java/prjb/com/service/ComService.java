@@ -861,32 +861,48 @@ public class ComService {
 	 * @throws Exception
 	 */
 	public Map fileDownLog(HttpServletRequest request) throws Exception{
+				
+		Map v_param = new HashMap();
+		v_param.put("COMM_USER_ID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
+		v_param.put("MODULE_CODE", request.getParameter("MODULE_CODE"));
+		v_param.put("MENU_URL", request.getParameter("MENU_URL"));
+		v_param.put("CIP", ComUtil.getAddress(request));
+		v_param.put("fileData", String.valueOf(request.getParameter("fileData")));
+		v_param.put("COMM_FILE_ID", request.getParameter("COMM_FILE_ID"));
+		v_param.put("RANDOM_KEY", request.getParameter("RANDOM_KEY"));
+		
+		return fileDownLog(v_param);
+	}
+	public Map fileDownLog(Map p_param) throws Exception{
 		
 		final int keyLenth = 7;
 		
 		Map param = new HashMap();
 		
-		param.put("COMM_USER_ID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
-		param.put("MODULE_CODE", request.getParameter("MODULE_CODE"));
-		param.put("MENU_URL", request.getParameter("MENU_URL"));
-		param.put("CIP", ComUtil.getAddress(request));
+		param.put("COMM_USER_ID", String.valueOf(p_param.get("COMM_USER_ID")));
+		param.put("MODULE_CODE", p_param.get("MODULE_CODE"));
+		param.put("MENU_URL", p_param.get("MENU_URL"));
+		param.put("CIP", p_param.get("CIP"));
 		
 		String DOWNLOAD_KEY = ComUtil.getRandomKey(keyLenth) + System.currentTimeMillis();
 		
 		param.put("DOWNLOAD_KEY", DOWNLOAD_KEY);
 		
-		List<Map> fileDataList = ComUtil.StringToList( String.valueOf( request.getParameter("fileData") ) );
+		List<Map> fileDataList = ComUtil.StringToList( String.valueOf( p_param.get("fileData") ) );
 
 		if(fileDataList != null && fileDataList.size() > 0) {
 			param.put("FILE_LIST", fileDataList);
 		}
 		else {
-			param.put("COMM_FILE_ID", request.getParameter("COMM_FILE_ID"));
-			param.put("RANDOM_KEY", request.getParameter("RANDOM_KEY"));
+			param.put("COMM_FILE_ID", p_param.get("COMM_FILE_ID"));
+			param.put("RANDOM_KEY", p_param.get("RANDOM_KEY"));
 		}
 		
-		//파일다운로드 로그 저장
-		comDao.insert("com.I_COMM_FILE_DOWN_LOG", param);
+//		개발환경에서는 로그를 저장하지 않는다.(로그테이블에 다운로드키가 있기때문에 저장해야한다)
+//		if( !"0:0:0:0:0:0:0:1".equals(p_param.get("CIP")) ) {
+			//파일다운로드 로그 저장
+			comDao.insert("com.I_COMM_FILE_DOWN_LOG", param);	
+//		}
 		
 		return param;
 	}
@@ -1006,6 +1022,7 @@ public class ComService {
 	 * @throws Exception
 	 */
 	public void readFile(HttpServletResponse response, String file) throws Exception {
+		
 		response.setCharacterEncoding("UTF-8");
 //		response.setContentType( "image/gif" );
 		

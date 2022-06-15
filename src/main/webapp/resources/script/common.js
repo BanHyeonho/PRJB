@@ -1273,7 +1273,7 @@ function gf_modal(p_modalId, p_option){
 	var v_buttons = gf_nvl(p_option.buttons, '') == '' ? {} : p_option.buttons;
 	var v_resizable = gf_nvl(p_option.resizable, '') == '' ? false : p_option.resizable;
 	
-	$('#' + p_modalId ).dialog({
+	return $('#' + p_modalId ).dialog({
 		modal: true,  
 		autoOpen: false,
 		resizable: v_resizable,

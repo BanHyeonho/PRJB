@@ -131,13 +131,11 @@
 	            <img style="max-width: 100%; max-height: 100%;">
 	        </div>
 	        
-<!-- 	        <div id="video_viewer" style="display: none; width: 100%;height: 100%;"> -->
-<!-- 	            <video style="width:100%; height:100%;" controls preload="metadata"> -->
-<!-- 					<source name='videoSource' type="video/mp4"> -->
-<!--  					<source name='videoSource'> -->
-					
-<!-- 				</video> -->
-<!-- 	        </div> -->
+	        <div id="video_viewer" style="display: none; width: 100%;height: 100%;">
+	            <video style="width:100%; height:100%;" controls preload="metadata">
+					<source name='videoSource' type="video/mp4">					
+				</video>
+	        </div>
 	        
 		</div>
 	</div>

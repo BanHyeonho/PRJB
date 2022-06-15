@@ -72,7 +72,7 @@ $(document).ready(function() {
 var f_set_modal = function(){
 	
 	//숨김항목보기 모달
-	var hideItemOption = {
+	 var hideItemOption = {
 			resizable : false,
 			height: 230,
 			width: 460,
@@ -113,8 +113,8 @@ var f_set_modal = function(){
     		}
     	}, null, null, '/my/showFolderView');
     	
-    	
     };
+    
     hideItemOption.buttons[gf_mlg('닫기')] = function(){
     	$(this).dialog('close');
     };
@@ -129,6 +129,16 @@ var f_set_modal = function(){
 	}
 	gf_modal('modal_preview', previewOption);
 	
+	//엔터입력시 실행
+	$('#PWD2').on('keydown', function(e){
+		//엔터
+		if(e.which == 13){
+			e.preventDefault();
+			e.stopPropagation();
+			
+			$('#modal_hideItemShow').dialog('option', 'buttons')[gf_mlg('확인')]();
+		}
+	});
 }
 /*****************************************************************************************************************************************************************
  * 
@@ -1184,10 +1194,10 @@ var f_show_fileView = function(me){
 	$('#pdf_viewer').hide();
 	$('#img_viewer').hide();
 	
-//	var videoTag = $('source[name=videoSource]').parent()[0];
-//	videoTag.pause();
-//	$('source[name=videoSource]').attr('src', '');
-//	videoTag.load();
+	var videoTag = $('source[name=videoSource]').parent()[0];
+	videoTag.pause();
+	$('source[name=videoSource]').attr('src', '');
+	videoTag.load();
 	
 	//pdf
 	if(file_ext == 'pdf'){
@@ -1195,7 +1205,8 @@ var f_show_fileView = function(me){
 		
 		url = '/resources/plugin/pdfjs/web/viewer.html?file=/preview?' + encodeURIComponent('MODULE_CODE=' + moduleCode + '&MENU_URL=' + menuUrl + '&COMM_FILE_ID=' + comm_file_id + '&RANDOM_KEY=' + random_key);
 		$('#pdf_viewer iframe').attr('src', url);
-
+		
+		
 	}
 	//엑셀, 워드 등(pdf변환후 미리보기해야하는 경우)
 	else if(gv_fileExtension.filter(x=> x.CODE_VALUE.toLowerCase() == file_ext && x.ATTRIBUTE3 == '1').length > 0){
@@ -1205,11 +1216,22 @@ var f_show_fileView = function(me){
 		$('#pdf_viewer iframe').attr('src', url);
 		
 	}
-	if(file_ext == 'mp4'){
+	//동영상
+	else if(file_ext == 'mp4'){
 		$('#video_viewer').show();
 		
+		var fileInfo = {
+				COMM_FILE_ID : comm_file_id,
+				RANDOM_KEY : random_key,
+				MODULE_CODE : pageInfo.moduleCode,
+				MENU_URL : pageInfo.menuUrl
+		};			
 		
-//		$('#video_viewer iframe').attr('src', url);
+		fileInfo = encodeURIComponent(JSON.stringify(fileInfo));
+		$('#video_viewer source[name=videoSource]').attr('src', '/st/video?fileInfo=' + fileInfo);
+				
+		videoTag.load();
+		videoTag.play();
 	}
 	//이미지
 	else{

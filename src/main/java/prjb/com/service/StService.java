@@ -50,6 +50,9 @@ public class StService {
 	@Autowired
 	ComDao comDao;
 	
+	@Autowired
+	ComService comService;
+	
 	private static final Logger logger = LoggerFactory.getLogger(StService.class);
 	
 	/**
@@ -62,6 +65,8 @@ public class StService {
 		
 		String commFileId = String.valueOf(fileMap.get("COMM_FILE_ID"));
 		String randomKey = String.valueOf(fileMap.get("RANDOM_KEY"));
+		String moduleCode = String.valueOf(fileMap.get("MODULE_CODE"));
+		String menuUrl = String.valueOf(fileMap.get("MENU_URL"));
 		
 		String contextFileId = String.valueOf(request.getServletContext().getAttribute("COMM_FILE_ID"));
 		String contextRandomKey = String.valueOf(request.getServletContext().getAttribute("RANDOM_KEY"));
@@ -74,9 +79,16 @@ public class StService {
 			fileData = String.valueOf(request.getServletContext().getAttribute("FILE_DATA"));
 		}
 		else {
-			Map param = new HashMap();
-			param.put("COMM_FILE_ID", commFileId);
-			param.put("RANDOM_KEY", randomKey);
+
+			Map logParam = new HashMap();
+			logParam.put("COMM_USER_ID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
+			logParam.put("MODULE_CODE", moduleCode);
+			logParam.put("MENU_URL", menuUrl);
+			logParam.put("CIP", ComUtil.getAddress(request));
+			logParam.put("COMM_FILE_ID", commFileId);
+			logParam.put("RANDOM_KEY", randomKey);
+			
+			Map param = comService.fileDownLog(logParam);
 			Map result = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
 			
 			if(result == null) {
