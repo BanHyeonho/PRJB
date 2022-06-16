@@ -80,7 +80,6 @@ var f_set_modal = function(){
 	}
 	hideItemOption.buttons[gf_mlg('확인')] = function(){
     	
-		var modal = $(this);
     	var fData = new FormData();
     	fData.set('PWD2', gf_securePw( $('#PWD2').val() , $('#publicKey').val() ));
     	fData.set('TITLE_STR', $('#searchParam1').val() );
@@ -104,7 +103,7 @@ var f_set_modal = function(){
     			
     			var resultList = data.result.filter(x=> x.TYPE_CODE == 'FOLDER');
     			f_treeReload( makeTree(resultList, []) );
-    			modal.dialog('close');
+    			$('#modal_hideItemShow').dialog('close');
     		}
     		//아이디, 비밀번호 오류
     		else if( data.state == 'chkPwd2'){
