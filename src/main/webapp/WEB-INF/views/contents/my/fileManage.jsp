@@ -135,6 +135,11 @@
 	            <video style="width:100%; height:100%;" controls preload="metadata">
 					<source name='videoSource' type="video/mp4">					
 				</video>
+				
+				<div id="subtitleContext" class="context no-drag-area" style="display: none;">
+					<ul id="subtitleContextUl">
+					</ul>
+				</div>
 	        </div>
 	        
 		</div>

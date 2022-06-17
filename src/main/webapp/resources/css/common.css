@@ -232,7 +232,8 @@ iframe {
 }
 
 #content{
-	height: 100vh;
+/* 	height: 100vh; */
+	height: 99vh;
 }
 
 #content-title {

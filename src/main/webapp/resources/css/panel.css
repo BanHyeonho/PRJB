@@ -34,6 +34,13 @@
 	height : 44vh;
 	float: left;
 }
+
+/* 타이틀 없을때 */
+.ht-pl-notitle-2-1 {
+	height : 48vh;
+	float: left;
+}
+
 .panel-1{
 	display: inline-block;
     width: 10%;

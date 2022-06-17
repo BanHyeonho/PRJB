@@ -490,6 +490,18 @@ var f_show_fileViewContext = function(e){
 	});
 }
 
+var f_subtitleContext = function(e){
+	$('.context').hide();
+	$('#subtitleContext').css({
+//			'top' : e.pageY
+//		 , 'left' : e.pageX
+		'top' : e.offsetY
+		 , 'left' : e.offsetX
+		 , 'z-index': '9999'
+		 , 'display' : 'block'
+	});
+}
+
 //새폴더
 var f_newFolder = function(e){
 	var currNode = folderTree.getActiveNode();
@@ -983,7 +995,18 @@ var f_makeFile = function(p_file, p_target, p_fileOrigin){
 
 	//자막파일일 경우 리스트에서 숨김
 	if(p_file.FILE_EXTENSION_DIVISION == 'SUB'){
-		div.addClass('hide')
+		div.addClass('hide');
+		
+		var li = $('<li><div><span></span></div></li>');
+		li.find('span').text(p_file.TITLE);
+		li.find('div').on('click', function(){
+			addTrack({
+				COMM_FILE_ID : p_file.FILE_ID,
+				RANDOM_KEY : p_file.RANDOM_KEY,
+			});
+			$('.context').hide();
+		});
+		$('#subtitleContextUl').append(li);
 	}
 	
 	var fileIcon = 'file_folder.png';
@@ -1157,7 +1180,7 @@ var f_openPreview = function(){
 		$('#preview_list div').remove();
 		$('#img_viewer img').attr('src', '');
 		$('#pdf_viewer iframe').attr('src', '');
-		
+		$('#subtitleContextUl li').remove();
 		return true;
 	}
 	, function(data){
@@ -1241,23 +1264,30 @@ var f_show_fileView = function(me){
 			var vttName = $(item).find('p').text().replace('.vtt', '');
 			
 			if(videoName == vttName){
-				
-				var subTitleInfo = {
-						COMM_FILE_ID : $(item).attr('file_id'),
-						RANDOM_KEY : $(item).attr('random_key'),
-				};
-				subTitleInfo = encodeURIComponent(JSON.stringify(subTitleInfo));
-				
-				var track = $('<track>').attr('kind', 'subtitles')
-										.attr('src', '/st/subtitle?subTitleInfo=' + subTitleInfo);
-				track.attr('default', true);
-				$('source[name=videoSource]:eq(0)').after(track);
+				addTrack({
+					COMM_FILE_ID : $(item).attr('file_id'),
+					RANDOM_KEY : $(item).attr('random_key'),
+				}, true);
 			}
 		});
 				
 		var videoTag = $('source[name=videoSource]').parent()[0];
 		videoTag.load();
 		videoTag.play();
+		
+		$('#video_viewer').on('contextmenu', function(e) {
+			f_subtitleContext(e);
+			   return false;
+		});
+		
+		if($('#subtitleContextUl').attr('role') == 'menu'){
+			$('#subtitleContextUl').menu('refresh');	
+		}
+		else{
+			$('#subtitleContextUl').menu();	
+		}
+		
+		
 	}
 	//이미지
 	else{
@@ -1269,6 +1299,24 @@ var f_show_fileView = function(me){
 	}
 	
 }
+//track 태그 추가
+var addTrack = function(p_param, p_default){
+	
+	$('video track').remove();
+	
+	var subTitleInfo = {
+			COMM_FILE_ID : p_param.COMM_FILE_ID,
+			RANDOM_KEY : p_param.RANDOM_KEY,
+	};
+	subTitleInfo = encodeURIComponent(JSON.stringify(subTitleInfo));
+	
+	var track = $('<track>').attr('kind', 'subtitles')
+							.attr('src', '/st/subtitle?subTitleInfo=' + subTitleInfo);
+	track.attr('default', gf_nvl(p_default, false));
+		
+	$('video').append(track);
+}
+
 //미리보기 닫기
 var f_show_fileView_close = function(){
 	$('#video_viewer').hide();

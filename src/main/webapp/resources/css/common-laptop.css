@@ -17,4 +17,9 @@
 	.ht-pl-2-1 {
 		height : 42.5vh;
 	}
+	/* 타이틀 없을때 */
+	.ht-pl-notitle-2-1 {
+		height : 46vh;
+		float: left;
+	}
 }
