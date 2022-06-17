@@ -141,26 +141,29 @@ public class StService {
 		String subTitleInfo = request.getParameter("subTitleInfo");
 		Map subTitleMap = new JSONObject(subTitleInfo.toString()).toMap();
 		
+		String moduleCode = String.valueOf(subTitleMap.get("MODULE_CODE"));
+		String menuUrl = String.valueOf(subTitleMap.get("MENU_URL"));
 		String commFileId = String.valueOf(subTitleMap.get("COMM_FILE_ID"));
 		String randomKey = String.valueOf(subTitleMap.get("RANDOM_KEY"));
+				
+		Map logParam = new HashMap();
+		logParam.put("COMM_USER_ID", String.valueOf(request.getSession().getAttribute("COMM_USER_ID")));
+		logParam.put("MODULE_CODE", moduleCode);
+		logParam.put("MENU_URL", menuUrl);
+		logParam.put("CIP", ComUtil.getAddress(request));
+		logParam.put("COMM_FILE_ID", commFileId);
+		logParam.put("RANDOM_KEY", randomKey);
 		
-		String contextFileId = String.valueOf(request.getServletContext().getAttribute("COMM_FILE_ID"));
-		String contextRandomKey = String.valueOf(request.getServletContext().getAttribute("RANDOM_KEY"));
+		Map param = comService.fileDownLog(logParam);
 		
-		String fileData = null;
-		
-		Map param = new HashMap();
-		param.put("COMM_FILE_ID", commFileId);
-		param.put("RANDOM_KEY", randomKey);
 		Map result = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
 		
 		String filePath = String.valueOf(result.get("FILE_PATH"));
 		String fileNm = String.valueOf(result.get("SERVER_FILE_NAME"));				
-		fileData = filePath + fileNm;
 				
 //		fileData = "C:\\develop\\files\\prjb\\eeVnA4fWJgZdxXMFDQF2vTKpzP7UUqBNkax1GXaoDMrblEaC9jlaW6tjm2Ryn19NwU37EePKVjyMmDYzaLP72w%3D%3D";
 		
-		Resource video = new FileSystemResource(fileData);
+		Resource video = new FileSystemResource(filePath + fileNm);
 		
 		return video;
 	}

@@ -128,6 +128,11 @@ var f_set_modal = function(){
 	}
 	gf_modal('modal_preview', previewOption);
 	
+	//미리보기 모달 종료시 이벤트
+	$("#modal_preview").on( "dialogclose", function( event, ui ) {
+		f_show_fileView_close();
+	});
+	
 	//엔터입력시 실행
 	$('#PWD2').on('keydown', function(e){
 		//엔터
@@ -976,6 +981,11 @@ var f_makeFile = function(p_file, p_target, p_fileOrigin){
 		.attr('FILE_EXTENSION', p_file.FILE_EXTENSION)
 		;
 
+	//자막파일일 경우 리스트에서 숨김
+	if(p_file.FILE_EXTENSION_DIVISION == 'SUB'){
+		div.addClass('hide')
+	}
+	
 	var fileIcon = 'file_folder.png';
 	
 	var fileInfo = {}; 
@@ -1178,6 +1188,7 @@ var f_openPreview = function(){
 	
 }
 
+//파일 미리보기
 var f_show_fileView = function(me){
 
 	var comm_file_id = $(me).attr('file_id');
@@ -1189,14 +1200,7 @@ var f_show_fileView = function(me){
 	
 	var url = '';
 	
-	$('#video_viewer').hide();
-	$('#pdf_viewer').hide();
-	$('#img_viewer').hide();
-	
-	var videoTag = $('source[name=videoSource]').parent()[0];
-	videoTag.pause();
-	$('source[name=videoSource]').attr('src', '');
-	videoTag.load();
+	f_show_fileView_close();
 	
 	//pdf
 	if(file_ext == 'pdf'){
@@ -1228,7 +1232,30 @@ var f_show_fileView = function(me){
 		
 		fileInfo = encodeURIComponent(JSON.stringify(fileInfo));
 		$('#video_viewer source[name=videoSource]').attr('src', '/st/video?fileInfo=' + fileInfo);
+		
+		
+		//기본 자막적용
+		var videoName = $(me).find('p').text().replace('.mp4', '');
+		$.each($('#preview_list .file_img[file_extension=vtt]'), function(idx, item){
+			
+			var vttName = $(item).find('p').text().replace('.vtt', '');
+			
+			if(videoName == vttName){
 				
+				var subTitleInfo = {
+						COMM_FILE_ID : $(item).attr('file_id'),
+						RANDOM_KEY : $(item).attr('random_key'),
+				};
+				subTitleInfo = encodeURIComponent(JSON.stringify(subTitleInfo));
+				
+				var track = $('<track>').attr('kind', 'subtitles')
+										.attr('src', '/st/subtitle?subTitleInfo=' + subTitleInfo);
+				track.attr('default', true);
+				$('source[name=videoSource]:eq(0)').after(track);
+			}
+		});
+				
+		var videoTag = $('source[name=videoSource]').parent()[0];
 		videoTag.load();
 		videoTag.play();
 	}
@@ -1241,4 +1268,16 @@ var f_show_fileView = function(me){
 
 	}
 	
+}
+//미리보기 닫기
+var f_show_fileView_close = function(){
+	$('#video_viewer').hide();
+	$('#pdf_viewer').hide();
+	$('#img_viewer').hide();
+	
+	var videoTag = $('source[name=videoSource]').parent()[0];
+	videoTag.pause();
+	$('source[name=videoSource]').attr('src', '');
+	videoTag.load();
+	$('video track').remove();
 }

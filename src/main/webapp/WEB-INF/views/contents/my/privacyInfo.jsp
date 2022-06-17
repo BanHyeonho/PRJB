@@ -29,10 +29,10 @@
 		
 		<div id='subContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-2'>
 			<div class="menu-div pd-default" id="privacy">
-				<span class="menu-text">나의 정보</span>
+				<span class="menu-text">${pb:msg(pageContext.request, "개인정보")}</span>
 			</div>
 			<div class="menu-div pd-default" id="social">
-				<span class="menu-text">소셜 로그인</span>
+				<span class="menu-text">간편 로그인</span>
 			</div>
 		</div>
 		<div id='privacyContainer' style="display: none;" class='content-area content-panel mg-pl-tp-default pd-pl-default ht-pl-1-1 panel-8-1'>
