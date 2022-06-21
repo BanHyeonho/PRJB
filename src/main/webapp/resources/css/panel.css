@@ -40,6 +40,10 @@
 	height : 48vh;
 	float: left;
 }
+.ht-pl-notitle {
+	height : 97vh;
+	float: left;
+}
 
 .panel-1{
 	display: inline-block;

@@ -1551,3 +1551,148 @@ function gf_toast(text, p_type) {
 	}
 	$.toast(text, option);
 }
+/*****************************************************************************************************************************************************************
+ * 
+ * 날짜 
+ * p_type : today
+ * 
+ *****************************************************************************************************************************************************************/
+function gf_getDate(condition, p_date) {
+	var newDate;
+	var today = new Date();
+	if (p_date != null) {
+		today = new Date(p_date);
+	}
+
+	if (condition == 'today') {
+		newDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+	} else if (condition == 'first') {
+		newDate = new Date(today.getFullYear(), today.getMonth(), 1);
+	} else if (condition == 'last') {
+		newDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+	} else if (condition == 'year') {
+		newDate = new Date(today.getFullYear(), today.getMonth(), 1);
+		return newDate.getFullYear();
+	} else if (condition == 'year_first') {
+		var year = today.getFullYear()
+		return year + "-01-01";
+	} else if (condition == 'year_last') {
+		var year = today.getFullYear()
+		return year + "-12-31";
+	} else if (condition == 'month_first') {
+		newDate = new Date(today.getFullYear(), today.getMonth(), 1);
+		var year = newDate.getFullYear();
+		return year + "-01";
+	} else if (condition == 'month') {
+		newDate = new Date(today.getFullYear(), today.getMonth(), 1);
+		var year = newDate.getFullYear();
+		var month = newDate.getMonth() + 1;
+		if (month < 10)
+			month = "0" + month;
+		return year + "-" + month;
+	} else if (condition == 'today_month') {
+		newDate = new Date(today.getFullYear(), today.getMonth(), 1);
+		var month = newDate.getMonth() + 1;
+		if (month < 10)
+			month = "0" + month;
+		return month;
+	} else if (condition == 'last_month') {
+		newDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+		var year = newDate.getMonth() == 0 ? newDate.getFullYear() - 1 : newDate.getFullYear();
+		var month = newDate.getMonth() == 0 ? 12 : newDate.getMonth();
+		if (month < 10)
+			month = "0" + month;
+		return year + "-" + month;
+	} else if (condition == 'before_one_month') {
+		newDate = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate() + 1);
+	} else if (condition == 'before_two_month') {
+		newDate = new Date(today.getFullYear(), today.getMonth() - 2, today.getDate() + 1);
+	} 
+	else {
+		newDate = condition;
+	}
+
+	var year = newDate.getFullYear();
+	var month = newDate.getMonth() + 1;
+	var day = newDate.getDate();
+
+	if (month < 10)
+		month = "0" + month;
+	if (day < 10)
+		day = "0" + day;
+
+	return year + "-" + month + "-" + day;
+}
+
+//일자 더하기
+Date.prototype.gf_addDays = function(d) {
+	this.setTime(this.getTime() + (d * 24 * 60 * 60 * 1000));
+	return this;
+}
+//시간 더하기
+Date.prototype.gf_addHours = function(h) {
+	this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+	return this;
+}
+
+//0으로 자릿수 맞추는 함수
+function gf_leadingZeros(n, digits) {
+	var zero = '';
+	n = n.toString();
+
+	if (n.length < digits) {
+		for (i = 0; i < digits - n.length; i++)
+			zero += '0';
+	}
+	return zero + n;
+}
+
+/* yyyymmdd 형식의 문자열 리턴 */
+Date.prototype.yyyymmdd = function() {
+	var yyyy = this.getFullYear().toString();
+	var mm = (this.getMonth() + 1).toString();
+	var dd = this.getDate().toString();
+	if (isNaN(yyyy)) {
+		return '';
+	}
+	return yyyy + (mm[1] ? mm : '0' + mm[0]) + (dd[1] ? dd : '0' + dd[0]);
+}
+/* yyyy-mm-dd 형식의 문자열 리턴 */
+Date.prototype.yyyy_mm_dd = function() {
+	var yyyy = this.getFullYear().toString();
+	var mm = (this.getMonth() + 1).toString();
+	var dd = this.getDate().toString();
+	if (isNaN(yyyy)) {
+		return '';
+	}
+	return yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]);
+}
+
+/* yyyymm 형식의 문자열 리턴 */
+Date.prototype.yyyymm = function() {
+	var yyyy = this.getFullYear().toString();
+	var mm = (this.getMonth() + 1).toString();
+	if (isNaN(yyyy)) {
+		return '';
+	}
+	return yyyy + (mm[1] ? mm : '0' + mm[0]);
+}
+/* YYYY-MM 형식의 문자열 리턴 */
+Date.prototype.yyyy_mm = function() {
+	return gf_leadingZeros(this.getFullYear(), 4) + '-' + gf_leadingZeros(this.getMonth() + 1, 2);
+}
+
+/* YYYY-MM-DD hh:mm:ss 형식의 문자열 리턴 */
+Date.prototype.yyyy_mm_dd_hh_mm_ss = function() {
+	var s = gf_leadingZeros(this.getFullYear(), 4) + '-' + gf_leadingZeros(this.getMonth() + 1, 2) + '-' + gf_leadingZeros(this.getDate(), 2) + ' ' + gf_leadingZeros(this.getHours(), 2) + ':' + gf_leadingZeros(this.getMinutes(), 2) + ':' + gf_leadingZeros(this.getSeconds(), 2);
+	return s;
+}
+
+Date.prototype.hh_mm_ss = function() {
+	return gf_leadingZeros(this.getHours(), 2) + ':' + gf_leadingZeros(this.getMinutes(), 2) + ':' + gf_leadingZeros(this.getSeconds(), 2);
+}
+
+Date.prototype.hh_mm = function() {
+	return gf_leadingZeros(this.getHours(), 2) + ':' + gf_leadingZeros(this.getMinutes(), 2);
+}
