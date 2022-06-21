@@ -1492,15 +1492,19 @@ function gf_editorEditable(p_editor, p_value){
 }
 //에디터 수정여부
 function gf_editorModified(p_editor){
-	
-	var stack = $('#' + p_editor).get(0).contentWindow.watchdog.editor.commands.get('undo')._stack;
-	
-	if(stack.length > 0){
-		return true;
-	}
-	else{
+	try{
+		var stack = $('#' + p_editor).get(0).contentWindow.watchdog.editor.commands.get('undo')._stack;
+		
+		if(stack.length > 0){
+			return true;
+		}
+		else{
+			return false;
+		}	
+	}catch(e){
 		return false;
 	}
+	
 }
 //에디터 수정여부
 function gf_editorUndoReset(p_editor){
