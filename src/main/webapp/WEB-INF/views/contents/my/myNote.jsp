@@ -57,11 +57,11 @@
 		
 		
 		<div id='noteEditorContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-1 panel-6-1' style="position: relative;">
-			<form id='noteForm'>
+			<form id='noteForm' onsubmit="return false;">
 				<input type="hidden" id='MY_NOTE_DETAIL_ID' name='MY_NOTE_DETAIL_ID' require='true'>
 				<div class="div-7-1 mg-rt-default3">
 					<label class="form form-require-label">${pb:msg(pageContext.request, "제목")}</label>
-					<input type="text" class="form form-text mg-tp-default" require='true' id='TITLE' name='TITLE' disabled>
+					<input type="text" class="form form-text mg-tp-default" require='true' id='TITLE' name='TITLE' enter-exec='90' disabled>
 				</div>
 				<div class="div-2">
 					<label class="form">${pb:msg(pageContext.request, "수정_시간")}</label>
