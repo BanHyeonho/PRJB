@@ -1258,8 +1258,16 @@ if (typeof Slick === "undefined") {
 		}else if(m.align == 'RIGHT'){
 			alignClass = 'text-right'
 		}
+		
+		/* 수정 start - 2022.06.21. 그리드필수값 컬럼 색상추가 */
+		var headerHtml = "<span class='slick-column-name'>" + m.name + "</span>";
+		if(m.requireYn == '1'){
+			headerHtml = "<span class='slick-column-name grid-require-label'>" + m.name + "</span>";
+		}
+		/* 수정 end - 2022.06.21. 그리드필수값 컬럼 색상추가 */
+		
         var header = $("<div class='ui-state-default slick-header-column' />")
-            .html("<span class='slick-column-name'>" + m.name + "</span>")
+            .html(headerHtml)
             .width(m.width - headerColumnWidthDiff)
             .attr("id", "" + uid + m.id)
             .attr("title", m.toolTip || "")

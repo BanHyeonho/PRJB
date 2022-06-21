@@ -1,55 +1,43 @@
 /**
  * 그리드관리
  */
-var gridPk = function(){
-	this.MENU_CODE;
-	this.MENU_NAME;
-	this.COMM_GRID_MASTER_ID;
-	this.COMM_GRID_DETAIL_ID;
-};
-	
 $(document).ready(function() {
 	
-	menuGrid = gf_gridInit('menuGrid');
+	//그리드셋팅
+	f_setMenuGrid();
+	f_setMasterGrid();
+	f_setContextGrid();
+	f_setDetailGrid();
+	f_setComboPopupGrid();
 	
-	masterGrid = gf_gridInit('masterGrid', {
-    	'defaultInsert' : {'MENU_CODE' : gridPk
-    						,'MENU_NAME' : gridPk
-    						,'FILTER_YN' : '1'
-    						, 'SORT_YN' : '1'
-    						, 'TREE_YN' : '0'}
+    f_search();
+});
+/*****************************************************************************************************************************************************************
+ * 
+ * 그리드 셋팅
+ * 
+ *****************************************************************************************************************************************************************/
+var f_setMenuGrid = function(){
+	menuGrid = gf_gridInit('menuGrid',{
+		forceFitColumns: true
     });
-	contextGrid = gf_gridInit('contextGrid');
-	
-	detailGrid = gf_gridInit('detailGrid',{
-		forceFitColumns: false,
-    	'defaultInsert' : {'USE_YN' : '1'
-    					,'REQUIRE_YN' : '0'
-						,'FIXED_YN' : '0'
-						,'HIDDEN_YN' : '0'
-						,'WIDTH' : '100'
-						,'TEXT_ALIGN' : 'CENTER'
-    					,'COMM_GRID_MASTER_ID' : gridPk
-    					}
-    });
-	
-	comboPopupGrid = gf_gridInit('comboPopupGrid',{
-		forceFitColumns: false,
-    	'defaultInsert' : {'USE_YN' : '1'
-    					 ,'COMM_GRID_DETAIL_ID' : gridPk}
-    });
-	
 	
 	menuGrid.onSelectedRowsChanged.subscribe(function (e, args) {
+		
+		var masterData = gf_gridSaveData(masterGrid);
+		var contextData = gf_gridSaveData(contextGrid);
+		var detailData = gf_gridSaveData(detailGrid);
+		var comboPopupData = gf_gridSaveData(comboPopupGrid);
 		
 		if(gridEventIgnore){
 			gridEventIgnore = false;
 			return false;
 		}
-		else if(gf_gridSaveData(masterGrid).length > 0
-		|| gf_gridSaveData(detailGrid).length > 0 
-		|| gf_gridSaveData(comboPopupGrid).length > 0
-		){
+		else if(masterData.state != 'empty'
+			 || contextData.state != 'empty' 
+			 || detailData.state != 'empty'
+			 || comboPopupData.state != 'empty' 
+			 ){
 		
 			if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
 				gridEventIgnore = true;	
@@ -60,29 +48,52 @@ $(document).ready(function() {
 		else if(args.rows.length == 0){
 			return false;
 		}
-		
-		var row = args.rows[0];
-		var grid = args.grid;
-		var preRow = args.previousSelectedRows[0];
-		var selectedRowData = grid.getData().getItem(row);
-		var pk = selectedRowData.MENU_CODE;
-		
-		gridPk.prototype.constructor.MENU_NAME = selectedRowData.MENU_NAME;
-		gridPk.prototype.constructor.MENU_CODE = pk;
-		
+				
 		//마스터 조회
-		f_masterSearch(pk, preRow);
+		f_masterSearch();
     });
-    
+}
+
+var f_setMasterGrid = function(){
+	masterGrid = gf_gridInit('masterGrid', {
+		forceFitColumns: true,
+		'addRowBefore' : function(){
+			var contextData = gf_gridSaveData(contextGrid);
+			var detailData = gf_gridSaveData(detailGrid);
+			var comboPopupData = gf_gridSaveData(comboPopupGrid);
+			
+			if(contextData.state == 'empty'
+			&& detailData.state == 'empty'
+			&& comboPopupData.state == 'empty'
+			){
+				return true;
+			}
+			else{
+				gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
+				return false;
+			}
+			
+		},
+    	'defaultInsert' : {'MENU_CODE' : function(){return gf_gridSelectVal(menuGrid, 'MENU_CODE')}
+    						,'MENU_NAME' : function(){return gf_gridSelectVal(menuGrid, 'MENU_NAME')}
+    						,'FILTER_YN' : '1'
+    						, 'SORT_YN' : '1'
+    						, 'TREE_YN' : '0'}
+    });
+	
 	masterGrid.onSelectedRowsChanged.subscribe(function (e, args) {
+		
+		var contextData = gf_gridSaveData(contextGrid);
+		var detailData = gf_gridSaveData(detailGrid);
+		var comboPopupData = gf_gridSaveData(comboPopupGrid);
 		
 		if(gridEventIgnore){
 			gridEventIgnore = false;
 			return false;
 		}
-		else if(gf_gridSaveData(detailGrid).length > 0
-			 || gf_gridSaveData(contextGrid).length > 0
-			 || gf_gridSaveData(comboPopupGrid).length > 0
+		else if(contextData.state != 'empty' 
+			 || detailData.state != 'empty' 
+			 || comboPopupData.state != 'empty' 
 				){
 			if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
 				gridEventIgnore = true;	
@@ -94,28 +105,61 @@ $(document).ready(function() {
 			return false;
 		}
 		
-		var row = args.rows[0];
-		var grid = args.grid;
-		var preRow = args.previousSelectedRows[0];
-		var selectedRowData = grid.getData().getItem(row);
-		var pk = selectedRowData.COMM_GRID_MASTER_ID;
-		gridPk.prototype.constructor.COMM_GRID_MASTER_ID = pk;
+		//상세조회
+		f_contextSearch();
 		
 		//상세조회
-		f_contextSearch(pk, preRow);
-		
-		//상세조회
-		f_detailSearch(pk, preRow);
+		f_detailSearch();
+    });
+}
+
+var f_setContextGrid = function(){
+	contextGrid = gf_gridInit('contextGrid',{
+		forceFitColumns: true
+	});
+}
+
+var f_setDetailGrid = function(){
+	detailGrid = gf_gridInit('detailGrid',{
+		forceFitColumns: false,
+		'addRowBefore' : function(){
+			var contextData = gf_gridSaveData(contextGrid);
+			var masterData = gf_gridSaveData(masterGrid);
+			var comboPopupData = gf_gridSaveData(comboPopupGrid);
+			
+			if(contextData.state == 'empty'
+			&& masterData.state == 'empty'
+			&& comboPopupData.state == 'empty'
+			){
+				return true;
+			}
+			else{
+				gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
+				return false;
+			}
+			
+		},
+    	'defaultInsert' : {'USE_YN' : '1'
+    					,'REQUIRE_YN' : '0'
+						,'FIXED_YN' : '0'
+						,'HIDE_YN' : '0'
+						,'WIDTH' : '100'
+						,'TEXT_ALIGN' : 'CENTER'
+						,'FIELD_TYPE' : 'READ_ONLY'
+    					,'COMM_GRID_MASTER_ID' : function(){return gf_gridSelectVal(masterGrid, 'COMM_GRID_MASTER_ID')}
+    					}
     });
 	
 	detailGrid.onSelectedRowsChanged.subscribe(function (e, args) {
+		
+		var comboPopupData = gf_gridSaveData(comboPopupGrid);
 		
 		if(gridEventIgnore){
 			gridEventIgnore = false;
 			return false;
 		}
-		else if(gf_gridSaveData(comboPopupGrid).length > 0
-				){
+		else if(comboPopupData.state != 'empty' 
+			 ){
 			if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
 				gridEventIgnore = true;	
 				detailGrid.setSelectedRows(args.previousSelectedRows);
@@ -125,22 +169,44 @@ $(document).ready(function() {
 		else if(args.rows.length == 0){
 			return false;
 		}
-		
-		var row = args.rows[0];
-		var grid = args.grid;
-		var preRow = args.previousSelectedRows[0];
-		var selectedRowData = grid.getData().getItem(row);
-		var pk = selectedRowData.COMM_GRID_DETAIL_ID;
-		gridPk.prototype.constructor.COMM_GRID_DETAIL_ID = pk;
-		
+				
 		//상세조회
-		f_comboPopupSearch(pk, preRow);
+		f_comboPopupSearch();
 		
     });
-        
-    f_search();
-});
-	
+
+}
+
+var f_setComboPopupGrid = function(){
+	comboPopupGrid = gf_gridInit('comboPopupGrid',{
+		forceFitColumns: false,
+		'addRowBefore' : function(){
+			var contextData = gf_gridSaveData(contextGrid);
+			var masterData = gf_gridSaveData(masterGrid);
+			var detailData = gf_gridSaveData(detailGrid);
+			
+			if(contextData.state == 'empty'
+			&& masterData.state == 'empty'
+			&& detailData.state == 'empty'
+			){
+				return true;
+			}
+			else{
+				gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
+				return false;
+			}
+			
+		},
+    	'defaultInsert' : {'USE_YN' : '1'
+    					 ,'COMM_GRID_DETAIL_ID' : function(){return gf_gridSelectVal(detailGrid, 'COMM_GRID_DETAIL_ID')}
+    	}
+    });
+}
+/*****************************************************************************************************************************************************************
+ * 
+ * 버튼 기능
+ * 
+ *****************************************************************************************************************************************************************/
 //다국어등록
 var f_mlg_regist = function(){
 
@@ -151,7 +217,17 @@ var f_mlg_regist = function(){
 		fData.set('MLG_COLUMN', 'MLG_CODE');
 		fData.set('COMPARE_COLUMN', 'GRID_YN');
   		gf_ajax( fData
-  				, null
+  				, function(){
+  			
+					var detailData = gf_gridSaveData(detailGrid);
+					
+					if(detailData.state != 'empty'){
+						if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_진행_하시겠습니까?'))){
+							return false;
+						}
+					}
+					return true;
+				}
   				, function(data){
   					
   					gf_toast(gf_mlg('저장_되었습니다'), 'success');
@@ -167,13 +243,18 @@ var f_search = function(){
 	gf_ajax( fData
 			, function(){
 				
-				if((gf_gridSaveData(masterGrid).length > 0
-				|| gf_gridSaveData(detailGrid).length > 0
-				|| gf_gridSaveData(contextGrid).length > 0
-				|| gf_gridSaveData(comboPopupGrid).length > 0
-				)
+				var masterData = gf_gridSaveData(masterGrid);
+				var contextData = gf_gridSaveData(contextGrid);
+				var detailData = gf_gridSaveData(detailGrid);
+				var comboPopupData = gf_gridSaveData(comboPopupGrid);
+		
+				if(masterData.state != 'empty'
+				|| contextData.state != 'empty'
+				|| detailData.state != 'empty'
+				|| comboPopupData.state != 'empty'
 				){
 					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
+						gridEventIgnore = true;
 						return false;
 					}
 				}
@@ -192,11 +273,13 @@ var f_search = function(){
 	
 }
   	
-var f_masterSearch = function(pk, preRow){
+var f_masterSearch = function(){
+	
+	var MENU_CODE = gf_nvl( gf_gridSelectVal(menuGrid, 'MENU_CODE') , '');
 	
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'com.S_COMM_GRID_MASTER');
-	fData.set('MENU_CODE', pk);
+	fData.set('MENU_CODE', MENU_CODE);
 	
 	gf_ajax( fData
 			, function(){
@@ -205,6 +288,10 @@ var f_masterSearch = function(pk, preRow){
 				gf_gridClear(contextGrid);
 				gf_gridClear(detailGrid);
 				gf_gridClear(comboPopupGrid);
+				
+				if( MENU_CODE == ''){
+					return false;
+				}
 				
 			}
 			, function(data){
@@ -215,21 +302,22 @@ var f_masterSearch = function(pk, preRow){
 	
 }
 	
-var f_contextSearch = function(pk, preRow){
+var f_contextSearch = function(){
   	
-	if(gf_nvl(pk, '') == ''){
-		gf_gridClear(contextGrid);
-		return false;
-	}
+	var COMM_GRID_MASTER_ID = gf_nvl( gf_gridSelectVal(masterGrid, 'COMM_GRID_MASTER_ID') , '');
+	
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'com.S_COMM_GRID_CONTEXT');
-	fData.set('COMM_GRID_MASTER_ID', pk);
+	fData.set('COMM_GRID_MASTER_ID', COMM_GRID_MASTER_ID);
 	
 	gf_ajax( fData
 			, function(){
 		
 				gf_gridClear(contextGrid);
 				
+				if( COMM_GRID_MASTER_ID == ''){
+					return false;
+				}
 			}
 			, function(data){
 				
@@ -239,21 +327,23 @@ var f_contextSearch = function(pk, preRow){
 	
 }
 	
-var f_detailSearch = function(pk, preRow){
-
-	if(gf_nvl(pk, '') == ''){
-		gf_gridClear(detailGrid);
-		return false;
-	}
+var f_detailSearch = function(){
+	
+	var COMM_GRID_MASTER_ID = gf_nvl( gf_gridSelectVal(masterGrid, 'COMM_GRID_MASTER_ID') , '');
+	
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'com.S_COMM_GRID_DETAIL');
-	fData.set('COMM_GRID_MASTER_ID', pk);
+	fData.set('COMM_GRID_MASTER_ID', COMM_GRID_MASTER_ID);
 	
 	gf_ajax( fData
 			, function(){
 		
 				gf_gridClear(detailGrid);
 				gf_gridClear(comboPopupGrid);
+				
+				if( COMM_GRID_MASTER_ID == ''){
+					return false;
+				}
 				
 			}
 			, function(data){
@@ -264,20 +354,22 @@ var f_detailSearch = function(pk, preRow){
 	
 }
   	
-var f_comboPopupSearch = function(pk, preRow){
+var f_comboPopupSearch = function(){
+		
+	var COMM_GRID_DETAIL_ID = gf_nvl( gf_gridSelectVal(detailGrid, 'COMM_GRID_DETAIL_ID') , '');
 	
-	if(gf_nvl(pk, '') == ''){
-		gf_gridClear(comboPopupGrid);
-		return false;
-	}
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'com.S_COMM_GRID_COMBO_POPUP');
-	fData.set('COMM_GRID_DETAIL_ID', pk);
+	fData.set('COMM_GRID_DETAIL_ID', COMM_GRID_DETAIL_ID);
 	
 	gf_ajax( fData
 			, function(){
 		
 				gf_gridClear(comboPopupGrid);
+				
+				if( COMM_GRID_DETAIL_ID == ''){
+					return false;
+				}
 				
 			}
 			, function(data){
@@ -294,55 +386,74 @@ var f_save = function(){
 	var detailData = gf_gridSaveData(detailGrid);
 	var comboPopupData = gf_gridSaveData(comboPopupGrid);
 	
+	if(!(masterData.state == 'success')
+	&& !(contextData.state == 'success')
+	&& !(detailData.state == 'success')
+	&& !(comboPopupData.state == 'success')
+	){
+		
+		if( masterData.state == 'fail'){
+			gf_toast(masterData.reason, 'info');
+		}
+		else if(contextData.state == 'fail'){
+			gf_toast(contextData.reason, 'info');
+		}
+		else if(detailData.state == 'fail'){
+			gf_toast(detailData.reason, 'info');
+		}
+		else if(comboPopupData.state == 'fail'){
+			gf_toast(comboPopupData.reason, 'info');
+		}
+		else{
+			gf_toast(masterData.reason, 'info');
+		}
+		
+		return false;
+	}
+	
 	var fData = new FormData();
 
 	gf_ajax( fData
 			, function(){
 				
-				if(masterData.length == 0 && contextData.length == 0 && detailData.length == 0 && comboPopupData.length == 0){
-				
-					gf_toast(gf_mlg('저장할_데이터가_없습니다'), 'info');
-					return false;
+					
+				//마스터그리드
+				if(masterData.data.length > 0){
+					masterData.data.unshift({
+						 'TABLE_NAME' : 'COMM_GRID_MASTER'
+						,'QUERY_ID' : 'com.COMM_QUERY'
+					});
+					fData.set('masterGrid', JSON.stringify(masterData.data));
 				}
-				else{
-					
-					//마스터그리드
-					if(masterData.length > 0){
-						masterData.unshift({
-  							 'TABLE_NAME' : 'COMM_GRID_MASTER'
-  							,'QUERY_ID' : 'com.COMM_QUERY'
-  						});
-  						fData.set('masterGrid', JSON.stringify(masterData));
-					}
-					
-					//컨텍스트그리드
-					if(contextData.length > 0){
-						contextData.unshift({
-  							 'TABLE_NAME' : 'COMM_GRID_CONTEXT'
-  							,'QUERY_ID' : 'com.COMM_GRID_CONTEXT'
-  						});
-  						fData.set('contextGrid', JSON.stringify(contextData));
-					}
 				
-					//디테일그리드
-					if(detailData.length > 0){
-						detailData.unshift({
-  							 'TABLE_NAME' : 'COMM_GRID_DETAIL'
-  							,'QUERY_ID' : 'com.COMM_QUERY'
-  						});
-  						fData.set('detailGrid', JSON.stringify(detailData));
-					}
-					
-					//콤보,팝업 설정그리드
-					if(comboPopupData.length > 0){
-						comboPopupData.unshift({
-  							 'TABLE_NAME' : 'COMM_GRID_COMBO_POPUP'
-  							,'QUERY_ID' : 'com.COMM_QUERY'
-  						});
-  						fData.set('comboPopupGrid', JSON.stringify(comboPopupData));
-					}
-				
+				//컨텍스트그리드
+				if(contextData.data.length > 0){
+					contextData.data.unshift({
+						 'TABLE_NAME' : 'COMM_GRID_CONTEXT'
+						,'QUERY_ID' : 'com.COMM_GRID_CONTEXT'
+					});
+					fData.set('contextGrid', JSON.stringify(contextData.data));
 				}
+			
+				//디테일그리드
+				if(detailData.data.length > 0){
+					detailData.data.unshift({
+						 'TABLE_NAME' : 'COMM_GRID_DETAIL'
+						,'QUERY_ID' : 'com.COMM_QUERY'
+					});
+					fData.set('detailGrid', JSON.stringify(detailData.data));
+				}
+				
+				//콤보,팝업 설정그리드
+				if(comboPopupData.data.length > 0){
+					comboPopupData.data.unshift({
+						 'TABLE_NAME' : 'COMM_GRID_COMBO_POPUP'
+						,'QUERY_ID' : 'com.COMM_QUERY'
+					});
+					fData.set('comboPopupGrid', JSON.stringify(comboPopupData.data));
+				}
+				
+				
 			}
 			, function(data){
 				

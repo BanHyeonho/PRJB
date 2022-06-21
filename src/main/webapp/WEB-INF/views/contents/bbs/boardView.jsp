@@ -10,11 +10,11 @@
 <meta name="google" content="notranslate">
 <style type="text/css">
 #editor{
-	height: 98%;
+	height: 91%;
 }
 @media screen and (max-width: 1280px) {
 	#editor{
-		height: 97%;
+		height: 90%;
 	}
 }
 </style>

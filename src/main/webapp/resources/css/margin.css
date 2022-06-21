@@ -15,6 +15,23 @@
 .mg-default2{
 	margin: 20px;
 }
+
+.mg-tp-default1{
+	margin-top: 15px;
+}
+.mg-lt-default1{
+	margin-left: 15px;
+}
+.mg-rt-default1{
+	margin-right: 15px;
+}
+.mg-bt-default1{
+	margin-bottom: 15px;
+}
+.mg-default1{
+	margin: 15px;
+}
+
 .mg-tp-default{
 	margin-top: 10px;
 }

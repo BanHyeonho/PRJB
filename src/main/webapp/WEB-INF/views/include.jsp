@@ -11,26 +11,29 @@
 <link  href="/plugin/jquery-ui-1.13.0/jquery-ui.css?v=${pb:jsNow()}" rel="stylesheet" />
 
 <!-- SlickGrid -->
-<script src="/plugin/slickGrid/lib/jquery.event.drag-2.3.0.js?v=${pb:jsNow()}"></script>
-<%-- <script src="/plugin/slickGrid/lib/jquery.event.drop-2.3.0.js?v=${pb:jsNow()}"></script> --%>
-<script src="/plugin/slickGrid/slick.core.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/slick.dataview.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/slick.editors.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/slick.formatters.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/slick.grid.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/slick.groupitemmetadataprovider.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/slick.remotemodel.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/lib/select2.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/plugins/slick.checkboxselectcolumn.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/plugins/slick.rowselectionmodel.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/plugins/slick.autotooltips.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/plugins/slick.cellrangedecorator.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/plugins/slick.cellrangeselector.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/plugins/slick.cellexternalcopymanager.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/plugins/slick.cellselectionmodel.js?v=${pb:jsNow()}"></script>
-<script src="/plugin/slickGrid/plugins/slick.resizer.js?v=${pb:jsNow()}"></script>
-<link  href="/plugin/slickGrid/slick.grid.css?v=${pb:jsNow()}" rel="stylesheet" />
-<link  href="/plugin/slickGrid/css/select2.css?v=${pb:jsNow()}" rel="stylesheet" />
+<!-- 그리드설정 -->
+<c:if test="${gridData.size() > 0}">
+	<script src="/plugin/slickGrid/lib/jquery.event.drag-2.3.0.js?v=${pb:jsNow()}"></script>
+	<%-- <script src="/plugin/slickGrid/lib/jquery.event.drop-2.3.0.js?v=${pb:jsNow()}"></script> --%>
+	<script src="/plugin/slickGrid/slick.core.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/slick.dataview.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/slick.editors.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/slick.formatters.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/slick.grid.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/slick.groupitemmetadataprovider.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/slick.remotemodel.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/lib/select2.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/slick.checkboxselectcolumn.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/slick.rowselectionmodel.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/slick.autotooltips.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/slick.cellrangedecorator.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/slick.cellrangeselector.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/slick.cellexternalcopymanager.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/slick.cellselectionmodel.js?v=${pb:jsNow()}"></script>
+	<script src="/plugin/slickGrid/plugins/slick.resizer.js?v=${pb:jsNow()}"></script>
+	<link  href="/plugin/slickGrid/slick.grid.css?v=${pb:jsNow()}" rel="stylesheet" />
+	<link  href="/plugin/slickGrid/css/select2.css?v=${pb:jsNow()}" rel="stylesheet" />
+</c:if>
 
 <!-- 암호화 -->
 <script src="/script/jsencrypt.min.js?v=${pb:jsNow()}"></script>
@@ -53,10 +56,11 @@
 <link  href="/css/common-laptop.css?v=${pb:jsNow()}" rel="stylesheet" />
 <script src="/script/common.js?v=${pb:jsNow()}"></script>
 
-<!-- 다국어/버튼 -->
+<!-- 다국어/버튼 , 사용자id -->
 <script type="text/javascript">
 const mlg = ${MLG};
 const btnList = JSON.parse(gf_nvl('${btnList}', '[]'));
+const gv_commUserId = '${sessionScope.COMM_USER_ID}';
 </script>
 
 <!-- 그리드설정 -->

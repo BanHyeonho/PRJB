@@ -60,6 +60,12 @@ var gridList = [];
 					<c:if test="${item.get(\"PASTE_YN\") == '1'}">
 					,pasteYn: '1'
 					</c:if>
+					<c:if test="${item.get(\"REQUIRE_YN\") == '1'}">
+					,requireYn: '1'
+					</c:if>
+					<c:if test="${item.get(\"FIXED_YN\") == '1'}">
+					,fixedYn: '1'
+					</c:if>
 					<c:choose>
 						<c:when test="${item.get(\"HIDE_YN\") == '1'}">
 						,cssClass: "grid_cell_hidden"
@@ -111,6 +117,12 @@ var gridList = [];
 							</c:if>
 							<c:if test="${item.get(\"PASTE_YN\") == '1'}">
 							,pasteYn: '1'
+							</c:if>
+							<c:if test="${item.get(\"REQUIRE_YN\") == '1'}">
+							,requireYn: '1'
+							</c:if>
+							<c:if test="${item.get(\"FIXED_YN\") == '1'}">
+							,fixedYn: '1'
 							</c:if>
 							<c:choose>
 								<c:when test="${item.get(\"HIDE_YN\") == '1'}">

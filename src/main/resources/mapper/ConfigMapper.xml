@@ -18,32 +18,33 @@
 	<sql id="P_COMM_GRID_CONTEXT">
 		MERGE INTO COMM_GRID_CONTEXT A
     	USING DUAL
-           ON (A.COMM_GRID_MASTER_ID = ${@prjb.com.util.ComUtil@sqlInjectionSafe(COMM_GRID_MASTER_ID)} AND A.FUNCTION_CODE = ${@prjb.com.util.ComUtil@sqlInjectionSafe(FUNCTION_CODE)})
+           ON (A.COMM_GRID_MASTER_ID = ${@prjb.com.util.ComUtil@sqlInjectionSafe(COMM_GRID_MASTER_ID)} AND A.FUNCTION_CODE = '${@prjb.com.util.ComUtil@sqlInjectionSafe(FUNCTION_CODE)}')
     	 WHEN MATCHED THEN
-			UPDATE SET A.USE_YN = ${@prjb.com.util.ComUtil@sqlInjectionSafe(USE_YN)}
-					 , A.DESCRIPTION = ${@prjb.com.util.ComUtil@sqlInjectionSafe(DESCRIPTION)}
+			UPDATE SET A.USE_YN = '${@prjb.com.util.ComUtil@sqlInjectionSafe(USE_YN)}'
+					 , A.DESCRIPTION = '${@prjb.com.util.ComUtil@sqlInjectionSafe(DESCRIPTION)}'
 					 , A.MID = ${@prjb.com.util.ComUtil@sqlInjectionSafe(MID)}
 					 , A.MDT = SYSDATE
-					 , A.MIP = ${@prjb.com.util.ComUtil@sqlInjectionSafe(MIP)}
+					 , A.MIP = '${@prjb.com.util.ComUtil@sqlInjectionSafe(MIP)}'
     	 WHEN NOT MATCHED THEN
         	INSERT (A.COMM_GRID_CONTEXT_ID, A.COMM_GRID_MASTER_ID, A.FUNCTION_CODE, A.USE_YN, A.DESCRIPTION, A.CID, A.CDT, A.CIP, A.MID, A.MDT, A.MIP)
         	VALUES (COMM_GRID_CONTEXT_S.NEXTVAL
         		  , ${@prjb.com.util.ComUtil@sqlInjectionSafe(COMM_GRID_MASTER_ID)}
-        		  , ${@prjb.com.util.ComUtil@sqlInjectionSafe(FUNCTION_CODE)}
-        		  , ${@prjb.com.util.ComUtil@sqlInjectionSafe(USE_YN)}
-        		  , ${@prjb.com.util.ComUtil@sqlInjectionSafe(DESCRIPTION)}
+        		  , '${@prjb.com.util.ComUtil@sqlInjectionSafe(FUNCTION_CODE)}'
+        		  , '${@prjb.com.util.ComUtil@sqlInjectionSafe(USE_YN)}'
+        		  , '${@prjb.com.util.ComUtil@sqlInjectionSafe(DESCRIPTION)}'
         		  , ${@prjb.com.util.ComUtil@sqlInjectionSafe(MID)}
         		  , SYSDATE
-        		  , ${@prjb.com.util.ComUtil@sqlInjectionSafe(MIP)}
+        		  , '${@prjb.com.util.ComUtil@sqlInjectionSafe(MIP)}'
         		  , ${@prjb.com.util.ComUtil@sqlInjectionSafe(MID)}
         		  , SYSDATE
-        		  , ${@prjb.com.util.ComUtil@sqlInjectionSafe(MIP)})
+        		  , '${@prjb.com.util.ComUtil@sqlInjectionSafe(MIP)}')
 	</sql>
 	
 	
 	<!-- clob -->
 	<resultMap id="ClobMap" type="hashMap" >
 	    <result property="BOARD_CONTENTS" column="BOARD_CONTENTS" jdbcType="CLOB" javaType="java.lang.String"/>
+	    <result property="NOTE_CONTENTS" column="NOTE_CONTENTS" jdbcType="CLOB" javaType="java.lang.String"/>
 	</resultMap>
 	
 	<!-- blob -->

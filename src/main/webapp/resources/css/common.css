@@ -253,6 +253,9 @@ iframe {
 	width : 100%;
 	font-size: 16px;
 }
+.grid-require-label{
+	color : #EC7B7E;
+}
 .form-require-label{
 	color : #EC7B7E;
 }

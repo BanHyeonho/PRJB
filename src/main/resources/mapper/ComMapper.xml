@@ -107,6 +107,7 @@
 			 , A.ATTRIBUTE1
 		  FROM COMM_FILE A
 		 WHERE A.MODULE_CODE 	= #{MODULE_CODE}
+		   AND A.MENU_URL 		= #{MENU_URL}
 		   AND A.GROUP_ID 		= #{GROUP_ID}
 		 ORDER BY A.COMM_FILE_ID ASC
 	</select>
@@ -1212,7 +1213,7 @@
 					</otherwise>
 				</choose>	
 			</foreach>
-		 WHERE ${@prjb.com.util.ComUtil@sqlInjectionSafe(WHERE_QUERY)}
+		 WHERE ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_PK)} = #{TABLE_PK_VAL}
 	</update>
 	
 	<!-- 공통DELETE -->
@@ -1220,7 +1221,7 @@
 		/* D_COMM_QUERY */
 		DELETE
 		  FROM ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}
-		 WHERE ${@prjb.com.util.ComUtil@sqlInjectionSafe(WHERE_QUERY)}
+		 WHERE ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_PK)} = #{TABLE_PK_VAL}
 	</delete>
 	
 	<!-- 각사용자별 암호화salt조회 -->

@@ -370,7 +370,8 @@ function gf_gridInit(gridDiv, option) {
 				for(let i = 0; i < key.length; i++){
 					if(typeof defaultInsertOption[key[i]] === 'function'){
 						
-						let value = defaultInsertOption[key[i]][key[i]];
+//						let value = defaultInsertOption[key[i]][key[i]];
+						let value = defaultInsertOption[key[i]]();
 						if( gf_nvl(value, '') == ''){
 							gf_toast(gf_mlg('저장할_마스터ID가_없습니다'), 'info');	//저장할 마스터ID가 없습니다.
 							return false;
@@ -618,28 +619,58 @@ function gf_gridFooter(cell, grid) {
 
 //그리드 저장데이터 생성
 function gf_gridSaveData(grid){
-	
+	var result = {
+			state : 'fail',
+			reason : '',
+			data : []
+	};
 	//그리드 미생성시
 	if(!(grid instanceof Slick.Grid)){
-		return [];
+		return result;
 	}
 	
 	grid.getEditorLock().commitCurrentEdit();
 	var saveData = [];
 
-	$.each(grid.getData().getItems(),function(index, item){
+	var requireCol = grid.getColumns().filter(x=> x.requireYn == '1');
+	
+	var getItems = grid.getData().getItems();
+	for(var i=0; i<getItems.length; i++){
+		var item = getItems[i];
+		
+		//필수값 체크
+		for(var j=0; j<requireCol.length; j++){
+			if(item[ requireCol[j].id ] == ''){
+				result.reason = gf_mlg('필수_값을_입력하세요',{
+					param : requireCol[j].name
+				});
+				return result;
+			}
+		}
+		
 		//INSERT, UPDATE
 		if(gf_nvl(item['gState'], '') != ''){
 			saveData.push(item);
 		}
-	});
+	}	
+	
 	var deletedData = new Function('return ' + grid.getContainerNode().id + 'DataDel')();
 	$.each(deletedData,function(index, item){
 		//DELETE
 		item['gState'] = 'deleted';
 		saveData.push(item);
 	});
-	return saveData;
+	
+	if(saveData.length == 0){
+		result.state = 'empty';
+		result.reason = gf_mlg('저장할_데이터가_없습니다');
+	}
+	else{
+		result.state = 'success';
+	}
+	
+	result.data = saveData;
+	return result;
 }
 
 function gf_gridClear(grid){
@@ -669,10 +700,14 @@ function gf_gridRowData(grid, rId, columnNm){
 		return grid.getData().getItems()[rId];
 	}
 	else{
-		return grid.getData().getItems()[rId][columnNm];
+		return gf_nvl(grid.getData().getItems()[rId], '')[columnNm];
 	}	
 }
 
+function gf_gridSelectVal(grid, columnNm){
+	grid.setSelectedRows( [grid.getSelectedRows()[0]] );
+	return gf_gridRowData(grid, grid.getSelectedRows()[0], columnNm);
+}
 /*****************************************************************************************************************************************************************
  * 
  * 그리드 컨텍스트기능
@@ -741,14 +776,25 @@ function gf_gridAddRow(gridDiv, cell) {
 	
 	grid.getEditorLock().commitCurrentEdit();
 	
+	
+	let addRowBeforeFunc = grid.getOptions().addRowBefore;
+	
+	if(typeof addRowBeforeFunc === 'function'){ 
+		if(!addRowBeforeFunc()){
+			gf_gridRefresh(gridDiv);
+			return false;
+		}
+	}
+	
 	let defaultInsertOption = grid.getOptions().defaultInsert;
 	let defaultInsert = {};
 	
 	let key = Object.keys(gf_nvl(defaultInsertOption, {}));
 	for(let i = 0; i < key.length; i++){
 		if(typeof defaultInsertOption[key[i]] === 'function'){
-			
-			let value = defaultInsertOption[key[i]][key[i]];
+					
+//			let value = defaultInsertOption[key[i]][key[i]];
+			let value = defaultInsertOption[key[i]]();
 			if( gf_nvl(value, '') == ''){
 				gf_toast(gf_mlg('저장할_마스터ID가_없습니다'), 'info');	//저장할 마스터ID가 없습니다.
 				return false;
@@ -775,9 +821,17 @@ function gf_gridAddRow(gridDiv, cell) {
 	} else {
 		grid.getData().getItems().splice((cell.row + 1) , 0, items); 
 	}
-	grid.getSelectionModel().setSelectedRanges("");
+
 	grid.getData().setItems(grid.getData().getItems());	
 	gf_gridRefresh(gridDiv);
+	
+	if(cell != null){
+		grid.setSelectedRows( [ cell.row +1] );
+	}
+	else{
+		grid.setSelectedRows( [ grid.getData().getItemCount() -1] );
+	}
+	
 }
 
 //그리드 여러행추가
@@ -788,6 +842,15 @@ function gf_gridAddMultiRow(gridDiv, cell) {
 	let grid = new Function('return ' + gridDiv)();
 	grid.getEditorLock().commitCurrentEdit();
 	
+	let addRowBeforeFunc = grid.getOptions().addRowBefore;
+	
+	if(typeof addRowBeforeFunc === 'function'){ 
+		if(!addRowBeforeFunc()){
+			gf_gridRefresh(gridDiv);
+			return false;
+		}
+	}
+	
 	let defaultInsertOption = grid.getOptions().defaultInsert;
 	let defaultInsert = {};
 	
@@ -795,7 +858,8 @@ function gf_gridAddMultiRow(gridDiv, cell) {
 	for(let i = 0; i < key.length; i++){
 		if(typeof defaultInsertOption[key[i]] === 'function'){
 			
-			let value = defaultInsertOption[key[i]][key[i]];
+//			let value = defaultInsertOption[key[i]][key[i]];
+			let value = defaultInsertOption[key[i]]();
 			if( gf_nvl(value, '') == ''){
 				gf_toast(gf_mlg('저장할_마스터ID가_업습니다'), 'info');	//저장할 마스터ID가 없습니다.
 				return false;
@@ -824,9 +888,17 @@ function gf_gridAddMultiRow(gridDiv, cell) {
 			grid.getData().getItems().splice((cell.row + 1) , 0, items);
 		}
 	}
-	grid.getSelectionModel().setSelectedRanges("");
+//	grid.getSelectionModel().setSelectedRanges("");
 	grid.getData().setItems(grid.getData().getItems());
 	gf_gridRefresh(gridDiv);
+	
+	if(cell != null){
+		grid.setSelectedRows( [ cell.row +1] );
+	}
+	else{
+		grid.setSelectedRows( [ grid.getData().getItemCount() -1] );
+	}
+	
 }
 
 //그리드 행삭제
@@ -834,6 +906,11 @@ function gf_gridRemoveRow(gridDiv, cell) {
 	
 	let grid = new Function('return ' + gridDiv)();
 	grid.getEditorLock().cancelCurrentEdit();
+	
+	if(Object.keys(grid.getData().getItems()).length == 0){
+		gf_gridRefresh(gridDiv);
+		return false;
+	}
 	
 	if (cell == null) {
 		new Function('items', gridDiv + 'DataDel.push(items)')(grid.getData().getItems().pop());
@@ -1382,14 +1459,15 @@ function gf_setEditorValue(p_editor, p_value){
 	
 	var intervalId = setInterval(function(){
 		try{
-			$('#' + p_editor).get(0).contentWindow.watchdog.editor.setData(p_value);
+			$('#' + p_editor).get(0).contentWindow.watchdog.editor.setData(gf_nvl(p_value, ''));
+			gf_editorUndoReset(p_editor);
 			clearInterval(intervalId);
 		}catch(e){
 			setTimeout(function(){
 				clearInterval(intervalId);
 			}, 10000);
 		}
-	},10);
+	}, 0);
 	
 	
 }
@@ -1412,7 +1490,24 @@ function gf_editorEditable(p_editor, p_value){
 		}
 	},10);
 }
-
+//에디터 수정여부
+function gf_editorModified(p_editor){
+	
+	var stack = $('#' + p_editor).get(0).contentWindow.watchdog.editor.commands.get('undo')._stack;
+	
+	if(stack.length > 0){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+//에디터 수정여부
+function gf_editorUndoReset(p_editor){
+	var undo = $('#' + p_editor).get(0).contentWindow.watchdog.editor.commands.get('undo');
+	undo._stack = [];
+	undo.refresh();
+}
 /*****************************************************************************************************************************************************************
  * 
  * 토스트

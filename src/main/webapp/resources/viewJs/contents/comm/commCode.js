@@ -1,34 +1,48 @@
 /**
  * 공통코드관리
  */
-var gridPk = function(){
-	this.COMM_CODE_MASTER_ID;
-	this.MASTER_CODE;
-};
-
 var detailGridDefaultColumns = []; 
 $(document).ready(function() {
+	
+	//그리드셋팅
+	f_setMasterGrid();
+	f_setDetailGrid();
+	
+    f_search();
+});
+
+/*****************************************************************************************************************************************************************
+ * 
+ * 그리드 셋팅
+ * 
+ *****************************************************************************************************************************************************************/
+var f_setMasterGrid = function(){
+
 	masterGrid = gf_gridInit('masterGrid', {
 		forceFitColumns: false,
-    	'defaultInsert' : {'USE_YN' : '1'}
-    });
-	detailGrid = gf_gridInit('detailGrid', {
-		forceFitColumns: false,
+		'addRowBefore' : function(){
+			var detailData = gf_gridSaveData(detailGrid);
+			
+			if(detailData.state == 'empty'){
+				return true;
+			}
+			else{
+				gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
+				return false;
+			}	
+		},
     	'defaultInsert' : {'USE_YN' : '1'
-    					,'COMM_CODE_MASTER_ID' : gridPk
-    					,'MASTER_CODE' : gridPk
-    					}
+    					, 'SYSTEM_CODE_YN' : '1'}
     });
 	
-	detailGridDefaultColumns = $.extend(true, [], detailGrid.getColumns());
-		
 	masterGrid.onSelectedRowsChanged.subscribe(function (e, args) {
 		
+		var detailData = gf_gridSaveData(detailGrid);
 		if(gridEventIgnore){
 			gridEventIgnore = false;
 			return false;
 		}
-		else if(gf_gridSaveData(detailGrid).length > 0
+		else if(detailData.state != 'empty' 
 				){
 				
 			if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
@@ -41,23 +55,42 @@ $(document).ready(function() {
 			return false;
 		}
 		
-		var row = args.rows[0];
-		var grid = args.grid;
-		var preRow = args.previousSelectedRows[0];
-		var selectedRowData = grid.getData().getItem(row);
-		var pk = selectedRowData.COMM_CODE_MASTER_ID;
-		var pk2 = selectedRowData.MASTER_CODE;
-		
-		gridPk.prototype.constructor.COMM_CODE_MASTER_ID = pk;
-		gridPk.prototype.constructor.MASTER_CODE = pk2;
-		
 		//상세조회
-		f_detailSearch(pk, preRow);
+		f_detailSearch();
     });
-	   
-    f_search();
-});
 
+}
+
+var f_setDetailGrid = function(){
+
+	detailGrid = gf_gridInit('detailGrid', {
+		forceFitColumns: false,
+		'addRowBefore' : function(){
+			var masterData = gf_gridSaveData(masterGrid);
+			if(masterData.state == 'empty'){
+				return true;
+			}
+			else{
+				gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
+				return false;
+			}
+			
+		},
+    	'defaultInsert' : {'USE_YN' : '1'
+    					,'COMM_CODE_MASTER_ID' : function(){return gf_gridSelectVal(masterGrid, 'COMM_CODE_MASTER_ID')}
+    					,'MASTER_CODE' : function(){return gf_gridSelectVal(masterGrid, 'MASTER_CODE')}
+    					}
+    });
+	
+	detailGridDefaultColumns = $.extend(true, [], detailGrid.getColumns());
+
+}
+
+/*****************************************************************************************************************************************************************
+ * 
+ * 버튼 기능
+ * 
+ *****************************************************************************************************************************************************************/
 //다국어등록
 var f_mlg_regist = function(){
 
@@ -68,7 +101,17 @@ var f_mlg_regist = function(){
 		fData.set('MLG_COLUMN', 'MLG_CODE');
 		fData.set('COMPARE_COLUMN', 'CODE_YN');
   		gf_ajax( fData
-  				, null
+  				, function(){
+  			
+					var masterData = gf_gridSaveData(masterGrid);
+					
+					if(masterData.state != 'empty'){
+						if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_진행_하시겠습니까?'))){
+							return false;
+						}
+					}
+					return true;
+				}
   				, function(data){
   					
   					gf_toast(gf_mlg('저장_되었습니다'), 'success');
@@ -84,7 +127,17 @@ var f_mlg_regist2 = function(){
 		fData.set('MLG_COLUMN', 'MLG_CODE');
 		fData.set('COMPARE_COLUMN', 'CODE_YN');
   		gf_ajax( fData
-  				, null
+  				, function(){
+  			
+					var detailData = gf_gridSaveData(detailGrid);
+					
+					if(detailData.state != 'empty'){
+						if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_진행_하시겠습니까?'))){
+							return false;
+						}
+					}
+					return true;
+				}
   				, function(data){
   					
   					gf_toast(gf_mlg('저장_되었습니다'), 'success');
@@ -99,17 +152,22 @@ var f_search = function(type){
 				p_masterCode : $('#searchParam1').val()
 			}, function(){
 				
-				if((gf_gridSaveData(masterGrid).length > 0
-				|| gf_gridSaveData(detailGrid).length > 0 )
+				var masterData = gf_gridSaveData(masterGrid);
+				var detailData = gf_gridSaveData(detailGrid);
+				
+				if(masterData.state != 'empty'
+				|| detailData.state != 'empty'
 				){
 				
 					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
+						gridEventIgnore = true;
 						return false;
 					}
 				}
 
 				gf_gridClear(masterGrid);
 				gf_gridClear(detailGrid);
+				
 			}
 			, function(data){
 				
@@ -118,22 +176,23 @@ var f_search = function(type){
 			});
 }
   	
-var f_detailSearch = function(pk, preRow){
+var f_detailSearch = function(){
 
-	if(gf_nvl(pk, '') == ''){
-		gf_gridClear(detailGrid);
-		
-		return false;
-	}
+	var COMM_CODE_MASTER_ID = gf_nvl( gf_gridSelectVal(masterGrid, 'COMM_CODE_MASTER_ID') , '');
 	
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'com.S_COMM_CODE_DETAIL');
-	fData.set('COMM_CODE_MASTER_ID', pk);
+	fData.set('COMM_CODE_MASTER_ID', COMM_CODE_MASTER_ID);
 	
 	gf_ajax( fData
 			, function(){
+		
 				detailGrid.setColumns(detailGridDefaultColumns);
 				gf_gridClear(detailGrid);
+				
+				if(COMM_CODE_MASTER_ID == ''){
+					return false;
+				}
 				
 			}
 			, function(data){
@@ -158,40 +217,51 @@ var f_save = function(){
 	
 	var masterData = gf_gridSaveData(masterGrid);
 	var detailData = gf_gridSaveData(detailGrid);
-	$.each(detailData, function(idx, item){
-		item['MASTER_DETAIL_CODE'] = item['MASTER_CODE'] + item['DETAIL_CODE']; 
+	
+	$.each(detailData.data, function(idx, item){
+		item['MASTER_DETAIL_CODE'] = item['MASTER_CODE'] + item['DETAIL_CODE'];
 	});
+	
+	if(!(masterData.state == 'success')
+	&& !(detailData.state == 'success')
+	){
+		
+		if( masterData.state == 'fail'){
+			gf_toast(masterData.reason, 'info');
+		}
+		else if(detailData.state == 'fail'){
+			gf_toast(detailData.reason, 'info');
+		}
+		else{
+			gf_toast(masterData.reason, 'info');
+		}
+		
+		return false;
+	}
+	
 	var fData = new FormData();
 	
 	gf_ajax( fData
 			, function(){
 				
-				if(masterData.length == 0 && detailData.length == 0){
+				//마스터그리드
+				if(masterData.data.length > 0){
+					masterData.data.unshift({
+						 'TABLE_NAME' : 'COMM_CODE_MASTER'
+						,'QUERY_ID' : 'com.COMM_QUERY'
+					});
+					fData.set('masterGrid', JSON.stringify(masterData.data));
+				}
 				
-					gf_toast(gf_mlg('저장할_데이터가_없습니다'), 'info');
-					return false;
+				//디테일그리드
+				if(detailData.data.length > 0){
+					detailData.data.unshift({
+						 'TABLE_NAME' : 'COMM_CODE_DETAIL'
+						,'QUERY_ID' : 'com.COMM_QUERY'
+					});
+					fData.set('detailGrid', JSON.stringify(detailData.data));
 				}
-				else{
 					
-					//마스터그리드
-					if(masterData.length > 0){
-						masterData.unshift({
-  							 'TABLE_NAME' : 'COMM_CODE_MASTER'
-  							,'QUERY_ID' : 'com.COMM_QUERY'
-  						});
-  						fData.set('masterGrid', JSON.stringify(masterData));
-					}
-					
-					//디테일그리드
-					if(detailData.length > 0){
-						detailData.unshift({
-  							 'TABLE_NAME' : 'COMM_CODE_DETAIL'
-  							,'QUERY_ID' : 'com.COMM_QUERY'
-  						});
-  						fData.set('detailGrid', JSON.stringify(detailData));
-					}
-					
-				}
 			}
 			, function(data){
 				

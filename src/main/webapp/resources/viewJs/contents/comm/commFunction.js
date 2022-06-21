@@ -1,22 +1,43 @@
 /**
  * 기능관리
  */
-var gridPk = function(){
-	this.COMM_FUNCTION_ID;
-};
 
 $(document).ready(function() {
 	
-    functionGrid = gf_gridInit('functionGrid');
-    menuGrid = gf_gridInit('menuGrid');
+    //그리드셋팅
+	f_setFunctionGrid();
+	f_setMenuGrid();
 	
-    functionGrid.onSelectedRowsChanged.subscribe(function (e, args) {
+});
+/*****************************************************************************************************************************************************************
+ * 
+ * 그리드 셋팅
+ * 
+ *****************************************************************************************************************************************************************/
+var f_setFunctionGrid = function(){
+	functionGrid = gf_gridInit('functionGrid', {
+		forceFitColumns: true,
+		'addRowBefore' : function(){
+			var menuData = gf_gridSaveData(menuGrid);
+			
+			if(menuData.state == 'empty'){
+				return true;
+			}
+			else{
+				gf_toast(gf_mlg('저장_후_진행하여_주시기_바랍니다'), 'info');
+				return false;
+			}
+		}
+    });
+	
+	functionGrid.onSelectedRowsChanged.subscribe(function (e, args) {
 
+		var menuData = gf_gridSaveData(menuGrid);
 		if(gridEventIgnore){
 			gridEventIgnore = false;
 			return false;
 		}
-		else if(gf_gridSaveData(menuGrid).length > 0
+		else if(menuData.state != 'empty' 
 				){
 			if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
 				gridEventIgnore = true;	
@@ -27,21 +48,24 @@ $(document).ready(function() {
 		else if(args.rows.length == 0){
 			return false;
 		}
-		
-		var row = args.rows[0];
-		var grid = args.grid;
-		var preRow = args.previousSelectedRows[0];
-		var selectedRowData = grid.getData().getItem(row);
-		var pk = selectedRowData.COMM_FUNCTION_ID;
-		gridPk.prototype.constructor.COMM_FUNCTION_ID = pk;
-		
+				
 		//기능별 메뉴조회
-		f_menuSearch(pk, preRow);
+		f_menuSearch();
 		
     });
 	
-});
+}
 
+var f_setMenuGrid = function(){
+	menuGrid = gf_gridInit('menuGrid', {
+		forceFitColumns: true
+    });
+}
+/*****************************************************************************************************************************************************************
+ * 
+ * 버튼 기능
+ * 
+ *****************************************************************************************************************************************************************/
 //다국어등록
 var f_mlg_regist = function(){
 
@@ -52,7 +76,17 @@ var f_mlg_regist = function(){
 		fData.set('MLG_COLUMN', 'MLG_CODE');
 		fData.set('COMPARE_COLUMN', 'FUNCTION_YN');
   		gf_ajax( fData
-  				, null
+  				, function(){
+  			
+					var functionData = gf_gridSaveData(functionGrid);
+					
+					if(functionData.state != 'empty'){
+						if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_진행_하시겠습니까?'))){
+							return false;
+						}
+					}
+					return true;
+				}
   				, function(data){
   					
   					gf_toast(gf_mlg('저장_되었습니다'), 'success');
@@ -69,11 +103,15 @@ var f_search = function(){
 	  			p_functionCode : $('#searchParam1').val()
 			}, function(){
 			
-				if((gf_gridSaveData(menuGrid).length > 0
-				|| gf_gridSaveData(functionGrid).length > 0 )
+				var functionData = gf_gridSaveData(functionGrid);
+				var menuData = gf_gridSaveData(menuGrid);
+				
+				if(functionData.state != 'empty'
+				|| menuData.state != 'empty'
 				){
 				
 					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
+						gridEventIgnore = true;
 						return false;
 					}
 				}
@@ -88,20 +126,22 @@ var f_search = function(){
 			});
 }
 
-var f_menuSearch = function(pk, preRow){
+var f_menuSearch = function(){
   	
-	if(gf_nvl(pk, '') == ''){
-		gf_gridClear(menuGrid);
-		return false;
-	}
+	var COMM_FUNCTION_ID = gf_nvl( gf_gridSelectVal(functionGrid, 'COMM_FUNCTION_ID') , '');
+	
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'com.S_COMM_FUNCTION_MENU');
-	fData.set('COMM_FUNCTION_ID', pk);
+	fData.set('COMM_FUNCTION_ID', COMM_FUNCTION_ID);
 	
 	gf_ajax( fData
 			, function(){
 		
 				gf_gridClear(menuGrid);
+				
+				if(COMM_FUNCTION_ID == ''){
+					return false;
+				}
 				
 			}
 			, function(data){
@@ -116,38 +156,47 @@ var f_save = function(){
 	var functionData = gf_gridSaveData(functionGrid);
 	var menuData = gf_gridSaveData(menuGrid);
 	
+	if(!(functionData.state == 'success')
+	&& !(menuData.state == 'success')
+	){
+		
+		if( functionData.state == 'fail'){
+			gf_toast(functionData.reason, 'info');
+		}
+		else if(menuData.state == 'fail'){
+			gf_toast(menuData.reason, 'info');
+		}
+		else{
+			gf_toast(functionData.reason, 'info');
+		}
+		
+		return false;
+	}
+	
 	var fData = new FormData();
 	
 	gf_ajax( fData
 			, function(){
 				
-				if(functionData.length == 0
-				&& menuData.length == 0
-				){
+					
+				//기능그리드
+				if(functionData.data.length > 0){
+					functionData.data.unshift({
+						 'TABLE_NAME' : 'COMM_FUNCTION'
+						,'QUERY_ID' : 'com.COMM_QUERY'
+					});
+					fData.set('functionGrid', JSON.stringify(functionData.data));
+				}
 				
-					gf_toast(gf_mlg('저장할_데이터가_없습니다'), 'info');
-					return false;
+				//메뉴그리드
+				if(menuData.data.length > 0){
+					menuData.data.unshift({
+						 'TABLE_NAME' : 'COMM_MENU_FUNC'
+						,'QUERY_ID' : 'com.COMM_MENU_FUNC'
+					});
+					fData.set('menuGrid', JSON.stringify(menuData.data));
 				}
-				else{
-					
-					//기능그리드
-					if(functionData.length > 0){
-						functionData.unshift({
-  							 'TABLE_NAME' : 'COMM_FUNCTION'
-  							,'QUERY_ID' : 'com.COMM_QUERY'
-  						});
-  						fData.set('functionGrid', JSON.stringify(functionData));
-					}
-					
-					//메뉴그리드
-					if(menuData.length > 0){
-						menuData.unshift({
-  							 'TABLE_NAME' : 'COMM_MENU_FUNC'
-  							,'QUERY_ID' : 'com.COMM_MENU_FUNC'
-  						});
-  						fData.set('menuGrid', JSON.stringify(menuData));
-					}
-				}
+				
 			}
 			, function(data){
 				

@@ -7,14 +7,9 @@ $(document).ready(function() {
     detailGrid = gf_gridInit('detailGrid');
 	
     masterGrid.onSelectedRowsChanged.subscribe(function (e, args) {
-					
-		var row = args.rows[0];
-		var grid = args.grid;
-		var preRow = args.previousSelectedRows[0];
-		var selectedRowData = grid.getData().getItem(row);
-					
+				
 		//상세조회
-		f_detailSearch(selectedRowData.TABLE_NAME);
+		f_detailSearch();
     });
 	
 });
@@ -38,19 +33,22 @@ var f_search = function(){
 			});
 }
 
-var f_detailSearch = function(p_tableName){
+var f_detailSearch = function(){
   	
-	if(gf_nvl(p_tableName, '') == ''){
-		gf_gridClear(detailGrid);
-		return false;
-	}
+	var TABLE_NAME = gf_nvl( gf_gridSelectVal(masterGrid, 'TABLE_NAME') , '');
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'com.S_COMM_TABLE_DETAIL');
-	fData.set('TABLE_NAME', p_tableName);
+	fData.set('TABLE_NAME', TABLE_NAME);
 	
 	gf_ajax( fData
 			, function(){
+		
 				gf_gridClear(detailGrid);
+				
+				if(TABLE_NAME == ''){
+					return false;
+				}
+				
 			}
 			, function(data){
 				gf_gridCallback('detailGrid', data);
@@ -68,8 +66,8 @@ var f_encrypt = function(){
 		return;
 	}
 	
-	var tableName = gf_gridRowData(masterGrid, selectedRows[0], 'TABLE_NAME');
-	var tableComment = gf_gridRowData(masterGrid, selectedRows[0], 'COMMENTS')
+	var tableName = gf_gridSelectVal(masterGrid, 'TABLE_NAME');
+	var tableComment = gf_gridSelectVal(masterGrid, 'COMMENTS');
 	
 	var confirmTxt = gf_mlg('테이블을_암호화_하시겠습니까',{
 		param1 : tableName,
@@ -106,8 +104,8 @@ var f_decrypt = function(){
 		return;
 	}
 	
-	var tableName = gf_gridRowData(masterGrid, selectedRows[0], 'TABLE_NAME');
-	var tableComment = gf_gridRowData(masterGrid, selectedRows[0], 'COMMENTS')
+	var tableName = gf_gridSelectVal(masterGrid, 'TABLE_NAME');
+	var tableComment = gf_gridSelectVal(masterGrid, 'COMMENTS');
 	
 	var confirmTxt = gf_mlg('테이블을_복호화_하시겠습니까',{
 		param1 : tableName,

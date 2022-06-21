@@ -296,4 +296,62 @@
 		           , #{MIP})
 	</update>
 	
+	<!-- 메모장 마스터 조회 -->
+	<select id="S_MY_NOTE_MASTER" resultType="HashMap" parameterType="HashMap" >
+		/* S_MY_NOTE_MASTER */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+	         , A.MY_NOTE_MASTER_ID
+			 , NVL(A.SEQ, ROWNUM) 		AS SEQ
+			 , A.COVER_TITLE
+			 , A.COMM_USER_ID
+      	  FROM MY_NOTE_MASTER A
+      	 WHERE A.COMM_USER_ID = #{COMM_USER_ID}
+      	 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchParam1)">
+      	   AND (
+      	   		A.COVER_TITLE LIKE '%' || #{searchParam1} || '%'
+      	   		OR
+      	   		EXISTS(
+      	   			SELECT Z.MY_NOTE_DETAIL_ID
+      	   			  FROM MY_NOTE_DETAIL Z
+      	   			 WHERE (A.MY_NOTE_MASTER_ID = Z.MY_NOTE_MASTER_ID AND A.COMM_USER_ID = #{COMM_USER_ID})
+      	   			   AND (Z.PAGE_TITLE LIKE '%' || #{searchParam1} || '%'
+      	   			   		OR
+      	   			   		Z.NOTE_CONTENTS LIKE '%' || #{searchParam1} || '%'
+      	   			   		)
+      	   				)
+      	   		)
+      	 </if>
+      	 ORDER BY NVL(A.SEQ, ROWNUM) ASC
+	</select>
+	<!-- 메모장 상세 조회 -->
+	<select id="S_MY_NOTE_DETAIL" resultType="HashMap" parameterType="HashMap" >
+		/* S_MY_NOTE_DETAIL */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+	         , A.MY_NOTE_MASTER_ID
+	         , A.MY_NOTE_DETAIL_ID
+			 , NVL(A.SEQ, ROWNUM) 		AS SEQ
+			 , A.PAGE_TITLE
+      	  FROM MY_NOTE_DETAIL A
+      	  JOIN MY_NOTE_MASTER B ON (A.MY_NOTE_MASTER_ID = B.MY_NOTE_MASTER_ID AND B.COMM_USER_ID = #{COMM_USER_ID})
+      	 WHERE A.MY_NOTE_MASTER_ID = #{MY_NOTE_MASTER_ID}
+      	 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchParam1)">
+      	   AND (
+      	   		A.PAGE_TITLE LIKE '%' || #{searchParam1} || '%'
+		   		OR
+		   		A.NOTE_CONTENTS LIKE '%' || #{searchParam1} || '%'
+      	   		)
+      	 </if>
+      	 ORDER BY NVL(A.SEQ, ROWNUM) ASC, A.PAGE_TITLE ASC
+	</select>
+	<!-- 메모장 상세 내용 조회 -->
+	<select id="S_MY_NOTE_DETAIL_CONTENT" parameterType="HashMap" resultMap="config.ClobMap">
+		/* S_MY_NOTE_DETAIL_CONTENT */
+		SELECT A.MY_NOTE_DETAIL_ID
+			 , A.NOTE_CONTENTS
+			 , A.PAGE_TITLE
+			 , NVL(TO_CHAR(A.MDT, 'YYYY-MM-DD HH:MI:SS'), '-') AS MDT
+      	  FROM MY_NOTE_DETAIL A
+      	  JOIN MY_NOTE_MASTER B ON (A.MY_NOTE_MASTER_ID = B.MY_NOTE_MASTER_ID AND B.COMM_USER_ID = #{COMM_USER_ID})
+      	 WHERE A.MY_NOTE_DETAIL_ID = #{MY_NOTE_DETAIL_ID}
+	</select>
 </mapper>

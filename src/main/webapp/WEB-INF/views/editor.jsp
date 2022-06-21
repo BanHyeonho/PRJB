@@ -15,7 +15,7 @@ body{
 </style>
 </head>
 <body>
-<div class="editor-container">
+<div class="editor-container" style="overflow-x: hidden;">
 	<div class="editor">
 	</div>
 </div>

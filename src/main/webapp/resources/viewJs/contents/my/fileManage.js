@@ -9,14 +9,14 @@ const pageInfo = {
 
 const gv_fileExtension = parent.index_info.gv_fileExtension;
 
-var f_dragData = [];
-
-var folderTree; 
-
 let fileManageInfo = {
 	attachedFiles : [],
 	attachedDelFiles : [],
 }
+
+var f_dragData = [];
+
+var folderTree; 
 
 $(document).ready(function() {
 	

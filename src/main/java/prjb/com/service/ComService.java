@@ -531,7 +531,7 @@ public class ComService {
 		String queryId = "";
 		List<Map> tableLayout = null;
 		List<Map> columns = null;
-		String whereQuery = "";
+		String tablePk = "";
 		if(param.size() > 0) {
 			Map<String, String> m = param.get(0);
 			tableNm = m.get("TABLE_NAME");
@@ -581,7 +581,7 @@ public class ComService {
 					
 				case "updated":
 					gridQueryId = nameSpace + ".U_" + query;
-					whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
+					tablePk = tableNm + "_ID";
 					paramMap.put("MID", cId);
 					paramMap.put("MIP", ip);
 					paramMap.put("MDT", "SYSDATE");
@@ -600,15 +600,17 @@ public class ComService {
 					}
 					paramMap.put("TABLE_NAME", tableNm);
 					paramMap.put("TABLE_LAYOUT", columns);
-					paramMap.put("WHERE_QUERY", whereQuery);
+					paramMap.put("TABLE_PK", tablePk);
+					paramMap.put("TABLE_PK_VAL", paramMap.get(tableNm + "_ID"));
 					comDao.update(gridQueryId, paramMap);
 					break;
 					
 				case "deleted":
 					gridQueryId = nameSpace + ".D_" + query;
-					whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
+					tablePk = tableNm + "_ID";
 					paramMap.put("TABLE_NAME", tableNm);
-					paramMap.put("WHERE_QUERY", whereQuery);
+					paramMap.put("TABLE_PK", tablePk);
+					paramMap.put("TABLE_PK_VAL", paramMap.get(tableNm + "_ID"));
 					comDao.delete(gridQueryId, paramMap);
 					break;
 			}
@@ -736,7 +738,7 @@ public class ComService {
 		//UPDATE
 		else if( queryId.contains(".U_")) {
 			
-			String whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
+			String tablePk = tableNm + "_ID";
 			paramMap.put("MID", cId);
 			paramMap.put("MIP", ip);
 			paramMap.put("LANG_CODE", String.valueOf(langCode));
@@ -755,8 +757,8 @@ public class ComService {
 			}
 			paramMap.put("TABLE_NAME", tableNm);
 			paramMap.put("TABLE_LAYOUT", columns);
-			paramMap.put("WHERE_QUERY", whereQuery);
-			
+			paramMap.put("TABLE_PK", tablePk);
+			paramMap.put("TABLE_PK_VAL", paramMap.get(tableNm + "_ID"));
 			comDao.update(queryId, paramMap);
 			
 			resultMap.put("state", "success");
@@ -766,9 +768,10 @@ public class ComService {
 		//DELETE
 		else if( queryId.contains(".D_")) {
 			
-			String whereQuery = tableNm + "_ID = " + paramMap.get(tableNm + "_ID");
+			String tablePk = tableNm + "_ID";
 			paramMap.put("TABLE_NAME", tableNm);
-			paramMap.put("WHERE_QUERY", whereQuery);
+			paramMap.put("TABLE_PK", tablePk);
+			paramMap.put("TABLE_PK_VAL", paramMap.get(tableNm + "_ID"));
 			comDao.delete(queryId, paramMap);
 			
 			resultMap.put("state", "success");

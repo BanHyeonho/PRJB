@@ -4,8 +4,6 @@
 var gridPk = function(){
 	this.MODULE_CODE;
 	this.MODULE_NAME;
-//	this.MENU_NAME;
-//	THIS.COMM_GRID_MASTER_ID;
 };
 $(document).ready(function() {
 	
@@ -20,6 +18,10 @@ $(document).ready(function() {
 var f_setModuleGrid = function(){
 	moduleGrid = gf_gridInit('moduleGrid');
 	moduleGrid.onSelectedRowsChanged.subscribe(function (e, args) {
+		
+		var categoryData = gf_gridSaveData(categoryGrid);
+		var authGroupData = gf_gridSaveData(authGroupGrid);
+		var bbsAuthData = gf_gridSaveData(bbsAuthGrid);
 		
 		if(gridEventIgnore){
 			gridEventIgnore = false;

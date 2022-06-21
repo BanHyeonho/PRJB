@@ -7,10 +7,25 @@ $(document).ready(function() {
     
     f_search();
 });
-  	
+
+/*****************************************************************************************************************************************************************
+ * 
+ * 버튼 기능
+ * 
+ *****************************************************************************************************************************************************************/
 var f_msgRefresh = function(e){
 	
-	gf_ajax( {}, null
+	gf_ajax( {}, function(){
+		
+				var masterData = gf_gridSaveData(masterGrid);
+				
+				if(masterData.state != 'empty'){
+					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_진행_하시겠습니까?'))){
+						return false;
+					}
+				}
+				return true;
+			}
 			, function(data){
 				
 				gf_toast(gf_mlg('갱신_되었습니다'), 'success');	
@@ -28,8 +43,9 @@ var f_search = function(){
 				p_mlgCode : $('#searchParam1').val()
 			}, function(){
 				
-				if(gf_gridSaveData(masterGrid).length > 0){
+				var masterData = gf_gridSaveData(masterGrid);
 				
+				if(masterData.state != 'empty'){
 					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
 						return false;
 					}
@@ -44,26 +60,16 @@ var f_search = function(){
   	
 var f_save = function(){
 	
-	var saveData = gf_gridSaveData(masterGrid);
-	
+	var masterData = gf_gridSaveData(masterGrid);
 	var fData = new FormData();
+	masterData.data.unshift({
+		 'TABLE_NAME' : 'COMM_MLG'
+		,'QUERY_ID' : 'com.COMM_QUERY'
+	});
+	fData.set('masterGrid', JSON.stringify(masterData.data));
 	
 	gf_ajax( fData
-			, function(){
-				
-				if(saveData.length == 0){
-				
-					gf_toast(gf_mlg('저장할_데이터가_없습니다'), 'info');
-					return false;
-				}
-				else{
-					saveData.unshift({
-						 'TABLE_NAME' : 'COMM_MLG'
-						,'QUERY_ID' : 'com.COMM_QUERY'
-					});
-					fData.set('masterGrid', JSON.stringify(saveData));
-				}
-			}
+			, null
 			, function(data){
 				
 				gf_toast(gf_mlg('저장_되었습니다'), 'success');
