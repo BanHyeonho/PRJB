@@ -1508,9 +1508,11 @@ function gf_editorModified(p_editor){
 }
 //에디터 수정여부
 function gf_editorUndoReset(p_editor){
-	var undo = $('#' + p_editor).get(0).contentWindow.watchdog.editor.commands.get('undo');
-	undo._stack = [];
-	undo.refresh();
+	try{
+		var undo = $('#' + p_editor).get(0).contentWindow.watchdog.editor.commands.get('undo');
+		undo._stack = [];
+		undo.refresh();
+	}catch(e){}
 }
 /*****************************************************************************************************************************************************************
  * 
