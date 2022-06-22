@@ -473,6 +473,18 @@ public class ComService {
 			else if(key.endsWith("Form")) {
 				
 				Map formMap = new JSONObject(value.toString()).toMap();
+				
+				
+				if(formMap.get("GET_PARAM") != null) {
+					
+					Map<String, String> getParam = (Map)formMap.get("GET_PARAM");
+					for ( Map.Entry<String, String> p : getParam.entrySet() ) {
+						String paramKey = p.getKey();
+						String[] paramValue = p.getValue().split("[.]");
+						formMap.put(paramKey, ((Map)((Map)result.get(paramValue[0])).get("result")).get(paramValue[1]) );
+					}
+				}
+
 				formMap.put("langCode", langCode);
 				formMap.put("ip", ip);
 				formMap.put("cId", cId);

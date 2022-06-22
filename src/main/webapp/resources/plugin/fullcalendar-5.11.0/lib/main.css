@@ -180,7 +180,8 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     padding: 0.4em 0.65em;
     font-size: 1em;
     line-height: 1.5;
-    border-radius: 0.25em;
+/*     border-radius: 0.25em; */
+    border-radius: 0;	/*수정.2022.06.22*/
   }
 .fc .fc-button:hover {
     text-decoration: none;
@@ -872,7 +873,8 @@ A HORIZONTAL event
 .fc-daygrid-event { /* make root-level, because will be dragged-and-dropped outside of a component root */
   position: relative; /* for z-indexes assigned later */
   white-space: nowrap;
-  border-radius: 3px; /* dot event needs this to when selected */
+/*   border-radius: 3px; dot event needs this to when selected */
+  border-radius: 0;	/*수정.2022.06.22*/
   font-size: .85em;
   font-size: var(--fc-small-font-size, .85em);
 }

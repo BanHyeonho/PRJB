@@ -354,4 +354,87 @@
       	  JOIN MY_NOTE_MASTER B ON (A.MY_NOTE_MASTER_ID = B.MY_NOTE_MASTER_ID AND B.COMM_USER_ID = #{COMM_USER_ID})
       	 WHERE A.MY_NOTE_DETAIL_ID = #{MY_NOTE_DETAIL_ID}
 	</select>
+	
+	<!-- 계획등록 - 계뢱목록 조회 -->
+	<select id="S_MY_PLAN" parameterType="HashMap" resultMap="config.ClobMap">
+		/* S_MY_PLAN */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.MY_PLAN_ID
+			 , A.PLAN_NAME
+			 , COMM_UTIL_PKG.DATE_FORMAT(A.START_DATE, 'YYYY-MM-DD')	AS START_DATE
+			 , COMM_UTIL_PKG.DATE_FORMAT(A.END_DATE, 'YYYY-MM-DD')	AS END_DATE 
+			 , A.EXCEPT_DAY
+			 , A.DESCRIPTION
+      	  FROM MY_PLAN A
+      	 WHERE A.COMM_USER_ID = #{COMM_USER_ID}
+      	 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(MY_PLAN_ID)">
+      	   AND A.MY_PLAN_ID = #{MY_PLAN_ID}
+      	 </if>
+      	 ORDER BY A.start_date DESC
+	</select>
+	<!-- 계획등록 - 계뢱 항목 조회 -->
+	<select id="S_MY_PLAN_ITEM" parameterType="HashMap" resultMap="config.ClobMap">
+		/* S_MY_PLAN_ITEM */
+		SELECT A.ITEM_NAME
+			 , A.TARGET
+      	  FROM MY_PLAN_ITEM A
+      	  JOIN MY_PLAN B ON (A.MY_PLAN_ID = A.MY_PLAN_ID AND B.COMM_USER_ID = #{COMM_USER_ID})
+      	 WHERE A.MY_PLAN_ID = #{MY_PLAN_ID}
+      	   AND B.MY_PLAN_ID = #{MY_PLAN_ID}
+      	 ORDER BY A.MY_PLAN_ITEM_ID ASC
+	</select>
+	<!-- 계획등록 - 계뢱 항목 등록 -->
+	<insert id="I_MY_PLAN_ITEM" parameterType="HashMap" statementType="CALLABLE">
+		/* I_MY_PLAN_ITEM */
+		DECLARE
+		  BEGIN
+		  		DELETE
+				  FROM MY_PLAN_ITEM
+				 WHERE MY_PLAN_ID = #{MY_PLAN_ID}
+				 	 ;
+				 
+				 INSERT INTO MY_PLAN_ITEM(MY_PLAN_ITEM_ID
+										, MY_PLAN_ID     
+										, ITEM_NAME      
+										, TARGET          
+										<include refid="config.cidColumn"></include>)
+								SELECT MY_PLAN_ITEM_S.NEXTVAL
+										, #{MY_PLAN_ID}     
+										, A.COLUMN_VALUE      
+										, B.COLUMN_VALUE         
+										, #{CID}
+										, SYSDATE            
+										, #{CIP}
+										, #{MID}
+										, SYSDATE            
+										, #{MIP}
+								  FROM (
+								  		SELECT ROWNUM  			AS IDX
+			                                 , COLUMN_VALUE     AS COLUMN_VALUE
+			                            FROM TABLE(COMM_UTIL_PKG.SPLIT(#{ITEM_NAME}, '[@;,;@]'))
+								  		) A
+								  JOIN (
+								  		SELECT ROWNUM  			AS IDX
+			                                 , COLUMN_VALUE     AS COLUMN_VALUE
+			                            FROM TABLE(COMM_UTIL_PKG.SPLIT(#{TARGET}, '[@;,;@]'))
+								  		) B ON A.IDX = B.IDX
+				  					;
+		    END;
+	</insert>
+	<!-- 계획등록 - 계뢱 삭제-->
+	<delete id="D_MY_PLAN_ALL" parameterType="HashMap" statementType="CALLABLE">
+		/* D_MY_PLAN_ALL */
+		DECLARE
+		  BEGIN
+		  		DELETE
+				  FROM MY_PLAN_ITEM
+				 WHERE MY_PLAN_ID = #{MY_PLAN_ID}
+				 	 ;
+				 	 
+				DELETE
+				  FROM MY_PLAN
+				 WHERE MY_PLAN_ID = #{MY_PLAN_ID}
+				 	 ;
+		    END;
+	</delete>
 </mapper>

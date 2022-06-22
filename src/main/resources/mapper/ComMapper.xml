@@ -1175,6 +1175,11 @@
 	<!-- 공통INSERT -->
 	<insert id="I_COMM_QUERY" parameterType="HashMap" >
 		/* I_COMM_QUERY */
+		<selectKey resultType="String" keyProperty="seq_pk" order="BEFORE">
+			SELECT ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}_S.NEXTVAL as seq_pk
+			  FROM DUAL
+		</selectKey>
+		
 		INSERT INTO ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}
 			<foreach collection="TABLE_LAYOUT" item="item" open="(" separator="," close=")" >
 					${@prjb.com.util.ComUtil@sqlInjectionSafe(item.COLUMN_NAME)}
@@ -1183,7 +1188,8 @@
 			<foreach collection="TABLE_LAYOUT" item="item" open="(" separator="," close=")">
 				<choose>
 					<when test="item.COLUMN_NAME == TABLE_NAME+'_ID'">
-					${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}_S.NEXTVAL
+					#{seq_pk}
+<!-- 					${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_NAME)}_S.NEXTVAL -->
 					</when>
 					<when test="item.COLUMN_NAME == 'CDT' or item.COLUMN_NAME == 'MDT'">
 					SYSDATE

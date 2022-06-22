@@ -15,9 +15,23 @@
 .pd-default{
 	padding: 15px !important;
 }
+
+.pd-tp-default2{
+	padding-top: 10px !important;
+}
+.pd-lt-default2{
+	padding-left: 10px !important;
+}
+.pd-rt-default2{
+	padding-right: 10px !important;
+}
+.pd-bt-default2{
+	padding-bottom: 10px !important;
+}
 .pd-default2{
 	padding: 10px !important;
 }
+
 .pd-default3{
 	padding: 1% !important;
 }
@@ -39,7 +53,7 @@
 	padding-right: 0.7% !important;
 }
 
-/* 패널용 패딩 */
+/* 패딩 없음 */
 .no-pd{
 	padding: 0 !important;
 }

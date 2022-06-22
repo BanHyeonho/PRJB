@@ -61,6 +61,11 @@ button{
 	padding: 5px !important;	
 }
 
+.font-size-default{
+	font-size: 20px !important;
+}
+
+
 .btn{
 /* 	border-radius: 5px; */
 	min-height: 32px;
