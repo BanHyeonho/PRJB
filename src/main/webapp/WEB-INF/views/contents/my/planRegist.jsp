@@ -81,15 +81,15 @@
 					</td>
 				</tr>
 				<tr class="line-bt">
-					<td class='pd-default font-size-default line-rt text-alien'>${pb:msg(pageContext.request, "제외요일")}</td>
+					<td class='pd-default font-size-default line-rt text-alien'>${pb:msg(pageContext.request, "적용요일")}</td>
 					<td class='pd-lt-default'>
-						<input class="form-text form-checkbox" type="checkbox" id='sun'><label for='sun' class='checkbox-label' >${pb:msg(pageContext.request, "일")}</label>
-						<input class="form-text form-checkbox" type="checkbox" id='mon'><label for='mon' class='checkbox-label' >${pb:msg(pageContext.request, "월")}</label>
-						<input class="form-text form-checkbox" type="checkbox" id='tue'><label for='tue' class='checkbox-label' >${pb:msg(pageContext.request, "화")}</label>
-						<input class="form-text form-checkbox" type="checkbox" id='wed'><label for='wed' class='checkbox-label' >${pb:msg(pageContext.request, "수")}</label>
-						<input class="form-text form-checkbox" type="checkbox" id='thu'><label for='thu' class='checkbox-label' >${pb:msg(pageContext.request, "목")}</label>
-						<input class="form-text form-checkbox" type="checkbox" id='fri'><label for='fri' class='checkbox-label' >${pb:msg(pageContext.request, "금")}</label>
-						<input class="form-text form-checkbox" type="checkbox" id='sat'><label for='sat' class='checkbox-label' >${pb:msg(pageContext.request, "토")}</label>
+						<input class="form-text form-checkbox" type="checkbox" id='sun' checked ><label for='sun' class='checkbox-label' >${pb:msg(pageContext.request, "일")}</label>
+						<input class="form-text form-checkbox" type="checkbox" id='mon' checked ><label for='mon' class='checkbox-label' >${pb:msg(pageContext.request, "월")}</label>
+						<input class="form-text form-checkbox" type="checkbox" id='tue' checked ><label for='tue' class='checkbox-label' >${pb:msg(pageContext.request, "화")}</label>
+						<input class="form-text form-checkbox" type="checkbox" id='wed' checked ><label for='wed' class='checkbox-label' >${pb:msg(pageContext.request, "수")}</label>
+						<input class="form-text form-checkbox" type="checkbox" id='thu' checked ><label for='thu' class='checkbox-label' >${pb:msg(pageContext.request, "목")}</label>
+						<input class="form-text form-checkbox" type="checkbox" id='fri' checked ><label for='fri' class='checkbox-label' >${pb:msg(pageContext.request, "금")}</label>
+						<input class="form-text form-checkbox" type="checkbox" id='sat' checked ><label for='sat' class='checkbox-label' >${pb:msg(pageContext.request, "토")}</label>
 					</td>
 				</tr>
 				<tr>

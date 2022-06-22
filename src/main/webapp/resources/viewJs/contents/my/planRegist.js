@@ -1,6 +1,7 @@
 /**
  * 계획등록
  */
+let calendar;
 $(document).ready(function() {
 
 	//그리드셋팅
@@ -12,15 +13,26 @@ $(document).ready(function() {
 	//항목추가 버튼
 	$('#itemPlusBtn').on('click', f_addItem);
 	
+	//달력에 적용
+	$('#START_DATE').on('change', f_calendarRefresh);
+	$('#END_DATE').on('change', f_calendarRefresh);
+	$('#sun').on('change', f_calendarRefresh); 
+	$('#mon').on('change', f_calendarRefresh); 
+	$('#tue').on('change', f_calendarRefresh); 
+	$('#wed').on('change', f_calendarRefresh); 
+	$('#thu').on('change', f_calendarRefresh); 
+	$('#fri').on('change', f_calendarRefresh); 
+	$('#sat').on('change', f_calendarRefresh); 
+	
+	
 	f_refresh();
 	f_search();
 });
 
 var f_addItem = function(){
-
 	
 	var tr = $('<tr>').addClass('pd-tp-default');
-	var tdItemName = $('<td>').addClass('pd-rt-default pd-tp-default2').append( $('<input type="text" name="ITEM_NAME">').addClass('form form-text') );
+	var tdItemName = $('<td>').addClass('pd-rt-default pd-tp-default2').append( $('<input type="text" name="ITEM_NAME" onchange="f_calendarRefresh();" >').addClass('form form-text') );
 	tr.append(tdItemName);
 	var tdTarget = $('<td>').addClass('pd-rt-default pd-tp-default2').append( $('<input type="number" min=1 name="TARGET">').addClass('form form-text') );
 	tr.append(tdTarget);
@@ -62,7 +74,7 @@ var f_setMasterGrid = function(){
 var f_setCalendar = function(){
 	var calendarEl = document.getElementById('calendar');
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    calendar = new FullCalendar.Calendar(calendarEl, {
     	height: '100%',
     	initialDate: new Date().yyyy_mm_dd(),
       locale: "ko",
@@ -71,24 +83,102 @@ var f_setCalendar = function(){
       selectable: true,
       businessHours: true,
       dayMaxEvents: true, // allow "more" link when too many events
-      
-      events: [
-        {
-            title: 'All Day Event',
-            start: '2022-06-03',
-            end: '2022-06-03'
-          },
-        {
-          title: 'Long Event',
-          start: '2022-06-07',
-          end: '2022-06-10'
-        }
-      ]
+      headerToolbar: {
+  	    left: 'title',
+//  	    right: 'today prev,next'
+  	  right: ''
+  	  },
+      customButtons: {
+    	  today: {
+    	      text: gf_mlg('오늘'),
+    	      click: function() {
+    	        calendar.today();
+    	        f_calendarRefresh();
+    	      }
+    	    },
+    	  prev: {
+    	      text: 'prev',
+    	      click: function() {
+    	        calendar.prev();
+    	        f_calendarRefresh();
+    	      }
+    	    },
+    	    next: {
+      	      text: 'next',
+      	      click: function() {
+      	        calendar.next();
+      	        f_calendarRefresh();
+      	      }
+      	    }
+	  }
     });
 
     calendar.render();
 }
 
+//달력에 적용
+var f_calendarRefresh = function(){
+	console.log('f_calendarRefresh');
+	calendar.today();
+	//달력 데이터삭제
+	$.each(calendar.getEventSources(), function(idx, item){
+		item.remove();
+	});
+	
+	var calendar_start = calendar.currentData.dateProfile.currentRange.start;
+	var calendar_end = calendar.currentData.dateProfile.currentRange.end;
+		
+	var start_date;
+	var end_date;
+	var event_list = [];
+	//시작일셋팅
+	if($('#START_DATE').val() == ''){
+		start_date = calendar_start;
+	}
+	else if(new Date($('#START_DATE').val()) < calendar_start){
+		start_date = calendar_start;
+	}
+	else if(new Date($('#START_DATE').val()) > calendar_end){
+		return false;
+	}
+	else{
+		start_date = new Date($('#START_DATE').val());
+	}
+	//종료일셋팅	
+	if($('#END_DATE').val() == ''){
+		end_date = calendar_end;
+	}
+	else if(new Date($('#END_DATE').val()) < calendar_end){
+		end_date = new Date($('#END_DATE').val()).gf_addDays(1);
+	}
+	else if(new Date($('#END_DATE').val()) < calendar_start){
+		return false;
+	}
+	else{
+		end_date = new Date($('#END_DATE').val()).gf_addDays(1);
+	}
+	
+	for (var curr_date = start_date; curr_date < end_date; curr_date.gf_addDays(1)) {
+		$.each($('#MY_PLAN_ITEM_TABLE tbody tr input[name=ITEM_NAME]'), function(idx, item){
+			if(item.value != ''
+			&& makeApplyDay().split('')[curr_date.getDay()] == '1'){
+				
+				event_list.push({
+					title : item.value,
+					start : curr_date.yyyy_mm_dd(),
+					end : curr_date.yyyy_mm_dd(),
+				});
+			}
+		});
+		
+	}
+
+	
+	if(event_list.length > 0){
+		calendar.addEventSource(event_list);	
+	}
+	
+}
 /*****************************************************************************************************************************************************************
  * 
  * 버튼 기능
@@ -130,9 +220,9 @@ var f_detailSearch = function(){
 					$('#PLAN_NAME').val(data.result[0].PLAN_NAME);
 					$('#START_DATE').val(data.result[0].START_DATE);
 					$('#END_DATE').val(data.result[0].END_DATE);
-					applyExceptDay(data.result[0].EXCEPT_DAY);
+					checkApplyDay(data.result[0].APPLY_DAY);
 				}
-			});
+			}, null, null, null, false);
 	
 	//항목조회
 	var fData2 = new FormData();
@@ -149,8 +239,12 @@ var f_detailSearch = function(){
 						$('#MY_PLAN_ITEM_TABLE tbody tr:eq(' + idx + ') input[name=ITEM_NAME]').val(item.ITEM_NAME);
 						$('#MY_PLAN_ITEM_TABLE tbody tr:eq(' + idx + ') input[name=TARGET]').val(item.TARGET);
 					});
+					
 				}
-			});
+			}, null, null, null, false);
+	
+	//달력적용
+	f_calendarRefresh();
 }
 var f_save = function(){
 	
@@ -183,7 +277,7 @@ var f_save = function(){
 		PLAN_NAME : $('#PLAN_NAME').val(),
 		START_DATE : new Date($('#START_DATE').val()).yyyymmdd(),
 		END_DATE : new Date($('#END_DATE').val()).yyyymmdd(),
-		EXCEPT_DAY : makeExceptDay()
+		APPLY_DAY : makeApplyDay()
 	};
 	fData.append('planForm', JSON.stringify(planDara));
 		
@@ -239,42 +333,42 @@ var f_save = function(){
 			, '/save');
 }
 
-var makeExceptDay = function(){
-	var exceptDay = '';
+var makeApplyDay = function(){
+	var applyDay = '';
 	//일
-	if($('#sun').is(':checked')){exceptDay += '1';}else{exceptDay += '0';}
+	if($('#sun').is(':checked')){applyDay += '1';}else{applyDay += '0';}
 	//월
-	if($('#mon').is(':checked')){exceptDay += '1';}else{exceptDay += '0';}
+	if($('#mon').is(':checked')){applyDay += '1';}else{applyDay += '0';}
 	//화
-	if($('#tue').is(':checked')){exceptDay += '1';}else{exceptDay += '0';}
+	if($('#tue').is(':checked')){applyDay += '1';}else{applyDay += '0';}
 	//수
-	if($('#wed').is(':checked')){exceptDay += '1';}else{exceptDay += '0';}
+	if($('#wed').is(':checked')){applyDay += '1';}else{applyDay += '0';}
 	//목
-	if($('#thu').is(':checked')){exceptDay += '1';}else{exceptDay += '0';}
+	if($('#thu').is(':checked')){applyDay += '1';}else{applyDay += '0';}
 	//금
-	if($('#fri').is(':checked')){exceptDay += '1';}else{exceptDay += '0';}
+	if($('#fri').is(':checked')){applyDay += '1';}else{applyDay += '0';}
 	//토
-	if($('#sat').is(':checked')){exceptDay += '1';}else{exceptDay += '0';}
+	if($('#sat').is(':checked')){applyDay += '1';}else{applyDay += '0';}
 	
-	return exceptDay;
+	return applyDay;
 }
-var applyExceptDay = function(p_exceptDay){
-	var exceptDaySp = p_exceptDay.split('') ;
+var checkApplyDay = function(p_applyDay){
+	var applyDaySp = p_applyDay.split('') ;
 	
 	//일
-	if(exceptDaySp[0] == '1'){$('#sun').prop('checked', true);}else{$('#sun').prop('checked', false);}
+	if(applyDaySp[0] == '1'){$('#sun').prop('checked', true);}else{$('#sun').prop('checked', false);}
 	//월
-	if(exceptDaySp[1] == '1'){$('#mon').prop('checked', true);}else{$('#mon').prop('checked', false);}
+	if(applyDaySp[1] == '1'){$('#mon').prop('checked', true);}else{$('#mon').prop('checked', false);}
 	//화
-	if(exceptDaySp[2] == '1'){$('#tue').prop('checked', true);}else{$('#tue').prop('checked', false);}
+	if(applyDaySp[2] == '1'){$('#tue').prop('checked', true);}else{$('#tue').prop('checked', false);}
 	//수
-	if(exceptDaySp[3] == '1'){$('#wed').prop('checked', true);}else{$('#wed').prop('checked', false);}
+	if(applyDaySp[3] == '1'){$('#wed').prop('checked', true);}else{$('#wed').prop('checked', false);}
 	//목
-	if(exceptDaySp[4] == '1'){$('#thu').prop('checked', true);}else{$('#thu').prop('checked', false);}
+	if(applyDaySp[4] == '1'){$('#thu').prop('checked', true);}else{$('#thu').prop('checked', false);}
 	//금
-	if(exceptDaySp[5] == '1'){$('#fri').prop('checked', true);}else{$('#fri').prop('checked', false);}
+	if(applyDaySp[5] == '1'){$('#fri').prop('checked', true);}else{$('#fri').prop('checked', false);}
 	//토
-	if(exceptDaySp[6] == '1'){$('#sat').prop('checked', true);}else{$('#sat').prop('checked', false);}
+	if(applyDaySp[6] == '1'){$('#sat').prop('checked', true);}else{$('#sat').prop('checked', false);}
 	
 }
 var f_refresh = function(){
@@ -282,7 +376,7 @@ var f_refresh = function(){
 	$('#PLAN_NAME').val('');
 	$('#START_DATE').val(new Date().yyyy_mm_dd());
 	$('#END_DATE').val('');
-	applyExceptDay('0000000');
+	checkApplyDay('1111111');
 
 	$('#MY_PLAN_ITEM_TABLE tbody tr').remove();
 	f_addItem();
