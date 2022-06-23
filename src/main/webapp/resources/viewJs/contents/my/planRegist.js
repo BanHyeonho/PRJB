@@ -94,7 +94,7 @@ var f_setCalendar = function(){
 
 //달력에 적용
 var f_calendarRefresh = function(){
-	console.log('f_calendarRefresh');
+	
 	calendar.today();
 	//달력 데이터삭제
 	$.each(calendar.getEventSources(), function(idx, item){
@@ -356,6 +356,7 @@ var f_refresh = function(){
 
 	$('#MY_PLAN_ITEM_TABLE tbody tr').remove();
 	f_addItem();
+	f_calendarRefresh();
 }
 var f_add = function(){
 	if(confirm(gf_mlg('추가_하시겠습니까'))){
