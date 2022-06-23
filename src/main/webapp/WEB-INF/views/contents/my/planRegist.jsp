@@ -62,7 +62,7 @@
 		<div id='masterGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-2'>
 			<div id="masterGrid" class="grid"></div>
 		</div>
-		<div id='contentContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-3-1'>
+		<div id='contentContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1-1 panel-3-1' style="overflow: auto;">
 			<input type="hidden" id='MY_PLAN_ID'>
 			<table style="width: 100%; max-height: 100%;">
 				<tr class="line-bt">

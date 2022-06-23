@@ -499,4 +499,30 @@
 		           , #{MIP}
 			  	   )
 	</update>
+	
+	<!-- 달력 일정 조회 -->
+	<select id="S_CALENDAR_VIEW_LIST" parameterType="HashMap" resultMap="config.ClobMap">
+		/* S_CALENDAR_VIEW_LIST */
+		SELECT 'MY_PLAN'		AS CAL_TYPE
+			 , A.MY_PLAN_ID		AS KEY_ID
+			 , A.PLAN_NAME		AS TITLE
+		  FROM MY_PLAN A
+		 WHERE A.COMM_USER_ID = #{COMM_USER_ID}
+		 <![CDATA[
+		   AND TO_NUMBER(NVL(A.END_DATE, '99991231')) >= TO_NUMBER(TO_CHAR(LAST_DAY('20220601'), 'YYYYMMDD'))
+		   ]]>
+		   UNION ALL
+		   
+		   SELECT 'GOOGLE' 	AS CAL_TYPE
+		   		, 9999		AS KEY_ID
+		   		, '구글' 	AS TITLE
+		     FROM DUAL
+		    
+		    UNION ALL
+		     
+		   SELECT 'KAKAO' 	AS CAL_TYPE
+		   		, 9999		AS KEY_ID
+		   		, '카카오' 	AS TITLE
+		     FROM DUAL
+	</select>
 </mapper>

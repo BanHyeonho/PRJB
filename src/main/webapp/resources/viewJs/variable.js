@@ -35,3 +35,6 @@ const gv_fileMaxSize = 21474836480;
 
 //첨부파일명 최대길이
 const gv_fileNameMaxlength = 200;
+
+//기본색상
+const gv_color = ['#ef9a9a', '#90caf9', '#a5d6a7', '#fff59d', '#ffcc80', '#bcaaa4', '#eeeeee', '#f44336', '#2196f3', '#4caf50', '#ffeb3b', '#ff9800', '#795548', '#9e9e9e'];
