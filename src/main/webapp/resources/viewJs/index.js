@@ -119,13 +119,16 @@ function f_openMenuList(){
 								var menuNm = item.MENU_NAME;
 								var menuCode = item.MENU_CODE
 								
-								var portlet = $('<div>').addClass('portlet');
-								var portletHeader = $('<div>').addClass('portlet-header').text(menuNm);
-								var portletAtag = $('<a>').attr('href', 'javascript:$("#' + menuCode + '").trigger("click");').text(gf_mlg('이동'));
-								var portletContent = $('<div>').addClass('portlet-content').html(portletAtag);
+								if( $('#' + menuCode).length > 0 ){
+									var portlet = $('<div>').addClass('portlet');
+									var portletHeader = $('<div>').addClass('portlet-header').text(menuNm);
+									var portletAtag = $('<a>').attr('href', 'javascript:$("#' + menuCode + '").trigger("click");').text(gf_mlg('이동'));
+									var portletContent = $('<div>').addClass('portlet-content').html(portletAtag);
+									
+									portlet.append(portletHeader).append(portletContent);
+									$('#openMenu').append(portlet);
+								}
 								
-								portlet.append(portletHeader).append(portletContent);
-								$('#openMenu').append(portlet);
 							}
 								
 							//메뉴 우측 퀵메뉴 셋팅		    
@@ -155,14 +158,17 @@ function f_bookmarkMenuList(){
 						var menuNm = item.MENU_NAME;
 						var menuCode = item.MENU_CODE;
 						
-						var portlet = $('<div>').addClass('portlet');
-						var portletHidden = $('<input type="hidden" name="menuCode"/>').val(menuCode);
-						var portletHeader = $('<div>').addClass('portlet-header').text(menuNm);
-						var portletAtag = $('<a>').attr('href', 'javascript:$("#' + menuCode + '").trigger("click");').text(gf_mlg('이동'));
-						var portletContent = $('<div>').addClass('portlet-content').html(portletAtag);
+						if( $('#' + menuCode).length > 0 ){
+							var portlet = $('<div>').addClass('portlet');
+							var portletHidden = $('<input type="hidden" name="menuCode"/>').val(menuCode);
+							var portletHeader = $('<div>').addClass('portlet-header').text(menuNm);
+							var portletAtag = $('<a>').attr('href', 'javascript:$("#' + menuCode + '").trigger("click");').text(gf_mlg('이동'));
+							var portletContent = $('<div>').addClass('portlet-content').html(portletAtag);
+							
+							portlet.append(portletHidden).append(portletHeader).append(portletContent);
+							$('#bookMark').append(portlet);
+						}
 						
-						portlet.append(portletHidden).append(portletHeader).append(portletContent);
-						$('#bookMark').append(portlet);
 					}
 					
 					//메뉴 우측 퀵메뉴 셋팅		    
@@ -280,13 +286,16 @@ function f_getMenu(){
 						var bigMenuCode = item.MENU_PATH.split('@')[1];
 						var bigMenu = bigMenus.find(x=>x.MENU_CODE==bigMenuCode);
 						
-						menuSearchData.push({
-							label : menuNm, 
-							category : gf_mlg(bigMenu.MLG_CODE),
-							value : menuNm,
-							menuCode : menuCode,
-							menuUrl : menuUrl
-						});
+						if(gf_nvl(bigMenu, '') != ''){
+							menuSearchData.push({
+								label : menuNm, 
+								category : gf_mlg(bigMenu.MLG_CODE),
+								value : menuNm,
+								menuCode : menuCode,
+								menuUrl : menuUrl
+							});
+						}
+						
 					}
 					
 					
