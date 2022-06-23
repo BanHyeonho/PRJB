@@ -330,7 +330,9 @@
              , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
              , B.COMM_AUTH_GROUP_MENU_ID
              , NVL(B.USE_YN, '0') AS USE_YN
-          FROM COMM_MENU A
+          FROM (SELECT *
+		   		  FROM COMM_MENU
+		   		 WHERE USE_YN = '1') A
      LEFT JOIN (
                SELECT Y.COMM_AUTH_GROUP_MENU_ID
                     , Y.COMM_MENU_ID
@@ -433,7 +435,9 @@
 	         , A.COMM_MENU_ID 								AS COMM_MENU_ID
 	         , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
 	         , NVL(B.USE_YN, '0') 							AS USE_YN
-      	  FROM COMM_MENU A
+      	  FROM (SELECT *
+		   		  FROM COMM_MENU
+		   		 WHERE USE_YN = '1') A
 	 LEFT JOIN COMM_MENU_FUNC B ON A.COMM_MENU_ID = B.COMM_MENU_ID AND B.COMM_FUNCTION_ID = #{COMM_FUNCTION_ID}
 	     START WITH A.UP_MENU_CODE IS null 
 	    CONNECT BY PRIOR A.MENU_CODE = A.UP_MENU_CODE
@@ -519,6 +523,7 @@
 		  FROM COMM_USER_BOOKMARK A
 		  JOIN COMM_MENU B ON A.MENU_CODE = B.MENU_CODE
 		 WHERE A.COMM_USER_ID = #{CID}
+		   AND B.USE_YN = '1'
 		   AND EXISTS (
 		             SELECT Y.COMM_MENU_ID
 		               FROM COMM_AUTH_GROUP Z
@@ -874,8 +879,10 @@
 			 , A.COMM_MENU_ID
 			 , A.MENU_CODE
 			 , COMM_UTIL_PKG.lang(A.MLG_CODE, #{LANG_CODE}) AS MENU_NAME
-		  FROM COMM_MENU A
-     	 WHERE A.USE_YN = '1'
+		  FROM (SELECT *
+		   		  FROM COMM_MENU
+		   		 WHERE USE_YN = '1'
+		   		) A
 		 START WITH A.UP_MENU_CODE IS null 
 		CONNECT BY PRIOR A.MENU_CODE = A.UP_MENU_CODE
 		ORDER SIBLINGS BY A.SEQ
@@ -1005,7 +1012,9 @@
 					       , A.DESCRIPTION 
 					       , A.SEQ
 					       , A.ATTRIBUTE1
-					      FROM COMM_MENU A
+					      FROM (SELECT *
+						   		  FROM COMM_MENU
+						   		 WHERE USE_YN = '1') A
 					      JOIN (
 					        SELECT C.COMM_MENU_ID
 					           , MAX(C.USE_YN) AS USE_YN
@@ -1015,8 +1024,7 @@
 					       WHERE B.COMM_USER_ID = #{CID}
 					       GROUP BY C.COMM_MENU_ID
 					          ) B ON A.COMM_MENU_ID = B.COMM_MENU_ID
-					     WHERE A.USE_YN = '1'
-					       AND B.USE_YN = '1'
+					     WHERE B.USE_YN = '1'
 					       <![CDATA[
 					       AND (
 					       		instr(A.MENU_CODE, 'HIDDEN') = 0 
