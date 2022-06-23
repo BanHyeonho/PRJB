@@ -62,7 +62,7 @@ var f_setMasterGrid = function(){
     });
 	masterGrid.onSelectedRowsChanged.subscribe(function (e, args) {
 				
-		//메모장 상세 조회
+		//상세 조회
 		f_detailSearch();
     });
 }
@@ -74,45 +74,20 @@ var f_setMasterGrid = function(){
  *****************************************************************************************************************************************************************/
 var f_setCalendar = function(){
 	var calendarEl = document.getElementById('calendar');
-
-    calendar = new FullCalendar.Calendar(calendarEl, {
-    	height: '100%',
-    	initialDate: new Date().yyyy_mm_dd(),
-      locale: "ko",
-//    	locale: "en",
-      editable: false,
-      selectable: true,
-      businessHours: true,
-      dayMaxEvents: true, // allow "more" link when too many events
-      headerToolbar: {
-  	    left: 'title',
-//  	    right: 'today prev,next'
-  	  right: ''
-  	  },
-      customButtons: {
-    	  today: {
-    	      text: gf_mlg('오늘'),
-    	      click: function() {
-    	        calendar.today();
-    	        f_calendarRefresh();
-    	      }
-    	    },
-    	  prev: {
-    	      text: 'prev',
-    	      click: function() {
-    	        calendar.prev();
-    	        f_calendarRefresh();
-    	      }
-    	    },
-    	    next: {
-      	      text: 'next',
-      	      click: function() {
-      	        calendar.next();
-      	        f_calendarRefresh();
-      	      }
-      	    }
-	  }
-    });
+	
+	calendar = new FullCalendar.Calendar(calendarEl, {
+		height: '100%',
+		initialDate: new Date().yyyy_mm_dd(),
+		locale: gf_getLang(),
+		editable: false,
+		selectable: true,
+		businessHours: true,
+		dayMaxEvents: true, // allow "more" link when too many events
+		headerToolbar: {
+			left: 'title',
+			right: ''
+		}
+	});
 
     calendar.render();
 }

@@ -12,7 +12,10 @@ function gf_nvl(val, val2) {
 
 	return result;
 }
-
+//브라우저 언어 (영어:en , 한글:ko)
+function gf_getLang() {
+  return navigator.language || navigator.userLanguage;
+}
 //암호화
 function gf_securePw(pw, puk) {	//암호화할 비밀번호 , 공개키
 
@@ -705,7 +708,7 @@ function gf_gridRowData(grid, rId, columnNm){
 }
 
 function gf_gridSelectVal(grid, columnNm){
-	grid.setSelectedRows( [grid.getSelectedRows()[0]] );
+//	grid.setSelectedRows( [grid.getSelectedRows()[0]] );
 	return gf_gridRowData(grid, grid.getSelectedRows()[0], columnNm);
 }
 /*****************************************************************************************************************************************************************

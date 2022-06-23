@@ -396,7 +396,6 @@ var f_search = function(){
 				|| (myNoteInfo.attachedFiles.length > 0 || myNoteInfo.attachedDelFiles.length > 0)
 				){
 					if(!confirm(gf_mlg('수정된_데이터를_저장하지_않고,_조회_하시겠습니까?'))){
-						gridEventIgnore = true;
 						return false;
 					}
 				}

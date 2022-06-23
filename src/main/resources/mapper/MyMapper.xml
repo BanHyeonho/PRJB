@@ -362,13 +362,19 @@
 			 , A.MY_PLAN_ID
 			 , A.PLAN_NAME
 			 , COMM_UTIL_PKG.DATE_FORMAT(A.START_DATE, 'YYYY-MM-DD')	AS START_DATE
-			 , COMM_UTIL_PKG.DATE_FORMAT(A.END_DATE, 'YYYY-MM-DD')	AS END_DATE 
+			 , COMM_UTIL_PKG.DATE_FORMAT(A.END_DATE, 'YYYY-MM-DD')		AS END_DATE 
 			 , A.APPLY_DAY
 			 , A.DESCRIPTION
       	  FROM MY_PLAN A
       	 WHERE A.COMM_USER_ID = #{COMM_USER_ID}
       	 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(MY_PLAN_ID)">
       	   AND A.MY_PLAN_ID = #{MY_PLAN_ID}
+      	 </if>
+      	 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(SEARCH_DATE)">
+      	 	<![CDATA[
+      	   AND TO_NUMBER(A.APPLY_DAY) <= TO_NUMBER(#{SEARCH_DATE})
+      	   AND TO_NUMBER(#{SEARCH_DATE}) <= TO_NUMBER(NVL(A.END_DATE, '99991231')) 
+      	   ]]>
       	 </if>
       	 ORDER BY A.start_date DESC
 	</select>
@@ -437,4 +443,60 @@
 				 	 ;
 		    END;
 	</delete>
+	
+	<!-- 실적등록 - 계뢱/실적 조회 -->
+	<select id="S_MY_PLAN_RESULT" parameterType="HashMap" resultMap="config.ClobMap">
+		/* S_MY_PLAN_RESULT */
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.THE_DATE
+			 , COMM_UTIL_PKG.DATE_FORMAT(A.THE_DATE, 'YYYY-MM-DD') AS THE_DATE_VIEW
+		     , A.DAYS
+		     , C.ITEM_NAME
+		     , C.TARGET
+		     , D.RESULT
+		     , C.MY_PLAN_ITEM_ID
+		  FROM COMM_UTIL_PKG.GET_MONTH(#{SEARCH_DATE}) A
+		  JOIN MY_PLAN B      ON (SUBSTR(B.APPLY_DAY, TO_NUMBER(A.DAYS)+1, 1) = '1'
+		  					<![CDATA[
+		  					  AND TO_NUMBER(B.START_DATE) <= TO_NUMBER(A.THE_DATE) 
+		                      AND TO_NUMBER(A.THE_DATE) <= TO_NUMBER(NVL(B.END_DATE, '99991231'))
+		                      ]]>		                      
+		                      )
+		  JOIN MY_PLAN_ITEM C ON (B.MY_PLAN_ID = C.MY_PLAN_ID AND B.COMM_USER_ID = #{COMM_USER_ID})
+	 LEFT JOIN MY_PLAN_RESULT D ON (D.COMM_USER_ID = #{COMM_USER_ID} AND C.MY_PLAN_ITEM_ID = D.MY_PLAN_ITEM_ID AND A.THE_DATE = D.THE_DATE)
+		 WHERE B.MY_PLAN_ID = #{MY_PLAN_ID}
+		   AND C.MY_PLAN_ID = #{MY_PLAN_ID}
+		 ORDER BY TO_NUMBER(A.THE_DATE) ASC, C.MY_PLAN_ITEM_ID ASC
+	</select>
+	<!-- 실적등록 - 계뢱/실적 입력 -->
+	<update id="U_MY_PLAN_RESULT" parameterType="HashMap">
+		/* U_MY_PLAN_RESULT */
+		MERGE INTO MY_PLAN_RESULT A
+			 USING DUAL
+			    ON (A.COMM_USER_ID = #{COMM_USER_ID} AND A.MY_PLAN_ITEM_ID = #{MY_PLAN_ITEM_ID} AND A.THE_DATE = #{THE_DATE})
+			  WHEN MATCHED THEN
+			  UPDATE SET A.RESULT = #{RESULT}
+			  		   , A.MID = #{MID}
+			  		   , A.MDT = SYSDATE
+			  		   , A.MIP = #{MIP}
+			  WHEN NOT MATCHED THEN
+			  INSERT(MY_PLAN_RESULT_ID
+			  	   , COMM_USER_ID
+			  	   , MY_PLAN_ITEM_ID
+			  	   , THE_DATE
+			  	   , RESULT
+			  	   <include refid="config.cidColumn"></include>)
+			  VALUES(MY_PLAN_RESULT_S.NEXTVAL
+			  	   , #{COMM_USER_ID}
+			  	   , #{MY_PLAN_ITEM_ID}
+			  	   , #{THE_DATE}
+			  	   , #{RESULT}
+			  	   , #{MID}
+		           , SYSDATE
+		           , #{MIP}
+		           , #{MID}
+		           , SYSDATE    
+		           , #{MIP}
+			  	   )
+	</update>
 </mapper>
