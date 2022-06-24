@@ -79,11 +79,13 @@
 						</tr>
 					</thead>
 				</table>
-				<div id="chart"></div>
+				<div class='pd-default'>
+					<div id="chart"></div>
+				</div>
 			</div>
 		</div>
 		<div id='calendarContainer' class='content-panel no-mg pd-pl-default ht-pl-notitle panel-8-1'>
-			<div id="calendar" class=""></div>
+			<div id="calendar"></div>
 		</div>
 	</div>
 </body>

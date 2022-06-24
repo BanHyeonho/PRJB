@@ -151,7 +151,7 @@ var f_calendarRefresh = function(){
 
 	
 	if(event_list.length > 0){
-		calendar.addEventSource(event_list);	
+		calendar.addEventSource(event_list);
 	}
 	
 }
