@@ -87,6 +87,25 @@
 		<div id='calendarContainer' class='content-panel no-mg pd-pl-default ht-pl-notitle panel-8-1'>
 			<div id="calendar"></div>
 		</div>
+		
+		<!-- 모달 -->
+		<div id="modal_registResult" title='${pb:msg(pageContext.request, "실적입력")}' class='no-drag-area'>
+			<div class="div-10 mg-tp-default">
+				<table style="width: 100%; max-height: 100%;">
+					<thead>
+						<tr>
+							<td class='pd-default line-rt' style="width: 65%;"><span class="">${pb:msg(pageContext.request, "항목")}</span></td>
+							<td class='pd-default line-rt' style="width: 15%;"><span class="">${pb:msg(pageContext.request, "목표")}</span></td>
+							<td class='pd-default' style="width: 20%;"><span class="">${pb:msg(pageContext.request, "실적")}</span></td>
+						</tr>
+					</thead>
+					<tbody>
+					
+					</tbody>
+				</table>
+			</div>
+		</div>
+	
 	</div>
 </body>
 </html>

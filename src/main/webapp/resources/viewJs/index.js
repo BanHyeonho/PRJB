@@ -406,12 +406,12 @@ function f_attachTabEvent(){
 //메뉴목록 열기
 var f_menuOpen = function(){
 	$( "#menu" ).dialog({
-	      resizable: false,
-	      height: "630",
-	      width: '900',
+		resizable: false,
+		height: "630",
+		width: '900',
 //	      maxWidth: '900',
 //	      maxHeight: '640',
-	      modal: true
+		modal: true
 	});
 	
     //즐겨찾기가져오기
@@ -461,7 +461,7 @@ var f_addPageExec = function(p_param){
         		}
         	});
         }
-    }catch(e){}
+    }catch(e){console.error(e);}
     
     li.attr('title', label);
         

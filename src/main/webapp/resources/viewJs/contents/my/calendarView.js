@@ -10,9 +10,71 @@ $(document).ready(function() {
 	//차트셋팅
 	f_setChart();
 	
-	f_search();
+	//모달셋팅
+	f_set_modal();
 	
+	
+	f_search();
 });
+/*****************************************************************************************************************************************************************
+ * 
+ * 모달
+ * 
+ *****************************************************************************************************************************************************************/
+var f_set_modal = function(){
+	
+	//실적입력 모달
+	var registResultOption = {
+			resizable : false,
+			height: 350,
+			width: 500,
+			buttons : {}
+	}
+	registResultOption.buttons[gf_mlg('확인')] = function(){
+   	
+		var fData = new FormData();
+		
+		var noData = true;
+		$.each($('#modal_registResult table tbody tr'), function(idx, item){
+			var resultVal = $(item).find('input[name=RESULT]').val();
+			var beforeVal = $(item).find('input[name=RESULT]').attr('before_value');
+			if(gf_nvl(resultVal, '') != gf_nvl(beforeVal, '')){
+				var resultDara = {
+					QUERY_ID : 'my.U_MY_PLAN_RESULT',
+					MY_PLAN_ITEM_ID : $(item).find('input[name=MY_PLAN_ITEM_ID]').val(),
+					THE_DATE : $(item).find('input[name=THE_DATE]').val(),
+					RESULT : resultVal
+				};
+				fData.append(idx + 'resultForm', JSON.stringify(resultDara));
+				noData = false;
+			}
+			
+		});
+		
+		if(noData){
+			$('#modal_registResult').dialog('close');
+			return false;
+		}
+		
+		gf_ajax( fData
+				, null
+				, function(data){
+					$('#modal_registResult').dialog('close');
+					gf_toast(gf_mlg('저장_되었습니다'), 'success');
+					f_searchCal();
+				}
+				, null
+				, null
+				, '/save');
+
+	};
+   
+	registResultOption.buttons[gf_mlg('닫기')] = function(){
+   		$(this).dialog('close');
+	};
+   gf_modal('modal_registResult', registResultOption);
+}
+
 /*****************************************************************************************************************************************************************
  * 
  * 달력
@@ -37,32 +99,71 @@ var f_setCalendar = function(p_date){
 		},
 		customButtons: {
 			today: {
-		      text: gf_mlg('오늘'),
-		      click: function() {
-		    	  calendar.today();
-		    	  f_search();
-		      }
-		    },
+				text: gf_mlg('오늘'),
+				click: function() {
+					calendar.today();
+					f_search();
+				}
+			},
 		    prev: {
-			      text: gf_mlg('이전달'),
-			      click: function() {
-			    	  calendar.prev();
-			    	  f_search();
-			      }
-			    },
+		    	text: gf_mlg('이전달'),
+		    	click: function() {
+		    		calendar.prev();
+		    		f_search();
+	    		}
+		    },
 		    next: {
-			      text: gf_mlg('다음달'),
-			      click: function() {
-			    	  calendar.next();
-			    	  f_search();
-			      }
-			    },			    
-		  }
+		    	text: gf_mlg('다음달'),
+		    	click: function() {
+		    		calendar.next();
+		    		f_search();
+	    		}
+		    },			    
+		},
+		dateClick : function(e){
+			f_openModal(e.date);
+		}
 	});
 	
     calendar.render();
 }
-
+var f_openModal = function(p_date){
+	$("#modal_registResult table tbody tr").remove();
+	
+	var fData = new FormData();
+	fData.set('QUERY_ID', 'my.S_MY_PLAN_RESULT_ONEDAY');
+	fData.set('SEARCH_DATE', p_date.yyyymmdd());
+	gf_ajax( fData
+			, null
+			, function(data){
+		
+				if(data.result.length > 0){
+					$.each(data.result, function(idx, item){
+						
+						var tr = $('<tr>').addClass('line-tp');
+						var itemName = $('<td style="width: 65%;">').addClass('pd-default line-rt').append( $('<input type="hidden" name="MY_PLAN_ITEM_ID">').val(item.MY_PLAN_ITEM_ID) )
+																									.append( $('<input type="hidden" name="THE_DATE">').val(item.THE_DATE) )
+																									.append( $('<span>').text(item.ITEM_NAME) );
+						tr.append(itemName);
+						
+						var target = $('<td style="width: 15%; text-align: center;">').addClass('pd-default line-rt').append( $('<span>').text(item.TARGET) );
+						tr.append(target);
+						
+						var result = $('<td style="width: 20%;">').addClass('pd-default2').append( $('<input class="form form-text" type="number" name="RESULT" min="0" before_value="'+ gf_nvl(item.RESULT, '') +'">').val(item.RESULT) );
+						tr.append(result);
+						
+						$('#modal_registResult table tbody').append(tr);
+						
+					});
+					$( "#modal_registResult" ).dialog({title : '(' + p_date.yyyy_mm_dd() + ') ' + gf_mlg('실적입력') })
+					$( "#modal_registResult" ).dialog('open');
+				}
+				
+			});
+	
+	
+	
+}
 /*****************************************************************************************************************************************************************
  * 
  * 차트
@@ -78,22 +179,14 @@ var f_setChart = function(){
 	    },
 	    gauge: {
 	        label: {
-//	            format: function(value, ratio) {
-//	                return value;
-//	            },
 	            show: false // to turn off the min/max labels.
 	        },
-//	    min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
-//	    max: 100, // 100 is default
-//	    units: ' %',
 	    width: 100 // for adjusting arc thickness
 	    },
 	    color: {
-	        pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
+	        pattern: gv_gaugeColor.pattern,
 	        threshold: {
-//	            unit: 'value', // percentage is default
-//	            max: 100, // 100 is default
-	            values: [30, 60, 90, 100]
+	            values: gv_gaugeColor.values
 	        }
 	    },
 	    size: {
@@ -193,7 +286,7 @@ var f_searchList = function(){
 					$('#listTable tbody').append(tr);
 					f_color(tr.find('.minicolors'), item.COLOR);
 				});
-			});	
+			});
 }
 var f_color = function(p_target, p_color){
 	var defaultColor;

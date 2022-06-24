@@ -54,10 +54,10 @@ $(document).ready(function() {
 	$(document).on('contextmenu', function() {
 		  return false;
 	});
-	//드래그 막기
-	$(document).on('dragstart', function() {
-		return false;
-	});
+	//드래그 막기(모달 드래그 이동이 안됨)
+//	$(document).on('dragstart', function() {
+//		return false;
+//	});
 	//선택막기(ctrl+a 안되는 문제가 있음)
 //	$(document).on('selectstart', function(e) {
 //		  return false;
