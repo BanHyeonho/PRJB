@@ -344,7 +344,7 @@
       	 ORDER BY NVL(A.SEQ, ROWNUM) ASC, A.PAGE_TITLE ASC
 	</select>
 	<!-- 메모장 상세 내용 조회 -->
-	<select id="S_MY_NOTE_DETAIL_CONTENT" parameterType="HashMap" resultMap="config.ClobMap">
+	<select id="S_MY_NOTE_DETAIL_CONTENT" parameterType="HashMap" resultType="HashMap" resultMap="config.ClobMap">
 		/* S_MY_NOTE_DETAIL_CONTENT */
 		SELECT A.MY_NOTE_DETAIL_ID
 			 , A.NOTE_CONTENTS
@@ -356,7 +356,7 @@
 	</select>
 	
 	<!-- 계획등록 - 계뢱목록 조회 -->
-	<select id="S_MY_PLAN" parameterType="HashMap" resultMap="config.ClobMap">
+	<select id="S_MY_PLAN" parameterType="HashMap" resultType="HashMap">
 		/* S_MY_PLAN */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.MY_PLAN_ID
@@ -379,7 +379,7 @@
       	 ORDER BY A.start_date DESC
 	</select>
 	<!-- 계획등록 - 계뢱 항목 조회 -->
-	<select id="S_MY_PLAN_ITEM" parameterType="HashMap" resultMap="config.ClobMap">
+	<select id="S_MY_PLAN_ITEM" parameterType="HashMap" resultType="HashMap">
 		/* S_MY_PLAN_ITEM */
 		SELECT A.ITEM_NAME
 			 , A.TARGET
@@ -445,7 +445,7 @@
 	</delete>
 	
 	<!-- 실적등록 - 계뢱/실적 조회 -->
-	<select id="S_MY_PLAN_RESULT" parameterType="HashMap" resultMap="config.ClobMap">
+	<select id="S_MY_PLAN_RESULT" parameterType="HashMap" resultType="HashMap">
 		/* S_MY_PLAN_RESULT */
 		SELECT 'id_' || (ROWNUM-1) AS "id"
 			 , A.THE_DATE
@@ -501,7 +501,7 @@
 	</update>
 	
 	<!-- 달력 일정 조회 -->
-	<select id="S_CALENDAR_VIEW_LIST" parameterType="HashMap" resultMap="config.ClobMap">
+	<select id="S_CALENDAR_VIEW_LIST" parameterType="HashMap" resultType="HashMap">
 		/* S_CALENDAR_VIEW_LIST */
 		SELECT A.CAL_TYPE
 			 , A.KEY_ID
@@ -574,7 +574,7 @@
 	</update>
 	
 	<!-- 달력 계획 달성율 -->
-	<select id="S_CALENDAR_VIEW_LIST_CHART" parameterType="HashMap" resultMap="config.ClobMap">
+	<select id="S_CALENDAR_VIEW_LIST_CHART" parameterType="HashMap" resultType="HashMap">
 		/* S_CALENDAR_VIEW_LIST_CHART */
 		SELECT C.MY_PLAN_ITEM_ID
          	 , C.ITEM_NAME
@@ -602,7 +602,7 @@
 	</select>
 	
 	<!-- 달력 계획 캘린더 -->
-	<select id="S_CALENDAR_VIEW_CALENDAR" parameterType="HashMap" resultMap="config.ClobMap">
+	<select id="S_CALENDAR_VIEW_CALENDAR" parameterType="HashMap" resultType="HashMap">
 		/* S_CALENDAR_VIEW_CALENDAR */
 		SELECT A.THE_DATE
 			 , COMM_UTIL_PKG.DATE_FORMAT(A.THE_DATE, 'YYYY-MM-DD')	AS "start"
@@ -644,4 +644,34 @@
 	 LEFT JOIN MY_PLAN_RESULT D ON (D.COMM_USER_ID = #{COMM_USER_ID} AND C.MY_PLAN_ITEM_ID = D.MY_PLAN_ITEM_ID AND A.THE_DATE = D.THE_DATE)
 	</select>
 	
+	<!-- 하루치 계획 실적 조회 -->
+	<select id="S_MY_PLAN_RESULT_ONEDAY" parameterType="HashMap" resultType="HashMap">
+		/* S_MY_PLAN_RESULT_ONEDAY */
+		SELECT #{SEARCH_DATE}		AS THE_DATE
+			 , B.MY_PLAN_ITEM_ID	AS MY_PLAN_ITEM_ID
+			 , MAX(B.ITEM_NAME)		AS ITEM_NAME
+			 , MAX(B.TARGET)		AS TARGET
+			 , MAX(C.RESULT)		AS RESULT
+		  FROM MY_PLAN A
+		  JOIN MY_PLAN_ITEM B ON (A.COMM_USER_ID = #{COMM_USER_ID} AND A.MY_PLAN_ID = B.MY_PLAN_ID)
+	 LEFT JOIN MY_PLAN_RESULT C ON (C.COMM_USER_ID = #{COMM_USER_ID} AND B.MY_PLAN_ITEM_ID = C.MY_PLAN_ITEM_ID AND C.THE_DATE = #{SEARCH_DATE})
+	     WHERE A.COMM_USER_ID = #{COMM_USER_ID}
+	       AND SUBSTR(A.APPLY_DAY, ( TO_NUMBER(TO_CHAR(TO_DATE(#{SEARCH_DATE}), 'D'))-1 )+1, 1) = '1'
+	       <![CDATA[
+	       AND (
+	       		TO_NUMBER(A.START_DATE) <= TO_NUMBER(#{SEARCH_DATE})
+	       		AND
+	       		TO_NUMBER(#{SEARCH_DATE}) <= TO_NUMBER(NVL(A.END_DATE, '99991231'))
+	       		)
+       		]]>
+		   AND EXISTS(
+	             SELECT MY_CALENDAR_LIST_ID
+	               FROM MY_CALENDAR_LIST Z
+	              WHERE Z.COMM_USER_ID = #{COMM_USER_ID}
+	                AND Z.CHECKED_YN = '1'
+	                AND Z.CAL_TYPE = 'MY_PLAN'
+	                AND Z.KEY_ID = A.MY_PLAN_ID
+	             )
+	     GROUP BY B.MY_PLAN_ITEM_ID
+	</select>
 </mapper>

@@ -130,7 +130,6 @@ var f_saveList = function(me){
 	gf_ajax( fData
 			, null
 			, function(data){
-		console.log($(me));		
 		
 				//색상편집기
 				if( $(me).hasClass('minicolors') ){
