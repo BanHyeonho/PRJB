@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
@@ -851,32 +852,13 @@ public class ComService {
 		dataParam.put("columnList", encryptList);
 		List<Map> tableDataList = comDao.selectList("com.S_ALL_TABLE_SELECT", dataParam);
 		
-		String tablePk = tableNm + "_ID";
-		Map updateParam = null;
-		List columns = null;
+		List<Future> futures = new ArrayList<>();
 		//암호화
 		//전체데이터를 다시 업데이트해서 자동으로 암호화 적용
 		if(type) {
 			
 			for (Map dataMap : tableDataList) {
-				
-				updateParam = new HashMap();
-				columns = new ArrayList();
-				
-				for (Map col : encryptList) {
-					Map m = new HashMap();
-					m.put("COLUMN_NAME", col.get("COLUMN_NAME"));
-					m.put("COLUMN_VALUE", dataMap.get(col.get("COLUMN_NAME")));								
-					columns.add(m);
-				}
-				
-				updateParam.put("TABLE_NAME", tableNm);
-				updateParam.put("TABLE_LAYOUT", columns);
-				
-				updateParam.put("TABLE_PK", tablePk);
-				updateParam.put("TABLE_PK_VAL", dataMap.get(tableNm + "_ID"));
-				
-				comDao.update("com.U_COMM_QUERY", updateParam);
+				futures.add(tableEncrypt(tableNm, encryptList, dataMap));
 			}
 			
 		}
@@ -884,30 +866,97 @@ public class ComService {
 		//전체데이터컬럼을 _DECRYPT 로 명칭변경후 다시 업데이트하여 복호화적용.
 		else {
 			for (Map dataMap : tableDataList) {
-				
-				updateParam = new HashMap();
-				columns = new ArrayList();
-				
-				for (Map col : encryptList) {
-					Map m = new HashMap();
-					m.put("COLUMN_NAME", col.get("COLUMN_NAME"));
-					m.put("CRYPTO_VALUE", dataMap.get(col.get("COLUMN_NAME")));								
-					columns.add(m);
-				}
-				
-				updateParam.put("TABLE_NAME", tableNm);
-				updateParam.put("TABLE_LAYOUT", columns);
-				
-				updateParam.put("TABLE_PK", tablePk);
-				updateParam.put("TABLE_PK_VAL", dataMap.get(tableNm + "_ID"));
-				
-				comDao.update("com.U_ALL_TABLE_DECRYPT", updateParam);
+				futures.add(tableDecrypt(tableNm, encryptList, dataMap));
 			}
 		}
 		
+		//쓰레드 동기화
+		for (Future future : futures) {
+			future.get();
+		}
+				
 		result.put("state", "success");
 		return result;
 	}
+	/**
+	 * 테이블 암호화 병렬처리
+	 * @param p_tableNm : 테이블명
+	 * @param p_encryptList : 암호화컬럼
+	 * @param p_dataMap : 데이터
+	 * @return
+	 */
+	public Future<Void> tableEncrypt(String p_tableNm, List<Map> p_encryptList, Map p_dataMap) {
+		Future<Void> result = null;
+		
+		result = asyncService.run(() -> {
+			
+			Map updateParam = new HashMap();
+			List columns = new ArrayList();
+			
+			for (Map col : p_encryptList) {
+				Map m = new HashMap();
+				m.put("COLUMN_NAME", col.get("COLUMN_NAME"));
+				m.put("COLUMN_VALUE", p_dataMap.get(col.get("COLUMN_NAME")));								
+				columns.add(m);
+			}
+			
+			updateParam.put("TABLE_NAME", p_tableNm);
+			updateParam.put("TABLE_LAYOUT", columns);
+			
+			updateParam.put("TABLE_PK", p_tableNm + "_ID");
+			updateParam.put("TABLE_PK_VAL", p_dataMap.get(p_tableNm + "_ID"));
+			
+			try {
+				comDao.update("com.U_COMM_QUERY", updateParam);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		});
+
+		return result;
+	}
+	/**
+	 * 테이블 복호화 병렬처리
+	 * @param p_tableNm : 테이블명
+	 * @param p_encryptList : 암호화컬럼
+	 * @param p_dataMap : 데이터
+	 * @return
+	 */
+	public Future<Void> tableDecrypt(String p_tableNm, List<Map> p_encryptList, Map p_dataMap){
+		Future<Void> result = null;
+		
+		result = asyncService.run(() -> {
+			
+			Map updateParam = new HashMap();
+			List columns = new ArrayList();
+			
+			for (Map col : p_encryptList) {
+				Map m = new HashMap();
+				m.put("COLUMN_NAME", col.get("COLUMN_NAME"));
+				m.put("CRYPTO_VALUE", p_dataMap.get(col.get("COLUMN_NAME")));								
+				columns.add(m);
+			}
+			
+			updateParam.put("TABLE_NAME", p_tableNm);
+			updateParam.put("TABLE_LAYOUT", columns);
+			
+			updateParam.put("TABLE_PK", p_tableNm + "_ID");
+			updateParam.put("TABLE_PK_VAL", p_dataMap.get(p_tableNm + "_ID"));
+			
+			try {
+				comDao.update("com.U_ALL_TABLE_DECRYPT", updateParam);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		});
+
+		return result;
+	}
+	
 	/**
 	 * 파일 저장
 	 * @param request

@@ -229,8 +229,6 @@ public class MyService {
 						}
 					}
 					
-					System.out.println("size ::: --------------------------------------->" + fileInfoList.size());
-					
 					if(keyId != null) {
 						String cId = String.valueOf(p_param.get("COMM_USER_ID"));
 						String ip = String.valueOf(p_param.get("IP"));
