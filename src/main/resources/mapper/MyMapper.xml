@@ -528,12 +528,6 @@
 			   		, '구글' 	AS TITLE
 			     FROM DUAL
 			    
-			    UNION ALL
-			     
-			   SELECT 'KAKAO' 	AS CAL_TYPE
-			   		, 9999		AS KEY_ID
-			   		, '카카오' 	AS TITLE
-			     FROM DUAL
 		  ) A
 	 LEFT JOIN MY_CALENDAR_LIST B ON (B.COMM_USER_ID = #{COMM_USER_ID} AND A.CAL_TYPE = B.CAL_TYPE AND A.KEY_ID = B.KEY_ID)		
 	</select>

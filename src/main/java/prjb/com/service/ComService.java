@@ -851,6 +851,7 @@ public class ComService {
 		dataParam.put("columnList", encryptList);
 		List<Map> tableDataList = comDao.selectList("com.S_ALL_TABLE_SELECT", dataParam);
 		
+		String tablePk = tableNm + "_ID";
 		Map updateParam = null;
 		List columns = null;
 		//암호화
@@ -869,11 +870,12 @@ public class ComService {
 					columns.add(m);
 				}
 				
-				String whereQuery = tableNm + "_ID = " + dataMap.get(tableNm + "_ID");
-				
 				updateParam.put("TABLE_NAME", tableNm);
 				updateParam.put("TABLE_LAYOUT", columns);
-				updateParam.put("WHERE_QUERY", whereQuery);
+				
+				updateParam.put("TABLE_PK", tablePk);
+				updateParam.put("TABLE_PK_VAL", dataMap.get(tableNm + "_ID"));
+				
 				comDao.update("com.U_COMM_QUERY", updateParam);
 			}
 			
@@ -893,11 +895,12 @@ public class ComService {
 					columns.add(m);
 				}
 				
-				String whereQuery = tableNm + "_ID = " + dataMap.get(tableNm + "_ID");
-				
 				updateParam.put("TABLE_NAME", tableNm);
 				updateParam.put("TABLE_LAYOUT", columns);
-				updateParam.put("WHERE", whereQuery);
+				
+				updateParam.put("TABLE_PK", tablePk);
+				updateParam.put("TABLE_PK_VAL", dataMap.get(tableNm + "_ID"));
+				
 				comDao.update("com.U_ALL_TABLE_DECRYPT", updateParam);
 			}
 		}
@@ -1094,7 +1097,12 @@ public class ComService {
 	@Transactional(rollbackFor = Exception.class)
 	public void fileDelete(Map p_param) throws Exception{
 		
-		String COMM_FILE_ID = String.valueOf(p_param.get("COMM_FILE_ID"));
+		Object COMM_FILE_ID = p_param.get("COMM_FILE_ID");
+		
+		if(COMM_FILE_ID == null) {
+			return;
+		}
+		
 		String RANDOM_KEY = String.valueOf(p_param.get("RANDOM_KEY"));
 		
 		Map param = new HashMap();

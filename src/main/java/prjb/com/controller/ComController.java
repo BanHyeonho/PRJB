@@ -9,10 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,6 +26,9 @@ import prjb.com.util.ComUtil;
 @Controller("ComController")
 public class ComController {
 
+	@Value("#{commonConfig['KAKAOjsKey']}")
+	private String KAKAOjsKey;
+	
 	@Autowired
 	ComService comService;
 	
@@ -46,6 +52,7 @@ public class ComController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");		
 		ComUtil.getKeyPair(request);
 		m.addAttribute("jsLink", "/viewJs" + request.getRequestURI() + ".js");
+		m.addAttribute("KAKAOjsKey", KAKAOjsKey);
 		return "loginPage";
 	}
 	
@@ -72,6 +79,11 @@ public class ComController {
 		return resultMap;
 	}
 	
+	@ResponseBody
+	@GetMapping("/kakaoLogin")
+	public void  kakaoCallback(@RequestParam String code) throws Exception {
+		System.out.println(code);
+    }
 	/**
 	 * 회원가입 처리
 	 */

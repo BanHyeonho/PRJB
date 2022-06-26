@@ -1168,7 +1168,7 @@
 		<foreach collection="TABLE_LAYOUT" item="item" index="index" separator=",">
 			${@prjb.com.util.ComUtil@sqlInjectionSafe(item.COLUMN_NAME)} = #{item.CRYPTO_VALUE}
 		</foreach>
-		 WHERE ${@prjb.com.util.ComUtil@sqlInjectionSafe(WHERE)}
+		 WHERE ${@prjb.com.util.ComUtil@sqlInjectionSafe(TABLE_PK)} = #{TABLE_PK_VAL}
 	</update>
 	
 	<!-- 공통쿼리사용을 위한 테이블컬럼조회 -->
