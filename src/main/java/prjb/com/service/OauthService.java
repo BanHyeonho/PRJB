@@ -67,14 +67,25 @@ public class OauthService {
 		return registResult;
 	}
 	
+	/**
+	 * 간편로그인 처리
+	 * @param p_type
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	public String login(String p_type, HttpServletRequest request) throws Exception{
 		
 		//1.토큰받기
 		String access_token = getToken(request);
-
+		if(access_token == null) {
+			throw new Exception("토큰에러");
+		}
 		//2.사용자 정보받기
 		Map userInfo = getUserInfo(access_token);
-		
+		if(userInfo == null) {
+			throw new Exception("사용자 정보에러");
+		}
 		Map oauthParam = new HashMap();
 		
 		oauthParam.put("OAUTH_TYPE", p_type);
@@ -118,12 +129,14 @@ public class OauthService {
 		bodyParam.put("client_id", KAKAO_REST_API);
 		
 		String url = null;
-		if("80".equals(request.getLocalPort()) || "443".equals(request.getLocalPort())) {
+		
+		if(request.getLocalPort() == 80 || request.getLocalPort() == 443 ) {
 			url = request.getScheme() + "://" + request.getServerName();
 		}
 		else {
 			url = request.getScheme() + "://" + request.getServerName() + ":" + request.getLocalPort();
 		}
+		
 		bodyParam.put("redirect_uri", url + KAKAO_REDIRECT_URI);
 		bodyParam.put("code", code);
 		
