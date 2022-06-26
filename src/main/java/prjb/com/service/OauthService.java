@@ -131,7 +131,7 @@ public class OauthService {
 		
 		//토큰받기 오류발생
 		if(!"200".equals(String.valueOf( tokenResult.get("responseCode") ))) {
-			logger.info("responseCode ::: 200");
+			logger.info("responseCode ::: " + String.valueOf( tokenResult.get("responseCode") ));
 			return null;
 		}
 				
@@ -152,7 +152,7 @@ public class OauthService {
 		Map userResult = HttpUtil.call(httpParam, headerParam, null);
 		//사용자 조회 오류발생
 		if(!"200".equals(String.valueOf( userResult.get("responseCode") ))) {
-			logger.info("responseCode ::: 200");
+			logger.info("responseCode ::: " + String.valueOf( userResult.get("responseCode") ));
 			return null;
 		}
 		return (Map)userResult.get("data");
