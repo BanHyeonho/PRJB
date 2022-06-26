@@ -50,10 +50,10 @@ public class  BroadController{
 				String url = request.getRequestURL().toString().replaceAll(request.getRequestURI(), "");
 				httpParam.put("url", url + "/broad/" + tomcat + "/setMlg");
 				httpParam.put("method", RequestMethod.GET);
-				Map dataParam = new HashMap();
-				dataParam.put("tomcat", tomcat);
-				httpParam.put("data", dataParam);
-				Map result = HttpUtil.call(httpParam);
+				Map bodyParam = new HashMap();
+				bodyParam.put("tomcat", tomcat);
+				
+				Map result = HttpUtil.call(httpParam, null, bodyParam);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

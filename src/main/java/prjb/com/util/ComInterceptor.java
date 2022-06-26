@@ -31,13 +31,20 @@ public class ComInterceptor extends HandlerInterceptorAdapter {
 			
 			switch (requestURI) {
 				case "/registPage":
-					return true;
+					return true;			
 				case "/registAction":
 					return true;
+					
 				case "/loginPage":
 					return true;
 				case "/loginAction":
 					return true;
+					
+				case "/oauth/regist":
+					return true;		
+				case "/oauth/registAction":
+					return true;
+				
 				case "/":
 					response.sendRedirect("/loginPage");
 					break;

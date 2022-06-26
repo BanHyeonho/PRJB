@@ -274,31 +274,41 @@ public class ComService {
 		Map<String, String> paramMap = (param == null ? ComUtil.getParameterMap(request) : param);
 		
 		String result;
-		HttpSession session = request.getSession();
 		
-		Map<String,String> loginResult = passwordChk(session.getAttribute("privateKey").toString(), paramMap);
+		Map<String,String> loginResult = passwordChk(request.getSession().getAttribute("privateKey").toString(), paramMap);
 				
 		if(loginResult == null) {
 			result = "chkIdPwd";
 		}
 		else {
-			session.setAttribute("LOGIN_SESSION_YN", "1");
-			session.setAttribute("COMM_USER_ID", loginResult.get("COMM_USER_ID"));
-			session.setAttribute("LOGIN_ID", loginResult.get("LOGIN_ID"));
-			session.setAttribute("USER_NAME", loginResult.get("USER_NAME"));
-			session.setAttribute("JOIN_DT", loginResult.get("CDT"));
-			
-			if( ComUtil.langKoChk(request) ) {
-				session.setAttribute("LANG_CODE", "KO");	
-			}else {
-				session.setAttribute("LANG_CODE", "EN");
-			}
-			
+			setSession(request, loginResult);
 			result = "success";
 		}
 		return result;
 	}
 
+	/**
+	 * 로그인후 세션값 저장
+	 * @param session
+	 * @param p_param(COMM_USER_ID, LOGIN_ID, USER_NAME, CDT)
+	 */
+	public void setSession(HttpServletRequest request, Map p_param) {
+		HttpSession session = request.getSession();
+		
+		session.setAttribute("LOGIN_SESSION_YN", "1");
+		session.setAttribute("COMM_USER_ID", p_param.get("COMM_USER_ID"));
+		session.setAttribute("LOGIN_ID", p_param.get("LOGIN_ID"));
+		session.setAttribute("USER_NAME", p_param.get("USER_NAME"));
+		session.setAttribute("JOIN_DT", p_param.get("CDT"));
+		
+		if( ComUtil.langKoChk(request) ) {
+			session.setAttribute("LANG_CODE", "KO");	
+		}else {
+			session.setAttribute("LANG_CODE", "EN");
+		}
+		
+	}
+	
 	/**
 	 * 회원가입처리
 	 * @param request

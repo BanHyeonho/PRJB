@@ -56,11 +56,26 @@
 <link  href="/css/common-laptop.css?v=${pb:jsNow()}" rel="stylesheet" />
 <script src="/script/common.js?v=${pb:jsNow()}"></script>
 
-<!-- 다국어/버튼 , 사용자id -->
+
 <script type="text/javascript">
+//다국어
 const mlg = ${MLG};
+//버튼
 const btnList = JSON.parse(gf_nvl('${btnList}', '[]'));
+//사용자id
 const gv_commUserId = '${sessionScope.COMM_USER_ID}';
+
+//카카오 간편로그인
+const gv_KAKAO_REST_API = '${KAKAO_REST_API}';
+const gv_KAKAO_REDIRECT_URI = location.origin + '${KAKAO_REDIRECT_URI}';
+
+//간편로그인 타입
+const gv_OAUTH_TYPE = '${OAUTH_TYPE}';
+
+//페이지변수(설정값) 불변
+const pageParam = JSON.parse(gf_nvl('${pageParam}', '{}'));
+//메뉴호출시 전송한변수
+const menuParam = JSON.parse(gf_nvl('${menuParam}', '{}'));
 </script>
 
 <!-- 그리드설정 -->
@@ -79,15 +94,6 @@ const gv_commUserId = '${sessionScope.COMM_USER_ID}';
 	<%@ include file="./gridData.jsp"%>
 </c:if>
 
-
-<!-- 페이지변수(설정값) 불변 -->
-<script type="text/javascript">
-const pageParam = JSON.parse(gf_nvl('${pageParam}', '{}'));
-</script>
-<!-- 메뉴호출시 전송한변수 -->
-<script type="text/javascript">
-const menuParam = JSON.parse(gf_nvl('${menuParam}', '{}'));
-</script>
 <!-- 글로벌변수 -->
 <script src="/viewJs/variable.js?v=${pb:jsNow()}"></script>
 <!-- 공통 document ready -->

@@ -3,11 +3,21 @@
  */
 $(document).ready(function () {
 	$('#title').text(location.host);
-	$('#loginBtn').on('click', login);
-	$('#registBtn').on('click', regist);
-});
+	$('#loginBtn').on('click', f_login);
+	$('#registBtn').on('click', f_regist);
+	$('#KAKAOLoginBtn').on('click', f_kakaoLogin);
 	
-var login = function(){
+});
+var f_regist = function(){
+	location.replace('/registPage');
+}
+/*****************************************************************************************************************************************************************
+ * 
+ * 로그인
+ * 
+ *****************************************************************************************************************************************************************/
+//로그인
+var f_login = function(){
 	
 	var fData = new FormData($('#loginForm')[0]);
 	fData.set('PWD', gf_securePw( $('#loginForm [name=PWD]').val() , $('#publicKey').val() ));
@@ -37,7 +47,11 @@ var login = function(){
 		}
 	}, null, null, '/loginAction');
 }
-
-var regist = function(){
-	location.replace('/registPage');
+//카카오 로그인
+var f_kakaoLogin = function(){
+	
+	location.href = "https://kauth.kakao.com/oauth/authorize"
+				+ "?client_id=" + gv_KAKAO_REST_API 
+				+ "&redirect_uri=" + gv_KAKAO_REDIRECT_URI
+				+ "&response_type=code";
 }

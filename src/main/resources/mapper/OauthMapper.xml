@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="oauth">
+
+	<!-- 간편로그인 가입여부 확인 -->	
+	<select id="S_COMM_OAUTH" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_OAUTH */
+		SELECT B.COMM_USER_ID
+			 , B.LOGIN_ID
+		 	 , B.USER_NAME
+		 	 , NVL(B.USE_YN, '0')	AS USE_YN
+		 	 , TO_CHAR(B.CDT, 'YYYY-MM-DD') as CDT
+		  FROM COMM_OAUTH A
+		  JOIN COMM_USER B ON (A.OAUTH_TYPE = #{OAUTH_TYPE} AND A.COMM_USER_ID = B.COMM_USER_ID)
+		 WHERE A.OAUTH_TYPE = #{OAUTH_TYPE}
+		   AND A.SOCIAL_ID = #{SOCIAL_ID} 
+	</select>
+	<!-- 간편로그인 연동 -->	
+	<insert id="I_COMM_OAUTH" parameterType="HashMap">
+		/* I_COMM_OAUTH */
+		INSERT INTO COMM_OAUTH(COMM_OAUTH_ID
+							 , OAUTH_TYPE   
+							 , SOCIAL_ID    
+							 , COMM_USER_ID
+							 <include refid="config.cidColumn"></include>
+								)
+						VALUES(COMM_OAUTH_S.NEXTVAL
+							 , #{OAUTH_TYPE}
+							 , #{SOCIAL_ID}
+							 , #{COMM_USER_ID}
+							 , #{CID}
+				          	 , SYSDATE
+					         , #{CIP}
+					         , #{CID}
+					         , SYSDATE    
+					         , #{CIP}        
+							)
+	</insert>
+	
+</mapper>

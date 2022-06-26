@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,25 +13,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import prjb.com.service.ComService;
+import prjb.com.service.OauthService;
 import prjb.com.util.ComUtil;
 
 
 @Controller("ComController")
 public class ComController {
 
-	@Value("#{commonConfig['KAKAOjsKey']}")
-	private String KAKAOjsKey;
+	
+	@Value("#{commonConfig['KAKAO_REST_API']}")
+	private String KAKAO_REST_API;
+	@Value("#{commonConfig['KAKAO_REDIRECT_URI']}")
+	private String KAKAO_REDIRECT_URI;
+	
 	
 	@Autowired
 	ComService comService;
+	
+	@Autowired
+	OauthService oauthService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ComController.class);
 	 
@@ -52,7 +59,10 @@ public class ComController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");		
 		ComUtil.getKeyPair(request);
 		m.addAttribute("jsLink", "/viewJs" + request.getRequestURI() + ".js");
-		m.addAttribute("KAKAOjsKey", KAKAOjsKey);
+		
+		m.addAttribute("KAKAO_REST_API", KAKAO_REST_API);
+		m.addAttribute("KAKAO_REDIRECT_URI", KAKAO_REDIRECT_URI);
+		
 		return "loginPage";
 	}
 	
@@ -79,11 +89,6 @@ public class ComController {
 		return resultMap;
 	}
 	
-	@ResponseBody
-	@GetMapping("/kakaoLogin")
-	public void  kakaoCallback(@RequestParam String code) throws Exception {
-		System.out.println(code);
-    }
 	/**
 	 * 회원가입 처리
 	 */
@@ -103,7 +108,7 @@ public class ComController {
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpServletRequest request) {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		
+			
 		request.getSession().invalidate();
 		
 		return "redirect:/loginPage";
@@ -116,6 +121,11 @@ public class ComController {
 	public String index(HttpServletRequest request, Model m) {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		m.addAttribute("jsLink", "/viewJs/index.js");
+		
+		m.addAttribute("KAKAO_REST_API", KAKAO_REST_API);
+		m.addAttribute("KAKAO_REDIRECT_URI", KAKAO_REDIRECT_URI);
+		m.addAttribute("OAUTH_TYPE", request.getSession().getAttribute("OAUTH_TYPE"));
+		
 		return "index";
 	}
 	

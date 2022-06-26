@@ -7,36 +7,71 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONObject;
 
 public class HttpUtil {
 
-	public static Map call(Map param) {
+	/**
+	 * http 요청
+	 * @param p_param(url-String, method-String)
+	 * @param p_header(contentType-String...) setRequestProperty
+	 * @param body() write
+	 * @return
+	 */
+	public static Map call(Map p_param, Map p_header, Map p_body) {
 		Map result = new HashMap();
 		HttpURLConnection conn = null;
 		
 		try{
-				URL url = new URL(String.valueOf(param.get("url")));
-				String method = param.get("method") == null ? "GET" : String.valueOf(param.get("method"));	// POST / GET / PUT / DELETE
+				URL url = new URL(String.valueOf(p_param.get("url")));
+				String method = p_param.get("method") == null ? "GET" : String.valueOf(p_param.get("method"));	// POST / GET / PUT / DELETE
 				
 		        conn = (HttpURLConnection)url.openConnection();
 		        conn.setRequestMethod(method);
-		        conn.setRequestProperty("Content-Type", "application/json");
-
-		        conn.setDoOutput(true);
-		        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-
-		        JSONObject json = null;
-		        if(param.get("data") != null && param.get("data") instanceof Map) {
-		        	json = new JSONObject(param.get("data"));
+		        
+		        if(p_header == null) {
+		        	conn.setRequestProperty("Content-Type", "application/json");
 		        }
 		        else {
-		        	json = new JSONObject();
+		        	Iterator<String> keys = p_header.keySet().iterator();
+		            while( keys.hasNext() ){
+
+		                String key = keys.next();                
+		                conn.setRequestProperty(key, (String) p_header.get(key));
+		                
+		            }
 		        }
 		        
-		        bw.write(json.toString());
+		        conn.setDoOutput(true);
+		        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+		        
+		        StringBuilder dataString = new StringBuilder();           
+	            
+		        if(p_body != null) {
+		        	
+		            Iterator<String> keys = p_body.keySet().iterator();
+		            int idx = 0;
+		            while( keys.hasNext() ){
+
+		                String key = keys.next();
+
+		                if(idx == 0) {
+		                	dataString.append(key + "=" + p_body.get(key));
+		                }
+		                else {
+		                	dataString.append("&" + key + "=" + p_body.get(key));
+		                }
+		                ++idx;
+		            }
+		        }
+		        else {
+		        	dataString.append("");
+		        }
+	            bw.write(dataString.toString());
+	            
 		        bw.flush();
 		        bw.close();
 

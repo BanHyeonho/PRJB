@@ -496,7 +496,17 @@ var f_selectFrame = function(me){
 var f_logout = function(){
 	 
 	if(confirm(gf_mlg('로그아웃_하시겠습니까?'))){
-		location.replace('/logout');	
+
+		//카카오 로그인시		
+		if(gv_OAUTH_TYPE == 'KAKAO'){
+			location.href = "https://kauth.kakao.com/oauth/logout"
+							+ "?client_id=" + gv_KAKAO_REST_API
+							+ "&logout_redirect_uri=" + location.origin + "/logout";
+		}
+		else{
+			location.replace('/logout');	
+		}
+			
 	}
 }
 
