@@ -48,14 +48,26 @@
 					, #{CIP}
 					)
 	</insert>
-	<!-- 연결된 간편로그인 조회 -->
-	<delete id="D_COMM_OAUTH" parameterType="HashMap">
+	<!-- 연결된 간편로그인 연결끊기 -->
+	<delete id="D_COMM_OAUTH" parameterType="HashMap" statementType="CALLABLE">
 		/* D_COMM_OAUTH */
-		DELETE
-		  FROM COMM_OAUTH
-		 WHERE OAUTH_TYPE = #{OAUTH_TYPE}
-		   AND SOCIAL_ID = #{SOCIAL_ID}
-		   AND COMM_USER_ID = #{COMM_USER_ID}
+		DECLARE
+		  BEGIN
+		  
+			DELETE
+			  FROM COMM_OAUTH
+			 WHERE OAUTH_TYPE = #{OAUTH_TYPE}
+			   AND SOCIAL_ID = #{SOCIAL_ID}
+			   AND COMM_USER_ID = #{COMM_USER_ID}
+			   ;
+			   
+		   DELETE
+		     FROM Comm_Oauth_token
+		    WHERE OAUTH_TYPE = #{OAUTH_TYPE}
+			  AND SOCIAL_ID = #{SOCIAL_ID}
+				;
+						    
+		  END;
 	</delete>
 
 	<!-- 연결된 간편로그인 조회 -->
