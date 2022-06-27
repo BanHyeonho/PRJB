@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import prjb.com.init.InitBean;
 import prjb.com.service.ComService;
 import prjb.com.service.OauthService;
 import prjb.com.util.ComUtil;
@@ -26,18 +27,21 @@ import prjb.com.util.ComUtil;
 @Controller("ComController")
 public class ComController {
 
-	
-	private final String API_STATE_CODE = ComUtil.getRandomKey(10);
+	//간편로그인
+	private final static String API_STATE_CODE = ComUtil.getRandomKey(10);
 	
 	@Value("#{commonConfig['KAKAO_REST_API']}")
 	private String KAKAO_REST_API;
 	@Value("#{commonConfig['KAKAO_REDIRECT_URI']}")
 	private String KAKAO_REDIRECT_URI;
-	
+		
+	@Value("#{commonConfig['NAVER_CLIENT_SECRET']}")
+	private String NAVER_CLIENT_SECRET;
 	@Value("#{commonConfig['NAVER_CLIENT_ID']}")
 	private String NAVER_CLIENT_ID;
 	@Value("#{commonConfig['NAVER_REDIRECT_URI']}")
 	private String NAVER_REDIRECT_URI;
+	
 	
 	@Autowired
 	ComService comService;
@@ -121,10 +125,6 @@ public class ComController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		
 		HttpSession session = request.getSession();
-		
-//		if("NAVER".equals( String.valueOf(session.getAttribute("OAUTH_TYPE")) )) {
-//			oauthService.logout("NAVER", String.valueOf(session.getAttribute("NAVER_REFRESH_TOKEN")));
-//		}
 		
 		session.invalidate();
 		

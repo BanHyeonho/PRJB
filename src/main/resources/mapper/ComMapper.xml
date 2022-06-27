@@ -1284,12 +1284,14 @@
 							, PWD 
 							, USER_NAME 
 							, USE_YN
+							, PWD_USE_YN
 							<include refid="config.cidColumn"></include>
 							)
 					  VALUES( #{COMM_USER_ID}
 							, #{LOGIN_ID}
 							, #{PWD}
 							, #{USER_NAME}
+							, '1'
 							, '1'
 							, #{COMM_USER_ID}
 							, SYSDATE

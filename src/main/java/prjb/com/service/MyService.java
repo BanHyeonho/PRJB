@@ -21,13 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
 import prjb.com.util.FileUtil;
 
 @Service("MyService")
 public class MyService {
-	
+		
 	@Value("#{config['file_root']}")
 	private String fileRoot;
 	

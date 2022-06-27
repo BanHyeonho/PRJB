@@ -4,6 +4,71 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="oauth">
 
+	<!-- 마지막 토큰 조회 -->
+	<select id="S_COMM_OAUTH_TOKEN_LAST" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_OAUTH_TOKEN_LAST */
+		SELECT MAX(ACCESS_TOKEN) KEEP(DENSE_RANK FIRST ORDER BY (MDT + EXPIRES_IN/(24*60*60)) DESC) AS ACCESS_TOKEN
+			 , MAX(REFRESH_TOKEN) KEEP(DENSE_RANK FIRST ORDER BY (MDT + EXPIRES_IN/(24*60*60)) DESC) AS REFRESH_TOKEN
+		  FROM COMM_OAUTH_TOKEN
+		 WHERE OAUTH_TYPE = #{OAUTH_TYPE}
+		   AND SOCIAL_ID = #{SOCIAL_ID}
+	</select>
+	<!-- 토큰 저장 -->	
+	<insert id="I_COMM_OAUTH_TOKEN" parameterType="HashMap">
+		/* I_COMM_OAUTH_TOKEN */
+		MERGE INTO COMM_OAUTH_TOKEN A
+			 USING DUAL
+			    ON (A.OAUTH_TYPE = #{OAUTH_TYPE} AND A.ACCESS_TOKEN = #{ACCESS_TOKEN} AND A.REFRESH_TOKEN = #{REFRESH_TOKEN})
+			  WHEN MATCHED THEN
+			  UPDATE SET A.EXPIRES_IN = #{EXPIRES_IN}
+			  		   , A.RE_EXPIRES_IN = #{RE_EXPIRES_IN}
+			  		   , A.MDT = SYSDATE
+			  		   , A.MIP = #{CIP}
+			  WHEN NOT MATCHED THEN
+			  INSERT(OAUTH_TYPE   
+					,ACCESS_TOKEN 
+					,REFRESH_TOKEN
+					,EXPIRES_IN   
+					,RE_EXPIRES_IN
+					,SOCIAL_ID
+					,CDT
+					,CIP
+					,MDT
+					,MIP
+			  		)
+			  VALUES( #{OAUTH_TYPE}
+					, #{ACCESS_TOKEN}
+					, #{REFRESH_TOKEN}
+					, #{EXPIRES_IN}
+					, #{RE_EXPIRES_IN}
+					, #{SOCIAL_ID}
+					, SYSDATE
+					, #{CIP}
+					, SYSDATE
+					, #{CIP}
+					)
+	</insert>
+	<!-- 연결된 간편로그인 조회 -->
+	<delete id="D_COMM_OAUTH" parameterType="HashMap">
+		/* D_COMM_OAUTH */
+		DELETE
+		  FROM COMM_OAUTH
+		 WHERE OAUTH_TYPE = #{OAUTH_TYPE}
+		   AND SOCIAL_ID = #{SOCIAL_ID}
+		   AND COMM_USER_ID = #{COMM_USER_ID}
+	</delete>
+
+	<!-- 연결된 간편로그인 조회 -->
+	<select id="S_MY_SOCIAL" resultType="HashMap" parameterType="HashMap" >
+		/* S_MY_SOCIAL */
+	    SELECT B.OAUTH_TYPE
+	    	 , NVL(A.PWD_USE_YN, '0')	AS PWD_USE_YN
+	    	 , B.SOCIAL_ID
+	      FROM COMM_USER A
+		  JOIN COMM_OAUTH B ON (A.COMM_USER_ID = B.COMM_USER_ID)
+	     WHERE A.COMM_USER_ID = #{COMM_USER_ID}
+	</select>
+	
 	<!-- 간편로그인 가입여부 확인 -->	
 	<select id="S_COMM_OAUTH" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_OAUTH */

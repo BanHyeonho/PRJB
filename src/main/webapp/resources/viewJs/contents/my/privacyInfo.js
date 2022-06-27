@@ -5,7 +5,7 @@ let currentType;
 const defaultProfileImg = '../img/default_profile.png';
 
 $(document).ready(function() {
-	console.log($('#publicKey').val());
+	
 	$('.menu-div').on('click', f_tabClick);
 	$('#removePwd2').on('click', f_removePwd2);
 	$('#profileBtn').on('click', function(){
@@ -31,8 +31,13 @@ $(document).ready(function() {
 				
 	});
 	
+	$('#KAKAO_YN').on('change', f_social_connect);
+	$('#NAVER_YN').on('change', f_social_connect);
 	
-	$('.menu-div:eq(0)').trigger('click');
+//	$('.menu-div:eq(0)').trigger('click');
+	$('.menu-div:eq(1)').trigger('click');
+	
+	Kakao.init(gv_KAKAO_JAVASCRIPT);
 });
 
 var f_tabClick = function(e){
@@ -104,6 +109,15 @@ var f_searchPrivacy = function(type){
 			}
 			, null
 			, function(data){
+				
+				if(data.result[0].PWD_USE_YN == '1'){
+					$('.pwd-use').show();
+				}
+				else{
+					$('.pwd-use').hide();
+				}
+				
+				//단순조회
 				if(type == 'search'){
 					f_clear();
 					gf_setFormData(data.result[0]);
@@ -116,10 +130,12 @@ var f_searchPrivacy = function(type){
 						$('#PWD2_STATE').show();
 					}
 				}
+				//2차비밀번호 삭제 후
 				else if(type == 'removePwd2'){
 					$('#MODIFY_DATE').text(data.result[0]['MODIFY_DATE']);
 					$('#PWD2_STATE').hide();
 				}
+				//프로필사진 삭제 후
 				else if(type == 'removeProfile'){
 					$('#MODIFY_DATE').text(data.result[0]['MODIFY_DATE']);
 					$('#PROFILE_PICTURE').val('');
@@ -129,7 +145,19 @@ var f_searchPrivacy = function(type){
 }
 
 var f_searchSocial = function(){
-	
+	gf_ajax({
+		QUERY_ID : 'oauth.S_MY_SOCIAL'
+	}
+	, null
+	, function(data){
+		$('#socialContainer .form-switch').prop('checked', false);
+		if(data.result.length > 0){
+			$.each(data.result, function(idx, item){
+				$('#socialContainer input[name=' + item.OAUTH_TYPE + ']').prop('checked', true);
+			});
+		}
+		
+	});
 }
 
 var f_clear = function(){
@@ -147,9 +175,9 @@ var f_save = function(){
 	case 'privacy':
 		f_savePrivacy();
 		break;
-	case 'social':
-		f_saveSocial();
-		break;
+//	case 'social':
+//		f_saveSocial();
+//		break;
 	}
 }
 var f_savePrivacy = function(){
@@ -162,17 +190,19 @@ var f_savePrivacy = function(){
 					gf_toast(gf_mlg("을(를)_입력하세요", {
 						param : $('[for=' + $(rs.tags[i]).attr('id') + ']').text()
 					}), 'info');
-					;
+					return false;
 				}
 				
 				//현재 비밀번호를 입력하세요.
 				if(gf_nvl($('#NEW_PWD').val(), '').length != ''
 				&& gf_nvl($('#OLD_PWD').val(), '').length == ''
 				){
+					gf_toast(gf_mlg("현재_비밀번호를_입력하세요"), 'info');
 					rs.result = false;
 				}
 				//새 비밀번호가 일치하지 않습니다.
-				if($('#NEW_PWD').val() != $('#NEW_PWD_CHK').val()){
+				else if($('#NEW_PWD').val() != $('#NEW_PWD_CHK').val()){
+					gf_toast(gf_mlg("새_비밀번호가_일치하지_않습니다"), 'info');
 					rs.result = false;
 				}
 				else if( gf_nvl($('#OLD_PWD').val(), '') == '' 
@@ -206,7 +236,7 @@ var f_savePrivacy = function(){
 				//성공
 				if(data.state == 'success'){
 					gf_toast(gf_mlg('저장_되었습니다'), 'success');
-					f_search();	
+					f_search();
 				}
 				//현재패스워드 불일치
 				else if(data.state == 'password_wrong'){
@@ -216,6 +246,105 @@ var f_savePrivacy = function(){
 			}, null, null, '/chgPrivacy');
 	
 }
-var f_saveSocial = function(){
+/*****************************************************************************************************************************************************************
+ * 
+ * 간편로그인 Oauth
+ * 
+ *****************************************************************************************************************************************************************/
+//간편로그인 연결 / 연결끊기
+var f_social_connect = function(e){
 	
+	var target = $(e.currentTarget);
+	
+	var type = target.attr('name');
+	var checked = target.is(':checked');
+	
+	if(checked){
+		if(confirm(gf_mlg('계정을_연결_하시겠습니까'))){
+			target.prop('checked', false);
+			f_social_link(type, target);
+		}
+		else{
+			target.prop('checked', false);
+		}
+	}
+	else{
+		if(confirm(gf_mlg('계정_연결을_해제_하시겠습니까'))){
+			target.prop('checked', true);
+			f_social_unlink(type, target);
+		}
+		else{
+			target.prop('checked', true);	
+		}
+		
+	}
 }
+//연결 끊기
+var f_social_unlink = function(p_oauth_type, p_target){
+	gf_ajax({
+				OAUTH_TYPE : p_oauth_type
+			}
+			, null
+			, function(data){
+				console.log(data);
+				if(data.state == 'success'){
+					gf_toast(gf_mlg('연결해제_되었습니다'), 'success');
+					p_target.prop('checked', false);
+				}
+				else{
+					//연결된 계정이 없음
+					if(data.reason == 'no_account'){
+						gf_toast(gf_mlg('연결된_계정이_없습니다'), 'info');	
+					}
+					//패스워드생성후 가능
+					else if(data.reason == 'no_password'){
+						gf_toast(gf_mlg('비밀번호가_사용_중이지_않습니다'), 'info');
+					}
+					
+				}
+			}, null, null, '/oauth/unlink');
+}
+//연결
+var f_social_link = function(p_oauth_type, p_target){
+	switch (p_oauth_type) {
+	case 'KAKAO':
+		Kakao.Auth.login({
+			  success: function(response) {
+			    gf_ajax({
+			    	OAUTH_TYPE : 'KAKAO',
+					ACCESS_TOKEN : response.access_token,
+					REFRESH_TOKEN : response.refresh_token,
+					EXPIRES_IN : response.expires_in,
+					RE_TOKEN_EXPIRES_IN : response.refresh_token_expires_in
+				}
+				, null
+				, function(data){
+					if(data.state == 'success'){
+						gf_toast(gf_mlg('연결_되었습니다'), 'success');
+						p_target.prop('checked', true);
+					}
+				}, null, null, '/oauth/link');
+			    
+			  },
+			  fail: function(error) {
+			    console.log(error);
+			  },
+			});
+		break;
+	case 'NAVER':
+		
+		var url = "https://nid.naver.com/oauth2.0/authorize"
+				+ "?response_type=code"
+				+ "&state=" + encodeURI(gv_API_STATE_CODE)		
+				+ "&client_id=" + gv_NAVER_CLIENT_ID 
+				+ "&redirect_uri=" + gv_NAVER_REDIRECT_URI_LINK
+				;
+		var title = "네이버계정연결";
+		var status = "toolbar=no,scrollbars=no,resizable=yes,status=no,menubar=no,width=500, height=700, top=0,left=0"; 
+		  
+		window.open(url,title,status); 
+	  	
+		break;
+	}
+}
+

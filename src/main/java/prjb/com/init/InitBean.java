@@ -11,22 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import prjb.com.service.ComService;
+import prjb.com.util.ComUtil;
 import prjb.com.util.CryptoUtil;
 
 @Component
 public class InitBean{
 
-	public static CryptoUtil CryptoClass;
-	public static ArrayList<String> encryptArray;
-	
-	//다국어
-	public static Map<String, Map<String,String>> msgMLGKO = null;
-	public static Map<String, Map<String,String>> msgMLGEN = null;
-	
-	
-	@Autowired
-	ComService comService;
-	
 	@Value("#{commonConfig['cryptoClass']}")
 	private String className;
 	
@@ -36,6 +26,18 @@ public class InitBean{
 	@Value("#{commonConfig['encrytList']}")
 	private String encrytList;
 	
+	//암호화
+	public static CryptoUtil CryptoClass;
+	public static ArrayList<String> encryptArray;
+	
+	//다국어
+	public static Map<String, Map<String,String>> msgMLGKO = null;
+	public static Map<String, Map<String,String>> msgMLGEN = null;
+	
+		
+	@Autowired
+	ComService comService;
+		
     /**
      * 암호화 클래스 주입
      * @param className
@@ -70,5 +72,5 @@ public class InitBean{
 		//다국어전체 초기화
 		comService.setMlg();
     }
-		
+
 }

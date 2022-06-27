@@ -7,6 +7,9 @@ $(document).ready(function () {
 	$('#registBtn').on('click', f_regist);
 	$('#KAKAOLoginBtn').on('click', f_kakaoLogin);
 	$('#NAVERLoginBtn').on('click', f_naverLogin);
+	
+	$('#KAKAOLoginBtn').css({'background-image' : 'url("/img/kakao_login_' + gf_getLang() + '.png")'});
+	$('#NAVERLoginBtn').css({'background-image' : 'url("/img/naver_login_' + gf_getLang() + '.png")'});
 });
 var f_regist = function(){
 	location.replace('/registPage');

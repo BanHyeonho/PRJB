@@ -16,7 +16,11 @@
 	max-width: 90px;
 }
 #NAVERLoginBtn{
-	background-image: url("/img/naver_login_ko.png");
+/* 	background-image: url("/img/naver_login_ko.png"); */
+	background-repeat: round;
+}
+#KAKAOLoginBtn{
+/* 	background-image: url("/img/kakao_login_ko.png"); */
 	background-repeat: round;
 }
 </style>
@@ -34,11 +38,15 @@
 					<input type="text" class="input-text font-size-36 mg-default2 input-st1" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}'>
 					<input type="password" class="input-text font-size-36 mg-default2 input-st1" enter-exec='4' tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "비밀번호")}' >
 					
+					<div class="div-10">
+						<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="4" id='loginBtn'>${pb:msg(pageContext.request, "로그인")}</button>
+						<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="3" id='registBtn'>${pb:msg(pageContext.request, "회원가입")}</button>
+					</div>
 					
-					<img class='fl-right mg-rt-default2 btn socialBtn' id='NAVERLoginBtn' tabindex="6">
-					<img class='fl-right mg-rt-default2 btn socialBtn' src="/img/kakao_login_ko.png" id='KAKAOLoginBtn' tabindex="5">
-					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="4" id='loginBtn'>${pb:msg(pageContext.request, "로그인")}</button>
-					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="3" id='registBtn'>${pb:msg(pageContext.request, "회원가입")}</button>
+					<div class="div-10 mg-tp-default">
+						<img class='fl-right mg-rt-default2 btn socialBtn' id='NAVERLoginBtn' tabindex="6">
+						<img class='fl-right mg-rt-default2 btn socialBtn' id='KAKAOLoginBtn' tabindex="5">
+					</div>
 				</div>
 			</form>
 		</div>

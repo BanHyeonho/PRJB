@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
+import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
 import prjb.com.util.FileUtil;

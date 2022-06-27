@@ -75,4 +75,35 @@ public class  OauthController{
 		
 		return "redirect:" + oauthService.login("NAVER", request);
 	}
+	
+	/**
+	 * 간편 로그인 연결해제
+	 */
+	@RequestMapping(value = "/unlink", method = RequestMethod.POST)
+	public @ResponseBody Object unlink(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		
+		return oauthService.unlink(request);
+	}
+	
+	/**
+	 * 간편 로그인 연결
+	 */
+	@RequestMapping(value = "/link", method = RequestMethod.POST)
+	public @ResponseBody Object link(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		
+		return oauthService.link(request);
+	}
+	
+	/**
+	 * 간편 로그인 연결(네이버)
+	 */
+	@RequestMapping(value = "/link/naver", method = RequestMethod.GET)
+	public String naverLink(HttpServletRequest request, Model m) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		oauthService.naverLink(request);
+		m.addAttribute("type", "/link/naver");
+		return "closePopup";
+	}
 }
