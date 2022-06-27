@@ -64,4 +64,15 @@ public class  OauthController{
 		
 		return "redirect:" + oauthService.login("KAKAO", request);
 	}
+	
+	/**
+	 * 네이버 간편로그인
+	 * @throws Exception 
+	 */
+	@RequestMapping(value = "/login/naver", method = RequestMethod.GET)
+	public String loginNaver(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		
+		return "redirect:" + oauthService.login("NAVER", request);
+	}
 }

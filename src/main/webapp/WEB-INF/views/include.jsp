@@ -69,6 +69,13 @@ const gv_commUserId = '${sessionScope.COMM_USER_ID}';
 const gv_KAKAO_REST_API = '${KAKAO_REST_API}';
 const gv_KAKAO_REDIRECT_URI = location.origin + '${KAKAO_REDIRECT_URI}';
 
+//간편로그인 상태코드
+const gv_API_STATE_CODE = '${API_STATE_CODE}';
+
+//네이버 간편로그인
+const gv_NAVER_CLIENT_ID = '${NAVER_CLIENT_ID}';
+const gv_NAVER_REDIRECT_URI = location.origin + '${NAVER_REDIRECT_URI}';
+
 //간편로그인 타입
 const gv_OAUTH_TYPE = '${OAUTH_TYPE}';
 

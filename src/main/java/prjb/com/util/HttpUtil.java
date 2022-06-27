@@ -91,7 +91,7 @@ public class HttpUtil {
 	                result.put("data", responseJson.toMap());
 	                
 		        }
-		        
+		        System.out.println(String.valueOf(p_param.get("url")) + " ::: responseCode ::: " + responseCode);
 		        result.put("responseCode", responseCode);
 
 		    }catch(Exception e) {

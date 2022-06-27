@@ -504,7 +504,7 @@ var f_logout = function(){
 							+ "&logout_redirect_uri=" + location.origin + "/logout";
 		}
 		else{
-			location.replace('/logout');	
+			location.replace('/logout');
 		}
 			
 	}

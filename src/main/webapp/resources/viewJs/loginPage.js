@@ -6,7 +6,7 @@ $(document).ready(function () {
 	$('#loginBtn').on('click', f_login);
 	$('#registBtn').on('click', f_regist);
 	$('#KAKAOLoginBtn').on('click', f_kakaoLogin);
-	
+	$('#NAVERLoginBtn').on('click', f_naverLogin);
 });
 var f_regist = function(){
 	location.replace('/registPage');
@@ -51,7 +51,19 @@ var f_login = function(){
 var f_kakaoLogin = function(){
 	
 	location.href = "https://kauth.kakao.com/oauth/authorize"
-				+ "?client_id=" + gv_KAKAO_REST_API 
-				+ "&redirect_uri=" + gv_KAKAO_REDIRECT_URI
-				+ "&response_type=code";
+					+ "?response_type=code"
+					+ "&state=" + encodeURI(gv_API_STATE_CODE)
+					+ "&client_id=" + gv_KAKAO_REST_API 
+					+ "&redirect_uri=" + gv_KAKAO_REDIRECT_URI
+					;
+}
+//네이버 로그인
+var f_naverLogin = function(){
+	
+	location.href = "https://nid.naver.com/oauth2.0/authorize"
+					+ "?response_type=code"		
+					+ "&state=" + encodeURI(gv_API_STATE_CODE)		
+					+ "&client_id=" + gv_NAVER_CLIENT_ID 
+					+ "&redirect_uri=" + gv_NAVER_REDIRECT_URI
+				;
 }

@@ -26,6 +26,13 @@ public class OauthService {
 	@Value("#{commonConfig['KAKAO_REDIRECT_URI']}")
 	private String KAKAO_REDIRECT_URI;
 	
+	@Value("#{commonConfig['NAVER_CLIENT_ID']}")
+	private String NAVER_CLIENT_ID;
+	@Value("#{commonConfig['NAVER_CLIENT_SECRET']}")
+	private String NAVER_CLIENT_SECRET;
+	@Value("#{commonConfig['NAVER_REDIRECT_URI']}")
+	private String NAVER_REDIRECT_URI;
+	
 	@Autowired
 	ComService comService;
 	
@@ -77,56 +84,67 @@ public class OauthService {
 	public String login(String p_type, HttpServletRequest request) throws Exception{
 		
 		//1.토큰받기
-		String access_token = getToken(request);
+		String access_token = getToken(p_type, request);
 		if(access_token == null) {
 			throw new Exception("토큰에러");
 		}
 		//2.사용자 정보받기
-		Map userInfo = getUserInfo(access_token);
+		Map userInfo = getUserInfo(p_type, access_token);
 		if(userInfo == null) {
 			throw new Exception("사용자 정보에러");
 		}
 		Map oauthParam = new HashMap();
 		
 		oauthParam.put("OAUTH_TYPE", p_type);
-		oauthParam.put("SOCIAL_ID", userInfo.get("id"));
+		
+		String sucialId;
+		switch (p_type) {
+		case "KAKAO":
+			sucialId = (String) userInfo.get("id"); 
+			break;
+			
+		case "NAVER":
+			sucialId = (String) ((Map)userInfo.get("response")).get("id");
+			break;
+			
+		default:
+			throw new Exception("등록되지않은 간편로그인");
+		}
+		
+		oauthParam.put("SOCIAL_ID", sucialId);
+		
 		Map<String,String> loginResult = comDao.selectOne("oauth.S_COMM_OAUTH", oauthParam);
 		
 		HttpSession session = request.getSession();
+		session.setAttribute(p_type + "_REFRESH_TOKEN", access_token);
+		session.setAttribute("OAUTH_TYPE", p_type);
+		
 		//연동된 아이디가 없음
 		if(loginResult == null) {
 			
-			session.setAttribute("OAUTH_TYPE", p_type);
-			session.setAttribute("SOCIAL_ID", userInfo.get("id"));
-			session.setAttribute(p_type + "_REFRESH_TOKEN", access_token);
-			
+			session.setAttribute("SOCIAL_ID", sucialId);
 			return "/oauth/regist";
 		}
 		else {
 			comService.setSession(request, loginResult);
-			session.setAttribute("OAUTH_TYPE", p_type);
-			
 		}
 		
 		return "/";
 	}
 	
 	//토큰받기
-	public String getToken(HttpServletRequest request) {
+	public String getToken(String p_type, HttpServletRequest request) {
 		
 		Map httpParam = new HashMap();
 		Map headerParam = new HashMap();
 		Map bodyParam = new HashMap();
 		
 		String code = request.getParameter("code");
-		
-		httpParam.put("url", "https://kauth.kakao.com/oauth/token");
-		httpParam.put("method", RequestMethod.POST);
+		String state = request.getParameter("state");
 		
 		headerParam.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-		
 		bodyParam.put("grant_type", "authorization_code");
-		bodyParam.put("client_id", KAKAO_REST_API);
+		httpParam.put("method", RequestMethod.POST);
 		
 		String url = null;
 		
@@ -137,8 +155,26 @@ public class OauthService {
 			url = request.getScheme() + "://" + request.getServerName() + ":" + request.getLocalPort();
 		}
 		
-		bodyParam.put("redirect_uri", url + KAKAO_REDIRECT_URI);
 		bodyParam.put("code", code);
+		bodyParam.put("state", state);
+		
+		switch (p_type) {
+		case "KAKAO":
+			httpParam.put("url", "https://kauth.kakao.com/oauth/token");
+			bodyParam.put("client_id", KAKAO_REST_API);
+			bodyParam.put("redirect_uri", url + KAKAO_REDIRECT_URI);
+			break;
+			
+		case "NAVER":
+			httpParam.put("url", "https://nid.naver.com/oauth2.0/token");
+			bodyParam.put("client_id", NAVER_CLIENT_ID);
+			bodyParam.put("client_secret", NAVER_CLIENT_SECRET);
+			bodyParam.put("redirect_uri", url + NAVER_REDIRECT_URI);			
+			break;
+			
+		default:
+			break;
+		}
 		
 		Map tokenResult = HttpUtil.call(httpParam, headerParam, bodyParam);
 		
@@ -152,13 +188,25 @@ public class OauthService {
 	}
 	
 	//사용자 조회
-	public Map getUserInfo(String p_access_token) {
+	public Map getUserInfo(String p_type, String p_access_token) {
 		Map httpParam = new HashMap();
 		Map headerParam = new HashMap();
 		
-		httpParam.put("url", "https://kapi.kakao.com/v2/user/me");
-		httpParam.put("method", RequestMethod.GET);
+		switch (p_type) {
+		case "KAKAO":
+			httpParam.put("url", "https://kapi.kakao.com/v2/user/me");
+			break;
+			
+		case "NAVER":
+			httpParam.put("url", "https://openapi.naver.com/v1/nid/me");		
+			break;
+			
+		default:
+			break;
+		}
 		
+		
+		httpParam.put("method", RequestMethod.GET);
 		headerParam.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 		headerParam.put("Authorization", "Bearer " + p_access_token );
 		
@@ -172,47 +220,51 @@ public class OauthService {
 	}
 	
 	//연결끊기
-	public void unlink(String p_access_token) {
+	public void unlink(String p_type, String p_access_token) {
 		Map httpParam = new HashMap();
 		Map headerParam = new HashMap();
 		
-		httpParam.put("url", "https://kapi.kakao.com/v1/user/unlink");
 		httpParam.put("method", RequestMethod.POST);
 		
 		headerParam.put("Content-Type", "application/x-www-form-urlencoded" );
 		headerParam.put("Authorization", "Bearer " + p_access_token );
 		
+		switch (p_type) {
+		case "KAKAO":
+			httpParam.put("url", "https://kapi.kakao.com/v1/user/unlink");
+			break;
+			
+		default:
+			break;
+		}
+		
+		
 		HttpUtil.call(httpParam, headerParam, null);
 	}
 	
-//	//로그아웃
-//	public void logout(String p_access_token) {
-//		Map httpParam = new HashMap();
-//		Map headerParam = new HashMap();
-//		Map bodyParam = new HashMap();
-//		
-//		//일반로그아웃
-////		httpParam.put("url", "https://kapi.kakao.com/v1/user/logout");
-////		httpParam.put("method", RequestMethod.POST);
-////		
-////		headerParam.put("Content-Type", "application/x-www-form-urlencoded" );
-////		headerParam.put("Authorization", "Bearer " + p_access_token );
-////		
-////		HttpUtil.call(httpParam, headerParam, null);
-////		
-////		httpParam.clear();
-////		headerParam.clear();
-////		bodyParam.clear();
-//		
-//		httpParam.put("url", "https://kauth.kakao.com/oauth/logout");
-//		httpParam.put("method", RequestMethod.GET);
-//		
-//		headerParam.put("Content-Type", "application/x-www-form-urlencoded" );
-//		
-//		bodyParam .put("client_id", KAKAO_REST_API );
-//		bodyParam .put("logout_redirect_uri", "http://localhost:8080/logout");
-//		
-//		HttpUtil.call(httpParam, headerParam, bodyParam);
-//	}
+	//로그아웃
+	public void logout(String p_type, String p_access_token) {
+		Map httpParam = new HashMap();
+		Map headerParam = new HashMap();
+		Map bodyParam = new HashMap();
+		
+		switch (p_type) {
+		case "NAVER":
+			httpParam.put("url", "https://nid.naver.com/oauth2.0/token");	
+			bodyParam .put("client_id", NAVER_CLIENT_ID );
+			bodyParam .put("client_secret", NAVER_CLIENT_SECRET );
+			bodyParam .put("access_token", p_access_token );
+			bodyParam .put("grant_type", "delete" );
+			break;
+			
+		default:
+			break;
+		}
+				
+		httpParam.put("method", RequestMethod.GET);
+		headerParam.put("Content-Type", "application/x-www-form-urlencoded" );
+		
+		HttpUtil.call(httpParam, headerParam, bodyParam);
+	}
 
 }

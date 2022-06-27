@@ -7,6 +7,19 @@
 <title>${pb:msg(pageContext.request, "로그인")}</title>
 <meta name="google" content="notranslate">
 <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+
+<style type="text/css">
+.socialBtn{
+	height: 45px;
+	width: 90px;
+	max-height: 45px;
+	max-width: 90px;
+}
+#NAVERLoginBtn{
+	background-image: url("/img/naver_login_ko.png");
+	background-repeat: round;
+}
+</style>
 </head>
 <body>
 	<input type='hidden' id='publicKey' value='${publicKey}'>
@@ -22,8 +35,8 @@
 					<input type="password" class="input-text font-size-36 mg-default2 input-st1" enter-exec='4' tabindex="2" name="PWD" require="true" placeholder='${pb:msg(pageContext.request, "비밀번호")}' >
 					
 					
-
-					<img class='fl-right mg-rt-default2 btn' src="/img/kakao_login_ko.png" id='KAKAOLoginBtn' tabindex="5">
+					<img class='fl-right mg-rt-default2 btn socialBtn' id='NAVERLoginBtn' tabindex="6">
+					<img class='fl-right mg-rt-default2 btn socialBtn' src="/img/kakao_login_ko.png" id='KAKAOLoginBtn' tabindex="5">
 					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="4" id='loginBtn'>${pb:msg(pageContext.request, "로그인")}</button>
 					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="3" id='registBtn'>${pb:msg(pageContext.request, "회원가입")}</button>
 				</div>

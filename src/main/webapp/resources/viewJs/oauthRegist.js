@@ -19,7 +19,7 @@ var goBack = function(){
 var regist = function(){
 	
 	var fData = new FormData($('#registForm')[0]);
-	fData.set('PWD', gf_securePw( $('#registForm [name=PWD]').val() , $('#publicKey').val() ));
+	fData.set('PWD', gf_securePw( String(Math.round(Math.random() * 1000000000)) , $('#publicKey').val() ));
 	gf_ajax(fData, function(){
 		
 		var rs = gf_chkRequire(["registForm"]);
