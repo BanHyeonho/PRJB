@@ -55,13 +55,18 @@ public class OauthService {
 	 * @return
 	 * @throws Exception
 	 */
-	public void naverLink(HttpServletRequest request) throws Exception{
+	public Map naverLink(HttpServletRequest request) throws Exception{
 		
 		//1.토큰받기
 		Map token = getToken("NAVER", request);
 		String access_token = (String)token.get("access_token");
 		if(access_token == null) {
-			throw new Exception("토큰에러");
+//			throw new Exception("토큰에러");
+			logger.error("토큰에러");
+			Map result = new HashMap();
+			result.put("state", "fail");
+			result.put("reason", "토큰에러");
+			return result;
 		}
 		
 		ModifiableRequest mr = new ModifiableRequest(request);
@@ -72,8 +77,7 @@ public class OauthService {
 		mr.setParameter("EXPIRES_IN", (String)token.get("expires_in"));
 		
 		//간편 로그인 연결
-		link(mr);
-		
+		return link(mr);
 	}
 	/**
 	 * 간편 로그인 연결
@@ -96,7 +100,10 @@ public class OauthService {
 		Map userInfo = getUserInfo(oauthType, accessToken);
 		
 		if(userInfo == null) {
-			throw new Exception("사용자 정보에러");
+//			throw new Exception("사용자 정보에러");
+			logger.error("사용자 정보에러");
+			result.put("state", "fail");
+			return result;
 		}
 		
 		String commUserId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
@@ -324,12 +331,16 @@ public class OauthService {
 		String access_token = (String)token.get("access_token");
 				
 		if(access_token == null) {
-			throw new Exception("토큰에러");
+//			throw new Exception("토큰에러");
+			logger.error("토큰에러");
+			return "/";
 		}
 		//2.사용자 정보받기
 		Map userInfo = getUserInfo(p_type, access_token);
 		if(userInfo == null) {
-			throw new Exception("사용자 정보에러");
+//			throw new Exception("사용자 정보에러");
+			logger.error("사용자 정보에러");
+			return "/";
 		}
 		Map oauthParam = new HashMap();
 		

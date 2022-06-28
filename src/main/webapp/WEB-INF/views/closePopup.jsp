@@ -11,8 +11,10 @@
 
 //네이버 간편로그인 연결(contents/my/privacyInfo)
 if('${type}' == '/link/naver'){
-	$(opener.document.getElementById('NAVER_YN')).prop('checked', true);
-	opener.gf_toast(opener.gf_mlg('연결_되었습니다'), 'success');
+	if('${state}' == 'success'){
+		$(opener.document.getElementById('NAVER_YN')).prop('checked', true);
+		opener.gf_toast(opener.gf_mlg('연결_되었습니다'), 'success');	
+	}
 }
 
 window.close();

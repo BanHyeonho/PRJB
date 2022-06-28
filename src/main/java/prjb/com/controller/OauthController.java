@@ -102,7 +102,9 @@ public class  OauthController{
 	@RequestMapping(value = "/link/naver", method = RequestMethod.GET)
 	public String naverLink(HttpServletRequest request, Model m) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		oauthService.naverLink(request);
+		Map result = oauthService.naverLink(request);
+		
+		m.addAttribute("state", result.get("state"));
 		m.addAttribute("type", "/link/naver");
 		return "closePopup";
 	}

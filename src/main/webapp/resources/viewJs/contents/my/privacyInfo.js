@@ -340,7 +340,7 @@ var f_social_link = function(p_oauth_type, p_target){
 				+ "&redirect_uri=" + gv_NAVER_REDIRECT_URI_LINK
 				;
 		var title = "네이버계정연결";
-		var status = "toolbar=no,scrollbars=no,resizable=yes,status=no,menubar=no,width=500, height=700, top=0,left=0"; 
+		var status = "toolbar=no,scrollbars=no,resizable=yes,status=no,menubar=no,width=580, height=700, top=0,left=0"; 
 		  
 		window.open(url,title,status); 
 	  	
