@@ -18,9 +18,10 @@
 				</div>
 				<div class="content-panel clearfix pd-default">
 					<input type="text" class="input-text font-size-36 mg-default2 input-st1" autofocus tabindex="1" name="LOGIN_ID" require="true" placeholder='${pb:msg(pageContext.request, "아이디")}' >
-					<input type="text" class="input-text font-size-36 mg-default2 input-st1" enter-exec='4' tabindex="2" name="USER_NAME" require="true" placeholder='${pb:msg(pageContext.request, "이름")}' >
-					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="3" id='goBackBtn'>${pb:msg(pageContext.request, "뒤로")}</button>
-					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="4" id='registBtn'>${pb:msg(pageContext.request, "가입")}</button>
+					<input type="text" class="input-text font-size-36 mg-default2 input-st1" tabindex="2" name="USER_NAME" require="true" placeholder='${pb:msg(pageContext.request, "이름")}' >
+					<input type="email" class="input-text font-size-36 mg-default2 input-st1" enter-exec='5' tabindex="3" name="EMAIL" require="true" placeholder='${pb:msg(pageContext.request, "이메일")}' >
+					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="4" id='goBackBtn'>${pb:msg(pageContext.request, "뒤로")}</button>
+					<button type="button" class="font-size-24 fl-right mg-rt-default2 btn btn-st1" tabindex="5" id='registBtn'>${pb:msg(pageContext.request, "가입")}</button>
 				</div>
 			</form>
 		</div>

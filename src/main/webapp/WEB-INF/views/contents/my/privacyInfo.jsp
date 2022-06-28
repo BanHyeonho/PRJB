@@ -177,18 +177,29 @@
 			<table style="width: 100%;">
 				<thead>
 					<tr class="line-bt">
-						<td class="pd-default" style="width: 15%;"><span class="font-size-24" style="float: right;">${pb:msg(pageContext.request, "카카오")}</span></td>
-						<td class="pd-default" style="width: 85%;">
+						<td class="pd-default" style="width: 10%; text-align: center;"><span class="font-size-24">${pb:msg(pageContext.request, "사이트")}</span></td>
+						<td class="pd-default" style="width: 10%; text-align: center;">
+							<span class="font-size-24">${pb:msg(pageContext.request, "연결상태")}</span>
+						</td>
+						<td class="pd-default" style="width: 75%;">
+							<span class="font-size-24">${pb:msg(pageContext.request, "연결계정_및_대표계정")}</span>
+						</td>
+					</tr>
+					<tr class="line-bt">
+						<td class="pd-default" style="text-align: center; vertical-align: middle;"><span class="font-size-24">${pb:msg(pageContext.request, "카카오")}</span></td>
+						<td class="pd-default" style="text-align: center;">
 							<input type="checkbox" id="KAKAO_YN" name='KAKAO' class='form-switch'>
 							<label for="KAKAO_YN" class="switch_label">
 								<span class="onf_btn"></span>
 							</label>
 						</td>
+						<td>
+						
+						</td>
 					</tr>
 					<tr class="line-bt">
-						<td class="pd-default" style="width: 15%;"><span class="font-size-24" style="float: right;">${pb:msg(pageContext.request, "네이버")}</span>
-						</td>
-						<td class="pd-default" style="width: 85%;">
+						<td class="pd-default" style="text-align: center; vertical-align: middle;"><span class="font-size-24">${pb:msg(pageContext.request, "네이버")}</span></td>
+						<td class="pd-default" style="text-align: center;">
 							<input type="checkbox" id="NAVER_YN" name='NAVER' class='form-switch'>
 							<label for="NAVER_YN" class="switch_label">
 								<span class="onf_btn"></span>

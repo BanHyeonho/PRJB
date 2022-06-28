@@ -4,6 +4,18 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com">
 	
+	<!-- 로그인 이력저장 -->
+	<insert id="I_COMM_LOGIN_LOG" parameterType="HashMap" >
+		/* I_COMM_LOGIN_LOG */
+		INSERT INTO COMM_LOGIN_LOG(LOGIN_ID
+								 , COMM_USER_ID
+								 , CDT
+								 , CIP)
+							VALUES(#{LOGIN_ID}
+								 , #{COMM_USER_ID}
+								 , SYSDATE
+								 , #{CIP})
+	</insert>
 	<!-- 에러로그 저장 -->
 	<insert id="I_ERROR_LOG_HISTORY" parameterType="HashMap" >
 		/* I_ERROR_LOG_HISTORY */
@@ -1285,6 +1297,7 @@
 							, USER_NAME 
 							, USE_YN
 							, PWD_USE_YN
+							, EMAIL
 							<include refid="config.cidColumn"></include>
 							)
 					  VALUES( #{COMM_USER_ID}
@@ -1293,6 +1306,7 @@
 							, #{USER_NAME}
 							, '1'
 							, '1'
+							, #{EMAIL}
 							, #{COMM_USER_ID}
 							, SYSDATE
 							, #{CIP}

@@ -386,7 +386,35 @@ public class OauthService {
 		
 		oauthParam.put("SOCIAL_ID", socialId);
 		
-		Map<String,String> loginResult = comDao.selectOne("oauth.S_COMM_OAUTH", oauthParam);
+		List<Map> loginList = comDao.selectList("oauth.S_COMM_OAUTH", oauthParam);
+		
+		Map<String,String> loginResult = null;
+		if(loginList != null) {
+			//연결된 계정이 1개인경우
+			if(loginList.size() == 1) {
+				loginResult = loginList.get(0);
+			}
+			//대표계정 설정없이 2개이상 인경우 가장 최근에 로그인한 계정으로 로그인한다. 
+			else if(loginList.size() > 1) {
+				String ids = "";
+				for (int i = 0; i < loginList.size(); i++) {
+					if(i == 0) {
+						ids += loginList.get(i).get("COMM_USER_ID");	
+					}
+					else {
+						ids += "," + loginList.get(i).get("COMM_USER_ID");
+					}
+					
+				}
+				
+				Map lastUserParam = new HashMap();
+				lastUserParam.put("IDS", ids);
+				Map lastUser = comDao.selectOne("oauth.S_COMM_LOGIN_LAST", lastUserParam);
+				Optional one = loginList.stream().filter(x->  String.valueOf(lastUser.get("COMM_USER_ID")).equals(String.valueOf(x.get("COMM_USER_ID")))).findFirst();
+				loginResult = (Map<String, String>) one.get();
+			}
+		}
+		
 		
 		HttpSession session = request.getSession();
 		

@@ -34,7 +34,8 @@ $(document).ready(function() {
 	$('#KAKAO_YN').on('change', f_social_connect);
 	$('#NAVER_YN').on('change', f_social_connect);
 	
-	$('.menu-div:eq(0)').trigger('click');
+//	$('.menu-div:eq(0)').trigger('click');
+	$('.menu-div:eq(1)').trigger('click');
 	
 	Kakao.init(gv_KAKAO_JAVASCRIPT);
 });
@@ -144,6 +145,7 @@ var f_searchPrivacy = function(type){
 }
 
 var f_searchSocial = function(){
+	//연동여부
 	gf_ajax({
 		QUERY_ID : 'oauth.S_MY_SOCIAL'
 	}
@@ -157,6 +159,19 @@ var f_searchSocial = function(){
 		}
 		
 	});
+	
+	//연동 계정조회
+	gf_ajax({
+		QUERY_ID : 'oauth.S_MY_SOCIAL_IDS'
+	}
+	, null
+	, function(data){
+		if(data.result.length > 0){
+			console.log(data.result)
+		}
+		
+	});
+	
 }
 
 var f_clear = function(){

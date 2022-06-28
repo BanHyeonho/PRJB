@@ -329,6 +329,19 @@ public class ComService {
 			session.setAttribute("LANG_CODE", "EN");
 		}
 		
+		
+		try {
+			//로그인 이력 저장
+			Map logParam = new HashMap();
+			logParam.put("LOGIN_ID", session.getAttribute("LOGIN_ID"));
+			logParam.put("COMM_USER_ID", session.getAttribute("COMM_USER_ID"));
+			logParam.put("CIP", ComUtil.getAddress(request) );
+			comDao.insert("com.I_COMM_LOGIN_LOG", logParam);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/**

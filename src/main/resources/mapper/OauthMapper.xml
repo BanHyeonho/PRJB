@@ -77,10 +77,39 @@
 	    	 , NVL(A.PWD_USE_YN, '0')	AS PWD_USE_YN
 	    	 , B.SOCIAL_ID
 	      FROM COMM_USER A
-		  JOIN COMM_OAUTH B ON (A.COMM_USER_ID = B.COMM_USER_ID)
+		  JOIN COMM_OAUTH B ON (A.COMM_USER_ID = B.COMM_USER_ID AND B.COMM_USER_ID = #{COMM_USER_ID})
 	     WHERE A.COMM_USER_ID = #{COMM_USER_ID}
 	</select>
-	
+	<!-- 연결된 계정 조회 -->
+	<select id="S_MY_SOCIAL_IDS" resultType="HashMap" parameterType="HashMap" >
+		/* S_MY_SOCIAL_IDS */
+	    SELECT B.LOGIN_ID
+		     , NVL(A.REP_YN, '0') AS REP_YN
+		     , A.OAUTH_TYPE
+		  FROM COMM_OAUTH A
+		  JOIN COMM_USER B ON (A.COMM_USER_ID = B.COMM_USER_ID)
+		 WHERE EXISTS (
+		          SELECT Y.COMM_OAUTH_ID
+		            FROM COMM_USER Z
+		            JOIN COMM_OAUTH Y ON (Z.COMM_USER_ID = Y.COMM_USER_ID AND Y.COMM_USER_ID = #{COMM_USER_ID})
+		           WHERE Z.COMM_USER_ID = #{COMM_USER_ID}
+		             AND Y.SOCIAL_ID = A.SOCIAL_ID
+		       )
+	</select>
+	<!-- 간편로그인 별 대표계정 수정 -->
+	<update id="U_MY_SOCIAL_REP_YN" parameterType="HashMap">
+		/* U_MY_SOCIAL_REP_YN */
+		UPDATE COMM_OAUTH A
+	   	   SET A.REP_YN = CASE WHEN A.COMM_USER_ID = (SELECT COMM_USER_ID FROM COMM_USER WHERE LOGIN_ID = #{LOGIN_ID})
+		                       THEN '1'
+		                       ELSE '0'
+		                        END
+		       A.MID = #{MID}
+		       A.MDT = SYSDATE
+		       A.MIP = #{MIP}
+		 WHERE A.OAUTH_TYPE = #{OAUTH_TYPE}
+		   AND A.SOCIAL_ID = #{SOCIAL_ID}
+	</update>
 	<!-- 간편로그인 가입여부 확인 -->	
 	<select id="S_COMM_OAUTH" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_OAUTH */
@@ -92,8 +121,21 @@
 		  FROM COMM_OAUTH A
 		  JOIN COMM_USER B ON (A.OAUTH_TYPE = #{OAUTH_TYPE} AND A.COMM_USER_ID = B.COMM_USER_ID)
 		 WHERE A.OAUTH_TYPE = #{OAUTH_TYPE}
-		   AND A.SOCIAL_ID = #{SOCIAL_ID} 
+		   AND NVL(A.REP_YN, '1') = '1'		--대표계정여부
+		   AND A.SOCIAL_ID = #{SOCIAL_ID}
 	</select>
+	<!-- 최근 로그인계정 조회 -->	
+	<select id="S_COMM_LOGIN_LAST" resultType="HashMap" parameterType="HashMap" >
+		/* S_COMM_LOGIN_LAST */
+		SELECT MIN(A.COMM_USER_ID) KEEP(DENSE_RANK FIRST ORDER BY A.CDT DESC) AS COMM_USER_ID
+          FROM COMM_LOGIN_LOG A
+         WHERE EXISTS(
+         			SELECT COLUMN_VALUE
+                      FROM TABLE(COMM_UTIL_PKG.SPLIT(#{IDS}, ','))
+                     WHERE COLUMN_VALUE = A.COMM_USER_ID
+         		)
+	</select>
+	
 	<!-- 간편로그인 연동 -->	
 	<insert id="I_COMM_OAUTH" parameterType="HashMap">
 		/* I_COMM_OAUTH */
