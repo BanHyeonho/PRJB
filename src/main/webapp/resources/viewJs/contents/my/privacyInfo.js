@@ -34,8 +34,7 @@ $(document).ready(function() {
 	$('#KAKAO_YN').on('change', f_social_connect);
 	$('#NAVER_YN').on('change', f_social_connect);
 	
-//	$('.menu-div:eq(0)').trigger('click');
-	$('.menu-div:eq(1)').trigger('click');
+	$('.menu-div:eq(0)').trigger('click');
 	
 	Kakao.init(gv_KAKAO_JAVASCRIPT);
 });
