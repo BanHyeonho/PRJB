@@ -167,7 +167,6 @@ var f_searchSocial = function(){
 	, function(data){
 		$('table[name=ID_LIST] tr').remove();
 		if(data.result.length > 0){
-//			console.log(data.result);
 			$.each(data.result, function(idx, item){
 				
 				var tr = $('<tr>');
@@ -201,7 +200,12 @@ var f_searchSocial = function(){
 	
 }
 var f_change_login = function(p_login_id){
-	if(confirm('계정(' + p_login_id + ')_로_로그인하시겠습니까')){
+	if(confirm(gf_mlg('계정으로_로그인하시겠습니까',{
+		param : p_login_id
+		}))
+	){
+		
+		
 		
 		gf_ajax({
 			LOGIN_ID : p_login_id
@@ -229,7 +233,7 @@ var f_change_repYn = function(me){
 		}
 		, null
 		, function(data){
-			gf_toast(gf_mlg("대표계정이_변경되었습니다"), 'success');
+			gf_toast(gf_mlg("대표_계정이_변경되었습니다"), 'success');
 			f_searchSocial();
 		});
 	}

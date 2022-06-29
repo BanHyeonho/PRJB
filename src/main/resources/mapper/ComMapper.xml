@@ -1315,7 +1315,16 @@
 							, #{MIP}
 							)
 	</insert>
-	
+	<!-- 패스워드사용여부 수정 -->
+	<update id="U_COMM_USER_PWD_USE" parameterType="HashMap" >
+		/* I_COMM_USER */
+		UPDATE COMM_USER
+		   SET PWD_USE_YN = #{PWD_USE_YN}
+		   	 , MID = #{MID}
+		   	 , MDT = SYSDATE
+		   	 , MIP = #{MIP}
+		 WHERE COMM_USER_ID = #{COMM_USER_ID}
+	</update>
 	<!-- 패스워드암호화 salt생성 -->
 	<insert id="I_SALT" parameterType="HashMap" >
 		/* I_SALT */

@@ -341,6 +341,13 @@ public class OauthService {
 			oauthParam.put("CIP", ComUtil.getAddress(request));
 			comDao.insert("oauth.I_COMM_OAUTH", oauthParam);
 			
+			//간편회원가입으로 가입한경우 패스워드 사용안함.
+			Map pwdParam = new HashMap();
+			pwdParam.put("COMM_USER_ID", commUserId);
+			pwdParam.put("PWD_USE_YN", '0');
+			pwdParam.put("MID", commUserId);
+			pwdParam.put("MIP", ComUtil.getAddress(request));
+			comDao.insert("com.U_COMM_USER_PWD_USE", pwdParam);
 		}
 		
 		
