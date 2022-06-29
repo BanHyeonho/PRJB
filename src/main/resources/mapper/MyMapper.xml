@@ -522,12 +522,12 @@
 			   		TO_NUMBER(NVL(Z.END_DATE, '99991231')) >= TO_NUMBER(TO_CHAR(LAST_DAY(#{SEARCH_DATE}), 'YYYYMMDD'))
 			   		)
 			   ]]>
-			   UNION ALL
+<!-- 			   UNION ALL -->
 			   
-			   SELECT 'GOOGLE' 	AS CAL_TYPE
-			   		, 9999		AS KEY_ID
-			   		, '구글' 	AS TITLE
-			     FROM DUAL
+<!-- 			   SELECT 'GOOGLE' 	AS CAL_TYPE -->
+<!-- 			   		, 9999		AS KEY_ID -->
+<!-- 			   		, '구글' 	AS TITLE -->
+<!-- 			     FROM DUAL -->
 			    
 		  ) A
 	 LEFT JOIN MY_CALENDAR_LIST B ON (B.COMM_USER_ID = #{COMM_USER_ID} AND A.CAL_TYPE = B.CAL_TYPE AND A.KEY_ID = B.KEY_ID)		
