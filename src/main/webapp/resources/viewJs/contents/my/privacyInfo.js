@@ -34,8 +34,7 @@ $(document).ready(function() {
 	$('#KAKAO_YN').on('change', f_social_connect);
 	$('#NAVER_YN').on('change', f_social_connect);
 	
-//	$('.menu-div:eq(0)').trigger('click');
-	$('.menu-div:eq(1)').trigger('click');
+	$('.menu-div:eq(0)').trigger('click');
 	
 	Kakao.init(gv_KAKAO_JAVASCRIPT);
 });
@@ -151,7 +150,7 @@ var f_searchSocial = function(){
 	}
 	, null
 	, function(data){
-		$('#socialContainer .form-switch').prop('checked', false);
+		$('.connect-yn').prop('checked', false);
 		if(data.result.length > 0){
 			$.each(data.result, function(idx, item){
 				$('#socialContainer input[name=' + item.OAUTH_TYPE + ']').prop('checked', true);
@@ -166,12 +165,78 @@ var f_searchSocial = function(){
 	}
 	, null
 	, function(data){
+		$('table[name=ID_LIST] tr').remove();
 		if(data.result.length > 0){
-			console.log(data.result)
+//			console.log(data.result);
+			$.each(data.result, function(idx, item){
+				
+				var tr = $('<tr>');
+				var idTd = $('<td style="text-align: right; vertical-align: middle; width:50%;">').addClass('pd-default2 font-size-24');
+				if(gv_loginId == item.LOGIN_ID){
+					idTd.append($('<span>').addClass('font-size-24').text(item.LOGIN_ID));
+				}
+				else{
+					idTd.append($('<span onclick="f_change_login(\'' + item.LOGIN_ID + '\')">').addClass('font-size-24 id-change-link').text(item.LOGIN_ID));
+				}
+				tr.append(idTd);
+				
+				var switchTd = $('<td class="pd-default2" style="text-align: left; vertical-align: middle; width:50%;">'
+								+'<input type="checkbox" class="form-switch" oauth_type="'+ item.OAUTH_TYPE + '" login_id="' + item.LOGIN_ID +'" onchange="f_change_repYn(this);" id="'+ item.OAUTH_TYPE + '_' + item.LOGIN_ID +'" name="'+ item.OAUTH_TYPE + '_CHECK">'
+								+'<label for="'+ item.OAUTH_TYPE + '_' + item.LOGIN_ID +'" class="switch_label">'
+								+'<span class="onf_btn"></span>'
+								+'</label>'
+								+'</td>');				
+				tr.append(switchTd);
+				
+				$('#' + item.OAUTH_TYPE + '_ID_LIST').append(tr);
+				
+				if(item.REP_YN == '1'){
+					$('#' + item.OAUTH_TYPE + '_' + item.LOGIN_ID ).prop('checked', true);					
+				}
+			});
+			
 		}
 		
 	});
 	
+}
+var f_change_login = function(p_login_id){
+	if(confirm('계정(' + p_login_id + ')_로_로그인하시겠습니까')){
+		
+		gf_ajax({
+			LOGIN_ID : p_login_id
+		}
+		, null
+		, function(data){
+//			if(data.state == 'success'){
+				parent.location.href='/';
+//			}
+			
+		}, null, null, '/oauth/reLogin');
+		
+	}
+}
+var f_change_repYn = function(me){
+
+	var oauth_type = $(me).attr('oauth_type');
+	var login_id = $(me).attr('login_id');
+	
+	if($(me).is(':checked')){
+		gf_ajax({
+			QUERY_ID : 'oauth.U_MY_SOCIAL_REP_YN',
+			OAUTH_TYPE : oauth_type,
+			LOGIN_ID : login_id,
+		}
+		, null
+		, function(data){
+			gf_toast(gf_mlg("대표계정이_변경되었습니다"), 'success');
+			f_searchSocial();
+		});
+	}
+	else{
+		$(me).prop('checked', true);
+	}
+//	
 }
 
 var f_clear = function(){
@@ -303,7 +368,7 @@ var f_social_unlink = function(p_oauth_type, p_target){
 				console.log(data);
 				if(data.state == 'success'){
 					gf_toast(gf_mlg('연결해제_되었습니다'), 'success');
-					p_target.prop('checked', false);
+					f_searchSocial();
 				}
 				else{
 					//연결된 계정이 없음
@@ -335,7 +400,7 @@ var f_social_link = function(p_oauth_type, p_target){
 				, function(data){
 					if(data.state == 'success'){
 						gf_toast(gf_mlg('연결_되었습니다'), 'success');
-						p_target.prop('checked', true);
+						f_searchSocial();
 					}
 				}, null, null, '/oauth/link');
 			    

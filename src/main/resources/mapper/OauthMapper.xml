@@ -79,6 +79,7 @@
 	      FROM COMM_USER A
 		  JOIN COMM_OAUTH B ON (A.COMM_USER_ID = B.COMM_USER_ID AND B.COMM_USER_ID = #{COMM_USER_ID})
 	     WHERE A.COMM_USER_ID = #{COMM_USER_ID}
+	       AND A.USE_YN = '1'
 	</select>
 	<!-- 연결된 계정 조회 -->
 	<select id="S_MY_SOCIAL_IDS" resultType="HashMap" parameterType="HashMap" >
@@ -87,13 +88,35 @@
 		     , NVL(A.REP_YN, '0') AS REP_YN
 		     , A.OAUTH_TYPE
 		  FROM COMM_OAUTH A
-		  JOIN COMM_USER B ON (A.COMM_USER_ID = B.COMM_USER_ID)
+		  JOIN COMM_USER B ON (A.COMM_USER_ID = B.COMM_USER_ID AND B.USE_YN = '1')
 		 WHERE EXISTS (
 		          SELECT Y.COMM_OAUTH_ID
 		            FROM COMM_USER Z
 		            JOIN COMM_OAUTH Y ON (Z.COMM_USER_ID = Y.COMM_USER_ID AND Y.COMM_USER_ID = #{COMM_USER_ID})
 		           WHERE Z.COMM_USER_ID = #{COMM_USER_ID}
 		             AND Y.SOCIAL_ID = A.SOCIAL_ID
+		             AND Z.USE_YN = '1'
+		       )
+	</select>
+	<!-- 연결된 계정 으로 재로그인 -->
+	<select id="S_RE_LOGIN" resultType="HashMap" parameterType="HashMap" >
+		/* S_RE_LOGIN */
+	    SELECT DISTINCT 
+	    	   B.COMM_USER_ID
+			 , B.LOGIN_ID
+		 	 , B.USER_NAME
+		 	 , NVL(B.USE_YN, '0')	AS USE_YN
+		 	 , TO_CHAR(B.CDT, 'YYYY-MM-DD') as CDT
+		  FROM COMM_OAUTH A
+		  JOIN COMM_USER B ON (A.COMM_USER_ID = B.COMM_USER_ID AND B.USE_YN = '1')
+		 WHERE B.LOGIN_ID = #{LOGIN_ID}
+		   AND EXISTS (
+		          SELECT Y.COMM_OAUTH_ID
+		            FROM COMM_USER Z
+		            JOIN COMM_OAUTH Y ON (Z.COMM_USER_ID = Y.COMM_USER_ID AND Y.COMM_USER_ID = #{COMM_USER_ID})
+		           WHERE Z.COMM_USER_ID = #{COMM_USER_ID}
+		             AND Y.SOCIAL_ID = A.SOCIAL_ID
+		             AND Z.USE_YN = '1'
 		       )
 	</select>
 	<!-- 간편로그인 별 대표계정 수정 -->
@@ -104,11 +127,18 @@
 		                       THEN '1'
 		                       ELSE '0'
 		                        END
-		       A.MID = #{MID}
-		       A.MDT = SYSDATE
-		       A.MIP = #{MIP}
+		     , A.MID = #{MID}
+		     , A.MDT = SYSDATE
+		     , A.MIP = #{MIP}
 		 WHERE A.OAUTH_TYPE = #{OAUTH_TYPE}
-		   AND A.SOCIAL_ID = #{SOCIAL_ID}
+		   AND EXISTS (
+		          SELECT Y.COMM_OAUTH_ID
+		            FROM COMM_USER Z
+		            JOIN COMM_OAUTH Y ON (Z.COMM_USER_ID = Y.COMM_USER_ID AND Y.COMM_USER_ID = #{COMM_USER_ID})
+		           WHERE Z.COMM_USER_ID = #{COMM_USER_ID}
+		             AND Y.SOCIAL_ID = A.SOCIAL_ID
+		             AND Z.USE_YN = '1'
+		       )
 	</update>
 	<!-- 간편로그인 가입여부 확인 -->	
 	<select id="S_COMM_OAUTH" resultType="HashMap" parameterType="HashMap" >
@@ -121,6 +151,7 @@
 		  FROM COMM_OAUTH A
 		  JOIN COMM_USER B ON (A.OAUTH_TYPE = #{OAUTH_TYPE} AND A.COMM_USER_ID = B.COMM_USER_ID)
 		 WHERE A.OAUTH_TYPE = #{OAUTH_TYPE}
+		   AND B.USE_YN = '1'
 		   AND NVL(A.REP_YN, '1') = '1'		--대표계정여부
 		   AND A.SOCIAL_ID = #{SOCIAL_ID}
 	</select>

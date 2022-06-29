@@ -89,6 +89,21 @@
   background: #fff;
   box-shadow: 1px 2px 3px #00000020;
 }
+
+.table-id-list{
+	width : 20%;
+}
+
+.id-change-link{
+	cursor : pointer;
+	text-decoration:underline; 
+	color:black;
+}
+.id-change-link:hover{
+	cursor : pointer;
+	text-decoration:underline;
+	color:#003EFF;
+}
 </style>
 </head>
 <body>
@@ -187,23 +202,28 @@
 					</tr>
 					<tr class="line-bt">
 						<td class="pd-default" style="text-align: center; vertical-align: middle;"><span class="font-size-24">${pb:msg(pageContext.request, "카카오")}</span></td>
-						<td class="pd-default" style="text-align: center;">
-							<input type="checkbox" id="KAKAO_YN" name='KAKAO' class='form-switch'>
+						<td class="pd-default" style="text-align: center; vertical-align: middle;">
+							<input type="checkbox" id="KAKAO_YN" name='KAKAO' class='form-switch connect-yn'>
 							<label for="KAKAO_YN" class="switch_label">
 								<span class="onf_btn"></span>
 							</label>
 						</td>
-						<td>
-						
+						<td class="pd-lt-default">
+							<table id='KAKAO_ID_LIST' name='ID_LIST' class='table-id-list'>
+							</table>
 						</td>
 					</tr>
 					<tr class="line-bt">
 						<td class="pd-default" style="text-align: center; vertical-align: middle;"><span class="font-size-24">${pb:msg(pageContext.request, "네이버")}</span></td>
-						<td class="pd-default" style="text-align: center;">
-							<input type="checkbox" id="NAVER_YN" name='NAVER' class='form-switch'>
+						<td class="pd-default" style="text-align: center; vertical-align: middle;">
+							<input type="checkbox" id="NAVER_YN" name='NAVER' class='form-switch connect-yn'>
 							<label for="NAVER_YN" class="switch_label">
 								<span class="onf_btn"></span>
 							</label>
+						</td>
+						<td class="pd-lt-default">
+							<table id='NAVER_ID_LIST' name='ID_LIST' class='table-id-list'>
+							</table>
 						</td>
 					</tr>
 				</thead>

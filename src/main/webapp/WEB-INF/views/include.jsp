@@ -64,6 +64,7 @@ const mlg = ${MLG};
 const btnList = JSON.parse(gf_nvl('${btnList}', '[]'));
 //사용자id
 const gv_commUserId = '${sessionScope.COMM_USER_ID}';
+const gv_loginId = '${sessionScope.LOGIN_ID}';
 
 //카카오 간편로그인
 const gv_KAKAO_JAVASCRIPT = '${KAKAO_JAVASCRIPT}';

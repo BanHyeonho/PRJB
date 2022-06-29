@@ -108,4 +108,14 @@ public class  OauthController{
 		m.addAttribute("type", "/link/naver");
 		return "closePopup";
 	}
+	
+	/**
+	 * 간편로그인으로 연결된 다른계정으로 재로그인 가능검증
+	 */
+	@RequestMapping(value = "/reLogin", method = RequestMethod.POST)
+	public @ResponseBody Object reLogin(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		
+		return oauthService.reLogin(request);
+	}
 }

@@ -49,6 +49,36 @@ public class OauthService {
 	private static final Logger logger = LoggerFactory.getLogger(OauthService.class);
 	
 	/**
+	 * 간편로그인으로 연결된 다른계정으로 재로그인 가능검증
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	public Map reLogin(HttpServletRequest request) throws Exception{
+		Map result = new HashMap();
+		
+		HttpSession session = request.getSession();
+		String loginId = request.getParameter("LOGIN_ID");
+		String CommUserId = String.valueOf(session.getAttribute("COMM_USER_ID"));
+		Map param = new HashMap();
+		param.put("LOGIN_ID", loginId);
+		param.put("COMM_USER_ID", CommUserId);
+		Map<String,String> loginResult = comDao.selectOne("oauth.S_RE_LOGIN", param);
+		
+		if(loginResult != null) {
+			
+			session.invalidate();
+			comService.setSession(request, loginResult);
+			result.put("state", "success");
+		}
+		else {
+			result.put("state", "fail");
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * 간편 로그인 연결(네이버)
 	 * @param p_type
 	 * @param request
