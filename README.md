@@ -3,18 +3,38 @@
 
 <hr/>
 
+# 프로젝트 개요
+지금까지, 그리고 앞으로 더 배우고 알아가는 모든 개발에 관한 것 들을 적용하기 위한 프로젝트.
+
+## 이 프로젝트를 하며 적용한 기술 목록
+> * Cent OS
+> * 오라클
+> * 아파치
+> * 톰캣
+> * 톰캣 이중화
+> * 깃
+> * 젠킨스
+> * FFmpeg
+> * Spring Framework
+> * Java
+> * Javascript
+> 	* Jquery
+> * Css
+
+<hr/>
+
 # 프로젝트 구조
 ## 자바 : src/main/java/prjb/com
 > ### controller : 컨트롤러 패키지
-> * BroadController : 로드밸런싱 되지않고, 모든톰캣에서 실행되어야 하는 url
-> * ComController : 공통모듈 컨트롤러 
-> * MyController : 마이페이지모듈 컨트롤러
-> * OauthController : Oauth모듈 컨트롤러
-> * StController : 스트리밍모듈 컨트롤러
+> * BroadController : 로드밸런싱 되지않고, 모든톰캣에서 실행되어야 하는 url (톰캣 이중화시)
+> * ComController : 공통 모듈 컨트롤러 
+> * MyController : 마이페이지 모듈 컨트롤러
+> * OauthController : Oauth 모듈 컨트롤러
+> * StController : 스트리밍 모듈 컨트롤러
 
 > ### crypto : 암호화 패키지
-> * AES256Util : AES256암호화유틸클래스
-> * Crypto : 암호화 어도테이션 클래스
+> * AES256Util : AES256 알고리즘 암호화 유틸 클래스
+> * Crypto : 암호화 어노테이션 클래스
 > * CryptoBean : DTO 클래스를 사용시 암호화 적용
 > * CryptoWrapperFactory : Mybatis model 클래스 암호화 자동적용 을 위한 클래스
 > * HashBean : DTO 를 HashMap 사용시 암호화 적용 
