@@ -5,6 +5,11 @@ import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 
+/**
+ * 동영상 인코딩 변경 클래스
+ * @author Administrator
+ *
+ */
 public class FFmpegUtil {
 
 	final static String ffmepgPath = "/usr/bin/ffmpeg";
