@@ -9,17 +9,29 @@
 ## 이 프로젝트를 하며 적용한 기술 목록
 > * Cent OS
 > * 오라클
-> * 아파치
+> * 아파치(mod_jk 사용)
 > * 톰캣
-> * 톰캣 이중화
+> * 톰캣 이중화 +세션클러스터링
 > * 깃
 > * 젠킨스
 > * FFmpeg
 > * Spring Framework
+> * Mybatis
 > * Java
+> * LibreOffice
 > * Javascript
 > 	* Jquery
+> 	* Jquery-ui
+> 	* Jquery-minicolors
+> 	* Jquery-toast
+> 	* slickGrid
+> 	* ckeditor
+> 	* fancytree
+> 	* c3js
+> 	* fullcalendar
+> 	* Pdfjs
 > * Css
+> * Oauth (네이버, 카카오)
 
 <hr/>
 
