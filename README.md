@@ -1,5 +1,5 @@
-#프로젝트 구조
-	##자바 : src/main/java/prjb/com
+# 프로젝트 구조
+	## 자바 : src/main/java/prjb/com
 			- controller	: 컨트롤러 패키지
 				*BroadController : 로드밸런싱 되지않고, 모든톰캣에서 실행되어야 하는 url
 				*ComController : 공통모듈 컨트롤러 
