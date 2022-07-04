@@ -7,25 +7,25 @@
 > * OauthController : Oauth모듈 컨트롤러
 > * StController : 스트리밍모듈 컨트롤러
 
-> crypto : 암호화 패키지
+> ### crypto : 암호화 패키지
 > * AES256Util : AES256암호화유틸클래스
 > * Crypto : 암호화 어도테이션 클래스
 > * CryptoBean : DTO 클래스를 사용시 암호화 적용
 > * CryptoWrapperFactory : Mybatis model 클래스 암호화 자동적용 을 위한 클래스
 > * HashBean : DTO 를 HashMap 사용시 암호화 적용 
 
-> init : 설정 패키지
+> ### init : 설정 패키지
 > * AsyncThreadConfiguration : 쓰레드 설정 클래스
 > * InitBean : 톨캣부팅시 의존성 주입
 > * PrjbServletContextListener : 톨캣부팅시 vm option 및 ServletContext 로드시 경로설정
 > * RefreshableSqlSessionFactoryBean : xml 쿼리 변경시 자동적용 클래스(개발시에만 사용)
 
-> mapper : 쿼리호출 패키지
+> ### mapper : 쿼리호출 패키지
 > * ComDao : DTO 를 사용하지않고 Map을 사용하여 쿼리호출 
 
-> model : data model 패키지
+> ### model : data model 패키지
 
-> service : 비즈니스로직 패키지
+> ### service : 비즈니스로직 패키지
 > * AsyncService : 쓰레드를 사용하여 병렬처리시 사용하는 서비스, 사용시 내부로직은 오버라이드 한다.
 > * ComService : 공통모듈 비즈니스 로직 클래스(단순 CRUD, 그리드, 페이지 오픈 등)
 > * ExceptionService : 에러발생 및 Exception 발생시 처리 클래스
@@ -34,7 +34,7 @@
 > * ScheduleService : cron 스케쥴 등록 및 실행 클래스
 > * StService : 스트리밍 관련 비즈니스로직 클래스
 
-> util : 유틸 패키지
+> ### util : 유틸 패키지
 > * ComInterceptor : 공통 interceptor
 > * ComUtil : 공통 util성 메서드를 모아놓은 클래스
 > * CryptoUtil : 암호화 메서드를 선언해 놓은 인터페이스, 톰캣 부팅시 의존성주입하여 암호화알고리즘, 암화화 키를 셋팅하여 인터페이스로 암/복호화 한다.
@@ -48,7 +48,7 @@
 > * tldUtil : JSP 의 EL 태그 taglib function 정의 클래스
 
 ## 설정 : src/main/resources/config
-> properties
+> ### properties
 > * common-config.properties : 개발,운영 모두 같은 설정값이어야 하는 경우
 > * config-dev.properties : 개발환경 설정값, 개발시에만 사용하는 클래스명 등 / 예 : 파일루트 경로 , 리브레오피스 경로 , sqlSessionFactory
 > * config-op.properties : 운영환경 설정값, 운영시에만 사용하는 클래스명 등 / 예 : 파일루트 경로, 리브레오피스 경로 , sqlSessionFactory
@@ -56,7 +56,7 @@
 > * config-vm-op.properties : 운영환경에 적용할 vm option 값(소스부팅이전에 적용해야하는 경우) / 파일인코딩, log4j 설정파일명
 > * log4jdbc.log4j2.properties : log4j 프로퍼티
 
-> xml
+> ### xml
 > * log4j2-dev.xml : 개발용 log4j 설정파일
 > * log4j2-op.xml : 운영용 log4j 설정파일
 > * mybatis-config.xml : 마이바티스 설정파일
