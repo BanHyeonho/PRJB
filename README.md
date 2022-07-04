@@ -64,22 +64,22 @@
 ## 마이바티스 쿼리 XML : src/main/resources/mapper
 	
 ## 정적 파일 : src/main/webapp/resources
-		*css : css폴더
-		*icon : 아이콘 관련 폴더
-		*img : 이미지 폴더
-		*plugin : 자바스크립트 플러그인 폴더
-		*script : 유틸성 자바스크립트 폴더
-		*tld : taglib 설정 폴더
-		*viewJs : 각 화면별 사용 자바스크립트 파일
+* css : css폴더
+* icon : 아이콘 관련 폴더
+* img : 이미지 폴더
+* plugin : 자바스크립트 플러그인 폴더
+* script : 유틸성 자바스크립트 폴더
+* tld : taglib 설정 폴더
+* viewJs : 각 화면별 사용 자바스크립트 파일
 	
 ## 화면 : src/main/webapp/WEB-INF/views
-		*contents : 관리자메뉴(메뉴등록)에서 등록한 메뉴에 해당하는 jsp 폴더, 첫 '_' 는 폴더, 파일명에는 '_' 를 사용하지 않는다. 
-		*error : 에러페이지
+* contents : 관리자메뉴(메뉴등록)에서 등록한 메뉴에 해당하는 jsp 폴더, 첫 '_' 는 폴더, 파일명에는 '_' 를 사용하지 않는다. 
+* error : 에러페이지
 	
 # 에러코드 정의
-	9999 : 세션이 없는상태
-	9998 : 사용자정의오류
-	404 : 페이지경로오류
+* 9999 : 세션이 없는상태
+* 9998 : 사용자정의오류
+* 404 : 페이지경로오류
 
 # 그리드조회쿼리 규칙
-	조회쿼리 작성시 'id_' || (ROWNUM-1) AS "id" 를 무조건 추가한다.(그리드ROW별 ID 생성을 위함)
+* 조회쿼리 작성시 'id_' || (ROWNUM-1) AS "id" 를 무조건 추가한다.(그리드ROW별 ID 생성을 위함)
