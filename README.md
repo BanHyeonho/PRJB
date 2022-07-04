@@ -1,5 +1,5 @@
-1.프로젝트 구조
-	자바 : src/main/java/prjb/com
+#프로젝트 구조
+	##자바 : src/main/java/prjb/com
 			- controller	: 컨트롤러 패키지
 				*BroadController : 로드밸런싱 되지않고, 모든톰캣에서 실행되어야 하는 url
 				*ComController : 공통모듈 컨트롤러 
@@ -47,7 +47,7 @@
 				*OsUtil : 운영체제 명령어 실행 클래스(리눅스. 윈도우)
 				*tldUtil : JSP 의 EL 태그 taglib function 정의 클래스
 
-	설정 : src/main/resources/config
+	##설정 : src/main/resources/config
 		properties
 			*common-config.properties : 개발,운영 모두 같은 설정값이어야 하는 경우
 			*config-dev.properties : 개발환경 설정값, 개발시에만 사용하는 클래스명 등 / 예 : 파일루트 경로 , 리브레오피스 경로 , sqlSessionFactory
@@ -60,9 +60,9 @@
 			*log4j2-op.xml : 운영용 log4j 설정파일
 			*mybatis-config.xml : 마이바티스 설정파일
 		
-	마이바티스 쿼리 XML : src/main/resources/mapper
+	##마이바티스 쿼리 XML : src/main/resources/mapper
 	
-	정적 파일 : src/main/webapp/resources
+	##정적 파일 : src/main/webapp/resources
 		*css : css폴더
 		*icon : 아이콘 관련 폴더
 		*img : 이미지 폴더
@@ -71,14 +71,14 @@
 		*tld : taglib 설정 폴더
 		*viewJs : 각 화면별 사용 자바스크립트 파일
 	
-	화면 : src/main/webapp/WEB-INF/views
+	##화면 : src/main/webapp/WEB-INF/views
 		*contents : 관리자메뉴(메뉴등록)에서 등록한 메뉴에 해당하는 jsp 폴더, 첫 '_' 는 폴더, 파일명에는 '_' 를 사용하지 않는다. 
 		*error : 에러페이지
 	
-2.에러코드 정의
+#에러코드 정의
 	- 9999 : 세션이 없는상태
 	- 9998 : 사용자정의오류 
 	- 404 : 페이지경로오류
 	
-3.그리드조회쿼리 규칙
+#그리드조회쿼리 규칙
 	- 조회쿼리 작성시 'id_' || (ROWNUM-1) AS "id" 를 무조건 추가한다.(그리드ROW별 ID 생성을 위함)
