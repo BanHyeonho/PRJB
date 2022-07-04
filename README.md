@@ -1,3 +1,8 @@
+# 서비스 URL
+> http://114.201.73.83/
+
+<hr/>
+
 # 프로젝트 구조
 ## 자바 : src/main/java/prjb/com
 > ### controller : 컨트롤러 패키지
