@@ -1,18 +1,18 @@
 # 프로젝트 구조
 ## 자바 : src/main/java/prjb/com
-> controller	: 컨트롤러 패키지
+> controller : 컨트롤러 패키지
 > * BroadController : 로드밸런싱 되지않고, 모든톰캣에서 실행되어야 하는 url
-	* ComController : 공통모듈 컨트롤러 
-	* MyController : 마이페이지모듈 컨트롤러
-	* OauthController : Oauth모듈 컨트롤러
-	* StController : 스트리밍모듈 컨트롤러
+> * ComController : 공통모듈 컨트롤러 
+> * MyController : 마이페이지모듈 컨트롤러
+> * OauthController : Oauth모듈 컨트롤러
+> * StController : 스트리밍모듈 컨트롤러
 
-	- crypto		: 암호화 패키지
-		*AES256Util : AES256암호화유틸클래스
-		*Crypto : 암호화 어도테이션 클래스
-		*CryptoBean : DTO 클래스를 사용시 암호화 적용
-		*CryptoWrapperFactory : Mybatis model 클래스 암호화 자동적용 을 위한 클래스
-		*HashBean : DTO 를 HashMap 사용시 암호화 적용 
+> crypto : 암호화 패키지
+> * AES256Util : AES256암호화유틸클래스
+> * Crypto : 암호화 어도테이션 클래스
+> * CryptoBean : DTO 클래스를 사용시 암호화 적용
+> * CryptoWrapperFactory : Mybatis model 클래스 암호화 자동적용 을 위한 클래스
+> * HashBean : DTO 를 HashMap 사용시 암호화 적용 
 
 	- init			: 설정 패키지
 		*AsyncThreadConfiguration : 쓰레드 설정 클래스
