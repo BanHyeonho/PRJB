@@ -94,6 +94,65 @@
 		 WHERE A.MODULE_CODE = #{MODULE_CODE}
 		 ORDER BY A.SEQ ASC
 	</select>
+	<!-- 게시판 카테고리 권한 조회 -->
+	<select id="S_BBS_AUTH" resultType="HashMap" parameterType="HashMap" >
+		/* S_BBS_AUTH */
+		SELECT 'id_' || (ROWNUM-1) AS "id" 
+			 , B.BBS_AUTH_ID 			AS BBS_AUTH_ID
+			 , #{BBS_SETTING_ID} 		AS BBS_SETTING_ID 
+			 , A.COMM_AUTH_GROUP_ID
+			 , A.GROUP_NANE
+			 , B.DESCRIPTION
+			 , NVL(B.USE_YN, '0')	AS USE_YN
+			 , NVL(B.INSERT_YN, '0')	AS INSERT_YN
+			 , NVL(B.UPDATE_YN, '0')	AS UPDATE_YN
+			 , NVL(B.DELETE_YN, '0')	AS DELETE_YN
+		  FROM COMM_AUTH_GROUP A
+	 LEFT JOIN BBS_AUTH B ON (A.COMM_AUTH_GROUP_ID = B.COMM_AUTH_GROUP_ID AND B.BBS_SETTING_ID = #{BBS_SETTING_ID})
+	</select>
+	
+	<!-- 게시판 카테고리 권한 수정 -->
+	<update id="U_BBS_AUTH" parameterType="HashMap" statementType="CALLABLE">
+		/* U_BBS_AUTH */
+		MERGE INTO BBS_AUTH A
+			 USING DUAL
+			    ON (A.BBS_SETTING_ID = #{BBS_SETTING_ID} AND A.COMM_AUTH_GROUP_ID = #{COMM_AUTH_GROUP_ID})
+			  WHEN MATCHED THEN
+			UPDATE SET DESCRIPTION 	= #{DESCRIPTION}
+					 , USE_YN			= #{USE_YN}
+					 , INSERT_YN		= #{INSERT_YN}
+					 , UPDATE_YN		= #{UPDATE_YN}
+					 , DELETE_YN		= #{DELETE_YN}
+					 , MID = #{MID}
+					 , MDT = SYSDATE
+					 , MIP = #{MIP}
+			  WHEN NOT MATCHED THEN
+			  INSERT(BBS_AUTH_ID 
+					, BBS_SETTING_ID    
+					, COMM_AUTH_GROUP_ID
+					, DESCRIPTION       
+					, USE_YN            
+					, INSERT_YN
+					, UPDATE_YN
+					, DELETE_YN
+		          <include refid="config.cidColumn"></include>
+		          )
+		       VALUES(BBS_AUTH_S.NEXTVAL 
+				  , #{BBS_SETTING_ID}
+				  , #{COMM_AUTH_GROUP_ID}
+				  , #{DESCRIPTION}
+				  , #{USE_YN}
+				  , #{INSERT_YN}
+				  , #{UPDATE_YN}
+				  , #{DELETE_YN}
+		          , #{MID}
+		          , SYSDATE
+		          , #{MIP}
+		          , #{MID}
+		          , SYSDATE    
+		          , #{MIP})
+	</update>
+	
 	
 	<!-- 게시판 리스트 카테고리 조회 (권한적용)-->	
 	<select id="S_BBS_CATEGORY" resultType="HashMap" parameterType="HashMap" >

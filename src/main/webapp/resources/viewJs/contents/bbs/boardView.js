@@ -8,7 +8,8 @@ let boardInfo = {
 
 const pageInfo = {
 		moduleCode : 'BD',
-		menuUrl : 'boardView'
+		menuUrl : 'boardView',
+		menuUrl2 : 'boardWrite'
 }
 
 $(document).ready(function() {
@@ -60,6 +61,7 @@ var f_search = function(){
 	gf_ajax({
 		QUERY_ID : 'com.S_COMM_FILE',
 		MODULE_CODE : pageInfo.moduleCode,
+		MENU_URL : pageInfo.menuUrl2,
 		GROUP_ID : boardInfo.bbsBoardId,
 	}, null
 	 , function(data){
@@ -70,8 +72,10 @@ var f_search = function(){
 			$.each(data.result, function(idx, item){
 				var tr = $('<tr>');
 				var downTag = $('<a>').attr('href', '/fileDownload?MODULE_CODE=' + pageInfo.moduleCode 
-																+ '&MENU_URL=' + pageInfo.menuUrl 
-																+ '&COMM_FILE_ID=' + item.COMM_FILE_ID + '&RANDOM_KEY=' + item.RANDOM_KEY).text(item.FILE_NAME);
+																+ '&MENU_URL=' + pageInfo.menuUrl2
+																+ '&COMM_FILE_ID=' + item.COMM_FILE_ID 
+																+ '&RANDOM_KEY=' + item.RANDOM_KEY).text(item.FILE_NAME);				
+				
 	            var fileNm = $('<td class="pd-bt-default pd-rt-default">').append(downTag);
 	            var fileSize = $('<td class="pd-rt-default">').text('(' + gf_getFileSize(item.FILE_SIZE) + ')');
 	            

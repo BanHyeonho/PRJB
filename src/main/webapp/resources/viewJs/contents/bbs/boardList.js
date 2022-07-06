@@ -8,18 +8,17 @@ $(document).ready(function() {
 	f_setBoardGrid();
 });
 
+/*****************************************************************************************************************************************************************
+ * 
+ * 그리드 셋팅
+ * 
+ *****************************************************************************************************************************************************************/
 var f_setCategoryGrid = function(){
 	categoryGrid = gf_gridInit('categoryGrid');
 	
 	categoryGrid.onSelectedRowsChanged.subscribe(function (e, args) {
-		
-		var row = args.rows[0];
-		var grid = args.grid;
-		var preRow = args.previousSelectedRows[0];
-		var selectedRowData = grid.getData().getItem(row);
-					
 		//게시글조회
-		f_boardSearch(selectedRowData.CATEGORY_CODE);
+		f_boardSearch();
     });
 	
 }
@@ -31,7 +30,6 @@ var f_setBoardGrid = function(){
 	boardGrid.onDblClick.subscribe(function (e, args){
 	    
 	    var boardInfo = boardGrid.getDataItem(args.row);
-	    
 	    
 		var v_param = {
 				menuNm : gf_mlg('게시글_보기', {
@@ -55,6 +53,12 @@ var f_setBoardGrid = function(){
 	});
 	
 }
+
+/*****************************************************************************************************************************************************************
+ * 
+ * 버튼 기능
+ * 
+ *****************************************************************************************************************************************************************/
 var f_write = function(){
 	
 	var v_param = {
@@ -85,16 +89,19 @@ var f_search = function(){
 				
 			});
 }
-var f_boardSearch = function(p_categoryCode){
+var f_boardSearch = function(){
   	
-	if(gf_nvl(p_categoryCode, '') == ''){
-		gf_gridClear(boardGrid);
+	var CATEGORY_CODE = gf_nvl( gf_gridSelectVal(categoryGrid, 'CATEGORY_CODE') , '');
+	
+	gf_gridClear(boardGrid);
+	if(gf_nvl(CATEGORY_CODE, '') == ''){
 		return false;
 	}
+	
 	var fData = new FormData();
 	fData.set('QUERY_ID', 'bbs.S_BBS_BOARD');
 	fData.set('MODULE_CODE', moduleCode);
-	fData.set('CATEGORY_CODE', p_categoryCode);
+	fData.set('CATEGORY_CODE', CATEGORY_CODE);
 	fData.set('WRITER', $('#WRITER').val());
 	fData.set('TITLE', $('#TITLE').val());
 	
