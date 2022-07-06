@@ -8,6 +8,11 @@ let boardInfo = {
 	attachedDelFiles : [],
 }
 
+const pageInfo = {
+		moduleCode : 'BD',
+		menuUrl : 'boardWrite'
+}
+
 $(document).ready(function() {
 	gf_editorEditable('editor', true);
 	//카테고리콤보
@@ -215,7 +220,9 @@ var f_search = function(){
 	gf_ajax({
 		QUERY_ID : 'com.S_COMM_FILE',
 		MODULE_CODE : 'BD',
+		MENU_URL : pageInfo.menuUrl,
 		GROUP_ID : boardInfo.bbsBoardId,
+		
 	}, null
 	 , function(data){
 		
@@ -226,7 +233,11 @@ var f_search = function(){
 		if(data.result.length > 0){
 			$.each(data.result, function(idx, item){
 				var tr = $('<tr>');
-				var downTag = $('<a>').attr('href', '/fileDownload?COMM_FILE_ID=' + item.COMM_FILE_ID + '&RANDOM_KEY=' + item.RANDOM_KEY).text(item.FILE_NAME);
+				var downTag = $('<a>').attr('href', '/fileDownload?MODULE_CODE=' + pageInfo.moduleCode 
+																	+ '&MENU_URL=' + pageInfo.menuUrl
+																	+ '&COMM_FILE_ID=' + item.COMM_FILE_ID 
+																	+ '&RANDOM_KEY=' + item.RANDOM_KEY).text(item.FILE_NAME);
+				
 	            var fileNm = $('<td class="pd-bt-default pd-rt-default">').append(downTag);
 	            var fileSize = $('<td class="pd-rt-default">').text('(' + gf_getFileSize(item.FILE_SIZE) + ')');
 	            
@@ -265,8 +276,8 @@ var f_save = function(){
 	$.each(boardInfo.attachedFiles, function(idx, item){
 		if(idx == 0){
 			var fileData = {
-					MODULE_CODE : 'BD',
-					MENU_URL : 'boardWrite',
+					MODULE_CODE : pageInfo.moduleCode,
+					MENU_URL : pageInfo.menuUrl,
 					GET_PARAM : {
 									GROUP_ID : 'boardForm.BBS_BOARD_ID'
 								}

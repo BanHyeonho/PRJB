@@ -292,21 +292,7 @@ public class ComUtil {
 		
 		// 저장할 맵
 		Map paramMap = ("SORT".equals(mapType) ? new LinkedHashMap() : new HashMap());
-		
-		MultipartHttpServletRequest multiRequest = null;
-		
-		try {
-			multiRequest = (MultipartHttpServletRequest) request;
-			//파일
-			Iterator<String> fileNames = multiRequest.getFileNames();
-			while (fileNames.hasNext()) {
-
-				String fileName = fileNames.next();
-				paramMap.put(fileName, multiRequest.getFile(fileName));
-			}
-			
-		}catch(Exception e) {}
-		
+	
 		// 파라미터 이름
 		Enumeration paramNames = request.getParameterNames();
 		
@@ -318,6 +304,20 @@ public class ComUtil {
 			paramMap.put(name, value);
 		}
 
+//		MultipartHttpServletRequest multiRequest = null;
+//		
+//		try {
+//			multiRequest = (MultipartHttpServletRequest) request;
+//			//파일
+//			Iterator<String> fileNames = multiRequest.getFileNames();
+//			while (fileNames.hasNext()) {
+//
+//				String fileName = fileNames.next();
+//				paramMap.put(fileName, multiRequest.getFile(fileName));
+//			}
+//			
+//		}catch(Exception e) {}		
+		
 		// 결과반환
 		return paramMap;
 	}

@@ -6,6 +6,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -501,7 +502,7 @@ public class ComService {
 		String cId = String.valueOf(session.getAttribute("COMM_USER_ID"));
 		String ip = ComUtil.getAddress(request);
 		
-		Map<String, Object> paramMap = ComUtil.getParameterMap(request, "SORT");
+		LinkedHashMap<String, Object> paramMap = (LinkedHashMap)ComUtil.getParameterMap(request, "SORT");
 		
 		List<Map> list = null;
 		for ( Map.Entry<String, Object> param : paramMap.entrySet() ) {
