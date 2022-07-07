@@ -245,7 +245,11 @@
 							          , A.COMM_USER_ID
 							          , A.SEQ + (SELECT COUNT(0) FROM MY_FILE_MANAGE WHERE PARENT_KEY_ID = A.PARENT_KEY_ID)
 							          , #{KEY_ID} || '_' || (SELECT COUNT(0) FROM MY_FILE_MANAGE WHERE PARENT_KEY_ID = A.PARENT_KEY_ID)
-							          , A.TITLE
+							          , SUBSTR(A.TITLE, 0, INSTR(A.TITLE, '.', -1) ) || CASE WHEN COMM_UTIL_PKG.COMM_CODE_ATTR('FILE_EXTENSION', UPPER(B.FILE_EXTENSION), 'ATTRIBUTE1', 'KO') = 'VIDEO'
+				                                                                             THEN 'mp4'
+				                                                                             WHEN COMM_UTIL_PKG.COMM_CODE_ATTR('FILE_EXTENSION', UPPER(B.FILE_EXTENSION), 'ATTRIBUTE1', 'KO') = 'SUB'
+				                                                                             THEN 'vtt'
+				                                                                              end
 							          , A.TYPE_CODE
 							          , A.PARENT_KEY_ID
 							          , A.SHOW_YN
@@ -256,9 +260,8 @@
 							          , SYSDATE    
 							          , 'SERVER'
 								   FROM MY_FILE_MANAGE A
+								   JOIN COMM_FILE B ON (B.MODULE_CODE = 'MY' AND A.MY_FILE_MANAGE_ID = B.GROUP_ID AND B.MENU_URL = 'fileManage')
 							      WHERE A.MY_FILE_MANAGE_ID = #{GROUP_ID}
-								
-							       
 	</insert>
 	
 	<!-- 나의정보 조회 -->
