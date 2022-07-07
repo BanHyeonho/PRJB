@@ -9,9 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import prjb.com.mapper.ComDao;
 
 @Service("ScheduleService")
@@ -30,8 +29,9 @@ public class ScheduleService {
 	
 	//매일 오전1시에 실행(초 분 시 일 월 요일 년도)
 //	@Scheduled(cron = "0 0 1 * * *")
-	@Scheduled(cron = "0 10 * * * *")
-	@Transactional(isolation=Isolation.SERIALIZABLE)
+//	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "23h", lockAtMostFor = "23h")
+	@Scheduled(cron = "0 15 0 * * * *")
+	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "14m", lockAtMostFor = "14m")
 	public void fileConvert() throws Exception {
 		logger.info("ScheduleService.fileConvert() START");
 		
