@@ -33,11 +33,11 @@ public class ScheduleService {
 	 * lockAtMostFor : 작업을 진행 중인 노드가 소멸될 경우에도 lock 이 유지될 시간
 	 * @throws Exception
 	 */
-	//매일 오전1시에 실행(초 분 시 일 월 요일 년도)
-//	@Scheduled(cron = "0 0 1 * * * *")
+	//매일 오전1시에 실행(초 분 시 일 월 요일)
+//	@Scheduled(cron = "0 0 1 * * *")
 //	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "23h", lockAtMostFor = "23h")
-	@Scheduled(cron = "0 1 * * * * *")
-	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "10*1000", lockAtMostFor = "10*1000")
+	@Scheduled(cron = "0 5 * * * *")
+	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "100*1000", lockAtMostFor = "100*1000")
 	public void fileConvert() throws Exception {
 		logger.info("ScheduleService.fileConvert() START");
 		
