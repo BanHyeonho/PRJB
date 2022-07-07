@@ -224,6 +224,43 @@
 				          , #{CIP})
 	</insert>
 	
+	<!-- 파일변환후 파일관리에 파일 추가 -->
+	<insert id="I_ST_FILE_CONVERT_AFTER" parameterType="HashMap" >
+		/* I_ST_FILE_CONVERT_AFTER */
+		<selectKey resultType="HashMap" keyProperty="MY_FILE_MANAGE_ID" order="BEFORE">
+			SELECT MY_FILE_MANAGE_S.NEXTVAL as MY_FILE_MANAGE_ID
+			  FROM DUAL
+		</selectKey>
+			INSERT INTO MY_FILE_MANAGE(MY_FILE_MANAGE_ID
+							          , COMM_USER_ID
+							          , SEQ
+							          , KEY_ID
+							          , TITLE
+							          , TYPE_CODE
+							          , PARENT_KEY_ID
+							          , SHOW_YN
+							          <include refid="config.cidColumn"></include>
+										)
+								SELECT #{MY_FILE_MANAGE_ID}
+							          , A.COMM_USER_ID
+							          , A.SEQ + (SELECT COUNT(0) FROM MY_FILE_MANAGE WHERE PARENT_KEY_ID = A.PARENT_KEY_ID)
+							          , #{KEY_ID} || '_' || (SELECT COUNT(0) FROM MY_FILE_MANAGE WHERE PARENT_KEY_ID = A.PARENT_KEY_ID)
+							          , A.TITLE
+							          , A.TYPE_CODE
+							          , A.PARENT_KEY_ID
+							          , A.SHOW_YN
+							          , -1
+							          , SYSDATE
+							          , 'SERVER'
+							          , -1
+							          , SYSDATE    
+							          , 'SERVER'
+								   FROM MY_FILE_MANAGE A
+							      WHERE A.MY_FILE_MANAGE_ID = #{MY_FILE_MANAGE_ID}
+								
+							       
+	</insert>
+	
 	<!-- 나의정보 조회 -->
 	<select id="S_MY_PRIVACY" resultType="HashMap" parameterType="HashMap" resultMap="config.BlobMap">
 		/* S_MY_PRIVACY */

@@ -305,6 +305,18 @@ public class StService {
 		
 		
         if("success".equals(fileResult.get("state"))) {
+        	
+        	
+        	switch (originMenuUrl) {
+			case "fileManage":
+				Map afterParam = new HashMap();	
+				afterParam.put("MY_FILE_MANAGE_ID", originGroupId);
+				afterParam.put("KEY_ID", String.valueOf(System.currentTimeMillis()));
+				comDao.insert("my.I_ST_FILE_CONVERT_AFTER", afterParam);
+				originGroupId = String.valueOf(afterParam.get("MY_FILE_MANAGE_ID"));
+				break;
+			}
+        	
         	Map<String, String> fileMapping = new HashMap();	
 			fileMapping.put("MODULE_CODE", originModuleCode);
 			fileMapping.put("GROUP_ID", originGroupId);
