@@ -8,6 +8,9 @@
 <meta charset="UTF-8">
 <title>${pb:msg(pageContext.request, "파일변환")}</title>
 <meta name="google" content="notranslate">
+<style type="text/css">
+    
+</style>
 </head>
 <body>
 	<div id='content' class="pd-pl-default">
@@ -16,28 +19,24 @@
 			<div class="btn-area" id='BTN_AREA1'>
 			</div>
 			<div class="search-area mg-tp-default2">
+				<div class="div-2-1 mg-rt-default3">
+					<label class="form">${pb:msg(pageContext.request, "신청메뉴")}</label>
+					<input class="form form-text mg-tp-default" type="text" tabindex="1" enter-exec='99' id="MENU_NAME">
+				</div>
 				<div class="div-2">
-					<label class="form">${pb:msg(pageContext.request, "글제목")}</label>
-					<input class="form form-text mg-tp-default" type="text" tabindex="1" enter-exec='99' id="TITLE">
+					<label class="form">${pb:msg(pageContext.request, "신청자")}</label>
+					<input class="form form-text mg-tp-default" type="text" tabindex="2" enter-exec='99' id="USER_NAME">
 				</div>
 			</div>
 		</div>
-		<div id='boardFileGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1 panel-3'>
-			<div id="boardFileGrid" class="grid"></div>
+		<div id='waitGridContainer' class='content-panel mg-pl-default no-mg-lt pd-pl-default ht-pl-1 panel-3'>
+			<div id="waitGrid" class="grid"></div>
 		</div>
-		<div id='boardOneContainer' class='content-panel mg-pl-tp-default mg-pl-rt-default pd-pl-default ht-pl-3 panel-4-1'>
-			<iframe id='editor' src="/editor" class="mg-tp-default"></iframe>
+		<div id='processingGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-1 panel-4-1'>
+			<div id="processingGrid" class="grid"></div>
 		</div>
-		<div id='videoGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-3 panel-3-1'>
-			<div id="videoGrid" class="grid"></div>
-		</div>
-		<div id='subtitleContainer' class='content-panel mg-pl-tp-default mg-pl-rt-default pd-pl-default ht-pl-3 panel-4-1'>
-<!-- 			<iframe id='editor2' src="/editor" class="mg-tp-default"></iframe> -->
-<!-- 			<div id='editor2'></div> -->
-			<textarea style="resize: none; width:100%; height:100%;" disabled id='subtitleContent'></textarea>
-		</div>
-		<div id='videoFileGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-3 panel-3-1'>
-			<div id="videoFileGrid" class="grid"></div>
+		<div id='completeGridContainer' class='content-panel mg-pl-tp-default pd-pl-default ht-pl-1 panel-3-1'>
+			<div id="completeGrid" class="grid"></div>
 		</div>
 	</div>
 </body>

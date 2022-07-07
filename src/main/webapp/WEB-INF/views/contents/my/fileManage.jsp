@@ -97,6 +97,9 @@
 		    	<div id='fileNewFolderBtn'><span>${pb:msg(pageContext.request, "새폴더")}</span></div>
 		  	</li>
 		  	<li>
+		    	<div id='fileEncodingBtn'><span>${pb:msg(pageContext.request, "인코딩_신청")}</span></div>
+		  	</li>
+		  	<li>
 		    	<div id='fileDownBtn'><span>${pb:msg(pageContext.request, "다운로드")}</span></div>
 		  	</li>
 		  	<li>

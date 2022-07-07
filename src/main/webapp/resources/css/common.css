@@ -170,6 +170,12 @@ iframe {
 	margin-top: 5px;
 }
 
+.slick-all-checkbox {
+	width: 25px;
+	height: 25px;
+	margin-top: 3px;
+}
+
 .slick-cell.copied {
 	background: rgba(0, 0, 255, 0.1) !important;
 	-webkit-transition: 0.5s background;
@@ -194,6 +200,17 @@ iframe {
 	box-sizing: border-box;
 }
 
+/* 그리드전체체크박스 */
+.slick-cell-checkboxsel {
+	background: #f0f0f0;
+	border-right-color: silver;
+	border-right-style: solid;
+}
+.slick-cell-checkboxsel input{
+	width: 25px;
+	height: 25px;
+}
+    
 .text-center {
 	text-align: center;
 }

@@ -36,9 +36,9 @@
 			 , B.FILE_EXTENSION
 			 , COMM_UTIL_PKG.COMM_CODE_ATTR('FILE_EXTENSION', UPPER(B.FILE_EXTENSION), 'ATTRIBUTE1', 'KO') AS FILE_EXTENSION_DIVISION
 	      FROM MY_FILE_MANAGE A
-     LEFT JOIN COMM_FILE B ON (B.MODULE_CODE = 'MY' AND B.MENU_URL = 'fileManage' AND B.GROUP_ID = A.MY_FILE_MANAGE_ID)
+     	  JOIN COMM_FILE B ON (B.MODULE_CODE = 'MY' AND B.MENU_URL = 'fileManage' AND B.GROUP_ID = A.MY_FILE_MANAGE_ID)
 	     WHERE A.COMM_USER_ID = #{CID}
-	       AND COMM_UTIL_PKG.COMM_CODE_ATTR('FILE_EXTENSION', UPPER(B.FILE_EXTENSION), 'ATTRIBUTE2', 'KO') = '1'
+	       AND COMM_UTIL_PKG.COMM_CODE_ATTR('FILE_EXTENSION', UPPER(B.FILE_EXTENSION), 'ATTRIBUTE2', 'KO') = '1' 
 	     <choose>
 	     	<when test="@org.apache.commons.lang3.StringUtils@isBlank(PARENT_KEY_ID)">
 	     		AND A.PARENT_KEY_ID IS NULL
@@ -68,6 +68,10 @@
      LEFT JOIN COMM_FILE B ON (B.MODULE_CODE = 'MY' AND B.MENU_URL = 'fileManage' AND B.GROUP_ID = A.MY_FILE_MANAGE_ID)
 	     WHERE A.COMM_USER_ID = #{CID}
 	       AND A.SHOW_YN = '1'
+	       AND (A.TYPE_CODE = 'FOLDER'
+              	OR
+              	(A.TYPE_CODE = 'FILE' AND B.COMM_FILE_ID IS NOT NULL)
+              	)
 	     <choose>
 	     	<when test="@org.apache.commons.lang3.StringUtils@isBlank(PARENT_KEY_ID)">
 	     		AND A.PARENT_KEY_ID IS NULL

@@ -61,11 +61,8 @@ public class StController {
 	@RequestMapping(value = "/convert", method = RequestMethod.POST)
 	public @ResponseBody Map convert(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		Map resultMap = new HashMap();
 		
-		resultMap.put("result", stService.convert(request));
-		
-		return resultMap;
+		return stService.convert(request);
 	}
 	
 	/**
@@ -84,13 +81,13 @@ public class StController {
 	/**
 	 * 자막내용 조회
 	 */
-	@RequestMapping(value = "/subTitleContent")
-	public @ResponseBody Map subTitleContent(HttpServletRequest request) throws Exception {
-		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		Map<String, Object> resultMap = new HashMap();
-		
-		resultMap.put("result", stService.subTitleContent(request));
-		
-		return resultMap;
-	}
+//	@RequestMapping(value = "/subTitleContent")
+//	public @ResponseBody Map subTitleContent(HttpServletRequest request) throws Exception {
+//		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+//		Map<String, Object> resultMap = new HashMap();
+//		
+//		resultMap.put("result", stService.subTitleContent(request));
+//		
+//		return resultMap;
+//	}
 }

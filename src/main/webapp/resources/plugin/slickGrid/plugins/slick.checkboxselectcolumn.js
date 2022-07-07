@@ -18,7 +18,8 @@
       cssClass: null,
       hideSelectAllCheckbox: false,
       toolTip: "Select/Deselect All",
-      width: 30,
+//      width: 30,
+      width: 50,
       hideInColumnTitleRow: false,
       hideInFilterHeaderRow: true
     };
@@ -253,7 +254,8 @@
     function getColumnDefinition() {
       return {
         id: _options.columnId,
-        name: (_options.hideSelectAllCheckbox || _options.hideInColumnTitleRow) ? "" : "<input id='header-selector" + _selectAll_UID + "' type='checkbox'><label for='header-selector" + _selectAll_UID + "'></label>",
+//        name: (_options.hideSelectAllCheckbox || _options.hideInColumnTitleRow) ? "" : "<input id='header-selector" + _selectAll_UID + "' type='checkbox'><label for='header-selector" + _selectAll_UID + "'></label>",
+		name: (_options.hideSelectAllCheckbox || _options.hideInColumnTitleRow) ? "" : "<input id='header-selector" + _selectAll_UID + "' class='slick-all-checkbox' type='checkbox'><label for='header-selector" + _selectAll_UID + "'></label>",
         toolTip: (_options.hideSelectAllCheckbox || _options.hideInColumnTitleRow) ? "" : _options.toolTip,
         field: "sel",
         width: _options.width,
@@ -290,8 +292,10 @@
           return null;
         } else {
           return _selectedRowsLookup[row]
-            ? "<input id='selector" + UID + "' type='checkbox' checked='checked'><label for='selector" + UID + "'></label>"
-            : "<input id='selector" + UID + "' type='checkbox'><label for='selector" + UID + "'></label>";
+//            ? "<input id='selector" + UID + "' type='checkbox' checked='checked'><label for='selector" + UID + "'></label>"
+//            : "<input id='selector" + UID + "' type='checkbox'><label for='selector" + UID + "'></label>";
+          	  ? "<input id='selector" + UID + "' type='checkbox' class='slick-all-checkbox' checked='checked'><label for='selector" + UID + "'></label>"
+              : "<input id='selector" + UID + "' type='checkbox' class='slick-all-checkbox'><label for='selector" + UID + "'></label>";
         }
       }
       return null;
@@ -306,9 +310,11 @@
 
     function renderSelectAllCheckbox(isSelectAllChecked) {
       if (isSelectAllChecked) {
-        _grid.updateColumnHeader(_options.columnId, "<input id='header-selector" + _selectAll_UID + "' type='checkbox' checked='checked'><label for='header-selector" + _selectAll_UID + "'></label>", _options.toolTip);
+//        _grid.updateColumnHeader(_options.columnId, "<input id='header-selector" + _selectAll_UID + "' type='checkbox' checked='checked'><label for='header-selector" + _selectAll_UID + "'></label>", _options.toolTip);
+        _grid.updateColumnHeader(_options.columnId, "<input id='header-selector" + _selectAll_UID + "' type='checkbox' class='slick-all-checkbox' checked='checked'><label for='header-selector" + _selectAll_UID + "'></label>", _options.toolTip);
       } else {
-        _grid.updateColumnHeader(_options.columnId, "<input id='header-selector" + _selectAll_UID + "' type='checkbox'><label for='header-selector" + _selectAll_UID + "'></label>", _options.toolTip);
+//        _grid.updateColumnHeader(_options.columnId, "<input id='header-selector" + _selectAll_UID + "' type='checkbox'><label for='header-selector" + _selectAll_UID + "'></label>", _options.toolTip);
+    	  _grid.updateColumnHeader(_options.columnId, "<input id='header-selector" + _selectAll_UID + "' type='checkbox' class='slick-all-checkbox' ><label for='header-selector" + _selectAll_UID + "'></label>", _options.toolTip);
       }
     }
 

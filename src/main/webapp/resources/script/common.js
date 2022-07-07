@@ -297,7 +297,6 @@ function gf_gridInit(gridDiv, option) {
 		columns.splice(0, 0, checkboxSelector.getColumnDefinition());
 		
 		vGrid = new Slick.Grid("#" + gridDiv, new Slick.Data.DataView(), columns, vOption);
-//    	vGrid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false})); 
     	vGrid.registerPlugin(checkboxSelector);
     }
 	else{
@@ -700,15 +699,17 @@ function gf_gridRowData(grid, rId, columnNm){
 	
 	if(gf_nvl(columnNm, '') == ''){
 		
-		return grid.getData().getItems()[rId];
+//		return grid.getData().getItems()[rId];	//필터적용시 rowid가 맞지않음
+		return grid.getData().getFilteredItems()[rId];
 	}
 	else{
-		return gf_nvl(grid.getData().getItems()[rId], '')[columnNm];
+//		return gf_nvl(grid.getData().getItems()[rId], '')[columnNm];	//필터적용시 rowid가 맞지않음
+		return gf_nvl(grid.getData().getFilteredItems()[rId], '')[columnNm];
 	}	
 }
 
 function gf_gridSelectVal(grid, columnNm){
-//	grid.setSelectedRows( [grid.getSelectedRows()[0]] );
+//	grid.setSelectedRows( [grid.getSelectedRows()[0]] );	//그리드선택시 하위그리드를 조회하는경우 상위그리느 영역선택이 안되는 오류가 발생.
 	return gf_gridRowData(grid, grid.getSelectedRows()[0], columnNm);
 }
 /*****************************************************************************************************************************************************************

@@ -59,6 +59,7 @@ $(document).ready(function() {
 	$('#fileDeleteBtn').on('click', f_fileDelete);
 	$('#fileDownBtn').on('click', f_fileDown);
 	$('#previewBtn').on('click', f_openPreview);
+	$('#fileEncodingBtn').on('click', f_fileEncoding);
 	
 	f_search();
 	
@@ -197,7 +198,7 @@ var f_save = function(){
 				var result = data.result;
 				
 				if(result.state == 'success'){
-					gf_toast(gf_mlg('저장_되었습니다'), 'success');	
+					gf_toast(gf_mlg('저장_되었습니다'), 'success');
 				}
 				else{
 					gf_toast(gf_mlg('개의_항목에_오류가_발생하였습니다',{
@@ -1013,7 +1014,7 @@ var f_makeFile = function(p_file, p_target, p_fileOrigin){
 	
 	var fileInfo = {}; 
 	if(gf_nvl(p_file.TYPE_CODE, '') == 'FILE'){
-		
+		debugger;
 		fileInfo = gf_nvl(parent.index_info.gv_fileExtension.find(x=> x.CODE_VALUE == p_file.FILE_EXTENSION.toUpperCase()), {});
 				
 		fileIcon = gf_nvl(fileInfo.ICON, 'file_default.png');
@@ -1328,4 +1329,62 @@ var f_show_fileView_close = function(){
 	$('source[name=videoSource]').attr('src', '');
 	videoTag.load();
 	$('video track').remove();
+}
+
+//파일 인코딩 신청
+var f_fileEncoding = function(){
+	$('.context').hide();
+	
+	if(fileManageInfo.attachedDelFiles.length > 0
+	|| fileManageInfo.attachedFiles.length > 0
+	){
+		gf_toast(gf_mlg('저장_후,_신청해_주세요'), 'info');
+		return;
+	}
+	
+	var target = $('#attachedFileArea .drag-highlight');
+	if(target.length > 0){
+		
+		if(confirm(gf_mlg('_개의_파일을_인코딩_신청하겠습니까',{
+					param : target.length
+					}))
+		){
+			
+			var ids = [];
+			var keys = [];
+			//신청파일 확장자 확인
+			for (var i = 0; i < target.length; i++) {
+				var fileExtension = gv_fileExtension.find(x=> x.CODE_VALUE == gf_nvl($(target[i]).attr('file_extension'), '').toUpperCase() ); 
+				
+				if(gf_nvl( fileExtension, '') == ''
+				|| fileExtension.ATTRIBUTE1 != 'VIDEO'
+				){
+					gf_toast(gf_mlg('동영상_파일만_인코딩_가능합니다'), 'info');
+					return;
+				}
+				
+				ids.push($(target[i]).attr('file_id'));
+				keys.push($(target[i]).attr('random_key'));
+				
+			}
+			
+			var fData = new FormData();
+			fData.set('QUERY_ID', 'st.I_ST_FILE_CONVERT');
+			fData.set('COMM_FILE_IDS', ids.join('[@;,;@]') );
+			fData.set('RANDOM_KEYS', keys.join('[@;,;@]') );
+			
+			gf_ajax(fData
+			, null
+			, function(data){
+				gf_toast(gf_mlg('신청_되었습니다'), 'success');
+			});
+			
+		}
+		
+	}
+	else{
+		gf_toast(gf_mlg('인코딩_신청할_파일을_선택하세요'), 'info');
+	}
+	
+	
 }

@@ -78,6 +78,10 @@
 	<!-- 첨부파일 저장 -->
 	<insert id="I_COMM_FILE" parameterType="HashMap" >
 		/* I_COMM_FILE */
+		<selectKey resultType="HashMap" keyProperty="COMM_FILE_ID" order="BEFORE">
+			SELECT COMM_FILE_S.NEXTVAL as COMM_FILE_ID
+			  FROM DUAL
+		</selectKey>
 		INSERT INTO COMM_FILE( COMM_FILE_ID    
 							 , MODULE_CODE     
 							 , MENU_URL
@@ -90,7 +94,7 @@
 							 , SERVER_FILE_NAME
 							<include refid="config.cidColumn"></include>               
 							)
-					  VALUES( COMM_FILE_S.NEXTVAL
+					  VALUES( #{COMM_FILE_ID}
 							, #{MODULE_CODE}
 							, #{MENU_URL}
 							, #{GROUP_ID}

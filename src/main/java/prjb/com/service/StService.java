@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,6 +32,8 @@ import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,6 +43,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
+import prjb.com.util.ErrorLogException;
 import prjb.com.util.FileUtil;
 
 @Service("StService")
@@ -53,6 +57,9 @@ public class StService {
 	
 	@Autowired
 	ComService comService;
+	
+	@Autowired
+	AsyncService asyncService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StService.class);
 	
@@ -179,84 +186,154 @@ public class StService {
 	public Map convert(HttpServletRequest request) throws Exception{
 		Map result = new HashMap();
 		Map<String, String> paramMap = ComUtil.getParameterMap(request);
-		final String moduleCode = "ST";
 		
 		final String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
 		final String ip = ComUtil.getAddress(request);
 		
-		ObjectMapper mapper = mapper = new ObjectMapper();
-		JsonNode json = mapper.readTree(String.valueOf(paramMap.get("CONVERT_FILES")));
-		ObjectReader reader = mapper.readerFor(new TypeReference<List>() {});
-		List<Map> convertFiles = reader.readValue(json);
+		String ids = String.valueOf(paramMap.get("IDS"));
 		
-		final String groupId = paramMap.get("GROUP_ID");
+		Map filesParam = new HashMap();
+		filesParam.put("ST_FILE_CONVERT_IDS", ids);
+		List<Map> convertFiles = comDao.selectList("st.S_ST_FILE_CONVERT_PROCESSING", filesParam);
+				
+		List<Future> futures = new ArrayList<>();
 		
 		for (Map fileInfo : convertFiles) {
-			String fileExtension = String.valueOf(fileInfo.get("FILE_EXTENSION")).toLowerCase();
-			String fileType = String.valueOf(fileInfo.get("FILE_TYPE")).toUpperCase();
 			
+			Map fileType = new HashMap();
+			fileType.put("type", String.valueOf(fileInfo.get("FILE_TYPE")).toUpperCase());
+			fileType.put("extension", String.valueOf(fileInfo.get("FILE_EXTENSION")).toLowerCase());
 			
-			//web에서 바로 실행가능한 파일이므로, 변환하지않고 매핑정보만 추가한다. COMM_FILE 에 데이터만 추가.
-			if("mp4".equals(fileExtension)
-			|| "vtt".equals(fileExtension)) {
-				Map param = new HashMap();
-				param.put("CIP", ip);
-				param.put("CID", cId);
-				param.put("COMM_FILE_ID", fileInfo.get("COMM_FILE_ID"));
-				param.put("MODULE_CODE", moduleCode);
-				param.put("GROUP_ID", groupId);       
-				comDao.insert("st.I_FILE_MAPPING_COPY", param);
-			}
-			//인코딩작업 필요
-			else {
+			Map param = new HashMap();
+			
+			param.put("COMM_USER_ID", cId);
+			param.put("IP", ip);
+			param.put("ST_FILE_CONVERT_ID", String.valueOf(fileInfo.get("ST_FILE_CONVERT_ID")));
+			param.put("MODULE_CODE", String.valueOf(fileInfo.get("MODULE_CODE")));
+			param.put("GROUP_ID", String.valueOf(fileInfo.get("GROUP_ID")));
+			param.put("MENU_URL", String.valueOf(fileInfo.get("MENU_URL")));
+			param.put("FILE_NAME", String.valueOf(fileInfo.get("FILE_NAME")));
+			param.put("FILE_PATH", String.valueOf(fileInfo.get("FILE_PATH")));
+			param.put("SERVER_FILE_NAME", String.valueOf(fileInfo.get("SERVER_FILE_NAME")));
+			
+			//쓰레드 병렬처리
+			futures.add(asyncConvert(result, fileType, param));
+			
+		}
+		
+		//쓰레드 동기화
+		for (Future future : futures) {
+			future.get();
+		}
+		
+		if("null".equals(String.valueOf(result.get("state")))) {
+			result.put("state", "success");
+		}
+		return result;
+	}
+	
+	/**
+	 * 파일변환 쓰레드
+	 * @param p_fileType
+	 * @return
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public Future<Void> asyncConvert(Map p_result, Map p_fileType, Map p_param) {
+
+		Future<Void> result = null;
+		try {
+			result = asyncService.run(() -> {
+				String type = String.valueOf(p_fileType.get("type"));
+				String extension = String.valueOf(p_fileType.get("extension"));
+				
 				//자막
-				if("SUB".equals(fileType)) {
+				if("SUB".equals(type)) {
 					
-					switch (fileExtension) {
+					switch (extension) {
 						case "srt":
-							srtConvert(request, fileInfo, groupId);
-							break;
-						case "smi":
-							smiConvert(request, fileInfo, groupId);
+//							srtConvert(request, fileInfo, groupId);
 							break;
 					}
 					
 				}
 				//영상
 				else {
-					mediaConvert(request, fileInfo, groupId);
+					try {
+						mediaConvert(p_param);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						p_result.put("state", "fail");
+					}
 				}
-			}
+				
+			});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		
+
 		return result;
+
 	}
 	
 	/**
-	 * 영상 -> mp4파일
-	 * @param request
-	 * @param param
-	 * @param groupId
+	 * 동영상 mp4 파일로 생성
+	 * @param p_param : COMM_USER_ID, IP, MODULE_CODE, GROUP_ID, MENU_URL, FILE_NAME, FILE_PATH, SERVER_FILE_NAME
 	 * @throws Exception
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void mediaConvert(HttpServletRequest request, Map param, String groupId) throws Exception{
+	public void mediaConvert(Map p_param) throws Exception{
 		
-		final String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
-		final String ip = ComUtil.getAddress(request);
-		final String commFileId = String.valueOf(param.get("COMM_FILE_ID"));
-		final String randomKey = String.valueOf(param.get("RANDOM_KEY"));
+		final String fileExtension = "mp4";
+		String cId = String.valueOf(p_param.get("COMM_USER_ID"));
+		String ip = String.valueOf(p_param.get("IP"));
 		
-		Map fileParam = new HashMap();
-		fileParam.put("COMM_FILE_ID", commFileId);
-		fileParam.put("RANDOM_KEY", randomKey);
-		Map fileInfo = comDao.selectOne("com.S_COMM_FILE_DOWN", fileParam);
-				
-		fileInfo.put("cId", cId);
-		fileInfo.put("ip", ip);
-		fileInfo.put("moduleCode", "ST");
-		mediaConvertExec(fileInfo, groupId);
+		
+		String stFileConvertId = String.valueOf(p_param.get("ST_FILE_CONVERT_ID"));
+		String originModuleCode = String.valueOf(p_param.get("MODULE_CODE"));
+		String originGroupId = String.valueOf(p_param.get("GROUP_ID"));
+		String originMenuUrl = String.valueOf(p_param.get("MENU_URL"));
+		
+		
+		String fileName = String.valueOf(p_param.get("FILE_NAME"));
+		String originFilePath = String.valueOf(p_param.get("FILE_PATH")) + String.valueOf(p_param.get("SERVER_FILE_NAME"));
+		        
+  		String filePath = FileUtil.filePath(fileRoot, "ST");
+		
+		Map<String, String> fileResult = FileUtil.fileConvert(originFilePath, filePath, fileName, fileExtension);
+		
+		
+        if("success".equals(fileResult.get("state"))) {
+        	Map<String, String> fileMapping = new HashMap();	
+			fileMapping.put("MODULE_CODE", originModuleCode);
+			fileMapping.put("GROUP_ID", originGroupId);
+			fileMapping.put("MENU_URL", originMenuUrl);
+			fileMapping.put("CID", cId);
+			fileMapping.put("CIP", ip);
+			fileMapping.put("FILE_PATH", filePath);
+			fileMapping.put("FILE_SIZE", String.valueOf(fileResult.get("fileSize")));
+			fileMapping.put("FILE_EXTENSION", fileResult.get("fileExtension"));
+			fileMapping.put("FILE_NAME_ENCRYPT", fileResult.get("fileName"));
+			fileMapping.put("SERVER_FILE_NAME", fileResult.get("serverFileName"));
+			fileMapping.put("RANDOM_KEY", ComUtil.getRandomKey());
+			
+			comDao.insert("com.I_COMM_FILE", fileMapping);
+			
+			fileMapping.put("MID", cId);
+			fileMapping.put("MIP", ip);
+			fileMapping.put("STATE_CODE", "COMPLETE");
+			fileMapping.put("ST_FILE_CONVERT_ID", stFileConvertId);
+			comDao.update("st.U_ST_FILE_CONVERT", fileMapping);
+		}
+        else {
+        	Map<String, String> fileMapping = new HashMap();
+        	fileMapping.put("MID", cId);
+			fileMapping.put("MIP", ip);
+			fileMapping.put("STATE_CODE", "FAIL");
+			fileMapping.put("ST_FILE_CONVERT_ID", stFileConvertId);
+			comDao.update("st.U_ST_FILE_CONVERT", fileMapping);
+        }
 		
 	}
 	
@@ -372,169 +449,8 @@ public class StService {
 		}
 	}
 	
-	/**
-	 * smi자막 -> vtt자막
-	 * @param request
-	 * @param param
-	 * @param groupId
-	 * @throws Exception
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	public void smiConvert(HttpServletRequest request, Map param, String groupId) throws Exception{
-		
-		final String moduleCode = "ST";
-		final String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
-		final String ip = ComUtil.getAddress(request);
-		final String commFileId = String.valueOf(param.get("COMM_FILE_ID"));
-		final String randomKey = String.valueOf(param.get("RANDOM_KEY"));
-		
-		Map fileParam = new HashMap();
-		fileParam.put("COMM_FILE_ID", commFileId);
-		fileParam.put("RANDOM_KEY", randomKey);
-		Map fileInfo = comDao.selectOne("com.S_COMM_FILE_DOWN", fileParam);
-		
-		String fileNm = String.valueOf(fileInfo.get("FILE_NAME"));
-		
-		String fileData = String.valueOf(fileInfo.get("FILE_PATH")) + String.valueOf(fileInfo.get("SERVER_FILE_NAME"));
-		
-//		String fileData = "C:\\develop\\files\\prjb\\아이언 맨 1.smi";
-		
-		File file = new File(fileData);
-	    
-		String encoding = ComUtil.getEncodingType(file);
-		
-        //입력 버퍼 생성
-        BufferedReader bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
-        
-        StringBuilder content = new StringBuilder("WEBVTT").append("\n").append("\n");
-        String line = "";
-        List<String> subtitleList = new ArrayList();
-        boolean headYn = true;
-        boolean startYn = true;
-        int titleIdx = 0;
-        while((line = bufReader.readLine()) != null){
-        	
-        	//헤더
-        	if(headYn) {
-        		if(line.trim().indexOf(".") == 0) {
-        			subtitleList.add(line.trim().substring(0, line.indexOf("{")));
-            	}
-        		else if(line.toUpperCase().contains("<BODY>")) {
-        			headYn = false;
-        		}
-        	}
-        	//바디
-        	else {
-        		//한,영 자막 같이있는경우
-        		if(subtitleList.size() > 1) {
-        			
-        			if(line.contains(subtitleList.get(titleIdx))) {
-        				
-        				if(startYn) {
-        					
-        				}
-        				System.out.println(line);
-        				String text = line;
-        				
-        				text.replaceAll("<br>", "\n");
-        				text = removeTag(text);
-        				
-            			content.append(text).append("\n");
-        				
-        			}
-        			else {
-        				titleIdx++;
-//        				if(line.contains(subtitleList.get(titleIdx))) {
-//            				
-//            			}
-        			}
-        			
-        		}
-        		//자막 1개만 있는경우
-        		else {
-        			
-//        			content.append(line).append("\n");
-        		}	
-        	}
-        }
-        System.out.println(content.toString());
-        //.readLine()은 끝에 개행문자를 읽지 않는다.            
-        bufReader.close();
-        
-//  	String filePath = FileUtil.filePath(fileRoot, moduleCode);
-//  		
-//        Map<String, String> fileResult = FileUtil.fileMake(filePath, fileNm, "vtt", content.toString());
-//		
-//        if("success".equals(fileResult.get("state"))) {
-//			
-//			Map<String, String> fileMapping = new HashMap();
-//			fileMapping.put("MODULE_CODE", moduleCode);
-//			fileMapping.put("GROUP_ID", groupId);
-//			fileMapping.put("CID", cId);
-//			fileMapping.put("CIP", ip);
-//			fileMapping.put("FILE_PATH", filePath);
-//			fileMapping.put("FILE_SIZE", String.valueOf(fileResult.get("fileSize")));
-//			fileMapping.put("FILE_EXTENSION", fileResult.get("fileExtension"));
-//			fileMapping.put("FILE_NAME_ENCRYPT", fileResult.get("fileName"));
-//			fileMapping.put("SERVER_FILE_NAME", fileResult.get("serverFileName"));
-//			fileMapping.put("RANDOM_KEY", ComUtil.getRandomKey());
-//			
-//			comDao.insert("com.I_COMM_FILE", fileMapping);
-//		}
-	}
-	public String removeTag(String str) {
-		StringBuilder result = new StringBuilder();
-		String[] strSp = str.split("");
-		boolean appendYn = true;
-		for (int i = 0; i < strSp.length; i++) {
-			String s = strSp[i];
-			if("<".equals(s)) {
-				appendYn = false;
-			}
-			else if(">".equals(s)){
-				appendYn = true;
-			}
-			else if(appendYn){
-				result.append(s);
-			}
-		}
-		return result.toString();
-	}
 	
-	/**
-	 * 자막내용 추출
-	 * @param request
-	 * @return
-	 * @throws Exception 
-	 */
-	public Map subTitleContent(HttpServletRequest request) throws Exception{
-		Map result = new HashMap();
-		Map<String, String> paramMap = ComUtil.getParameterMap(request);
-		
-		final String cId = String.valueOf(request.getSession().getAttribute("COMM_USER_ID"));
-		final String ip = ComUtil.getAddress(request);
-		final String randomKey = paramMap.get("RANDOM_KEY");
-		final String commFileId = paramMap.get("COMM_FILE_ID");
-		
-		Map param = new HashMap();
-		param.put("COMM_FILE_ID", commFileId);
-		param.put("RANDOM_KEY", randomKey);
-		Map fileInfo = comDao.selectOne("com.S_COMM_FILE_DOWN", param);
-		
-		String filePath = String.valueOf(fileInfo.get("FILE_PATH"));
-		String fileNm = String.valueOf(fileInfo.get("SERVER_FILE_NAME"));				
-		String fileData = filePath + fileNm;
-		
-//		String fileData = "C:\\Users\\Administrator\\Desktop\\자막\\";
-//		fileData += "YGvmlXnwFvyW%2FSCvnBBMQPBc2rMhAlh%2Bb5M1xvg5wu5AF61NDS1WgAvX3eYQLADan%2Fdfr%2FSD7%2F%2Bs0kzUGPHpLg%3D%3D";
-		File file = new File(fileData);
-	    
-		String encoding = ComUtil.getEncodingType(file);
-	    String content = FileUtils.readFileToString(file, encoding);
-	    
-	    result.put("result", content);
-	    
-		return result;
-	}
+	
+	
 	
 }

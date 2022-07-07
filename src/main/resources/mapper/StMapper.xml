@@ -66,37 +66,6 @@
 	 ORDER SIBLINGS BY A.CATEGORY_NAME
 	</select>
 	
-	<!-- 파일변환 매핑정보만 추가 -->	
-	<insert id="I_FILE_MAPPING_COPY" parameterType="HashMap">
-	INSERT INTO COMM_FILE( COMM_FILE_ID    
-						 , MODULE_CODE     
-						 , GROUP_ID        
-						 , FILE_PATH       
-						 , RANDOM_KEY      
-						 , FILE_NAME       
-						 , FILE_EXTENSION  
-						 , FILE_SIZE       
-						 , SERVER_FILE_NAME
-						<include refid="config.cidColumn"></include>
-						)
-				  SELECT COMM_FILE_S.NEXTVAL    
-					   , #{MODULE_CODE}     
-					   , #{GROUP_ID}        
-					   , A.FILE_PATH
-					   , A.RANDOM_KEY      
-					   , A.FILE_NAME       
-					   , A.FILE_EXTENSION  
-					   , A.FILE_SIZE       
-					   , A.SERVER_FILE_NAME
-					   , #{CID}
-				       , SYSDATE
-					   , #{CIP}
-					   , #{CID}
-					   , SYSDATE    
-					   , #{CIP}        
-				    FROM COMM_FILE A
-				   WHERE A.COMM_FILE_ID = #{COMM_FILE_ID}        
-	</insert>
 	<!-- 영상 리스트(업로드된 파일) 조회 -->	
 	<select id="S_ST_VIDEO_VIEW_FILE" resultType="HashMap" parameterType="HashMap" >
 		/* S_ST_VIDEO_VIEW_FILE */
@@ -159,4 +128,135 @@
 		 WHERE COMM_FILE_ID = #{COMM_FILE_ID}
 		   AND RANDOM_KEY = #{RANDOM_KEY}
 	</update>
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 동영상 파일변환 신청 -->	
+	<insert id="I_ST_FILE_CONVERT" parameterType="HashMap">
+		/* I_ST_FILE_CONVERT */
+		INSERT INTO ST_FILE_CONVERT( ST_FILE_CONVERT_ID
+								   , ORIGIN_COMM_FILE_ID
+								   , STATE_CODE
+								   , COMM_USER_ID
+									<include refid="config.cidColumn"></include>
+									)
+							  SELECT ST_FILE_CONVERT_S.NEXTVAL
+								   , A.COMM_FILE_ID
+								   , 'WAIT'
+								   , #{COMM_USER_ID}
+								   , #{CID}
+							       , SYSDATE
+								   , #{CIP}
+								   , #{CID}
+								   , SYSDATE    
+								   , #{CIP}        
+							    FROM COMM_FILE A
+							   WHERE EXISTS (
+							   SELECT Z.COMM_FILE_ID
+							     FROM (
+							     		SELECT Z.COLUMN_VALUE 	AS COMM_FILE_ID
+									   		, Y.COLUMN_VALUE	AS RANDOM_KEY
+									     FROM (
+											SELECT ROWNUM  			AS IDX
+											 	 , COLUMN_VALUE     AS COLUMN_VALUE
+											  FROM TABLE(COMM_UTIL_PKG.SPLIT(#{COMM_FILE_IDS}, '[@;,;@]'))
+											) Z
+											JOIN (
+											SELECT ROWNUM  			AS IDX
+											 	 , COLUMN_VALUE     AS COLUMN_VALUE
+											FROM TABLE(COMM_UTIL_PKG.SPLIT(#{RANDOM_KEYS}, '[@;,;@]'))
+											) Y ON Z.IDX = Y.IDX
+							     		) Z
+							     WHERE Z.COMM_FILE_ID = A.COMM_FILE_ID
+							       AND Z.RANDOM_KEY = A.RANDOM_KEY
+							   )
+	</insert>
+	<!-- 동영상 파일변환 신청 조회 -->
+	<select id="S_ST_FILE_CONVERT" resultType="HashMap" parameterType="HashMap" >
+		/* S_ST_FILE_CONVERT */
+		<![CDATA[
+		SELECT 'id_' || (ROWNUM-1) AS "id"
+			 , A.ST_FILE_CONVERT_ID
+			 , A.STATE_CODE
+			 , COMM_UTIL_PKG.COMM_CODE_ATTR('SCHEDULE_STATE', A.STATE_CODE, 'NAME', #{LANG_CODE})	AS STATE_NAME
+			 , A.ORIGIN_COMM_FILE_ID
+			 , A.RESULT_COMM_FILE_ID
+			 , COMM_UTIL_PKG.USER_NAME(A.COMM_USER_ID)	AS USER_NAME
+			 , B.FILE_NAME
+			 , B.FILE_EXTENSION
+			 , COMM_UTIL_PKG.lang( (SELECT MAX(MLG_CODE) KEEP(DENSE_RANK FIRST ORDER BY USE_YN DESC)
+								   	  FROM COMM_MENU
+								   	 WHERE INSTR(MENU_URL, B.MENU_URL) > 0
+								   ), #{LANG_CODE})								AS MENU_NAME
+			 
+		  FROM ST_FILE_CONVERT A
+		  JOIN COMM_FILE B ON (A.ORIGIN_COMM_FILE_ID = B.COMM_FILE_ID)
+		 WHERE A.ST_FILE_CONVERT_ID = A.ST_FILE_CONVERT_ID
+		 ]]>		  
+		 <choose>
+		 	<when test='STATE_CODE == "WAIT"'>
+		 		AND A.STATE_CODE IN ('WAIT', 'FAIL', 'REJECT')
+		 	</when>
+		 	<otherwise>
+		 		AND A.STATE_CODE = #{STATE_CODE}
+		 	</otherwise>
+		 </choose>
+		 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(MENU_NAME)">
+		 	<![CDATA[
+		 	AND INSTR(COMM_UTIL_PKG.lang( (SELECT MAX(MLG_CODE) KEEP(DENSE_RANK FIRST ORDER BY USE_YN DESC)
+								   	  FROM COMM_MENU
+								   	 WHERE INSTR(MENU_URL, B.MENU_URL) > 0
+								   ), #{LANG_CODE}), #{MENU_NAME}) > 0 
+		   ]]>		  
+		 </if>
+		 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(USER_NAME)">
+		 	<![CDATA[
+		 	AND INSTR(COMM_UTIL_PKG.USER_NAME(A.COMM_USER_ID), #{USER_NAME}) > 0 
+		   ]]>		  
+		 </if>
+	</select>
+	
+	<!-- 동영상 파일변환 신청 상태 수정 -->
+	<update id="U_ST_FILE_CONVERT" parameterType="HashMap">
+		/* U_ST_FILE_CONVERT */
+		UPDATE ST_FILE_CONVERT A
+		   SET A.STATE_CODE = #{STATE_CODE}
+		   	 , A.RESULT_COMM_FILE_ID = #{COMM_FILE_ID}
+		   	 , A.MID = #{MID}
+		   	 , A.MIP = #{MIP}
+		   	 , A.MDT = SYSDATE
+		 WHERE EXISTS (
+		 			SELECT COLUMN_VALUE     AS COLUMN_VALUE
+					  FROM TABLE(COMM_UTIL_PKG.SPLIT(#{ST_FILE_CONVERT_ID}, '[@;,;@]'))
+					 WHERE COLUMN_VALUE = A.ST_FILE_CONVERT_ID
+		 		)
+	</update>
+	
+	<!-- 동영상 파일변환 진행중(변환실행) -->
+	<select id="S_ST_FILE_CONVERT_PROCESSING" resultType="HashMap" parameterType="HashMap" >
+		/* S_ST_FILE_CONVERT_PROCESSING */
+		SELECT A.ST_FILE_CONVERT_ID
+			 , COMM_UTIL_PKG.COMM_CODE_ATTR('FILE_EXTENSION', UPPER(B.FILE_EXTENSION), 'ATTRIBUTE1', #{LANG_CODE}) AS FILE_TYPE
+			 , B.FILE_EXTENSION
+			 , B.MODULE_CODE
+			 , B.GROUP_ID
+			 , B.MENU_URL
+			 , B.FILE_NAME
+			 , B.FILE_PATH
+			 , B.SERVER_FILE_NAME
+		  FROM ST_FILE_CONVERT A
+		  JOIN COMM_FILE B ON (A.ORIGIN_COMM_FILE_ID = B.COMM_FILE_ID)
+		 WHERE A.STATE_CODE = 'PROCESSING'
+		   AND EXISTS (
+		   			SELECT COLUMN_VALUE     AS COLUMN_VALUE
+					  FROM TABLE(COMM_UTIL_PKG.SPLIT(#{ST_FILE_CONVERT_IDS}, '[@;,;@]'))
+					 WHERE COLUMN_VALUE = A.ST_FILE_CONVERT_ID
+		   		)
+	</select>
+	
 </mapper>
