@@ -256,7 +256,7 @@
 							          , SYSDATE    
 							          , 'SERVER'
 								   FROM MY_FILE_MANAGE A
-							      WHERE A.MY_FILE_MANAGE_ID = #{MY_FILE_MANAGE_ID}
+							      WHERE A.MY_FILE_MANAGE_ID = #{GROUP_ID}
 								
 							       
 	</insert>

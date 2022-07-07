@@ -310,7 +310,7 @@ public class StService {
         	switch (originMenuUrl) {
 			case "fileManage":
 				Map afterParam = new HashMap();	
-				afterParam.put("MY_FILE_MANAGE_ID", originGroupId);
+				afterParam.put("GROUP_ID", originGroupId);
 				afterParam.put("KEY_ID", String.valueOf(System.currentTimeMillis()));
 				comDao.insert("my.I_ST_FILE_CONVERT_AFTER", afterParam);
 				originGroupId = String.valueOf(afterParam.get("MY_FILE_MANAGE_ID"));
