@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import prjb.com.mapper.ComDao;
 
@@ -28,19 +30,15 @@ public class ScheduleService {
 	
 	//매일 오전1시에 실행(초 분 시 일 월 요일 년도)
 //	@Scheduled(cron = "0 0 1 * * *")
-	@Scheduled(cron = "0 35 * * * *")
+	@Scheduled(cron = "0 10 * * * *")
+	@Transactional(isolation=Isolation.SERIALIZABLE)
 	public void fileConvert() throws Exception {
 		logger.info("ScheduleService.fileConvert() START");
 		
 		List<Map> convertList = comDao.selectList("st.S_ST_FILE_CONVERT_PROCESSING", null);
-		Map result = new HashMap();
-		stService.convert(convertList, result, "-1", "SERVER");
 		
-		//실패
-		if("fail".equals(String.valueOf(result.get("state")))) {
-			
-		}
-		
+		stService.convert(convertList, new HashMap(), "-1", "SERVER");
+				
 		logger.info("ScheduleService.fileConvert() END");
 		
 	}
