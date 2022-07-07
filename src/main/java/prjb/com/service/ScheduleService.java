@@ -37,7 +37,7 @@ public class ScheduleService {
 //	@Scheduled(cron = "0 0 1 * * *")
 //	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "23h", lockAtMostFor = "23h")
 	@Scheduled(cron = "0 */1 * * * *")
-	@SchedulerLock(name = "scheduledTaskName", lockAtLeastFor = "14m", lockAtMostFor = "14m")
+	@SchedulerLock(name = "scheduledTaskName", lockAtLeastFor = "PT5M", lockAtMostFor = "PT5M")
 	public void fileConvert() throws Exception {
 		logger.info("ScheduleService.fileConvert() START");
 		
