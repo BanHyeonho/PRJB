@@ -61,6 +61,10 @@ public class StService {
 	@Autowired
 	AsyncService asyncService;
 	
+	@Autowired
+	ExceptionService exceptionService;
+	
+	
 	private static final Logger logger = LoggerFactory.getLogger(StService.class);
 	
 	/**
@@ -196,6 +200,19 @@ public class StService {
 		filesParam.put("ST_FILE_CONVERT_IDS", ids);
 		List<Map> convertFiles = comDao.selectList("st.S_ST_FILE_CONVERT_PROCESSING", filesParam);
 				
+		List<Future> futures = convert(convertFiles, result, cId, ip);
+		
+		//쓰레드 동기화
+		for (Future future : futures) {
+			future.get();
+		}
+		
+		if("null".equals(String.valueOf(result.get("state")))) {
+			result.put("state", "success");
+		}
+		return result;
+	}
+	public List<Future> convert(List<Map> convertFiles, Map result, String cId, String ip) {
 		List<Future> futures = new ArrayList<>();
 		
 		for (Map fileInfo : convertFiles) {
@@ -220,16 +237,8 @@ public class StService {
 			futures.add(asyncConvert(result, fileType, param));
 			
 		}
-		
-		//쓰레드 동기화
-		for (Future future : futures) {
-			future.get();
-		}
-		
-		if("null".equals(String.valueOf(result.get("state")))) {
-			result.put("state", "success");
-		}
-		return result;
+
+		return futures;
 	}
 	
 	/**
@@ -264,6 +273,14 @@ public class StService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						p_result.put("state", "fail");
+						
+						//에러로그 생성
+				    	Map logParam = new HashMap();
+						logParam.put("ERROR_LOCATION", e.getStackTrace()[0].toString());
+						logParam.put("ERROR_MSG", e.getMessage());
+						logParam.put("CID", p_param.get("COMM_USER_ID"));
+						logParam.put("CIP", p_param.get("IP"));
+						exceptionService.insertErrorLog(p_param);
 					}
 				}
 				
@@ -306,8 +323,8 @@ public class StService {
 		
         if("success".equals(fileResult.get("state"))) {
         	
-        	
         	switch (originMenuUrl) {
+        	//파일관리
 			case "fileManage":
 				Map afterParam = new HashMap();	
 				afterParam.put("GROUP_ID", originGroupId);
@@ -347,51 +364,6 @@ public class StService {
 			comDao.update("st.U_ST_FILE_CONVERT", fileMapping);
         }
 		
-	}
-	
-	/**
-	 * 영상 -> mp4파일 변환실행부
-	 * @param request
-	 * @param param
-	 * @param groupId
-	 * @throws Exception
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	public Map mediaConvertExec(Map fileInfo, String groupId) throws Exception{
-		Map result = new HashMap();
-		result.put("state", "fail");
-		final String fileExtension = "mp4";
-		final String moduleCode = String.valueOf(fileInfo.get("moduleCode"));
-		final String cId = String.valueOf(fileInfo.get("cId"));
-		final String ip = String.valueOf(fileInfo.get("ip"));
-		String fileNm = String.valueOf(fileInfo.get("FILE_NAME"));
-		
-		String fileData = String.valueOf(fileInfo.get("FILE_PATH")) + String.valueOf(fileInfo.get("SERVER_FILE_NAME"));
-		        
-  		String filePath = FileUtil.filePath(fileRoot, moduleCode);
-  		
-        Map<String, String> fileResult = FileUtil.fileConvert(fileData, filePath, fileNm, fileExtension);
-        
-        if("success".equals(fileResult.get("state"))) {
-			
-			Map<String, String> fileMapping = new HashMap();
-			fileMapping.put("MODULE_CODE", moduleCode);
-			fileMapping.put("GROUP_ID", groupId);
-			fileMapping.put("CID", cId);
-			fileMapping.put("CIP", ip);
-			fileMapping.put("FILE_PATH", filePath);
-			fileMapping.put("FILE_SIZE", String.valueOf(fileResult.get("fileSize")));
-			fileMapping.put("FILE_EXTENSION", fileResult.get("fileExtension"));
-			fileMapping.put("FILE_NAME_ENCRYPT", fileResult.get("fileName"));
-			fileMapping.put("SERVER_FILE_NAME", fileResult.get("serverFileName"));
-			fileMapping.put("RANDOM_KEY", ComUtil.getRandomKey());
-			
-			comDao.insert("com.I_COMM_FILE", fileMapping);
-			result.put("state", "success");
-		}
-        
-        
-        return result;
 	}
 	
 	/**
@@ -460,9 +432,5 @@ public class StService {
 			comDao.insert("com.I_COMM_FILE", fileMapping);
 		}
 	}
-	
-	
-	
-	
 	
 }

@@ -146,29 +146,6 @@
 		 			)
 	</select>
 	
-	<!-- 첨부파일 스케쥴상태로 조회 -->
-	<select id="S_COMM_FILE_SCHEDULE" resultType="HashMap" parameterType="HashMap" >
-		/* S_COMM_FILE_SCHEDULE */
-		SELECT A.FILE_PATH
-			 , A.FILE_NAME
-			 , A.FILE_EXTENSION
-			 , A.SERVER_FILE_NAME
-			 , A.ATTRIBUTE1
-			 , A.COMM_FILE_ID
-			 , A.RANDOM_KEY
-		  FROM COMM_FILE A
-		 WHERE A.SCHEDULE_CODE = #{SCHEDULE_CODE}
-	</select>
-	<!-- 첨부파일 스케쥴상태 변경 -->
-	<update id="U_COMM_FILE_SCHEDULE" parameterType="HashMap" >
-		/* U_COMM_FILE_SCHEDULE */
-		UPDATE COMM_FILE
-		   SET SCHEDULE_CODE = #{SCHEDULE_CODE}
-		   	 , MDT = SYSDATE
-		   	 , MID = #{CID}
-		   	 , MIP = #{CIP}
-		 WHERE COMM_FILE_ID = #{COMM_FILE_ID} 
-	</update>
 	<!-- 실제파일 삭제체크-->
 	<select id="S_COMM_FILE_DELETE_CHK" resultType="HashMap" parameterType="HashMap" >
 		/* S_COMM_FILE_DELETE_CHK */
