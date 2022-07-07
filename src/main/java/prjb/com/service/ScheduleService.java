@@ -36,14 +36,14 @@ public class ScheduleService {
 	//매일 오전1시에 실행(초 분 시 일 월 요일)
 //	@Scheduled(cron = "0 0 1 * * *")
 //	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "23h", lockAtMostFor = "23h")
-	@Scheduled(cron = "0 5 * * * *")
-	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "100*1000", lockAtMostFor = "100*1000")
+	@Scheduled(cron = "0 */1 * * * *")
+	@SchedulerLock(name = "scheduledTaskName", lockAtLeastFor = "14m", lockAtMostFor = "14m")
 	public void fileConvert() throws Exception {
 		logger.info("ScheduleService.fileConvert() START");
 		
-		List<Map> convertList = comDao.selectList("st.S_ST_FILE_CONVERT_PROCESSING", null);
-		
-		stService.convert(convertList, new HashMap(), "-1", "SERVER");
+//		List<Map> convertList = comDao.selectList("st.S_ST_FILE_CONVERT_PROCESSING", null);
+//		
+//		stService.convert(convertList, new HashMap(), "-1", "SERVER");
 				
 		logger.info("ScheduleService.fileConvert() END");
 		
