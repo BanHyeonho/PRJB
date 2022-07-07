@@ -27,11 +27,17 @@ public class ScheduleService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ScheduleService.class);
 	
+	/**
+	 * name : 스케줄 작업의 고유 이름
+	 * lockAtLeastFor : 작업이 lock 되어야 할 최소한 시간
+	 * lockAtMostFor : 작업을 진행 중인 노드가 소멸될 경우에도 lock 이 유지될 시간
+	 * @throws Exception
+	 */
 	//매일 오전1시에 실행(초 분 시 일 월 요일 년도)
 //	@Scheduled(cron = "0 0 1 * * *")
 //	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "23h", lockAtMostFor = "23h")
-	@Scheduled(cron = "0 15 0 * * * *")
-	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "14m", lockAtMostFor = "14m")
+	@Scheduled(cron = "0 40 * * * *")
+	@SchedulerLock(name = "fileConvert", lockAtLeastFor = "39m", lockAtMostFor = "39m")
 	public void fileConvert() throws Exception {
 		logger.info("ScheduleService.fileConvert() START");
 		

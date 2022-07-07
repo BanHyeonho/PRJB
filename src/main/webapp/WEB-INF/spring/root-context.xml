@@ -32,4 +32,8 @@
 			<property name="dataSource" ref="DS" />
 		</bean>
 		
+		<bean id="lockProvider" class="net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider">
+			 <constructor-arg ref="DS"/>
+		</bean>
+		
 </beans>
