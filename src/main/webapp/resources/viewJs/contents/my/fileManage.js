@@ -193,7 +193,6 @@ var f_save = function(){
 				return result;
 			}
 			, function(data){
-				console.log(data);
 				
 				var result = data.result;
 				
@@ -1014,7 +1013,7 @@ var f_makeFile = function(p_file, p_target, p_fileOrigin){
 	
 	var fileInfo = {}; 
 	if(gf_nvl(p_file.TYPE_CODE, '') == 'FILE'){
-		debugger;
+		
 		fileInfo = gf_nvl(parent.index_info.gv_fileExtension.find(x=> x.CODE_VALUE == p_file.FILE_EXTENSION.toUpperCase()), {});
 				
 		fileIcon = gf_nvl(fileInfo.ICON, 'file_default.png');
