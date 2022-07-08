@@ -195,7 +195,10 @@
 								   ), #{LANG_CODE})								AS MENU_NAME
 			 
 		  FROM ST_FILE_CONVERT A
-		  JOIN COMM_FILE B ON (A.ORIGIN_COMM_FILE_ID = B.COMM_FILE_ID)
+		  JOIN COMM_FILE B ON ( (A.ORIGIN_COMM_FILE_ID = B.COMM_FILE_ID)
+	                            OR
+	                            (A.RESULT_COMM_FILE_ID = B.COMM_FILE_ID)
+	                          )
 		 WHERE A.ST_FILE_CONVERT_ID = A.ST_FILE_CONVERT_ID
 		 ]]>		  
 		 <choose>
