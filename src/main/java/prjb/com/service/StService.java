@@ -14,7 +14,6 @@ import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,18 +31,9 @@ import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-
-import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
-import prjb.com.util.ErrorLogException;
 import prjb.com.util.FileUtil;
 
 @Service("StService")
@@ -282,6 +272,9 @@ public class StService {
 					case "srt":
 						fileResult = srtToVtt(originFilePath, filePath, fileName);
 						break;
+					case "smi":
+						fileResult = smiToVtt(originFilePath, filePath, fileName);
+						break;
 					}
 				}
 				
@@ -383,4 +376,66 @@ public class StService {
 		
 	}
 	
+	/**
+	 * smi자막 -> vtt자막
+	 * @param p_file : 원본파일
+	 * @param p_resultPath : 결과파일경로
+	 * @param p_fileName : 결과 파일명
+	 * @return
+	 */
+	public Map smiToVtt(String p_file, String p_resultPath, String p_fileName){
+		
+		File file = new File(p_file);
+	    
+		String encoding = ComUtil.getEncodingType(file);
+		StringBuilder content = null;
+		try {
+			//입력 버퍼 생성
+			BufferedReader bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
+			
+			content = new StringBuilder("WEBVTT").append("\n").append("\n");
+			String line = "";
+			boolean startYn = false;
+			while((line = bufReader.readLine()) != null){
+				line = line.trim();
+				//자막시작
+				if (!startYn 
+				&& !line.toLowerCase().startsWith("<sync")) {
+					startYn = true;
+                }
+				
+				if(startYn) {
+					
+					if (line.toLowerCase().startsWith("<sync")) {
+	                    
+						//p태그 제거
+						if(line.toLowerCase().contains("<p")) {
+							String tmp = line.substring(line.toLowerCase().indexOf("<p"));
+							tmp = tmp.substring(0, tmp.indexOf(">")+1 );
+							line = line.replace(tmp, "");
+						}
+						
+						
+						
+	                }
+					
+					if(line.contains("-->")) {
+						line = line.replaceAll(",", ".");
+					}
+					line = line.replaceAll("<br>", "\n");
+					
+					content.append(line).append("\n");
+				}
+			}
+			//.readLine()은 끝에 개행문자를 읽지 않는다.            
+			bufReader.close();
+			
+		}catch(Exception e) {
+			
+		}
+        
+        
+        return FileUtil.fileMake(p_resultPath, p_fileName, "vtt", content.toString());
+		
+	}
 }

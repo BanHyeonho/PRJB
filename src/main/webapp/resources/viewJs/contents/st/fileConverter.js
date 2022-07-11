@@ -33,6 +33,58 @@ var f_setCompleteGrid = function(){
  * 버튼 기능
  * 
  *****************************************************************************************************************************************************************/
+var f_save = function(){
+	var waitData = gf_gridSaveData(waitGrid);
+	var completeData = gf_gridSaveData(completeGrid);
+	
+	if(!(waitData.state == 'success')
+	&& !(completeData.state == 'success')
+	){
+		
+		if( waitData.state == 'fail'){
+			gf_toast(waitData.reason, 'info');
+		}
+		else if(completeData.state == 'fail'){
+			gf_toast(completeData.reason, 'info');
+		}
+		else{
+			gf_toast(waitData.reason, 'info');
+		}
+		
+		return false;
+	}
+	
+	var fData = new FormData();
+	
+	gf_ajax( fData
+			, function(){
+				
+				if(waitData.data.length > 0){
+					waitData.data.unshift({
+						 'TABLE_NAME' : 'ST_FILE_CONVERT'
+						,'QUERY_ID' : 'com.COMM_QUERY'
+					});
+					fData.set('waitGrid', JSON.stringify(waitData.data));
+				}
+				
+				if(completeData.data.length > 0){
+					completeData.data.unshift({
+						 'TABLE_NAME' : 'ST_FILE_CONVERT'
+						,'QUERY_ID' : 'com.COMM_QUERY'
+					});
+					fData.set('completeGrid', JSON.stringify(completeData.data));
+				}
+					
+			}
+			, function(data){
+				
+				gf_toast(gf_mlg('저장_되었습니다'), 'success');
+				f_search();
+			}
+			, null
+			, null
+			, '/save');
+}
 //조회
 var f_search = function(){
 	

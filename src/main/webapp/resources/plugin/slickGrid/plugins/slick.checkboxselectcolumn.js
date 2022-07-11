@@ -156,6 +156,7 @@
     }
 
     function handleClick(e, args) {
+    	
       // clicking on a row select checkbox
       if (_grid.getColumns()[args.cell].id === _options.columnId && $(e.target).is(":checkbox")) {
         // if editing, try to commit
@@ -165,7 +166,19 @@
           return;
         }
 
-        toggleRowSelection(args.row);
+        //2022.07.11체크박스 체크 풀리는 오류 수정
+		var rows = _grid.getSelectedRows();
+		rows.push(args.row);
+		
+		if(!$(e.target).is(':checked')){
+			rows = rows.filter(x=> x != args.row );
+		}
+		_grid.setSelectedRows(rows);
+		
+        //2022.07.11체크박스 체크 풀리는 오류 수정		
+//      toggleRowSelection(args.row);
+//		toggleRowSelection(rows);
+		
         e.stopPropagation();
         e.stopImmediatePropagation();
       }
