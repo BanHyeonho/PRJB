@@ -213,9 +213,11 @@ public class StService {
 			
 			Map param = new HashMap();
 			
+			String stFileConvertId = String.valueOf(fileInfo.get("ST_FILE_CONVERT_ID"));
+					
 			param.put("COMM_USER_ID", cId);
 			param.put("IP", ip);
-			param.put("ST_FILE_CONVERT_ID", String.valueOf(fileInfo.get("ST_FILE_CONVERT_ID")));
+			param.put("ST_FILE_CONVERT_ID", stFileConvertId);
 			param.put("MODULE_CODE", String.valueOf(fileInfo.get("MODULE_CODE")));
 			param.put("GROUP_ID", String.valueOf(fileInfo.get("GROUP_ID")));
 			param.put("MENU_URL", String.valueOf(fileInfo.get("MENU_URL")));
@@ -223,8 +225,23 @@ public class StService {
 			param.put("FILE_PATH", String.valueOf(fileInfo.get("FILE_PATH")));
 			param.put("SERVER_FILE_NAME", String.valueOf(fileInfo.get("SERVER_FILE_NAME")));
 			
-			//쓰레드 병렬처리
-			futures.add(asyncConvert(result, fileType, param));
+			//상태 변경 (진행대기 -> 진행)
+			Map fileConvertParam = new HashMap();
+			fileConvertParam.put("MID", cId);
+			fileConvertParam.put("MIP", ip);
+			fileConvertParam.put("ST_FILE_CONVERT_ID", stFileConvertId);
+			try {
+				fileConvertParam.put("STATE_CODE", "PROCESSING");
+				comDao.update("st.U_ST_FILE_CONVERT", fileConvertParam);
+				
+				//쓰레드 병렬처리
+				futures.add(asyncConvert(result, fileType, param));
+				
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				
+			}
 			
 		}
 
@@ -255,21 +272,6 @@ public class StService {
 				String originModuleCode = String.valueOf(p_param.get("MODULE_CODE"));
 				String originGroupId = String.valueOf(p_param.get("GROUP_ID"));
 				String originMenuUrl = String.valueOf(p_param.get("MENU_URL"));
-				
-				//상태 변경 (진행대기 -> 진행)
-				Map fileConvertParam = new HashMap();
-				fileConvertParam.put("MID", cId);
-				fileConvertParam.put("MIP", ip);
-				fileConvertParam.put("ST_FILE_CONVERT_ID", stFileConvertId);
-				try {
-					fileConvertParam.put("STATE_CODE", "PROCESSING");
-					comDao.update("st.U_ST_FILE_CONVERT", fileConvertParam);
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-					return;
-				}
-				
 				
 				String fileName = String.valueOf(p_param.get("FILE_NAME"));
 				String originFilePath = String.valueOf(p_param.get("FILE_PATH")) + String.valueOf(p_param.get("SERVER_FILE_NAME"));
