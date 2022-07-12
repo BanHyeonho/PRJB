@@ -1355,10 +1355,13 @@ var f_fileEncoding = function(){
 			for (var i = 0; i < target.length; i++) {
 				var fileExtension = gv_fileExtension.find(x=> x.CODE_VALUE == gf_nvl($(target[i]).attr('file_extension'), '').toUpperCase() ); 
 				
+				
 				if(gf_nvl( fileExtension, '') == ''
-				|| fileExtension.ATTRIBUTE1 != 'VIDEO'
+				|| fileExtension.ATTRIBUTE4 != '1'
 				){
-					gf_toast(gf_mlg('동영상_파일만_인코딩_가능합니다'), 'info');
+					gf_toast(gf_mlg('해당_확장자만_신청_가능_합니다',{
+						param : gv_fileExtension.filter(x=>x.ATTRIBUTE4 == '1').map(x=>x.CODE_VALUE.toLowerCase()).join(', ')
+					}), 'info');
 					return;
 				}
 				
