@@ -118,6 +118,9 @@
 					  FROM TABLE(COMM_UTIL_PKG.SPLIT(#{ST_FILE_CONVERT_ID}, '[@;,;@]'))
 					 WHERE COLUMN_VALUE = A.ST_FILE_CONVERT_ID
 		 		)
+		 <if test='STATE_CODE == "WAIT"'>
+		 	AND A.STATE_CODE = 'PROCESSING_WAIT'
+		 </if>
 	</update>
 	
 	<!-- 동영상 파일변환 진행중(변환실행) -->
