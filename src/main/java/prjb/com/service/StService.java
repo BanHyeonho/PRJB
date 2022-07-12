@@ -193,13 +193,13 @@ public class StService {
 		List<Future> futures = convert(convertFiles, result, cId, ip);
 		
 		//쓰레드 동기화
-		for (Future future : futures) {
-			future.get();
-		}
+//		for (Future future : futures) {
+//			future.get();
+//		}
 		
-		if("null".equals(String.valueOf(result.get("state")))) {
+//		if("null".equals(String.valueOf(result.get("state")))) {
 			result.put("state", "success");
-		}
+//		}
 		return result;
 	}
 	public List<Future> convert(List<Map> convertFiles, Map result, String cId, String ip) {
@@ -255,6 +255,20 @@ public class StService {
 				String originModuleCode = String.valueOf(p_param.get("MODULE_CODE"));
 				String originGroupId = String.valueOf(p_param.get("GROUP_ID"));
 				String originMenuUrl = String.valueOf(p_param.get("MENU_URL"));
+				
+				//상태 변경 (진행대기 -> 진행)
+				Map fileConvertParam = new HashMap();
+				fileConvertParam.put("MID", cId);
+				fileConvertParam.put("MIP", ip);
+				fileConvertParam.put("ST_FILE_CONVERT_ID", stFileConvertId);
+				try {
+					fileConvertParam.put("STATE_CODE", "PROCESSING");
+					comDao.update("st.U_ST_FILE_CONVERT", fileConvertParam);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					return;
+				}
 				
 				
 				String fileName = String.valueOf(p_param.get("FILE_NAME"));

@@ -82,6 +82,9 @@
 		 	<when test='STATE_CODE == "WAIT"'>
 		 		AND A.STATE_CODE IN ('WAIT', 'FAIL', 'REJECT')
 		 	</when>
+		 	<when test='STATE_CODE == "PROCESSING"'>
+		 		AND A.STATE_CODE IN ('PROCESSING', 'PROCESSING_WAIT')
+		 	</when>
 		 	<otherwise>
 		 		AND A.STATE_CODE = #{STATE_CODE}
 		 	</otherwise>
@@ -131,7 +134,7 @@
 			 , B.SERVER_FILE_NAME
 		  FROM ST_FILE_CONVERT A
 		  JOIN COMM_FILE B ON (A.ORIGIN_COMM_FILE_ID = B.COMM_FILE_ID)
-		 WHERE A.STATE_CODE = 'PROCESSING'
+		 WHERE A.STATE_CODE = 'PROCESSING_WAIT'
 		 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(ST_FILE_CONVERT_IDS)">
 		   AND EXISTS (
 		   			SELECT COLUMN_VALUE     AS COLUMN_VALUE

@@ -1,5 +1,7 @@
 package prjb.com.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import fr.noop.subtitle.sami.SamiObject;
+import fr.noop.subtitle.sami.SamiParser;
 import prjb.com.service.ComService;
 import prjb.com.service.ScheduleService;
 import prjb.com.service.StService;
@@ -79,15 +83,16 @@ public class StController {
 	}
 	
 	/**
-	 * 자막내용 조회
+	 * 테스트
 	 */
-//	@RequestMapping(value = "/subTitleContent")
-//	public @ResponseBody Map subTitleContent(HttpServletRequest request) throws Exception {
-//		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-//		Map<String, Object> resultMap = new HashMap();
-//		
-//		resultMap.put("result", stService.subTitleContent(request));
-//		
-//		return resultMap;
-//	}
+	@RequestMapping(value = "/test")
+	public @ResponseBody Map test(HttpServletRequest request) throws Exception {
+		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
+		Map<String, Object> resultMap = new HashMap();
+		
+		SamiObject so = new SamiParser("EUC-KR").parse(new FileInputStream(new File("C:\\Users\\Administrator\\Desktop\\task\\3id.smi")));
+		
+		System.out.println(so.toString());
+		return resultMap;
+	}
 }

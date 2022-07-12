@@ -128,7 +128,7 @@ var f_approveExec = function(p_grid, p_type){
 	var selectMsg;
 	
 	if(p_type == 'APPROVE'){
-		stateCode = 'PROCESSING';
+		stateCode = 'PROCESSING_WAIT';
 		selectMsg = gf_mlg('승인_처리할_파일을_선택하세요');
 		confirmMsg = gf_mlg('_개의_파일을_승인_하시겠습니까',{
 			param : rows.length
