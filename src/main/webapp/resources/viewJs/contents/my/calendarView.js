@@ -61,7 +61,7 @@ var f_set_modal = function(){
 				, function(data){
 					$('#modal_registResult').dialog('close');
 					gf_toast(gf_mlg('저장_되었습니다'), 'success');
-					f_searchCal();
+					f_search();
 				}
 				, null
 				, null
@@ -223,16 +223,7 @@ var f_saveList = function(me){
 	gf_ajax( fData
 			, null
 			, function(data){
-		
-				//색상편집기
-				if( $(me).hasClass('minicolors') ){
-					f_searchList();
-					f_searchCal();
-				}
-				//그외
-				else{
-					f_search();
-				}
+				f_search();
 			}
 			, null
 			, null

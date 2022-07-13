@@ -3,22 +3,28 @@ package prjb.com.util;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import prjb.com.model.SubtitleTimeCode;
 import prjb.com.model.Vtt;
 
 public class SmiUtil {
 	
-	public static String convert(InputStreamReader isr) {
+	/**
+	 * smi -> vtt 형식으로 변환
+	 * @param isr
+	 * @return
+	 */
+	public static Map convert(InputStreamReader isr) {
 		
-		StringBuilder content = null;
+		Map<String, StringBuilder> contentMap = new HashMap();
 		List<Vtt> list = new ArrayList();
 		try {
 			//입력 버퍼 생성
 			BufferedReader bufReader = new BufferedReader(isr);
 			
-			content = new StringBuilder("WEBVTT").append("\n").append("\n");
 			String line = "";
 			boolean startYn = false;
 			
@@ -48,8 +54,16 @@ public class SmiUtil {
 						
 					}
 					
+					String lang = getLang(line);
+					if(!"".equals(lang)) {
+						list.get( list.size()-1 ).setLang(lang);
+					}
+					
 					line = removeTag("p", line);
 					line = removeTag("br", line);
+					line = removeTag("font", line);
+					line = removeTag("i", line);
+					line = removeTag("b", line);
 					
 					String beforeStr = list.get( list.size()-1 ).getText();
 					String resultLine = "";
@@ -84,17 +98,35 @@ public class SmiUtil {
 			if(vtt.getEndTime() == null) {
 				break;
 			}
-			String text = vtt.getText().trim();
+			
+			String text = removeRemark(vtt.getText()).trim();
 			if(!"&nbsp;".equals(text)) {
-				content.append("\n").append(vtt.getStartTime()).append(" --> ").append(vtt.getEndTime()).append("\n");
-				content.append(text).append("\n");	
+				
+				String lang = vtt.getLang();
+				
+				if(contentMap.get(lang) == null) {
+					StringBuilder content = new StringBuilder("WEBVTT").append("\n").append("\n");
+					content.append("\n").append(vtt.getStartTime()).append(" --> ").append(vtt.getEndTime()).append("\n");
+					content.append(text).append("\n");
+					contentMap.put(lang, content);
+				}
+				else {
+					contentMap.get(lang).append("\n").append(vtt.getStartTime()).append(" --> ").append(vtt.getEndTime()).append("\n");
+					contentMap.get(lang).append(text).append("\n");
+				}
+				
 			}
 			
 		}
 		
-		return content.toString();
+		return contentMap;
 	}
 	
+	/**
+	 * 시작시간 추출
+	 * @param str
+	 * @return
+	 */
 	public static String getStart(String str) {
 		
 		if(str.toLowerCase().contains("<sync")) {
@@ -111,28 +143,33 @@ public class SmiUtil {
 		return str;
 	}
 	
-	public static String removeP(String str) {
+	/**
+	 * 자막언어 추출
+	 * @param str
+	 * @return
+	 */
+	public static String getLang(String str) {
 		
 		if(str.toLowerCase().contains("<p")) {
 			String tmp = str.substring(str.toLowerCase().indexOf("<p"));
 			tmp = tmp.substring(0, tmp.indexOf(">")+1);
-			str = str.replace(tmp, "").trim();
+			str = tmp.toLowerCase().replace("<p", "").trim().replace("class", "").trim().replace("=", "").trim().replace(">", "").replace("cc", "").trim();
 		}
+		else {
+			str = "";
+		}		
 		
 		return str;
 	}
+	
+	/**
+	 * 태그제거
+	 * @param type
+	 * @param str
+	 * @return
+	 */
 	public static String removeTag(String type, String str) {
 		switch (type) {
-		case "br":
-			str = str.replaceAll("<br>", "\n").replaceAll("<BR>", "\n");
-			break;
-		case "p":
-			if(str.toLowerCase().contains("<p")) {
-				String tmp = str.substring(str.toLowerCase().indexOf("<p"));
-				tmp = tmp.substring(0, tmp.indexOf(">")+1);
-				str = str.replace(tmp, "").trim();
-			}
-			break;
 		case "sync":
 			if(str.toLowerCase().contains("<sync")) {
 				String tmp = str.substring(str.toLowerCase().indexOf("<sync"));
@@ -140,8 +177,71 @@ public class SmiUtil {
 				str = str.replace(tmp, "").trim();
 			}
 			break;
+		case "p":
+			if( str.toLowerCase().contains("<p") ) {
+				String tmp = str.substring(str.toLowerCase().indexOf("<p"));
+				tmp = tmp.substring(0, tmp.indexOf(">")+1);
+				str = str.replace(tmp, "").trim();
+			}
+			break;
+		case "br":
+			str = str.replaceAll("<br>", "\n").replaceAll("<BR>", "\n");
+			break;
+		case "font":
+			while( str.toLowerCase().contains("<font") ) {
+				String tmp = str.substring(str.toLowerCase().indexOf("<font"));
+				tmp = tmp.substring(0, tmp.indexOf(">")+1);
+				str = str.replace(tmp, "").trim();
+			}
+			break;
+		case "b":
+			while(str.toLowerCase().contains("<b")) {
+				String tmp = str.substring(str.toLowerCase().indexOf("<b"));
+				tmp = tmp.substring(0, tmp.indexOf(">")+1);
+				str = str.replace(tmp, "").trim();
+			}
+			while(str.toLowerCase().contains("</b")) {
+				String tmp = str.substring(str.toLowerCase().indexOf("</b"));
+				tmp = tmp.substring(0, tmp.indexOf(">")+1);
+				str = str.replace(tmp, "").trim();
+			}			
+			break;
+		case "i":
+			while(str.toLowerCase().contains("<i")) {
+				String tmp = str.substring(str.toLowerCase().indexOf("<i"));
+				tmp = tmp.substring(0, tmp.indexOf(">")+1);
+				str = str.replace(tmp, "").trim();
+			}
+			while(str.toLowerCase().contains("</i")) {
+				String tmp = str.substring(str.toLowerCase().indexOf("</i"));
+				tmp = tmp.substring(0, tmp.indexOf(">")+1);
+				str = str.replace(tmp, "").trim();
+			}
+			break;
 		}
 		
 		return str;
+	}
+	
+	/**
+	 * 주석제거
+	 * @param str
+	 * @return
+	 */
+	public static String removeRemark(String str) {
+		String result = null;
+		if(str.indexOf("<!--") > -1) {
+			do {
+				int idx = str.indexOf("<!--");
+				int idx2 = str.indexOf("-->") +3;
+				str = str.replace( str.substring(idx, idx2), "");
+				
+				
+			}while(str.indexOf("<!--") > -1);
+		}
+		
+		result = str;
+		
+		return result;
 	}
 }

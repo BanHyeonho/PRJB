@@ -34,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
 import prjb.com.util.FileUtil;
@@ -281,75 +282,81 @@ public class StService {
 				        
 		  		String filePath = FileUtil.filePath(fileRoot, "ST");
 				
-				Map<String, String> fileResult = new HashMap();
-				
+		  		List<Map<String, String>> fileResultList = new ArrayList();
+		  		
 				if("mp4".equals(resultFileExtension)) {
-					fileResult = FileUtil.fileConvert(originFilePath, filePath, fileName, resultFileExtension);
+					fileResultList.add(FileUtil.fileConvert(originFilePath, filePath, fileName, resultFileExtension));
 				}
 				else {
 					switch (extension) {
 					case "srt":
-						fileResult = srtToVtt(originFilePath, filePath, fileName);
+						fileResultList.add( srtToVtt(originFilePath, filePath, fileName));
 						break;
 					case "smi":
-						fileResult = smiToVtt(originFilePath, filePath, fileName);
+						fileResultList = smiToVtt(originFilePath, filePath, fileName);
 						break;
 					}
 				}
 				
-				
-				try {
+				for (Map<String, String> fileResult : fileResultList) {
 					
-			        if("success".equals(fileResult.get("state"))) {
-			        	
-			        	switch (originMenuUrl) {
-			        	//파일관리
-						case "fileManage":
-							Map afterParam = new HashMap();	
-							afterParam.put("GROUP_ID", originGroupId);
-							afterParam.put("KEY_ID", String.valueOf(System.currentTimeMillis()));
+					try {
+						
+						if("success".equals(fileResult.get("state"))) {
 							
-							comDao.insert("my.I_ST_FILE_CONVERT_AFTER", afterParam);
+							switch (originMenuUrl) {
+							//파일관리
+							case "fileManage":
+								Map afterParam = new HashMap();	
+								afterParam.put("GROUP_ID", originGroupId);
+								afterParam.put("KEY_ID", String.valueOf(System.currentTimeMillis()));
+								
+								afterParam.put("TITLE", InitBean.CryptoClass.decrypt(String.valueOf(fileResult.get("fileName")))  );
+								
+								comDao.insert("my.I_ST_FILE_CONVERT_AFTER", afterParam);
+								
+								originGroupId = String.valueOf(afterParam.get("MY_FILE_MANAGE_ID"));
+								break;
+							}
 							
-							originGroupId = String.valueOf(afterParam.get("MY_FILE_MANAGE_ID"));
-							break;
+							Map<String, String> fileMapping = new HashMap();	
+							fileMapping.put("MODULE_CODE", originModuleCode);
+							fileMapping.put("GROUP_ID", originGroupId);
+							fileMapping.put("MENU_URL", originMenuUrl);
+							fileMapping.put("CID", cId);
+							fileMapping.put("CIP", ip);
+							fileMapping.put("FILE_PATH", filePath);
+							fileMapping.put("FILE_SIZE", String.valueOf(fileResult.get("fileSize")));
+							fileMapping.put("FILE_EXTENSION", fileResult.get("fileExtension"));
+							fileMapping.put("FILE_NAME_ENCRYPT", fileResult.get("fileName"));
+							fileMapping.put("SERVER_FILE_NAME", fileResult.get("serverFileName"));
+							fileMapping.put("RANDOM_KEY", ComUtil.getRandomKey());
+							
+							comDao.insert("com.I_COMM_FILE", fileMapping);
+							
+							fileMapping.put("MID", cId);
+							fileMapping.put("MIP", ip);
+							fileMapping.put("STATE_CODE", "COMPLETE");
+							fileMapping.put("ST_FILE_CONVERT_ID", stFileConvertId);
+							comDao.update("st.U_ST_FILE_CONVERT", fileMapping);
 						}
-			        	
-			        	Map<String, String> fileMapping = new HashMap();	
-						fileMapping.put("MODULE_CODE", originModuleCode);
-						fileMapping.put("GROUP_ID", originGroupId);
-						fileMapping.put("MENU_URL", originMenuUrl);
-						fileMapping.put("CID", cId);
-						fileMapping.put("CIP", ip);
-						fileMapping.put("FILE_PATH", filePath);
-						fileMapping.put("FILE_SIZE", String.valueOf(fileResult.get("fileSize")));
-						fileMapping.put("FILE_EXTENSION", fileResult.get("fileExtension"));
-						fileMapping.put("FILE_NAME_ENCRYPT", fileResult.get("fileName"));
-						fileMapping.put("SERVER_FILE_NAME", fileResult.get("serverFileName"));
-						fileMapping.put("RANDOM_KEY", ComUtil.getRandomKey());
+						//변환 실패
+						else {
+							Map<String, String> fileMapping = new HashMap();
+							fileMapping.put("MID", cId);
+							fileMapping.put("MIP", ip);
+							fileMapping.put("STATE_CODE", "FAIL");
+							fileMapping.put("ST_FILE_CONVERT_ID", stFileConvertId);
+							comDao.update("st.U_ST_FILE_CONVERT", fileMapping);
+						}
 						
-						comDao.insert("com.I_COMM_FILE", fileMapping);
-						
-						fileMapping.put("MID", cId);
-						fileMapping.put("MIP", ip);
-						fileMapping.put("STATE_CODE", "COMPLETE");
-						fileMapping.put("ST_FILE_CONVERT_ID", stFileConvertId);
-						comDao.update("st.U_ST_FILE_CONVERT", fileMapping);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-			        //변환 실패
-			        else {
-			        	Map<String, String> fileMapping = new HashMap();
-			        	fileMapping.put("MID", cId);
-						fileMapping.put("MIP", ip);
-						fileMapping.put("STATE_CODE", "FAIL");
-						fileMapping.put("ST_FILE_CONVERT_ID", stFileConvertId);
-						comDao.update("st.U_ST_FILE_CONVERT", fileMapping);
-			        }
-				
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					
 				}
+				
 			});
 
 		return result;
@@ -402,14 +409,31 @@ public class StService {
 	 * @param p_fileName : 결과 파일명
 	 * @return
 	 */
-	public Map smiToVtt(String p_file, String p_resultPath, String p_fileName){
+	public List smiToVtt(String p_file, String p_resultPath, String p_fileName){
 		
+		List<Map<String, String>> fileResultList = new ArrayList();
 		File file = new File(p_file);
 	    
 		String encoding = ComUtil.getEncodingType(file);
-		String content = null;
+		
 		try {
-			content = SmiUtil.convert(new InputStreamReader(new FileInputStream(file), encoding));
+			
+			Map<String, StringBuilder> contentMap = SmiUtil.convert(new InputStreamReader(new FileInputStream(file), encoding));
+			
+			for( String lang : contentMap.keySet() ){
+
+		        String fileName = null;
+		        if("kr".equals(lang)) {
+		        	fileName = p_fileName;
+		        }
+		        else {
+		        	fileName = p_fileName.substring(0, p_fileName.lastIndexOf(".")) + "_" + lang + ".smi";
+		        }
+		        
+		        
+		        fileResultList.add( FileUtil.fileMake(p_resultPath, fileName, "vtt", contentMap.get(lang).toString()) );
+		    }
+			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -418,7 +442,7 @@ public class StService {
 			e.printStackTrace();
 		}
 		
-        return FileUtil.fileMake(p_resultPath, p_fileName, "vtt", content);
+        return fileResultList;
 		
 	}
 }

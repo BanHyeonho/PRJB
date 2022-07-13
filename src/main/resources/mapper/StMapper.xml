@@ -138,13 +138,20 @@
 		  FROM ST_FILE_CONVERT A
 		  JOIN COMM_FILE B ON (A.ORIGIN_COMM_FILE_ID = B.COMM_FILE_ID)
 		 WHERE A.STATE_CODE = 'PROCESSING_WAIT'
-		 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(ST_FILE_CONVERT_IDS)">
-		   AND EXISTS (
+		 <choose>
+		 	<when test="@org.apache.commons.lang3.StringUtils@isNotBlank(ST_FILE_CONVERT_IDS)">
+		 	AND EXISTS (
 		   			SELECT COLUMN_VALUE     AS COLUMN_VALUE
 					  FROM TABLE(COMM_UTIL_PKG.SPLIT(#{ST_FILE_CONVERT_IDS}, '[@;,;@]'))
 					 WHERE COLUMN_VALUE = A.ST_FILE_CONVERT_ID
-		   		)		 
-		 </if>
+		   		)
+		 	</when>
+		 	<otherwise>
+		 	<![CDATA[
+		 	AND ROWNUM <= 50
+		 	]]>
+		 	</otherwise>
+		 </choose>
 	</select>
 	
 </mapper>
