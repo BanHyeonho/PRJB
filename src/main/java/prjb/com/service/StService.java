@@ -3,7 +3,9 @@ package prjb.com.service;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
 import prjb.com.util.FileUtil;
+import prjb.com.util.SmiUtil;
 
 @Service("StService")
 public class StService {
@@ -404,54 +407,18 @@ public class StService {
 		File file = new File(p_file);
 	    
 		String encoding = ComUtil.getEncodingType(file);
-		StringBuilder content = null;
+		String content = null;
 		try {
-			//입력 버퍼 생성
-			BufferedReader bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
-			
-			content = new StringBuilder("WEBVTT").append("\n").append("\n");
-			String line = "";
-			boolean startYn = false;
-			while((line = bufReader.readLine()) != null){
-				line = line.trim();
-				//자막시작
-				if (!startYn 
-				&& !line.toLowerCase().startsWith("<sync")) {
-					startYn = true;
-                }
-				
-				if(startYn) {
-					
-					if (line.toLowerCase().startsWith("<sync")) {
-	                    
-						//p태그 제거
-						if(line.toLowerCase().contains("<p")) {
-							String tmp = line.substring(line.toLowerCase().indexOf("<p"));
-							tmp = tmp.substring(0, tmp.indexOf(">")+1 );
-							line = line.replace(tmp, "");
-						}
-						
-						
-						
-	                }
-					
-					if(line.contains("-->")) {
-						line = line.replaceAll(",", ".");
-					}
-					line = line.replaceAll("<br>", "\n");
-					
-					content.append(line).append("\n");
-				}
-			}
-			//.readLine()은 끝에 개행문자를 읽지 않는다.            
-			bufReader.close();
-			
-		}catch(Exception e) {
-			
+			content = SmiUtil.convert(new InputStreamReader(new FileInputStream(file), encoding));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-        
-        
-        return FileUtil.fileMake(p_resultPath, p_fileName, "vtt", content.toString());
+		
+        return FileUtil.fileMake(p_resultPath, p_fileName, "vtt", content);
 		
 	}
 }
