@@ -284,20 +284,36 @@ public class StService {
 				
 		  		List<Map<String, String>> fileResultList = new ArrayList();
 		  		
-				if("mp4".equals(resultFileExtension)) {
-					fileResultList.add(FileUtil.fileConvert(originFilePath, filePath, fileName, resultFileExtension));
-				}
-				else {
-					switch (extension) {
-					case "srt":
-						fileResultList.add( srtToVtt(originFilePath, filePath, fileName));
-						break;
-					case "smi":
-						fileResultList = smiToVtt(originFilePath, filePath, fileName);
-						break;
+		  		try {
+					if("mp4".equals(resultFileExtension)) {
+						fileResultList.add(FileUtil.fileConvert(originFilePath, filePath, fileName, resultFileExtension));
+					}
+					else {
+						switch (extension) {
+						case "srt":
+							fileResultList.add( srtToVtt(originFilePath, filePath, fileName));
+							break;
+						case "smi":
+							fileResultList = smiToVtt(originFilePath, filePath, fileName);
+							break;
+						}
+					}
+		  		} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Map<String, String> fileMapping = new HashMap();
+					fileMapping.put("MID", cId);
+					fileMapping.put("MIP", ip);
+					fileMapping.put("STATE_CODE", "FAIL");
+					fileMapping.put("ST_FILE_CONVERT_ID", stFileConvertId);
+					try {
+						comDao.update("st.U_ST_FILE_CONVERT", fileMapping);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
 				}
-				
+		  		
 				for (Map<String, String> fileResult : fileResultList) {
 					
 					try {
@@ -369,35 +385,33 @@ public class StService {
 	 * @param p_resultPath : 결과파일경로
 	 * @param p_fileName : 결과 파일명
 	 * @return
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
 	 */
-	public Map srtToVtt(String p_file, String p_resultPath, String p_fileName){
+	public Map srtToVtt(String p_file, String p_resultPath, String p_fileName) throws Exception{
 		
 		File file = new File(p_file);
 	    
 		String encoding = ComUtil.getEncodingType(file);
 		StringBuilder content = null;
-		try {
-			//입력 버퍼 생성
-			BufferedReader bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
-			
-			content = new StringBuilder("WEBVTT").append("\n").append("\n");
-			String line = "";
-			while((line = bufReader.readLine()) != null){
-				if(line.contains("-->")) {
-					line = line.replaceAll(",", ".");
-				}
-				line = line.replaceAll("<i>", "");
-				line = line.replaceAll("</i>", "");
-				content.append(line).append("\n");
+		BufferedReader bufReader = null;
+		
+		//입력 버퍼 생성
+		bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
+		
+		content = new StringBuilder("WEBVTT").append("\n").append("\n");
+		String line = "";
+		while((line = bufReader.readLine()) != null){
+			if(line.contains("-->")) {
+				line = line.replaceAll(",", ".");
 			}
-			//.readLine()은 끝에 개행문자를 읽지 않는다.            
-			bufReader.close();
-			
-		}catch(Exception e) {
-			
+			line = line.replaceAll("<i>", "");
+			line = line.replaceAll("</i>", "");
+			content.append(line).append("\n");
 		}
-        
-        
+		//.readLine()은 끝에 개행문자를 읽지 않는다.            
+		bufReader.close();
+			             
         return FileUtil.fileMake(p_resultPath, p_fileName, "vtt", content.toString());
 		
 	}
@@ -408,40 +422,32 @@ public class StService {
 	 * @param p_resultPath : 결과파일경로
 	 * @param p_fileName : 결과 파일명
 	 * @return
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
 	 */
-	public List smiToVtt(String p_file, String p_resultPath, String p_fileName){
+	public List smiToVtt(String p_file, String p_resultPath, String p_fileName) throws Exception{
 		
 		List<Map<String, String>> fileResultList = new ArrayList();
 		File file = new File(p_file);
 	    
 		String encoding = ComUtil.getEncodingType(file);
 		
-		try {
-			
-			Map<String, StringBuilder> contentMap = SmiUtil.convert(new InputStreamReader(new FileInputStream(file), encoding));
-			
-			for( String lang : contentMap.keySet() ){
-
-		        String fileName = null;
-		        if("kr".equals(lang)) {
-		        	fileName = p_fileName;
-		        }
-		        else {
-		        	fileName = p_fileName.substring(0, p_fileName.lastIndexOf(".")) + "_" + lang + ".smi";
-		        }
-		        
-		        
-		        fileResultList.add( FileUtil.fileMake(p_resultPath, fileName, "vtt", contentMap.get(lang).toString()) );
-		    }
-			
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Map<String, StringBuilder> contentMap = SmiUtil.convert(new InputStreamReader(new FileInputStream(file), encoding));
 		
+		for( String lang : contentMap.keySet() ){
+
+	        String fileName = null;
+	        if("kr".equals(lang)) {
+	        	fileName = p_fileName;
+	        }
+	        else {
+	        	fileName = p_fileName.substring(0, p_fileName.lastIndexOf(".")) + "_" + lang + ".smi";
+	        }
+	        
+	        
+	        fileResultList.add( FileUtil.fileMake(p_resultPath, fileName, "vtt", contentMap.get(lang).toString()) );
+	    }
+			
         return fileResultList;
 		
 	}
