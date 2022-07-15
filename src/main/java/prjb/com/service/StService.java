@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -385,8 +386,7 @@ public class StService {
 	 * @param p_resultPath : 결과파일경로
 	 * @param p_fileName : 결과 파일명
 	 * @return
-	 * @throws FileNotFoundException 
-	 * @throws UnsupportedEncodingException 
+	 * @throws Exception
 	 */
 	public Map srtToVtt(String p_file, String p_resultPath, String p_fileName) throws Exception{
 		
@@ -394,23 +394,23 @@ public class StService {
 	    
 		String encoding = ComUtil.getEncodingType(file);
 		StringBuilder content = null;
-		BufferedReader bufReader = null;
-		
+
 		//입력 버퍼 생성
-		bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
+		try (BufferedReader bufReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding))){
 		
-		content = new StringBuilder("WEBVTT").append("\n").append("\n");
-		String line = "";
-		while((line = bufReader.readLine()) != null){
-			if(line.contains("-->")) {
-				line = line.replaceAll(",", ".");
+			content = new StringBuilder("WEBVTT").append("\n").append("\n");
+			String line = "";
+			while((line = bufReader.readLine()) != null){
+				if(line.contains("-->")) {
+					line = line.replaceAll(",", ".");
+				}
+				line = line.replaceAll("<i>", "");
+				line = line.replaceAll("</i>", "");
+				content.append(line).append("\n");
 			}
-			line = line.replaceAll("<i>", "");
-			line = line.replaceAll("</i>", "");
-			content.append(line).append("\n");
+			//.readLine()은 끝에 개행문자를 읽지 않는다.
 		}
-		//.readLine()은 끝에 개행문자를 읽지 않는다.            
-		bufReader.close();
+		
 			             
         return FileUtil.fileMake(p_resultPath, p_fileName, "vtt", content.toString());
 		

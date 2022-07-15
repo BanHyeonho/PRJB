@@ -2,6 +2,8 @@ package prjb.com.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1228,20 +1230,29 @@ public class ComService {
 	 * @param file
 	 * @throws Exception
 	 */
-	public void readFile(HttpServletResponse response, String file) throws Exception {
+	public void readFile(HttpServletResponse response, String file) throws Exception{
 		
 		response.setCharacterEncoding("UTF-8");
 //		response.setContentType( "image/gif" );
 		
-		ServletOutputStream sOs = response.getOutputStream();
-		FileInputStream f = new FileInputStream(file);
-		int length;
-		byte[] buffer = new byte[10];
-		while ( ( length = f.read( buffer ) ) != -1 ){
-			sOs.write( buffer, 0, length );
+		ServletOutputStream sOs = null;
+		
+		try (FileInputStream f = new FileInputStream(file);
+		){
+			
+			sOs = response.getOutputStream();
+			int length;
+			byte[] buffer = new byte[10];
+			while ( ( length = f.read( buffer ) ) != -1 ){
+				sOs.write( buffer, 0, length );
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			sOs.close();
 		}
-		sOs.close();
-		f.close();
+		
 	}
 	
 	/**

@@ -1,6 +1,7 @@
 package prjb.com.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,18 +17,18 @@ public class SmiUtil {
 	 * smi -> vtt 형식으로 변환
 	 * @param isr
 	 * @return
+	 * @throws Exception 
 	 */
-	public static Map convert(InputStreamReader isr) {
+	public static Map convert(InputStreamReader isr) throws Exception{
 		
 		Map<String, StringBuilder> contentMap = new HashMap();
 		List<Vtt> list = new ArrayList();
-		try {
-			//입력 버퍼 생성
-			BufferedReader bufReader = new BufferedReader(isr);
+		
+		//입력 버퍼 생성		
+		try (BufferedReader bufReader = new BufferedReader(isr)){
 			
 			String line = "";
 			boolean startYn = false;
-			
 			
 			while((line = bufReader.readLine()) != null){
 				line = line.trim();
@@ -87,11 +88,7 @@ public class SmiUtil {
 					list.get( list.size()-1 ).setText(resultLine);
 				}
 			}
-			//.readLine()은 끝에 개행문자를 읽지 않는다.            
-			bufReader.close();
-		}
-		catch(Exception e) {
-			e.printStackTrace();
+			
 		}
 		
 		for (Vtt vtt : list) {

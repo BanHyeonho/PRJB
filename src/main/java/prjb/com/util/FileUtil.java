@@ -181,16 +181,13 @@ public class FileUtil {
 			}
 	
 			File file = new File(filePath + serverFileName);
-			
+
 			// BufferedWriter 와 FileWriter를 조합하여 사용 (속도 향상)
-			BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
-
-			// 파일안에 문자열 쓰기
-			fw.write(content.toString());
-			fw.flush();
-
-			// 객체 닫기
-			fw.close();
+			try(BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));){
+				// 파일안에 문자열 쓰기
+				fw.write(content.toString());
+				fw.flush();
+			}
 			
 			fileSize = file.length();
 			
@@ -283,26 +280,17 @@ public class FileUtil {
 			response.setHeader("Content-Disposition", disposition);
 			response.setHeader("Content-Transfer-Encoding", "binary");
 
-			OutputStream out = null;
-			FileInputStream fis = null;
-
-			try {
-				out = response.getOutputStream();
-				fis = new FileInputStream(file);
+			try (OutputStream out = response.getOutputStream();
+				FileInputStream fis = new FileInputStream(file);
+			){
 				FileCopyUtils.copy(fis, out);
 				result = true;
+				out.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 				result = false;
-			} finally {
-				if (fis != null){
-					fis.close();
-				}
-				if(out != null){
-					out.flush();
-					out.close();
-				}
 			}
+			
 		}
 		
 		return result;

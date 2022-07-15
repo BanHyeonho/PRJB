@@ -25,7 +25,8 @@ public class HttpUtil {
 		Map result = new HashMap();
 		HttpURLConnection conn = null;
 		
-		try{
+		try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+		){
 				URL url = new URL(String.valueOf(p_param.get("url")));
 				String method = p_param.get("method") == null ? "GET" : String.valueOf(p_param.get("method"));	// POST / GET / PUT / DELETE
 				
@@ -46,7 +47,7 @@ public class HttpUtil {
 		        }
 		        
 		        conn.setDoOutput(true);
-		        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+		        
 		        
 		        StringBuilder dataString = new StringBuilder();           
 	            
@@ -73,23 +74,22 @@ public class HttpUtil {
 	            bw.write(dataString.toString());
 	            
 		        bw.flush();
-		        bw.close();
 
 		        //HTTP 응답 코드 수신 
 		        int responseCode = conn.getResponseCode();
 		        if(responseCode == 200) {
 
 		        	//서버에서 보낸 응답 데이터 수신 받기
-		        	BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			        StringBuilder sb = new StringBuilder();
-	                String line = "";
-	                while ((line = br.readLine()) != null) {
-	                    sb.append(line);
-	                }
-	                br.close();
-	                JSONObject responseJson = new JSONObject(sb.toString());
-	                result.put("data", responseJson.toMap());
-	                
+		        	try(BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));){
+		        		StringBuilder sb = new StringBuilder();
+		                String line = "";
+		                while ((line = br.readLine()) != null) {
+		                    sb.append(line);
+		                }
+		                JSONObject responseJson = new JSONObject(sb.toString());
+		                result.put("data", responseJson.toMap());
+		        	}
+		        	
 		        }
 		        System.out.println(String.valueOf(p_param.get("url")) + " ::: responseCode ::: " + responseCode);
 		        result.put("responseCode", responseCode);

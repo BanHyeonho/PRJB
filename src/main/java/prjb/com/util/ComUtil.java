@@ -331,12 +331,13 @@ public class ComUtil {
 		 
         String body = null;
         StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
- 
-        try {
-            InputStream inputStream = request.getInputStream();
+        
+        try (InputStream inputStream = request.getInputStream();
+    		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+		){
+            
             if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            	
                 char[] charBuffer = new char[128];
                 int bytesRead = -1;
                 while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
@@ -346,16 +347,9 @@ public class ComUtil {
                 stringBuilder.append("");
             }
         } catch (IOException e) {
-        	e.printStackTrace();
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException e) {
-                	e.printStackTrace();
-                }
-            }
-        }
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
  
         body = stringBuilder.toString();
         return body;
