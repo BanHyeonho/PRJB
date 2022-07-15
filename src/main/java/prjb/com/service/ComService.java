@@ -46,10 +46,7 @@ public class ComService {
 	
 	//간편로그인
 	private final String API_STATE_CODE = ComUtil.getRandomKey(10);
-	@Value("#{commonConfig['KAKAO_JAVASCRIPT']}")
-	private String KAKAO_JAVASCRIPT;
-	@Value("#{commonConfig['NAVER_CLIENT_ID']}")
-	private String NAVER_CLIENT_ID;
+		
 	@Value("#{commonConfig['NAVER_REDIRECT_URI']}")
 	private String NAVER_REDIRECT_URI;
 	@Value("#{commonConfig['NAVER_REDIRECT_URI_LINK']}")
@@ -101,10 +98,10 @@ public class ComService {
 		
 		//개인정보수정 일경우 카카오 javascript key 필요
 		if("my_privacyInfo".equals(menuUrl)) {
-			mv.addObject("KAKAO_JAVASCRIPT", KAKAO_JAVASCRIPT);
+			mv.addObject("KAKAO_JAVASCRIPT", InitBean.getKAKAO_JAVASCRIPT());
 			
 			mv.addObject("API_STATE_CODE", API_STATE_CODE);
-			mv.addObject("NAVER_CLIENT_ID", NAVER_CLIENT_ID);
+			mv.addObject("NAVER_CLIENT_ID", InitBean.getNAVER_CLIENT_ID());
 			mv.addObject("NAVER_REDIRECT_URI", NAVER_REDIRECT_URI);
 			mv.addObject("NAVER_REDIRECT_URI_LINK", NAVER_REDIRECT_URI_LINK);
 			

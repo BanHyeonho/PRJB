@@ -194,13 +194,9 @@ public class SmiUtil {
 			str = str.replaceAll("<i>", "").replaceAll("</i>", "");
 			break;
 		case "font":
+			str = str.replaceAll("</font>", "");
 			while( str.toLowerCase().contains("<font") ) {
 				String tmp = str.substring(str.toLowerCase().indexOf("<font"));
-				tmp = tmp.substring(0, tmp.indexOf(">")+1);
-				str = str.replace(tmp, "").trim();
-			}
-			while( str.toLowerCase().contains("</font") ) {
-				String tmp = str.substring(str.toLowerCase().indexOf("</font"));
 				tmp = tmp.substring(0, tmp.indexOf(">")+1);
 				str = str.replace(tmp, "").trim();
 			}

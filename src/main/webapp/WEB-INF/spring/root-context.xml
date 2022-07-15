@@ -7,15 +7,39 @@
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 	
-		<util:properties id="commonConfig" location="classpath:/config/properties/common-config.properties" />
+		<!-- 프로퍼티암호화 된값 복호화-->
+		<bean id="encryptorConfig" class="org.jasypt.encryption.pbe.config.EnvironmentPBEConfig">
+			<property name="algorithm" value="PBEWithMD5AndDES" />
+ 			<property name="passwordEnvName" value="PRJB_ENC_KEY" />
+		</bean>
+		<bean id="encryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+			<property name="config" ref="encryptorConfig" />
+		</bean>
+		<bean id="encryptPlaceholder" class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
+			<constructor-arg ref="encryptor"/>
+			<property name="locations">
+				<list>
+					<value>classpath:/config/properties/common-config.properties</value>
+				</list>
+			</property>
+		</bean>
+		
+		<util:properties id="commonConfig"  location="classpath:/config/properties/common-config.properties" />
 		<util:properties id="config" location="classpath:/config/properties/config-#{systemProperties['spring.profiles.active']}.properties" />
 		
+		<!-- 복호화 된 값 프로퍼티에 담기 -->
+		<bean id="propertySource" class="org.jasypt.spring31.properties.EncryptablePropertiesPropertySource">
+        	<constructor-arg index="0" type="java.lang.String" value="encProperties"/>
+        	<constructor-arg index="1" type="java.util.Properties" ref="commonConfig"/>
+        	<constructor-arg index="2" type="org.jasypt.encryption.StringEncryptor" ref="encryptor"/>
+    	</bean>
+    
  		<!-- Root Context: defines shared resources visible to all other web components -->
 		<bean id='DS' class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 			<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
-			<property name="url" value="#{commonConfig['db.url']}" />
-			<property name="username" value="#{commonConfig['db.username']}"/>
-			<property name="password" value="#{commonConfig['db.password']}" />
+			<property name="url" value="${db.url}" />
+			<property name="username" value="${db.username}"/>
+			<property name="password" value="${db.password}" />
 		</bean>
 		<bean id='SqlFactory' class="#{config['sqlSessionFactory']}">
 			<property name="dataSource" ref="DS" />

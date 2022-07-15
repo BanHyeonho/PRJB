@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -14,8 +16,8 @@ public class OsUtil {
 	
 	private static final Logger logger = LoggerFactory.getLogger(OsUtil.class);
 	
-	public static boolean shellCmd(String command){
-		boolean result = false;
+	public static Map shellCmd(String command){
+		Map result = new HashMap();
 		
 		Process process = null;
         Runtime runtime = Runtime.getRuntime();
@@ -62,17 +64,20 @@ public class OsUtil {
  
             // shell 실행이 정상 종료되었을 경우
             if (process.exitValue() == 0) {
-            	result = true;
+            	result.put("state", true);
+            	result.put("result", successOutput.toString());
                 logger.info("성공 : " + successOutput.toString());
             } 
             // shell 실행이 비정상 종료되었을 경우
             else if(StringUtils.isNotBlank(errorOutput.toString())) {
-            	result = false;
+            	result.put("state", false);
+            	result.put("result", errorOutput.toString());
                 logger.info("오류 : " + errorOutput.toString());
             }
             // shell 실행이 비정상 종료되었을 경우
             else {
-            	result = false;
+            	result.put("state", false);
+            	result.put("result", successOutput.toString());
                 logger.info("비정상 종료 : " + successOutput.toString());
             }
  

@@ -30,18 +30,10 @@ public class ComController {
 	//간편로그인
 	private final static String API_STATE_CODE = ComUtil.getRandomKey(10);
 	
-	@Value("#{commonConfig['KAKAO_REST_API']}")
-	private String KAKAO_REST_API;
 	@Value("#{commonConfig['KAKAO_REDIRECT_URI']}")
 	private String KAKAO_REDIRECT_URI;
-		
-	@Value("#{commonConfig['NAVER_CLIENT_SECRET']}")
-	private String NAVER_CLIENT_SECRET;
-	@Value("#{commonConfig['NAVER_CLIENT_ID']}")
-	private String NAVER_CLIENT_ID;
 	@Value("#{commonConfig['NAVER_REDIRECT_URI']}")
 	private String NAVER_REDIRECT_URI;
-	
 	
 	@Autowired
 	ComService comService;
@@ -72,10 +64,10 @@ public class ComController {
 		
 		m.addAttribute("API_STATE_CODE", API_STATE_CODE);
 		
-		m.addAttribute("KAKAO_REST_API", KAKAO_REST_API);
+		m.addAttribute("KAKAO_REST_API", InitBean.getKAKAO_REST_API());
 		m.addAttribute("KAKAO_REDIRECT_URI", KAKAO_REDIRECT_URI);
 		
-		m.addAttribute("NAVER_CLIENT_ID", NAVER_CLIENT_ID);
+		m.addAttribute("NAVER_CLIENT_ID", InitBean.getNAVER_CLIENT_ID());
 		m.addAttribute("NAVER_REDIRECT_URI", NAVER_REDIRECT_URI);
 		
 		return "loginPage";
@@ -139,10 +131,10 @@ public class ComController {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		m.addAttribute("jsLink", "/viewJs/index.js");
 		
-		m.addAttribute("KAKAO_REST_API", KAKAO_REST_API);
+		m.addAttribute("KAKAO_REST_API", InitBean.getKAKAO_REST_API());
 		m.addAttribute("KAKAO_REDIRECT_URI", KAKAO_REDIRECT_URI);
 		
-		m.addAttribute("NAVER_CLIENT_ID", NAVER_CLIENT_ID);
+		m.addAttribute("NAVER_CLIENT_ID", InitBean.getNAVER_CLIENT_ID());
 		m.addAttribute("NAVER_REDIRECT_URI", NAVER_REDIRECT_URI);
 		
 		m.addAttribute("OAUTH_TYPE", request.getSession().getAttribute("OAUTH_TYPE"));

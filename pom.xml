@@ -17,6 +17,19 @@
 	
 	<dependencies>
 		
+		<!-- https://mvnrepository.com/artifact/org.jasypt/jasypt 프로퍼티암호화 -->
+		<dependency>
+		    <groupId>org.jasypt</groupId>
+		    <artifactId>jasypt</artifactId>
+		    <version>1.9.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jasypt/jasypt-spring31 -->
+		<dependency>
+		    <groupId>org.jasypt</groupId>
+		    <artifactId>jasypt-spring31</artifactId>
+		    <version>1.9.2</version>
+		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-spring 스케쥴러락-->
 		<dependency>
 		    <groupId>net.javacrumbs.shedlock</groupId>
@@ -29,8 +42,7 @@
 		    <artifactId>shedlock-provider-jdbc-template</artifactId>
 		    <version>4.33.0</version>
 		</dependency>
-		
-		
+				
 		<!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
 		<dependency>
 		    <groupId>net.lingala.zip4j</groupId>

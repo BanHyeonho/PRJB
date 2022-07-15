@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import prjb.com.init.InitBean;
 import prjb.com.mapper.ComDao;
 import prjb.com.util.ComUtil;
 import prjb.com.util.HttpUtil;
@@ -26,20 +27,11 @@ import prjb.com.util.ModifiableRequest;
 public class OauthService {
 	
 	//간편로그인
-	@Value("#{commonConfig['KAKAO_REST_API']}")
-	private String KAKAO_REST_API;
 	@Value("#{commonConfig['KAKAO_REDIRECT_URI']}")
 	private String KAKAO_REDIRECT_URI;
-	@Value("#{commonConfig['KAKAO_ADMIN']}")
-	private String KAKAO_ADMIN;
-	
-	@Value("#{commonConfig['NAVER_CLIENT_ID']}")
-	private String NAVER_CLIENT_ID;
-	@Value("#{commonConfig['NAVER_CLIENT_SECRET']}")
-	private String NAVER_CLIENT_SECRET;
 	@Value("#{commonConfig['NAVER_REDIRECT_URI']}")
 	private String NAVER_REDIRECT_URI;
-		
+	
 	@Autowired
 	ComService comService;
 	
@@ -258,7 +250,7 @@ public class OauthService {
 		switch (p_type) {
 		case "KAKAO":
 				httpParam.put("url", "https://kapi.kakao.com/v1/user/unlink");
-				headerParam.put("Authorization", "KakaoAK " + KAKAO_ADMIN);
+				headerParam.put("Authorization", "KakaoAK " + InitBean.getKAKAO_ADMIN());
 				bodyParam.put("target_id_type", "user_id");
 				bodyParam.put("target_id", p_socialId);
 			break;
@@ -274,8 +266,8 @@ public class OauthService {
 				//토큰갱신
 				httpParam.put("url", "https://nid.naver.com/oauth2.0/token");
 				bodyParam.put("grant_type", "refresh_token");
-				bodyParam.put("client_id", NAVER_CLIENT_ID);
-				bodyParam.put("client_secret", NAVER_CLIENT_SECRET);
+				bodyParam.put("client_id", InitBean.getNAVER_CLIENT_ID());
+				bodyParam.put("client_secret", InitBean.getNAVER_CLIENT_SECRET());
 				bodyParam.put("refresh_token", URLEncoder.encode(String.valueOf(lastToken.get("REFRESH_TOKEN")), "UTF-8") );
 				Map refreshResult = (Map)HttpUtil.call(httpParam, headerParam, bodyParam).get("data");
 				
@@ -289,8 +281,8 @@ public class OauthService {
 				httpParam.put("url", "https://nid.naver.com/oauth2.0/token");
 				headerParam.put("Content-Type", "application/x-www-form-urlencoded" );
 				bodyParam.put("grant_type", "delete");
-				bodyParam.put("client_id", NAVER_CLIENT_ID);
-				bodyParam.put("client_secret", NAVER_CLIENT_SECRET);
+				bodyParam.put("client_id", InitBean.getNAVER_CLIENT_ID());
+				bodyParam.put("client_secret", InitBean.getNAVER_CLIENT_SECRET());
 				bodyParam.put("access_token", URLEncoder.encode(accessToken, "UTF-8"));
 				bodyParam.put("service_provider", "NAVER");
 			break;
@@ -499,14 +491,14 @@ public class OauthService {
 		switch (p_type) {
 		case "KAKAO":
 			httpParam.put("url", "https://kauth.kakao.com/oauth/token");
-			bodyParam.put("client_id", KAKAO_REST_API);
+			bodyParam.put("client_id", InitBean.getKAKAO_REST_API());
 			bodyParam.put("redirect_uri", url + KAKAO_REDIRECT_URI);
 			break;
 			
 		case "NAVER":
 			httpParam.put("url", "https://nid.naver.com/oauth2.0/token");
-			bodyParam.put("client_id", NAVER_CLIENT_ID);
-			bodyParam.put("client_secret", NAVER_CLIENT_SECRET);
+			bodyParam.put("client_id", InitBean.getNAVER_CLIENT_ID());
+			bodyParam.put("client_secret", InitBean.getNAVER_CLIENT_SECRET());
 			bodyParam.put("redirect_uri", url + NAVER_REDIRECT_URI);			
 			break;
 			
@@ -566,8 +558,8 @@ public class OauthService {
 		switch (p_type) {
 		case "NAVER":
 			httpParam.put("url", "https://nid.naver.com/oauth2.0/token");	
-			bodyParam .put("client_id", NAVER_CLIENT_ID );
-			bodyParam .put("client_secret", NAVER_CLIENT_SECRET );
+			bodyParam .put("client_id", InitBean.getNAVER_CLIENT_ID() );
+			bodyParam .put("client_secret", InitBean.getNAVER_CLIENT_SECRET() );
 			bodyParam .put("access_token", p_access_token );
 			bodyParam .put("grant_type", "delete" );
 			break;
