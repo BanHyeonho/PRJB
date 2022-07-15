@@ -89,7 +89,8 @@ public class ComUtil {
 			} 
 			else {
 	//			System.out.println("No encoding detected.");
-				result = null;
+//				result = null;
+				result = "EUC-KR";	//인코딩정보를 찾을수 없을때 EUC-KR 로 기본으로 한다.
 			} 
 			detector.reset();
 			}

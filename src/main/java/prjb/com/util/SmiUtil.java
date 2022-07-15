@@ -187,33 +187,20 @@ public class SmiUtil {
 		case "br":
 			str = str.replaceAll("<br>", "\n").replaceAll("<BR>", "\n");
 			break;
+		case "b":
+			str = str.replaceAll("<b>", "").replaceAll("</b>", "");			
+			break;
+		case "i":
+			str = str.replaceAll("<i>", "").replaceAll("</i>", "");
+			break;
 		case "font":
 			while( str.toLowerCase().contains("<font") ) {
 				String tmp = str.substring(str.toLowerCase().indexOf("<font"));
 				tmp = tmp.substring(0, tmp.indexOf(">")+1);
 				str = str.replace(tmp, "").trim();
 			}
-			break;
-		case "b":
-			while(str.toLowerCase().contains("<b")) {
-				String tmp = str.substring(str.toLowerCase().indexOf("<b"));
-				tmp = tmp.substring(0, tmp.indexOf(">")+1);
-				str = str.replace(tmp, "").trim();
-			}
-			while(str.toLowerCase().contains("</b")) {
-				String tmp = str.substring(str.toLowerCase().indexOf("</b"));
-				tmp = tmp.substring(0, tmp.indexOf(">")+1);
-				str = str.replace(tmp, "").trim();
-			}			
-			break;
-		case "i":
-			while(str.toLowerCase().contains("<i")) {
-				String tmp = str.substring(str.toLowerCase().indexOf("<i"));
-				tmp = tmp.substring(0, tmp.indexOf(">")+1);
-				str = str.replace(tmp, "").trim();
-			}
-			while(str.toLowerCase().contains("</i")) {
-				String tmp = str.substring(str.toLowerCase().indexOf("</i"));
+			while( str.toLowerCase().contains("</font") ) {
+				String tmp = str.substring(str.toLowerCase().indexOf("</font"));
 				tmp = tmp.substring(0, tmp.indexOf(">")+1);
 				str = str.replace(tmp, "").trim();
 			}
