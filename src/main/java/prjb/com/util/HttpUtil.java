@@ -25,8 +25,7 @@ public class HttpUtil {
 		Map result = new HashMap();
 		HttpURLConnection conn = null;
 		
-		try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-		){
+		try{
 				URL url = new URL(String.valueOf(p_param.get("url")));
 				String method = p_param.get("method") == null ? "GET" : String.valueOf(p_param.get("method"));	// POST / GET / PUT / DELETE
 				
@@ -48,39 +47,39 @@ public class HttpUtil {
 		        
 		        conn.setDoOutput(true);
 		        
+		        try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));){
+		        	StringBuilder dataString = new StringBuilder();           
+		            
+			        if(p_body != null) {
+			        	
+			            Iterator<String> keys = p_body.keySet().iterator();
+			            int idx = 0;
+			            while( keys.hasNext() ){
+
+			                String key = keys.next();
+
+			                if(idx == 0) {
+			                	dataString.append(key + "=" + p_body.get(key));
+			                }
+			                else {
+			                	dataString.append("&" + key + "=" + p_body.get(key));
+			                }
+			                ++idx;
+			            }
+			        }
+			        else {
+			        	dataString.append("");
+			        }
+		            bw.write(dataString.toString());
+		        }
 		        
-		        StringBuilder dataString = new StringBuilder();           
-	            
-		        if(p_body != null) {
-		        	
-		            Iterator<String> keys = p_body.keySet().iterator();
-		            int idx = 0;
-		            while( keys.hasNext() ){
-
-		                String key = keys.next();
-
-		                if(idx == 0) {
-		                	dataString.append(key + "=" + p_body.get(key));
-		                }
-		                else {
-		                	dataString.append("&" + key + "=" + p_body.get(key));
-		                }
-		                ++idx;
-		            }
-		        }
-		        else {
-		        	dataString.append("");
-		        }
-	            bw.write(dataString.toString());
-	            
-		        bw.flush();
-
 		        //HTTP 응답 코드 수신 
 		        int responseCode = conn.getResponseCode();
 		        if(responseCode == 200) {
 
 		        	//서버에서 보낸 응답 데이터 수신 받기
-		        	try(BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));){
+		        	try(BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        			){
 		        		StringBuilder sb = new StringBuilder();
 		                String line = "";
 		                while ((line = br.readLine()) != null) {

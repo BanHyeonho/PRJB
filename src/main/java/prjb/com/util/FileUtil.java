@@ -186,7 +186,7 @@ public class FileUtil {
 			try(BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));){
 				// 파일안에 문자열 쓰기
 				fw.write(content.toString());
-				fw.flush();
+				
 			}
 			
 			fileSize = file.length();
@@ -285,7 +285,6 @@ public class FileUtil {
 			){
 				FileCopyUtils.copy(fis, out);
 				result = true;
-				out.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 				result = false;
