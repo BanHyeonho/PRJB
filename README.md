@@ -11,11 +11,12 @@
 > * 오라클
 > * 아파치(mod_jk 사용)
 > * 톰캣
-> * 톰캣 이중화 +세션클러스터링
+> * 톰캣 이중화 + 세션클러스터링
 > * 깃
 > * 젠킨스
 > * FFmpeg
 > * Spring Framework
+> 	* jasypt
 > * Mybatis
 > * Java
 > * LibreOffice
@@ -61,6 +62,8 @@
 > * ComDao : DTO 를 사용하지않고 Map을 사용하여 쿼리호출 
 
 > ### model : data model 패키지
+> * SubtitleTimeCode : 자막 인코딩시 시간포맷 클래스
+> * Vtt : Vtt자막형식 model
 
 > ### service : 비즈니스로직 패키지
 > * AsyncService : 쓰레드를 사용하여 병렬처리시 사용하는 서비스, 사용시 내부로직은 오버라이드 한다.
