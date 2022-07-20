@@ -78,17 +78,4 @@ public class StController {
 		return resultMap;
 	}
 	
-	/**
-	 * 테스트
-	 */
-	@RequestMapping(value = "/test")
-	public @ResponseBody Map test(HttpServletRequest request) throws Exception {
-		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
-		Map<String, Object> resultMap = new HashMap();
-		
-//		SamiObject so = new SamiParser("EUC-KR").parse(new FileInputStream(new File("C:\\Users\\Administrator\\Desktop\\task\\3id.smi")));
-		
-//		System.out.println(so.toString());
-		return resultMap;
-	}
 }
