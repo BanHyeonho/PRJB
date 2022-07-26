@@ -97,6 +97,7 @@
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
 			<version>9.0.52</version>
+			<scope>provided</scope>
 		</dependency>
 
  		<!--Local ojdbc -->
