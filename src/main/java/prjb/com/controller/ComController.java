@@ -87,7 +87,7 @@ public class ComController {
 	 * 로그인처리
 	 */
 	@RequestMapping(value = "/loginAction", method = RequestMethod.POST)
-	public @ResponseBody Object loginAction(HttpServletRequest request) throws Exception {
+	public @ResponseBody Map loginAction(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, String> resultMap = new HashMap();
 		
@@ -100,7 +100,7 @@ public class ComController {
 	 * 회원가입 처리
 	 */
 	@RequestMapping(value = "/registAction", method = RequestMethod.POST)
-	public @ResponseBody Object registAction(HttpServletRequest request) throws Exception {
+	public @ResponseBody Map registAction(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, String> resultMap = new HashMap();
 		
@@ -146,7 +146,7 @@ public class ComController {
 	 * 개인정보 수정
 	 */
 	@RequestMapping(value = "/chgPrivacy", method = RequestMethod.POST)
-	public @ResponseBody Object chgPrivacy(HttpServletRequest request) throws Exception {
+	public @ResponseBody Map chgPrivacy(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, String> resultMap = comService.chgPrivacy(request);
 		return resultMap;

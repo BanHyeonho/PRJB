@@ -45,7 +45,7 @@ public class  OauthController{
 	 * 간편 회원가입 처리
 	 */
 	@RequestMapping(value = "/registAction", method = RequestMethod.POST)
-	public @ResponseBody Object registAction(HttpServletRequest request) throws Exception {
+	public @ResponseBody Map registAction(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		Map<String, String> resultMap = new HashMap();
 		
@@ -80,7 +80,7 @@ public class  OauthController{
 	 * 간편 로그인 연결해제
 	 */
 	@RequestMapping(value = "/unlink", method = RequestMethod.POST)
-	public @ResponseBody Object unlink(HttpServletRequest request) throws Exception {
+	public @ResponseBody Map unlink(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		
 		return oauthService.unlink(request);
@@ -90,7 +90,7 @@ public class  OauthController{
 	 * 간편 로그인 연결
 	 */
 	@RequestMapping(value = "/link", method = RequestMethod.POST)
-	public @ResponseBody Object link(HttpServletRequest request) throws Exception {
+	public @ResponseBody Map link(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		
 		return oauthService.link(request);
@@ -113,7 +113,7 @@ public class  OauthController{
 	 * 간편로그인으로 연결된 다른계정으로 재로그인 가능검증
 	 */
 	@RequestMapping(value = "/reLogin", method = RequestMethod.POST)
-	public @ResponseBody Object reLogin(HttpServletRequest request) throws Exception {
+	public @ResponseBody Map reLogin(HttpServletRequest request) throws Exception {
 		logger.info("URL is {}.", "[" + request.getRequestURI() + "]");
 		
 		return oauthService.reLogin(request);
