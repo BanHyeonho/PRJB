@@ -31,7 +31,10 @@ public class SmiUtil {
 			boolean startYn = false;
 			
 			while((line = bufReader.readLine()) != null){
-				line = line.trim();
+				
+				//잘못된 태그 수정
+				line = tagAdjust(line.trim());
+				
 				//자막시작
 				if (!startYn 
 				&& line.toLowerCase().startsWith("<sync")) {
@@ -127,6 +130,7 @@ public class SmiUtil {
 	public static String getStart(String str) {
 		
 		if(str.toLowerCase().contains("<sync")) {
+			
 			String tmp = str.substring(str.toLowerCase().indexOf("<sync"));
 			tmp = tmp.substring(0, tmp.indexOf(">")+1);
 			str = tmp.toLowerCase().replace("<sync", "").trim().replace("start", "").trim().replace("=", "").trim().replace(">", "").trim();
@@ -146,8 +150,7 @@ public class SmiUtil {
 	 * @return
 	 */
 	public static String getLang(String str) {
-		
-		if(str.toLowerCase().contains("<p")) {
+		if(str.toLowerCase().contains("<p")) {			
 			String tmp = str.substring(str.toLowerCase().indexOf("<p"));
 			tmp = tmp.substring(0, tmp.indexOf(">")+1);
 			str = tmp.toLowerCase().replace("<p", "").trim().replace("class", "").trim().replace("=", "").trim().replace(">", "").replace("cc", "").trim();
@@ -166,6 +169,7 @@ public class SmiUtil {
 	 * @return
 	 */
 	public static String removeTag(String type, String str) {
+		
 		switch (type) {
 		case "sync":
 			if(str.toLowerCase().contains("<sync")) {
@@ -223,5 +227,39 @@ public class SmiUtil {
 		result = str;
 		
 		return result;
+	}
+	
+	/**
+	 * 잘못된 태그 수정
+	 * @return
+	 */
+	public static String tagAdjust(String str) {
+		
+		String[] sp = str.split("");
+		StringBuilder result = new StringBuilder();
+		
+		boolean open = false;
+		for (String s : sp) {
+			//태그가 안닫힌경우 --예) <SYNC Start=4864200<P Class=KRCC>&nbsp;
+			if("<".equals(s) && open) {
+				result.append(">");
+				open = false;
+			}
+			//태그를 열고 공백이 들어간경우 --예) <SYNC Start=4790144>< P Class=KRCC>&nbsp;
+			else if(" ".equals(s) && "<".equals(result.toString().substring(result.toString().length() -1)) ) {
+				continue;
+			}
+			else if("<".equals(s)) {
+				open = true;
+			}
+			else if(">".equals(s)) {
+				open = false;
+			}
+			
+			result.append(s);
+		}
+		
+		
+		return result.toString();
 	}
 }
