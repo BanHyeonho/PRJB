@@ -578,10 +578,10 @@
 			 , B.COMMENTS			AS COMMENTS
 			 , C.LAST_NUMBER		AS SEQ_CURRVAL 
 		  FROM ALL_TABLES A
-		  JOIN ALL_TAB_COMMENTS B ON A.TABLE_NAME = B.TABLE_NAME 
-		  						 AND B.TABLE_TYPE = 'TABLE'
-	 LEFT JOIN USER_SEQUENCES C ON A.TABLE_NAME || '_S' = C.SEQUENCE_NAME 
+		  JOIN ALL_TAB_COMMENTS B ON (A.TABLE_NAME = B.TABLE_NAME AND B.TABLE_TYPE = 'TABLE' AND A.OWNER = 'PRJB' AND B.OWNER = 'PRJB')
+	 LEFT JOIN USER_SEQUENCES C ON (A.TABLE_NAME || '_S' = C.SEQUENCE_NAME) 
 		 WHERE A.OWNER = 'PRJB'
+		   AND B.OWNER = 'PRJB'
 		 <if test="@prjb.com.util.ComUtil@nvl(p_tableNm, '') != ''">
 		 	<![CDATA[
 		 	AND ( instr( upper(A.TABLE_NAME), upper(#{p_tableNm}) ) > 0 OR instr( upper(B.COMMENTS), upper(#{p_tableNm}) ) > 0 )
